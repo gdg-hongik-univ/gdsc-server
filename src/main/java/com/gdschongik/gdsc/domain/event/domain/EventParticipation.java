@@ -1,6 +1,7 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
 import com.gdschongik.gdsc.domain.common.model.BaseEntity;
+import com.gdschongik.gdsc.domain.member.domain.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -10,8 +11,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 @Getter
 @Entity
@@ -28,15 +31,23 @@ public class EventParticipation extends BaseEntity {
 
     private Long memberId;
 
+    @Comment("본행사 신청 상태")
     @Enumerated(EnumType.STRING)
-    private ApplicationStatus mainEventApplicationStatus;
+    private MainEventApplicationStatus mainEventApplicationStatus;
 
+    @Comment("뒷풀이 신청 상태")
     @Enumerated(EnumType.STRING)
-    private AttendanceStatus mainEventAttendanceStatus;
+    private AfterPartyApplicationStatus afterPartyApplicationStatus;
 
+    @Comment("뒷풀이 참석 상태")
     @Enumerated(EnumType.STRING)
-    private ApplicationStatus afterPartyApplicationStatus;
+    private AfterPartyAttendanceStatus afterPartyAttendanceStatus;
 
+    @Comment("선정산 납부 상태")
     @Enumerated(EnumType.STRING)
-    private AttendanceStatus afterPartyAttendanceStatus;
+    private PaymentStatus prePaymentStatus;
+
+    @Comment("후정산 납부 상태")
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus postPaymentStatus;
 }

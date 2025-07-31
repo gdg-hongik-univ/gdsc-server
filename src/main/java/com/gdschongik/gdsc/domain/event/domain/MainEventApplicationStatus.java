@@ -1,7 +1,6 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
-public enum ApplicationStatus {
-    NONE,
+public enum MainEventApplicationStatus {
     NOT_APPLIED,
     APPLIED,
     ;
