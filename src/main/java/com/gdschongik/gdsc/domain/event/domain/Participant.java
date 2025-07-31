@@ -18,6 +18,7 @@ public record Participant(String name, @Column(unique = true) String studentId, 
         if (!member.getAssociateRequirement().isInfoSatisfied()) {
             throw new CustomException(PARTICIPANT_NOT_CREATABLE_INFO_NOT_SATISFIED);
         }
+
         return new Participant(member.getName(), member.getStudentId(), member.getPhone());
     }
 }
