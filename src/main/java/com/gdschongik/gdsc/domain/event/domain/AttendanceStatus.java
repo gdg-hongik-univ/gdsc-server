@@ -1,6 +1,6 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
-public enum EventAttendanceStatus {
+public enum AttendanceStatus {
     NONE,
     NOT_ATTENDED,
     ATTENDED,

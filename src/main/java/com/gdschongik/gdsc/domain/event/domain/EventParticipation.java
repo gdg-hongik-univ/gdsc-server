@@ -29,14 +29,14 @@ public class EventParticipation extends BaseEntity {
     private Long memberId;
 
     @Enumerated(EnumType.STRING)
-    private EventApplicationStatus mainEventApplicationStatus;
+    private ApplicationStatus mainEventApplicationStatus;
 
     @Enumerated(EnumType.STRING)
-    private EventAttendanceStatus mainEventAttendanceStatus;
+    private AttendanceStatus mainEventAttendanceStatus;
 
     @Enumerated(EnumType.STRING)
-    private EventApplicationStatus afterPartyApplicationStatus;
+    private ApplicationStatus afterPartyApplicationStatus;
 
     @Enumerated(EnumType.STRING)
-    private EventAttendanceStatus afterPartyAttendanceStatus;
+    private AttendanceStatus afterPartyAttendanceStatus;
 }
