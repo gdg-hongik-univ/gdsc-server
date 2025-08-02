@@ -10,6 +10,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,6 +53,10 @@ public class EventParticipation extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PaymentStatus postPaymentStatus;
 
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
+
     @Builder(access = AccessLevel.PRIVATE)
     private EventParticipation(
             Participant participant,
@@ -60,7 +66,8 @@ public class EventParticipation extends BaseEntity {
             AfterPartyApplicationStatus afterPartyApplicationStatus,
             AfterPartyAttendanceStatus afterPartyAttendanceStatus,
             PaymentStatus prePaymentStatus,
-            PaymentStatus postPaymentStatus) {
+            PaymentStatus postPaymentStatus,
+            Event event) {
         this.participant = participant;
         this.memberId = memberId;
         this.mainEventApplicationStatus = mainEventApplicationStatus;
@@ -68,12 +75,13 @@ public class EventParticipation extends BaseEntity {
         this.afterPartyAttendanceStatus = afterPartyAttendanceStatus;
         this.prePaymentStatus = prePaymentStatus;
         this.postPaymentStatus = postPaymentStatus;
+        this.event = event;
     }
 
     // 신청 폼을 통해 생성된 참여정보
 
     public static EventParticipation createRegisteredByForm(
-            Member member, AfterPartyApplicationStatus afterPartyApplicationStatus) {
+            Member member, AfterPartyApplicationStatus afterPartyApplicationStatus, Event event) {
         return EventParticipation.builder()
                 .participant(Participant.from(member))
                 .memberId(member.getId())
@@ -82,11 +90,12 @@ public class EventParticipation extends BaseEntity {
                 .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.NONE)
                 .prePaymentStatus(PaymentStatus.UNPAID)
                 .postPaymentStatus(PaymentStatus.UNPAID)
+                .event(event)
                 .build();
     }
 
     public static EventParticipation createUnregisteredByForm(
-            Participant participant, AfterPartyApplicationStatus afterPartyApplicationStatus) {
+            Participant participant, AfterPartyApplicationStatus afterPartyApplicationStatus, Event event) {
         return EventParticipation.builder()
                 .participant(participant)
                 .mainEventApplicationStatus(MainEventApplicationStatus.APPLIED)
@@ -94,12 +103,13 @@ public class EventParticipation extends BaseEntity {
                 .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.NOT_ATTENDED)
                 .prePaymentStatus(PaymentStatus.UNPAID)
                 .postPaymentStatus(PaymentStatus.UNPAID)
+                .event(event)
                 .build();
     }
 
     // 뒷풀이 현장등록을 통해 생성된 참여정보
 
-    public static EventParticipation createRegisteredByAfterParty(Member member) {
+    public static EventParticipation createRegisteredByAfterParty(Member member, Event event) {
         return EventParticipation.builder()
                 .participant(Participant.from(member))
                 .memberId(member.getId())
@@ -108,10 +118,11 @@ public class EventParticipation extends BaseEntity {
                 .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.ATTENDED)
                 .prePaymentStatus(PaymentStatus.UNPAID)
                 .postPaymentStatus(PaymentStatus.UNPAID)
+                .event(event)
                 .build();
     }
 
-    public static EventParticipation createUnregisteredByAfterParty(Participant participant) {
+    public static EventParticipation createUnregisteredByAfterParty(Participant participant, Event event) {
         return EventParticipation.builder()
                 .participant(participant)
                 .mainEventApplicationStatus(MainEventApplicationStatus.NOT_APPLIED)
@@ -119,6 +130,7 @@ public class EventParticipation extends BaseEntity {
                 .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.ATTENDED)
                 .prePaymentStatus(PaymentStatus.UNPAID)
                 .postPaymentStatus(PaymentStatus.UNPAID)
+                .event(event)
                 .build();
     }
 }
