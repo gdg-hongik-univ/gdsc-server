@@ -1,6 +1,5 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
