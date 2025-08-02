@@ -50,4 +50,75 @@ public class EventParticipation extends BaseEntity {
     @Comment("후정산 납부 상태")
     @Enumerated(EnumType.STRING)
     private PaymentStatus postPaymentStatus;
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private EventParticipation(
+            Participant participant,
+            Long memberId,
+            MainEventApplicationStatus mainEventApplicationStatus,
+            AfterPartyAttendanceStatus mainEventAfterPartyAttendanceStatus,
+            AfterPartyApplicationStatus afterPartyApplicationStatus,
+            AfterPartyAttendanceStatus afterPartyAttendanceStatus,
+            PaymentStatus prePaymentStatus,
+            PaymentStatus postPaymentStatus) {
+        this.participant = participant;
+        this.memberId = memberId;
+        this.mainEventApplicationStatus = mainEventApplicationStatus;
+        this.afterPartyApplicationStatus = afterPartyApplicationStatus;
+        this.afterPartyAttendanceStatus = afterPartyAttendanceStatus;
+        this.prePaymentStatus = prePaymentStatus;
+        this.postPaymentStatus = postPaymentStatus;
+    }
+
+    // 신청 폼을 통해 생성된 참여정보
+
+    public static EventParticipation createRegisteredByForm(
+            Member member, AfterPartyApplicationStatus afterPartyApplicationStatus) {
+        return EventParticipation.builder()
+                .participant(Participant.from(member))
+                .memberId(member.getId())
+                .mainEventApplicationStatus(MainEventApplicationStatus.APPLIED)
+                .afterPartyApplicationStatus(afterPartyApplicationStatus)
+                .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.NONE)
+                .prePaymentStatus(PaymentStatus.UNPAID)
+                .postPaymentStatus(PaymentStatus.UNPAID)
+                .build();
+    }
+
+    public static EventParticipation createUnregisteredByForm(
+            Participant participant, AfterPartyApplicationStatus afterPartyApplicationStatus) {
+        return EventParticipation.builder()
+                .participant(participant)
+                .mainEventApplicationStatus(MainEventApplicationStatus.APPLIED)
+                .afterPartyApplicationStatus(afterPartyApplicationStatus)
+                .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.NOT_ATTENDED)
+                .prePaymentStatus(PaymentStatus.UNPAID)
+                .postPaymentStatus(PaymentStatus.UNPAID)
+                .build();
+    }
+
+    // 뒷풀이 현장등록을 통해 생성된 참여정보
+
+    public static EventParticipation createRegisteredByAfterParty(Member member) {
+        return EventParticipation.builder()
+                .participant(Participant.from(member))
+                .memberId(member.getId())
+                .mainEventApplicationStatus(MainEventApplicationStatus.NOT_APPLIED)
+                .afterPartyApplicationStatus(AfterPartyApplicationStatus.NOT_APPLIED)
+                .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.ATTENDED)
+                .prePaymentStatus(PaymentStatus.UNPAID)
+                .postPaymentStatus(PaymentStatus.UNPAID)
+                .build();
+    }
+
+    public static EventParticipation createUnregisteredByAfterParty(Participant participant) {
+        return EventParticipation.builder()
+                .participant(participant)
+                .mainEventApplicationStatus(MainEventApplicationStatus.NOT_APPLIED)
+                .afterPartyApplicationStatus(AfterPartyApplicationStatus.NOT_APPLIED)
+                .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.ATTENDED)
+                .prePaymentStatus(PaymentStatus.UNPAID)
+                .postPaymentStatus(PaymentStatus.UNPAID)
+                .build();
+    }
 }
