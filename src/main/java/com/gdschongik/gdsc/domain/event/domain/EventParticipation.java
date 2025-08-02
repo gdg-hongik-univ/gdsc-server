@@ -80,56 +80,68 @@ public class EventParticipation extends BaseEntity {
 
     // 신청 폼을 통해 생성된 참여정보
 
-    public static EventParticipation createRegisteredByForm(
-            Member member, AfterPartyApplicationStatus afterPartyApplicationStatus, Event event) {
+    public static EventParticipation createOnlineForRegistered(
+            Member member,
+            AfterPartyApplicationStatus afterPartyApplicationStatus,
+            AfterPartyAttendanceStatus afterPartyAttendanceStatus,
+            PaymentStatus prePaymentStatus,
+            PaymentStatus postPaymentStatus,
+            Event event) {
         return EventParticipation.builder()
                 .participant(Participant.from(member))
                 .memberId(member.getId())
                 .mainEventApplicationStatus(MainEventApplicationStatus.APPLIED)
                 .afterPartyApplicationStatus(afterPartyApplicationStatus)
-                .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.NONE)
-                .prePaymentStatus(PaymentStatus.UNPAID)
-                .postPaymentStatus(PaymentStatus.UNPAID)
+                .afterPartyAttendanceStatus(afterPartyAttendanceStatus)
+                .prePaymentStatus(prePaymentStatus)
+                .postPaymentStatus(postPaymentStatus)
                 .event(event)
                 .build();
     }
 
-    public static EventParticipation createUnregisteredByForm(
-            Participant participant, AfterPartyApplicationStatus afterPartyApplicationStatus, Event event) {
+    public static EventParticipation createOnlineForUnregistered(
+            Participant participant,
+            AfterPartyApplicationStatus afterPartyApplicationStatus,
+            AfterPartyAttendanceStatus afterPartyAttendanceStatus,
+            PaymentStatus prePaymentStatus,
+            PaymentStatus postPaymentStatus,
+            Event event) {
         return EventParticipation.builder()
                 .participant(participant)
                 .mainEventApplicationStatus(MainEventApplicationStatus.APPLIED)
                 .afterPartyApplicationStatus(afterPartyApplicationStatus)
-                .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.NOT_ATTENDED)
-                .prePaymentStatus(PaymentStatus.UNPAID)
-                .postPaymentStatus(PaymentStatus.UNPAID)
+                .afterPartyAttendanceStatus(afterPartyAttendanceStatus)
+                .prePaymentStatus(prePaymentStatus)
+                .postPaymentStatus(postPaymentStatus)
                 .event(event)
                 .build();
     }
 
     // 뒷풀이 현장등록을 통해 생성된 참여정보
 
-    public static EventParticipation createRegisteredByAfterParty(Member member, Event event) {
+    public static EventParticipation createOnsiteForRegistered(
+            Member member, PaymentStatus prePaymentStatus, PaymentStatus postPaymentStatus, Event event) {
         return EventParticipation.builder()
                 .participant(Participant.from(member))
                 .memberId(member.getId())
                 .mainEventApplicationStatus(MainEventApplicationStatus.NOT_APPLIED)
                 .afterPartyApplicationStatus(AfterPartyApplicationStatus.NOT_APPLIED)
                 .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.ATTENDED)
-                .prePaymentStatus(PaymentStatus.UNPAID)
-                .postPaymentStatus(PaymentStatus.UNPAID)
+                .prePaymentStatus(prePaymentStatus)
+                .postPaymentStatus(postPaymentStatus)
                 .event(event)
                 .build();
     }
 
-    public static EventParticipation createUnregisteredByAfterParty(Participant participant, Event event) {
+    public static EventParticipation createOnsiteForUnregistered(
+            Participant participant, PaymentStatus prePaymentStatus, PaymentStatus postPaymentStatus, Event event) {
         return EventParticipation.builder()
                 .participant(participant)
                 .mainEventApplicationStatus(MainEventApplicationStatus.NOT_APPLIED)
                 .afterPartyApplicationStatus(AfterPartyApplicationStatus.NOT_APPLIED)
                 .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.ATTENDED)
-                .prePaymentStatus(PaymentStatus.UNPAID)
-                .postPaymentStatus(PaymentStatus.UNPAID)
+                .prePaymentStatus(prePaymentStatus)
+                .postPaymentStatus(postPaymentStatus)
                 .event(event)
                 .build();
     }
