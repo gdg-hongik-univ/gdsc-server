@@ -43,13 +43,6 @@ public class Event extends BaseEntity {
     private UsageStatus regularRoleOnlyStatus;
 
     /**
-     * 신청 폼에 RSVP 요청 리마인더 질문 포함 여부를 나타내는 필드입니다. 어떠한 검증에도 활용되지 않습니다.
-     */
-    @Comment("RSVP 질문 활성화 상태")
-    @Enumerated(EnumType.STRING)
-    private UsageStatus rsvpQuestionStatus;
-
-    /**
      * 뒤풀이 진행 여부를 나타내는 필드입니다.
      */
     @Comment("뒤풀이 활성화 상태")
@@ -64,6 +57,13 @@ public class Event extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UsageStatus postPaymentStatus;
 
+    /**
+     * 신청 폼에 RSVP 요청 리마인더 질문 포함 여부를 나타내는 필드입니다. 어떠한 검증에도 활용되지 않습니다.
+     */
+    @Comment("RSVP 질문 활성화 상태")
+    @Enumerated(EnumType.STRING)
+    private UsageStatus rsvpQuestionStatus;
+
     @Comment("본행사 최대 신청 가능 인원")
     private Integer mainEventMaxApplicantCount;
 
@@ -77,10 +77,10 @@ public class Event extends BaseEntity {
             String applicationDescription,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
-            UsageStatus rsvpQuestionStatus,
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus,
             UsageStatus postPaymentStatus,
+            UsageStatus rsvpQuestionStatus,
             Integer mainEventMaxApplicantCount,
             Integer afterPartyMaxApplicantCount) {
         this.name = name;
@@ -88,10 +88,10 @@ public class Event extends BaseEntity {
         this.applicationDescription = applicationDescription;
         this.applicationPeriod = applicationPeriod;
         this.regularRoleOnlyStatus = regularRoleOnlyStatus;
-        this.rsvpQuestionStatus = rsvpQuestionStatus;
         this.afterPartyStatus = afterPartyStatus;
         this.prePaymentStatus = prePaymentStatus;
         this.postPaymentStatus = postPaymentStatus;
+        this.rsvpQuestionStatus = rsvpQuestionStatus;
         this.mainEventMaxApplicantCount = mainEventMaxApplicantCount;
         this.afterPartyMaxApplicantCount = afterPartyMaxApplicantCount;
     }
@@ -102,10 +102,10 @@ public class Event extends BaseEntity {
             String applicationDescription,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
-            UsageStatus rsvpQuestionStatus,
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus,
             UsageStatus postPaymentStatus,
+            UsageStatus rsvpQuestionStatus,
             Integer mainEventMaxApplicantCount,
             Integer afterPartyMaxApplicantCount) {
         return Event.builder()
@@ -114,10 +114,10 @@ public class Event extends BaseEntity {
                 .applicationDescription(applicationDescription)
                 .applicationPeriod(applicationPeriod)
                 .regularRoleOnlyStatus(regularRoleOnlyStatus)
-                .rsvpQuestionStatus(rsvpQuestionStatus)
                 .afterPartyStatus(afterPartyStatus)
                 .prePaymentStatus(prePaymentStatus)
                 .postPaymentStatus(postPaymentStatus)
+                .rsvpQuestionStatus(rsvpQuestionStatus)
                 .mainEventMaxApplicantCount(mainEventMaxApplicantCount)
                 .afterPartyMaxApplicantCount(afterPartyMaxApplicantCount)
                 .build();
