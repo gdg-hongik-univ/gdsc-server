@@ -36,7 +36,7 @@ public class Event extends BaseEntity {
     private Period applicationPeriod;
 
     /**
-     * 신청 폼에 RSVP 요청 리마인더 질문을 포함할지 여부를 나타내는 필드입니다.
+     * 신청 폼에 RSVP 요청 리마인더 질문 포함 여부를 나타내는 필드입니다.
      */
     @Comment("RSVP 질문 활성화 상태")
     @Enumerated(EnumType.STRING)
