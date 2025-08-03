@@ -42,6 +42,9 @@ public class Event extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UsageStatus rsvpStatus;
 
+    /**
+     * 뒤풀이 진행 여부를 나타내는 필드입니다.
+     */
     @Comment("뒤풀이 활성화 상태")
     @Enumerated(EnumType.STRING)
     private UsageStatus afterPartyStatus;
