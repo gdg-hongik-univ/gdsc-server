@@ -53,6 +53,10 @@ public class Event extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UsageStatus prePaymentStatus;
 
+    @Comment("후정산 활성화 상태")
+    @Enumerated(EnumType.STRING)
+    private UsageStatus postPaymentStatus;
+
     @Builder(access = AccessLevel.PRIVATE)
     private Event(
             String name,
@@ -61,7 +65,8 @@ public class Event extends BaseEntity {
             Period applicationPeriod,
             UsageStatus rsvpStatus,
             UsageStatus afterPartyStatus,
-            UsageStatus prePaymentStatus) {
+            UsageStatus prePaymentStatus,
+            UsageStatus postPaymentStatus) {
         this.name = name;
         this.venue = venue;
         this.applicationDescription = applicationDescription;
@@ -69,6 +74,7 @@ public class Event extends BaseEntity {
         this.rsvpStatus = rsvpStatus;
         this.afterPartyStatus = afterPartyStatus;
         this.prePaymentStatus = prePaymentStatus;
+        this.postPaymentStatus = postPaymentStatus;
     }
 
     public static Event create(
@@ -78,7 +84,8 @@ public class Event extends BaseEntity {
             Period applicationPeriod,
             UsageStatus rsvpStatus,
             UsageStatus afterPartyStatus,
-            UsageStatus prePaymentStatus) {
+            UsageStatus prePaymentStatus,
+            UsageStatus postPaymentStatus) {
         return Event.builder()
                 .name(name)
                 .venue(venue)
@@ -87,6 +94,7 @@ public class Event extends BaseEntity {
                 .rsvpStatus(rsvpStatus)
                 .afterPartyStatus(afterPartyStatus)
                 .prePaymentStatus(prePaymentStatus)
+                .postPaymentStatus(postPaymentStatus)
                 .build();
     }
 }
