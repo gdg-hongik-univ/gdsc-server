@@ -30,9 +30,9 @@ public class Event {
 
     @Comment("행사 기간")
     @Embedded
-    @AttributeOverride(name = "startDate", column = @Column(name = "event_start_at"))
-    @AttributeOverride(name = "endDate", column = @Column(name = "event_end_at"))
-    private Period period;
+    @AttributeOverride(name = "startDate", column = @Column(name = "application_start_at"))
+    @AttributeOverride(name = "endDate", column = @Column(name = "application_end_at"))
+    private Period applicationPeriod;
 
     @Comment("RSVP 활성화 상태")
     @Enumerated(EnumType.STRING)
@@ -51,14 +51,14 @@ public class Event {
             EventType type,
             String name,
             String description,
-            Period period,
+            Period applicationPeriod,
             UsageStatus rsvp,
             UsageStatus afterParty,
             UsageStatus prePayment) {
         this.type = type;
         this.name = name;
         this.description = description;
-        this.period = period;
+        this.applicationPeriod = applicationPeriod;
         this.rsvp = rsvp;
         this.afterParty = afterParty;
         this.prePayment = prePayment;
@@ -68,7 +68,7 @@ public class Event {
             EventType type,
             String name,
             String description,
-            Period period,
+            Period applicationPeriod,
             UsageStatus rsvp,
             UsageStatus afterParty,
             UsageStatus prePayment) {
@@ -76,7 +76,7 @@ public class Event {
                 .type(type)
                 .name(name)
                 .description(description)
-                .period(period)
+                .applicationPeriod(applicationPeriod)
                 .rsvp(rsvp)
                 .afterParty(afterParty)
                 .prePayment(prePayment)
