@@ -189,7 +189,10 @@ public enum ErrorCode {
 
     // Excel
     EXCEL_WORKSHEET_WRITE_FAILED(INTERNAL_SERVER_ERROR, "엑셀 워크시트 작성에 실패했습니다."),
-    ;
+
+    // Event
+    PARTICIPANT_NOT_CREATABLE_INFO_NOT_SATISFIED(
+            INTERNAL_SERVER_ERROR, "기본 정보를 입력하지 않은 멤버로 참여자 정보 생성을 시도했습니다. 관리자에게 문의 바랍니다.");
     private final HttpStatus status;
     private final String message;
 }
