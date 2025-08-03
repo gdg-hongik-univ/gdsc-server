@@ -47,7 +47,7 @@ public class Event extends BaseEntity {
      */
     @Comment("RSVP 질문 활성화 상태")
     @Enumerated(EnumType.STRING)
-    private UsageStatus rsvpStatus;
+    private UsageStatus rsvpQuestionStatus;
 
     /**
      * 뒤풀이 진행 여부를 나타내는 필드입니다.
@@ -71,7 +71,7 @@ public class Event extends BaseEntity {
             String applicationDescription,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
-            UsageStatus rsvpStatus,
+            UsageStatus rsvpQuestionStatus,
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus,
             UsageStatus postPaymentStatus) {
@@ -80,7 +80,7 @@ public class Event extends BaseEntity {
         this.applicationDescription = applicationDescription;
         this.applicationPeriod = applicationPeriod;
         this.regularRoleOnlyStatus = regularRoleOnlyStatus;
-        this.rsvpStatus = rsvpStatus;
+        this.rsvpQuestionStatus = rsvpQuestionStatus;
         this.afterPartyStatus = afterPartyStatus;
         this.prePaymentStatus = prePaymentStatus;
         this.postPaymentStatus = postPaymentStatus;
@@ -92,7 +92,7 @@ public class Event extends BaseEntity {
             String applicationDescription,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
-            UsageStatus rsvpStatus,
+            UsageStatus rsvpQuestionStatus,
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus,
             UsageStatus postPaymentStatus) {
@@ -102,7 +102,7 @@ public class Event extends BaseEntity {
                 .applicationDescription(applicationDescription)
                 .applicationPeriod(applicationPeriod)
                 .regularRoleOnlyStatus(regularRoleOnlyStatus)
-                .rsvpStatus(rsvpStatus)
+                .rsvpQuestionStatus(rsvpQuestionStatus)
                 .afterPartyStatus(afterPartyStatus)
                 .prePaymentStatus(prePaymentStatus)
                 .postPaymentStatus(postPaymentStatus)
