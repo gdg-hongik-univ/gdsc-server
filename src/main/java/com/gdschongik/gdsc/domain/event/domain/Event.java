@@ -37,15 +37,15 @@ public class Event extends BaseEntity {
 
     @Comment("RSVP 활성화 상태")
     @Enumerated(EnumType.STRING)
-    private UsageStatus rsvp;
+    private UsageStatus rsvpStatus;
 
     @Comment("뒤풀이 활성화 상태")
     @Enumerated(EnumType.STRING)
-    private UsageStatus afterParty;
+    private UsageStatus afterPartyStatus;
 
     @Comment("선입금 활성화 상태")
     @Enumerated(EnumType.STRING)
-    private UsageStatus prePayment;
+    private UsageStatus prePaymentStatus;
 
     @Builder(access = AccessLevel.PRIVATE)
     private Event(
@@ -53,16 +53,16 @@ public class Event extends BaseEntity {
             String name,
             String applicationDescription,
             Period applicationPeriod,
-            UsageStatus rsvp,
-            UsageStatus afterParty,
-            UsageStatus prePayment) {
+            UsageStatus rsvpStatus,
+            UsageStatus afterPartyStatus,
+            UsageStatus prePaymentStatus) {
         this.type = type;
         this.name = name;
         this.applicationDescription = applicationDescription;
         this.applicationPeriod = applicationPeriod;
-        this.rsvp = rsvp;
-        this.afterParty = afterParty;
-        this.prePayment = prePayment;
+        this.rsvpStatus = rsvpStatus;
+        this.afterPartyStatus = afterPartyStatus;
+        this.prePaymentStatus = prePaymentStatus;
     }
 
     public static Event create(
@@ -70,17 +70,17 @@ public class Event extends BaseEntity {
             String name,
             String applicationDescription,
             Period applicationPeriod,
-            UsageStatus rsvp,
-            UsageStatus afterParty,
-            UsageStatus prePayment) {
+            UsageStatus rsvpStatus,
+            UsageStatus afterPartyStatus,
+            UsageStatus prePaymentStatus) {
         return Event.builder()
                 .type(type)
                 .name(name)
                 .applicationDescription(applicationDescription)
                 .applicationPeriod(applicationPeriod)
-                .rsvp(rsvp)
-                .afterParty(afterParty)
-                .prePayment(prePayment)
+                .rsvpStatus(rsvpStatus)
+                .afterPartyStatus(afterPartyStatus)
+                .prePaymentStatus(prePaymentStatus)
                 .build();
     }
 }
