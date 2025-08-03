@@ -19,9 +19,6 @@ public class Event extends BaseEntity {
     @Column(name = "event_id")
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private EventType type;
-
     @Comment("행사 이름")
     private String name;
 
@@ -49,14 +46,12 @@ public class Event extends BaseEntity {
 
     @Builder(access = AccessLevel.PRIVATE)
     private Event(
-            EventType type,
             String name,
             String applicationDescription,
             Period applicationPeriod,
             UsageStatus rsvpStatus,
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus) {
-        this.type = type;
         this.name = name;
         this.applicationDescription = applicationDescription;
         this.applicationPeriod = applicationPeriod;
@@ -66,7 +61,6 @@ public class Event extends BaseEntity {
     }
 
     public static Event create(
-            EventType type,
             String name,
             String applicationDescription,
             Period applicationPeriod,
@@ -74,7 +68,6 @@ public class Event extends BaseEntity {
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus) {
         return Event.builder()
-                .type(type)
                 .name(name)
                 .applicationDescription(applicationDescription)
                 .applicationPeriod(applicationPeriod)
