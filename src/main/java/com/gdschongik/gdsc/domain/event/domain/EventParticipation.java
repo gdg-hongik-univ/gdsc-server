@@ -13,6 +13,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +23,9 @@ import org.hibernate.annotations.Comment;
 
 @Getter
 @Entity
+@Table(
+        name = "event_participation",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"event_id", "member_id"})})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EventParticipation extends BaseEntity {
 

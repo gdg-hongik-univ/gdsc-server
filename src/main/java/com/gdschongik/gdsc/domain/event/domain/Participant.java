@@ -4,7 +4,6 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -20,7 +19,6 @@ public final class Participant {
 
     private String name;
 
-    @Column(unique = true)
     private String studentId;
 
     private String phone;
