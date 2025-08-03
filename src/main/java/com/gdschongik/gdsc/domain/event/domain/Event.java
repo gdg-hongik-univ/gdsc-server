@@ -25,11 +25,11 @@ public class Event extends BaseEntity {
     @Comment("행사 이름")
     private String name;
 
-    @Comment("행사 설명")
+    @Comment("행사 신청 폼 설명")
     @Column(columnDefinition = "TEXT")
-    private String description;
+    private String applicationDescription;
 
-    @Comment("행사 기간")
+    @Comment("행사 신청 기간")
     @Embedded
     @AttributeOverride(name = "startDate", column = @Column(name = "application_start_at"))
     @AttributeOverride(name = "endDate", column = @Column(name = "application_end_at"))
@@ -51,14 +51,14 @@ public class Event extends BaseEntity {
     private Event(
             EventType type,
             String name,
-            String description,
+            String applicationDescription,
             Period applicationPeriod,
             UsageStatus rsvp,
             UsageStatus afterParty,
             UsageStatus prePayment) {
         this.type = type;
         this.name = name;
-        this.description = description;
+        this.applicationDescription = applicationDescription;
         this.applicationPeriod = applicationPeriod;
         this.rsvp = rsvp;
         this.afterParty = afterParty;
@@ -68,7 +68,7 @@ public class Event extends BaseEntity {
     public static Event create(
             EventType type,
             String name,
-            String description,
+            String applicationDescription,
             Period applicationPeriod,
             UsageStatus rsvp,
             UsageStatus afterParty,
@@ -76,7 +76,7 @@ public class Event extends BaseEntity {
         return Event.builder()
                 .type(type)
                 .name(name)
-                .description(description)
+                .applicationDescription(applicationDescription)
                 .applicationPeriod(applicationPeriod)
                 .rsvp(rsvp)
                 .afterParty(afterParty)
