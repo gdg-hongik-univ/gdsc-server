@@ -63,7 +63,6 @@ public class EventParticipation extends BaseEntity {
             Participant participant,
             Long memberId,
             MainEventApplicationStatus mainEventApplicationStatus,
-            AfterPartyAttendanceStatus mainEventAfterPartyAttendanceStatus,
             AfterPartyApplicationStatus afterPartyApplicationStatus,
             AfterPartyAttendanceStatus afterPartyAttendanceStatus,
             PaymentStatus prePaymentStatus,
