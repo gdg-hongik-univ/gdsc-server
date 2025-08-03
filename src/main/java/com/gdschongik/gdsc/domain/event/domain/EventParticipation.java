@@ -43,11 +43,11 @@ public class EventParticipation extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MainEventApplicationStatus mainEventApplicationStatus;
 
-    @Comment("뒷풀이 신청 상태")
+    @Comment("뒤풀이 신청 상태")
     @Enumerated(EnumType.STRING)
     private AfterPartyApplicationStatus afterPartyApplicationStatus;
 
-    @Comment("뒷풀이 참석 상태")
+    @Comment("뒤풀이 참석 상태")
     @Enumerated(EnumType.STRING)
     private AfterPartyAttendanceStatus afterPartyAttendanceStatus;
 
@@ -122,7 +122,7 @@ public class EventParticipation extends BaseEntity {
                 .build();
     }
 
-    // 뒷풀이 현장등록을 통해 생성된 참여정보
+    // 뒤풀이 현장등록을 통해 생성된 참여정보
 
     public static EventParticipation createOnsiteForRegistered(
             Member member, PaymentStatus prePaymentStatus, PaymentStatus postPaymentStatus, Event event) {
