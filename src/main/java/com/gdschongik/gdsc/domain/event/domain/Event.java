@@ -22,6 +22,9 @@ public class Event extends BaseEntity {
     @Comment("행사 이름")
     private String name;
 
+    @Comment("행사 진행 장소")
+    private String venue;
+
     @Comment("행사 신청 폼 설명")
     @Column(columnDefinition = "TEXT")
     private String applicationDescription;
@@ -47,12 +50,14 @@ public class Event extends BaseEntity {
     @Builder(access = AccessLevel.PRIVATE)
     private Event(
             String name,
+            String venue,
             String applicationDescription,
             Period applicationPeriod,
             UsageStatus rsvpStatus,
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus) {
         this.name = name;
+        this.venue = venue;
         this.applicationDescription = applicationDescription;
         this.applicationPeriod = applicationPeriod;
         this.rsvpStatus = rsvpStatus;
@@ -62,6 +67,7 @@ public class Event extends BaseEntity {
 
     public static Event create(
             String name,
+            String venue,
             String applicationDescription,
             Period applicationPeriod,
             UsageStatus rsvpStatus,
@@ -69,6 +75,7 @@ public class Event extends BaseEntity {
             UsageStatus prePaymentStatus) {
         return Event.builder()
                 .name(name)
+                .venue(venue)
                 .applicationDescription(applicationDescription)
                 .applicationPeriod(applicationPeriod)
                 .rsvpStatus(rsvpStatus)
