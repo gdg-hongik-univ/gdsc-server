@@ -49,11 +49,11 @@ public class Event extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UsageStatus afterPartyStatus;
 
-    @Comment("선입금 활성화 상태")
+    @Comment("뒤풀이 선입금 활성화 상태")
     @Enumerated(EnumType.STRING)
     private UsageStatus prePaymentStatus;
 
-    @Comment("후정산 활성화 상태")
+    @Comment("뒤풀이 후정산 활성화 상태")
     @Enumerated(EnumType.STRING)
     private UsageStatus postPaymentStatus;
 

@@ -51,11 +51,11 @@ public class EventParticipation extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private AfterPartyAttendanceStatus afterPartyAttendanceStatus;
 
-    @Comment("선입금 납부 상태")
+    @Comment("뒤풀이 선입금 납부 상태")
     @Enumerated(EnumType.STRING)
     private PaymentStatus prePaymentStatus;
 
-    @Comment("후정산 납부 상태")
+    @Comment("뒤풀이 후정산 납부 상태")
     @Enumerated(EnumType.STRING)
     private PaymentStatus postPaymentStatus;
 
