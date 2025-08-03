@@ -36,6 +36,13 @@ public class Event extends BaseEntity {
     private Period applicationPeriod;
 
     /**
+     * 정회원만 신청 폼 작성을 허용할 것인지 여부를 나타내는 필드입니다.
+     */
+    @Comment("정회원 전용 신청 폼 여부")
+    @Enumerated(EnumType.STRING)
+    private UsageStatus regularRoleOnlyStatus;
+
+    /**
      * 신청 폼에 RSVP 요청 리마인더 질문 포함 여부를 나타내는 필드입니다.
      */
     @Comment("RSVP 질문 활성화 상태")
@@ -63,6 +70,7 @@ public class Event extends BaseEntity {
             String venue,
             String applicationDescription,
             Period applicationPeriod,
+            UsageStatus regularRoleOnlyStatus,
             UsageStatus rsvpStatus,
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus,
@@ -71,6 +79,7 @@ public class Event extends BaseEntity {
         this.venue = venue;
         this.applicationDescription = applicationDescription;
         this.applicationPeriod = applicationPeriod;
+        this.regularRoleOnlyStatus = regularRoleOnlyStatus;
         this.rsvpStatus = rsvpStatus;
         this.afterPartyStatus = afterPartyStatus;
         this.prePaymentStatus = prePaymentStatus;
@@ -82,6 +91,7 @@ public class Event extends BaseEntity {
             String venue,
             String applicationDescription,
             Period applicationPeriod,
+            UsageStatus regularRoleOnlyStatus,
             UsageStatus rsvpStatus,
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus,
@@ -91,6 +101,7 @@ public class Event extends BaseEntity {
                 .venue(venue)
                 .applicationDescription(applicationDescription)
                 .applicationPeriod(applicationPeriod)
+                .regularRoleOnlyStatus(regularRoleOnlyStatus)
                 .rsvpStatus(rsvpStatus)
                 .afterPartyStatus(afterPartyStatus)
                 .prePaymentStatus(prePaymentStatus)
