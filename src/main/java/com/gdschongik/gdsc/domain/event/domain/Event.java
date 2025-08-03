@@ -34,15 +34,15 @@ public class Event {
     @AttributeOverride(name = "endDate", column = @Column(name = "event_end_at"))
     private Period period;
 
-    @Comment("RSVP 활성화 여부")
+    @Comment("RSVP 활성화 상태")
     @Enumerated(EnumType.STRING)
     private UsageStatus rsvp;
 
-    @Comment("뒤풀이 활성화 여부")
+    @Comment("뒤풀이 활성화 상태")
     @Enumerated(EnumType.STRING)
     private UsageStatus afterParty;
 
-    @Comment("선입금 활성화 여부")
+    @Comment("선입금 활성화 상태")
     @Enumerated(EnumType.STRING)
     private UsageStatus prePayment;
 
