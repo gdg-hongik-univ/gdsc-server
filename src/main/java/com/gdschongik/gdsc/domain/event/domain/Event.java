@@ -43,7 +43,7 @@ public class Event extends BaseEntity {
     private UsageStatus regularRoleOnlyStatus;
 
     /**
-     * 신청 폼에 RSVP 요청 리마인더 질문 포함 여부를 나타내는 필드입니다.
+     * 신청 폼에 RSVP 요청 리마인더 질문 포함 여부를 나타내는 필드입니다. 어떠한 검증에도 활용되지 않습니다.
      */
     @Comment("RSVP 질문 활성화 상태")
     @Enumerated(EnumType.STRING)
