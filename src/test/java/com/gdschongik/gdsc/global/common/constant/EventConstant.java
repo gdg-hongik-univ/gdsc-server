@@ -1,6 +1,7 @@
 package com.gdschongik.gdsc.global.common.constant;
 
 import com.gdschongik.gdsc.domain.common.vo.Period;
+import com.gdschongik.gdsc.domain.event.domain.UsageStatus;
 import java.time.LocalDateTime;
 
 public class EventConstant {
@@ -12,6 +13,11 @@ public class EventConstant {
     public static final String VENUE = "홍익대학교 제 4공학관(T동) 608호";
     public static final Period EVENT_APPLICATION_PERIOD =
             Period.of(LocalDateTime.of(2025, 3, 1, 0, 0), LocalDateTime.of(2025, 3, 14, 23, 59));
+    public static final UsageStatus REGULAR_ROLE_ONLY_STATUS = UsageStatus.DISABLED;
+    public static final UsageStatus AFTER_PARTY_STATUS = UsageStatus.ENABLED;
+    public static final UsageStatus PRE_PAYMENT_STATUS = UsageStatus.ENABLED;
+    public static final UsageStatus POST_PAYMENT_STATUS = UsageStatus.DISABLED;
+    public static final UsageStatus RSVP_QUESTION_STATUS = UsageStatus.DISABLED;
     public static final int MAIN_EVENT_MAX_APPLICATION_COUNT = 100;
     public static final int AFTER_PARTY_MAX_APPLICATION_COUNT = 100;
 }
