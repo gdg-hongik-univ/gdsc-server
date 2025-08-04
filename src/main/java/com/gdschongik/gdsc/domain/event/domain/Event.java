@@ -1,8 +1,13 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
+import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.*;
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+
 import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.common.vo.Period;
+import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -96,6 +101,7 @@ public class Event extends BaseEntity {
         this.afterPartyMaxApplicantCount = afterPartyMaxApplicantCount;
     }
 
+    // 생성 팩토리 메서드
     public static Event create(
             String name,
             String venue,
@@ -108,6 +114,9 @@ public class Event extends BaseEntity {
             UsageStatus rsvpQuestionStatus,
             Integer mainEventMaxApplicantCount,
             Integer afterPartyMaxApplicantCount) {
+        validatePaymentDisabledWhenAfterPartyDisabled(afterPartyStatus, prePaymentStatus, postPaymentStatus);
+        validatePrePaymentAndPostPayment(prePaymentStatus, postPaymentStatus);
+
         return Event.builder()
                 .name(name)
                 .venue(venue)
@@ -121,5 +130,19 @@ public class Event extends BaseEntity {
                 .mainEventMaxApplicantCount(mainEventMaxApplicantCount)
                 .afterPartyMaxApplicantCount(afterPartyMaxApplicantCount)
                 .build();
+    }
+
+    // 검증 메서드
+    private static void validatePaymentDisabledWhenAfterPartyDisabled(
+            UsageStatus afterPartyStatus, UsageStatus prePaymentStatus, UsageStatus postPaymentStatus) {
+        if (afterPartyStatus == DISABLED && (prePaymentStatus == ENABLED || postPaymentStatus == ENABLED)) {
+            throw new CustomException(EVENT_NOT_CREATABLE_PAYMENT_STATUS_ENABLED);
+        }
+    }
+
+    private static void validatePrePaymentAndPostPayment(UsageStatus prePaymentStatus, UsageStatus postPaymentStatus) {
+        if (prePaymentStatus == ENABLED && postPaymentStatus == ENABLED) {
+            throw new CustomException(EVENT_NOT_CREATABLE_PAYMENTS_BOTH_ENABLED);
+        }
     }
 }
