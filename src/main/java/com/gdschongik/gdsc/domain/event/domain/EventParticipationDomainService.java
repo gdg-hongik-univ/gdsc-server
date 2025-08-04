@@ -1,5 +1,6 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
+import com.gdschongik.gdsc.domain.common.vo.Period;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.annotation.DomainService;
 import com.gdschongik.gdsc.global.exception.CustomException;
@@ -12,7 +13,7 @@ public class EventParticipationDomainService {
     public EventParticipation applyEventForRegistered(
             Member member, AfterPartyApplicationStatus afterPartyApplicationStatus, Event event, LocalDateTime now) {
 
-        validateEventAppliable(event, now);
+        validateEventApplicationPeriod(event, now);
         validateMemberWhenOnlyRegularRoleAllowed(event, member);
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
 
@@ -29,8 +30,9 @@ public class EventParticipationDomainService {
                 event);
     }
 
-    private void validateEventAppliable(Event event, LocalDateTime now) {
-        if (!event.isAppliable(now)) {
+    private void validateEventApplicationPeriod(Event event, LocalDateTime now) {
+        Period applicationPeriod = event.getApplicationPeriod();
+        if (!applicationPeriod.isWithin(now)) {
             throw new CustomException(ErrorCode.EVENT_NOT_APPLIABLE_APPLICATION_PERIOD_INVALID);
         }
     }

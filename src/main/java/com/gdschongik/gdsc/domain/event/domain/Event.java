@@ -7,7 +7,6 @@ import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.common.vo.Period;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -145,10 +144,5 @@ public class Event extends BaseEntity {
         if (prePaymentStatus == ENABLED && postPaymentStatus == ENABLED) {
             throw new CustomException(EVENT_NOT_CREATABLE_PAYMENTS_BOTH_ENABLED);
         }
-    }
-
-    // 정보 조회 메서드
-    public boolean isAppliable(LocalDateTime now) {
-        return applicationPeriod.isWithin(now);
     }
 }
