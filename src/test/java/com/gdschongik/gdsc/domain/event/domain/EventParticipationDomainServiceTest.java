@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 public class EventParticipationDomainServiceTest {
 
-    EventParticipationDomainService eventParticipationDomainService = new EventParticipationDomainService();
+    EventParticipationDomainService domainService = new EventParticipationDomainService();
 
     FixtureHelper fixtureHelper = new FixtureHelper();
 
@@ -28,19 +28,19 @@ public class EventParticipationDomainServiceTest {
                     VENUE,
                     APPLICATION_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD, // 신청 기간 (25년 3월 1일 ~ 3월 14일)
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED,
+                    REGULAR_ROLE_ONLY_STATUS,
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS,
+                    RSVP_QUESTION_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
                     AFTER_PARTY_MAX_APPLICATION_COUNT);
             Member member = fixtureHelper.createRegularMember(1L);
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
             LocalDateTime invalidDate = LocalDateTime.of(2025, 4, 1, 0, 0);
 
             // when & then
-            assertThatThrownBy(() -> eventParticipationDomainService.applyEventForRegistered(
-                            member, AfterPartyApplicationStatus.NONE, event, invalidDate))
+            assertThatThrownBy(() -> domainService.applyEventForRegistered(member, status, event, invalidDate))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(ErrorCode.EVENT_NOT_APPLIABLE_APPLICATION_PERIOD_INVALID.getMessage());
         }
@@ -54,18 +54,18 @@ public class EventParticipationDomainServiceTest {
                     APPLICATION_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD,
                     UsageStatus.ENABLED, // 정회원 전용 신청 폼
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED,
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS,
+                    RSVP_QUESTION_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
                     AFTER_PARTY_MAX_APPLICATION_COUNT);
             Member guestMember = fixtureHelper.createGuestMember(1L);
-            LocalDateTime validDate = LocalDateTime.of(2025, 3, 1, 0, 0);
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
-            assertThatThrownBy(() -> eventParticipationDomainService.applyEventForRegistered(
-                            guestMember, AfterPartyApplicationStatus.NONE, event, validDate))
+            assertThatThrownBy(() -> domainService.applyEventForRegistered(guestMember, status, event, now))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(ErrorCode.EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE.getMessage());
         }
@@ -78,19 +78,20 @@ public class EventParticipationDomainServiceTest {
                     VENUE,
                     APPLICATION_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD,
-                    UsageStatus.DISABLED,
+                    REGULAR_ROLE_ONLY_STATUS,
                     UsageStatus.ENABLED, // 뒤풀이 활성화
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS,
+                    RSVP_QUESTION_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
                     AFTER_PARTY_MAX_APPLICATION_COUNT);
+
             Member member = fixtureHelper.createRegularMember(1L);
-            LocalDateTime validDate = LocalDateTime.of(2025, 3, 1, 0, 0);
+            AfterPartyApplicationStatus noneStatus = AfterPartyApplicationStatus.NONE;
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
-            assertThatThrownBy(() -> eventParticipationDomainService.applyEventForRegistered(
-                            member, AfterPartyApplicationStatus.NONE, event, validDate))
+            assertThatThrownBy(() -> domainService.applyEventForRegistered(member, noneStatus, event, now))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_STATUS_NONE.getMessage());
         }
@@ -103,19 +104,19 @@ public class EventParticipationDomainServiceTest {
                     VENUE,
                     APPLICATION_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD,
-                    UsageStatus.DISABLED,
+                    REGULAR_ROLE_ONLY_STATUS,
                     UsageStatus.DISABLED, // 뒤풀이 비활성화
                     UsageStatus.DISABLED,
                     UsageStatus.DISABLED,
-                    UsageStatus.DISABLED,
+                    RSVP_QUESTION_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
                     AFTER_PARTY_MAX_APPLICATION_COUNT);
             Member member = fixtureHelper.createRegularMember(1L);
-            LocalDateTime validDate = LocalDateTime.of(2025, 3, 1, 0, 0);
+            AfterPartyApplicationStatus appliedStatus = AfterPartyApplicationStatus.APPLIED;
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
-            assertThatThrownBy(() -> eventParticipationDomainService.applyEventForRegistered(
-                            member, AfterPartyApplicationStatus.APPLIED, event, validDate))
+            assertThatThrownBy(() -> domainService.applyEventForRegistered(member, appliedStatus, event, now))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_STATUS_NOT_NONE.getMessage());
         }
