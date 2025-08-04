@@ -75,6 +75,7 @@ public class Event extends BaseEntity {
     @Comment("뒤풀이 최대 신청 가능 인원")
     private Integer afterPartyMaxApplicantCount;
 
+    // TODO: 팩토리 메서드 제거하고 빌더만 사용하는 것 검토
     @Builder(access = AccessLevel.PRIVATE)
     private Event(
             String name,
