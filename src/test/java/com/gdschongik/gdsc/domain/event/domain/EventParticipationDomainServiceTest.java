@@ -93,7 +93,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForRegistered(member, noneStatus, event, now))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_STATUS_NONE.getMessage());
+                    .hasMessageContaining(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE.getMessage());
         }
 
         @Test
@@ -118,7 +118,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForRegistered(member, appliedStatus, event, now))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_STATUS_NOT_NONE.getMessage());
+                    .hasMessageContaining(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE.getMessage());
         }
     }
 }

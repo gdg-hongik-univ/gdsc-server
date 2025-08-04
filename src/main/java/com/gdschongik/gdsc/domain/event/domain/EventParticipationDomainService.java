@@ -47,12 +47,12 @@ public class EventParticipationDomainService {
             Event event, AfterPartyApplicationStatus afterPartyApplicationStatus) {
         if (event.getAfterPartyStatus() == UsageStatus.ENABLED
                 && afterPartyApplicationStatus == AfterPartyApplicationStatus.NONE) {
-            throw new CustomException(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_STATUS_NONE);
+            throw new CustomException(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE);
         }
 
         if (event.getAfterPartyStatus() == UsageStatus.DISABLED
                 && afterPartyApplicationStatus != AfterPartyApplicationStatus.NONE) {
-            throw new CustomException(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_STATUS_NOT_NONE);
+            throw new CustomException(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE);
         }
     }
 

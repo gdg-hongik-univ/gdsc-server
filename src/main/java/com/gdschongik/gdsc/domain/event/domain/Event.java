@@ -136,7 +136,7 @@ public class Event extends BaseEntity {
     private static void validatePaymentDisabledWhenAfterPartyDisabled(
             UsageStatus afterPartyStatus, UsageStatus prePaymentStatus, UsageStatus postPaymentStatus) {
         if (afterPartyStatus == DISABLED && (prePaymentStatus == ENABLED || postPaymentStatus == ENABLED)) {
-            throw new CustomException(EVENT_NOT_CREATABLE_PAYMENT_STATUS_ENABLED);
+            throw new CustomException(EVENT_NOT_CREATABLE_PAYMENT_ENABLED);
         }
     }
 

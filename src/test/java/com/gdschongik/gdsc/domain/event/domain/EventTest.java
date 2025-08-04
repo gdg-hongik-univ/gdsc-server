@@ -34,7 +34,7 @@ public class EventTest {
                             MAIN_EVENT_MAX_APPLICATION_COUNT,
                             AFTER_PARTY_MAX_APPLICATION_COUNT))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(ErrorCode.EVENT_NOT_CREATABLE_PAYMENT_STATUS_ENABLED.getMessage());
+                    .hasMessage(ErrorCode.EVENT_NOT_CREATABLE_PAYMENT_ENABLED.getMessage());
         }
 
         @Test
