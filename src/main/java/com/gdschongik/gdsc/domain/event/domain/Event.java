@@ -145,4 +145,9 @@ public class Event extends BaseEntity {
             throw new CustomException(EVENT_NOT_CREATABLE_PAYMENTS_BOTH_ENABLED);
         }
     }
+
+    // 정보 조회 메서드
+    public boolean isAppliable(LocalDateTime now) {
+        return applicationPeriod.isWithin(now);
+    }
 }

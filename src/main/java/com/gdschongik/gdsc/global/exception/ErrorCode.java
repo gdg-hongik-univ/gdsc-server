@@ -194,6 +194,9 @@ public enum ErrorCode {
     EVENT_NOT_CREATABLE_PAYMENT_STATUS_ENABLED(CONFLICT, "뒤풀이 상태가 비활성화된 경우, 선입금 및 후정산 상태도 비활성화 되어야 합니다."),
     EVENT_NOT_CREATABLE_PAYMENTS_BOTH_ENABLED(CONFLICT, "선입금과 후정산은 동시에 활성화될 수 없습니다."),
     EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE(CONFLICT, "정회원이 아닌 회원은 이벤트에 신청할 수 없습니다."),
+    EVENT_NOT_APPLIABLE_APPLICATION_PERIOD_INVALID(CONFLICT, "이벤트 신청 기간이 아닙니다."),
+    EVENT_NOT_APPLIABLE_AFTER_PARTY_STATUS_NONE(CONFLICT, "뒤풀이가 활성화된 이벤트는 뒤풀이 신청 여부를 NONE으로 설정할 수 없습니다."),
+    EVENT_NOT_APPLIABLE_AFTER_PARTY_STATUS_NOT_NONE(CONFLICT, "뒤풀이가 비활성화된 이벤트에 뒤풀이 신청을 할 수 없습니다."),
     PARTICIPANT_NOT_CREATABLE_INFO_NOT_SATISFIED(
             INTERNAL_SERVER_ERROR, "기본 정보를 입력하지 않은 멤버로 참여자 정보 생성을 시도했습니다. 관리자에게 문의 바랍니다.");
     private final HttpStatus status;
