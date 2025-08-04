@@ -10,4 +10,8 @@ public enum UsageStatus {
     DISABLED("비활성화");
 
     private final String value;
+
+    public boolean isEnabled() {
+        return this == ENABLED;
+    }
 }

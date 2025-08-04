@@ -9,4 +9,8 @@ public enum AfterPartyApplicationStatus {
     NOT_APPLIED,
     APPLIED,
     ;
+
+    public boolean isNone() {
+        return this == NONE;
+    }
 }
