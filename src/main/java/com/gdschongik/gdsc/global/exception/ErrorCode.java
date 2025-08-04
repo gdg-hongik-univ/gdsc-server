@@ -191,6 +191,8 @@ public enum ErrorCode {
     EXCEL_WORKSHEET_WRITE_FAILED(INTERNAL_SERVER_ERROR, "엑셀 워크시트 작성에 실패했습니다."),
 
     // Event
+    EVENT_NOT_CREATABLE_INVALID_PAYMENT_STATUS(CONFLICT, "뒤풀이 상태가 비활성화된 경우, 선입금 및 후정산 상태도 비활성화 되어야 합니다."),
+    EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE(CONFLICT, "정회원이 아닌 회원은 이벤트에 신청할 수 없습니다."),
     PARTICIPANT_NOT_CREATABLE_INFO_NOT_SATISFIED(
             INTERNAL_SERVER_ERROR, "기본 정보를 입력하지 않은 멤버로 참여자 정보 생성을 시도했습니다. 관리자에게 문의 바랍니다.");
     private final HttpStatus status;
