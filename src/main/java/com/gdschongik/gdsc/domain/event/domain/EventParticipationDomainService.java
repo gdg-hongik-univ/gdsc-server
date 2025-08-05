@@ -1,10 +1,11 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+
 import com.gdschongik.gdsc.domain.common.vo.Period;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.annotation.DomainService;
 import com.gdschongik.gdsc.global.exception.CustomException;
-import com.gdschongik.gdsc.global.exception.ErrorCode;
 import java.time.LocalDateTime;
 
 @DomainService
@@ -33,31 +34,31 @@ public class EventParticipationDomainService {
     private void validateEventApplicationPeriod(Event event, LocalDateTime now) {
         Period applicationPeriod = event.getApplicationPeriod();
         if (!applicationPeriod.isWithin(now)) {
-            throw new CustomException(ErrorCode.EVENT_NOT_APPLIABLE_APPLICATION_PERIOD_INVALID);
+            throw new CustomException(EVENT_NOT_APPLIABLE_APPLICATION_PERIOD_INVALID);
         }
     }
 
     private void validateMemberWhenOnlyRegularRoleAllowed(Event event, Member member) {
         if (event.getRegularRoleOnlyStatus().isEnabled() && !member.isRegular()) {
-            throw new CustomException(ErrorCode.EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
+            throw new CustomException(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
         }
     }
 
     private void validateAfterPartyApplicationStatus(
             Event event, AfterPartyApplicationStatus afterPartyApplicationStatus) {
         if (event.getAfterPartyStatus().isEnabled() && afterPartyApplicationStatus.isNone()) {
-            throw new CustomException(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE);
+            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE);
         }
 
         if (!event.getAfterPartyStatus().isEnabled() && !afterPartyApplicationStatus.isNone()) {
-            throw new CustomException(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE);
+            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE);
         }
     }
 
     private void validateNotRegularRoleAllowed(Event event) {
         // createXForUnregistered 메서드에서 사용
         if (event.getRegularRoleOnlyStatus().isEnabled()) {
-            throw new CustomException(ErrorCode.EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
+            throw new CustomException(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
         }
     }
 
