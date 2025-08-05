@@ -1,8 +1,8 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
 import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
-import static org.assertj.core.api.Assertions.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+import static org.assertj.core.api.Assertions.*;
 
 import com.gdschongik.gdsc.global.exception.CustomException;
 import org.junit.jupiter.api.Nested;
