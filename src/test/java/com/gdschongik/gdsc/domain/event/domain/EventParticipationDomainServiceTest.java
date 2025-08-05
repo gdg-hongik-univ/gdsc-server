@@ -2,10 +2,10 @@ package com.gdschongik.gdsc.domain.event.domain;
 
 import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
 import static org.assertj.core.api.Assertions.*;
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
-import com.gdschongik.gdsc.global.exception.ErrorCode;
 import com.gdschongik.gdsc.helper.FixtureHelper;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Nested;
@@ -42,7 +42,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForRegistered(member, status, event, invalidDate))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(ErrorCode.EVENT_NOT_APPLIABLE_APPLICATION_PERIOD_INVALID.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLIABLE_APPLICATION_PERIOD_INVALID.getMessage());
         }
 
         @Test
@@ -67,7 +67,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForRegistered(guestMember, status, event, now))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(ErrorCode.EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE.getMessage());
         }
 
         @Test
@@ -93,7 +93,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForRegistered(member, noneStatus, event, now))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE.getMessage());
         }
 
         @Test
@@ -118,7 +118,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForRegistered(member, appliedStatus, event, now))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(ErrorCode.EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE.getMessage());
         }
     }
 }

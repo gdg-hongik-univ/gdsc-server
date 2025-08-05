@@ -2,9 +2,9 @@ package com.gdschongik.gdsc.domain.event.domain;
 
 import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
 import static org.assertj.core.api.Assertions.*;
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.global.exception.CustomException;
-import com.gdschongik.gdsc.global.exception.ErrorCode;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,7 @@ public class EventTest {
                             MAIN_EVENT_MAX_APPLICATION_COUNT,
                             AFTER_PARTY_MAX_APPLICATION_COUNT))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(ErrorCode.EVENT_NOT_CREATABLE_PAYMENT_ENABLED.getMessage());
+                    .hasMessage(EVENT_NOT_CREATABLE_PAYMENT_ENABLED.getMessage());
         }
 
         @Test
@@ -58,7 +58,7 @@ public class EventTest {
                             MAIN_EVENT_MAX_APPLICATION_COUNT,
                             AFTER_PARTY_MAX_APPLICATION_COUNT))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(ErrorCode.EVENT_NOT_CREATABLE_PAYMENTS_BOTH_ENABLED.getMessage());
+                    .hasMessage(EVENT_NOT_CREATABLE_PAYMENTS_BOTH_ENABLED.getMessage());
         }
     }
 }
