@@ -31,6 +31,29 @@ public class EventParticipationDomainService {
                 event);
     }
 
+    public EventParticipation applyEventForUnregistered(
+            Participant participant,
+            AfterPartyApplicationStatus afterPartyApplicationStatus,
+            Event event,
+            LocalDateTime now) {
+
+        validateEventApplicationPeriod(event, now);
+        validateNotRegularRoleAllowed(event);
+        validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
+
+        AfterPartyAttendanceStatus afterPartyAttendanceStatus = AfterPartyAttendanceStatus.getInitialStatus(event);
+        PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
+        PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
+
+        return EventParticipation.createOnlineForUnregistered(
+                participant,
+                afterPartyApplicationStatus,
+                afterPartyAttendanceStatus,
+                prePaymentStatus,
+                postPaymentStatus,
+                event);
+    }
+
     private void validateEventApplicationPeriod(Event event, LocalDateTime now) {
         Period applicationPeriod = event.getApplicationPeriod();
         if (!applicationPeriod.isWithin(now)) {
@@ -40,6 +63,12 @@ public class EventParticipationDomainService {
 
     private void validateMemberWhenOnlyRegularRoleAllowed(Event event, Member member) {
         if (event.getRegularRoleOnlyStatus().isEnabled() && !member.isRegular()) {
+            throw new CustomException(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
+        }
+    }
+
+    private void validateNotRegularRoleAllowed(Event event) {
+        if (event.getRegularRoleOnlyStatus().isEnabled()) {
             throw new CustomException(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
         }
     }
@@ -55,13 +84,6 @@ public class EventParticipationDomainService {
         }
     }
 
-    private void validateNotRegularRoleAllowed(Event event) {
-        // createXForUnregistered 메서드에서 사용
-        if (event.getRegularRoleOnlyStatus().isEnabled()) {
-            throw new CustomException(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
-        }
-    }
-
-    // TODO: applyEventForUnregistered, joinOnsiteForRegistered, joinOnsiteForUnregistered 메서드 구현
+    // TODO: joinOnsiteForRegistered, joinOnsiteForUnregistered 메서드 구현
     // TODO: 작업 분량이 많기에 메서드 하나씩 구현할 것
 }
