@@ -7,16 +7,16 @@ public enum PaymentStatus {
     ;
 
     public static PaymentStatus getInitialPrePaymentStatus(Event event) {
-        if (event.getPrePaymentStatus() == UsageStatus.DISABLED) {
-            return NONE;
+        if (event.getPrePaymentStatus().isEnabled()) {
+            return UNPAID;
         }
-        return UNPAID;
+        return NONE;
     }
 
     public static PaymentStatus getInitialPostPaymentStatus(Event event) {
-        if (event.getPostPaymentStatus() == UsageStatus.DISABLED) {
-            return NONE;
+        if (event.getPostPaymentStatus().isEnabled()) {
+            return UNPAID;
         }
-        return UNPAID;
+        return NONE;
     }
 }
