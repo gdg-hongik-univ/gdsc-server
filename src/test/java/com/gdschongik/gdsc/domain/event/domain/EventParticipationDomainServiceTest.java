@@ -23,6 +23,8 @@ public class EventParticipationDomainServiceTest {
         @Test
         void 신청_기간이_아닌경우_실패한다() {
             // given
+            Member member = fixtureHelper.createRegularMember(1L);
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
             Event event = Event.create(
                     EVENT_NAME,
                     VENUE,
@@ -35,8 +37,6 @@ public class EventParticipationDomainServiceTest {
                     RSVP_QUESTION_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
                     AFTER_PARTY_MAX_APPLICATION_COUNT);
-            Member member = fixtureHelper.createRegularMember(1L);
-            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
             LocalDateTime invalidDate = LocalDateTime.of(2025, 4, 1, 0, 0);
 
             // when & then
@@ -48,6 +48,8 @@ public class EventParticipationDomainServiceTest {
         @Test
         void 정회원만_참석_가능한_행사에_정회원이_아닌_유저가_신청하면_실패한다() {
             // given
+            Member guestMember = fixtureHelper.createGuestMember(1L);
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
             Event event = Event.create(
                     EVENT_NAME,
                     VENUE,
@@ -60,8 +62,6 @@ public class EventParticipationDomainServiceTest {
                     RSVP_QUESTION_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
                     AFTER_PARTY_MAX_APPLICATION_COUNT);
-            Member guestMember = fixtureHelper.createGuestMember(1L);
-            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
@@ -73,6 +73,8 @@ public class EventParticipationDomainServiceTest {
         @Test
         void 뒤풀이가_있는_행사에_뒤풀이_신청여부가_NONE이면_실패한다() {
             // given
+            Member member = fixtureHelper.createRegularMember(1L);
+            AfterPartyApplicationStatus noneStatus = AfterPartyApplicationStatus.NONE;
             Event event = Event.create(
                     EVENT_NAME,
                     VENUE,
@@ -85,9 +87,6 @@ public class EventParticipationDomainServiceTest {
                     RSVP_QUESTION_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
                     AFTER_PARTY_MAX_APPLICATION_COUNT);
-
-            Member member = fixtureHelper.createRegularMember(1L);
-            AfterPartyApplicationStatus noneStatus = AfterPartyApplicationStatus.NONE;
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
@@ -99,6 +98,8 @@ public class EventParticipationDomainServiceTest {
         @Test
         void 뒤풀이가_없는_행사에_뒤풀이_신청을_하면_실패한다() {
             // given
+            Member member = fixtureHelper.createRegularMember(1L);
+            AfterPartyApplicationStatus appliedStatus = AfterPartyApplicationStatus.APPLIED;
             Event event = Event.create(
                     EVENT_NAME,
                     VENUE,
@@ -111,8 +112,6 @@ public class EventParticipationDomainServiceTest {
                     RSVP_QUESTION_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
                     AFTER_PARTY_MAX_APPLICATION_COUNT);
-            Member member = fixtureHelper.createRegularMember(1L);
-            AfterPartyApplicationStatus appliedStatus = AfterPartyApplicationStatus.APPLIED;
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
