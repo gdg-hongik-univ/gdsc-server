@@ -5,4 +5,18 @@ public enum PaymentStatus {
     UNPAID,
     PAID,
     ;
+
+    public static PaymentStatus getInitialPrePaymentStatus(Event event) {
+        if (event.getPrePaymentStatus().isEnabled()) {
+            return UNPAID;
+        }
+        return NONE;
+    }
+
+    public static PaymentStatus getInitialPostPaymentStatus(Event event) {
+        if (event.getPostPaymentStatus().isEnabled()) {
+            return UNPAID;
+        }
+        return NONE;
+    }
 }

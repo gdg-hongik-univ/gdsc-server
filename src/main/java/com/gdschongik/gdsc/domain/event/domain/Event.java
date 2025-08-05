@@ -1,7 +1,11 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
+import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.*;
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+
 import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.common.vo.Period;
+import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -70,6 +74,7 @@ public class Event extends BaseEntity {
     @Comment("뒤풀이 최대 신청 가능 인원")
     private Integer afterPartyMaxApplicantCount;
 
+    // TODO: 팩토리 메서드 제거하고 빌더만 사용하는 것 검토
     @Builder(access = AccessLevel.PRIVATE)
     private Event(
             String name,
@@ -96,6 +101,7 @@ public class Event extends BaseEntity {
         this.afterPartyMaxApplicantCount = afterPartyMaxApplicantCount;
     }
 
+    // 생성 팩토리 메서드
     public static Event create(
             String name,
             String venue,
@@ -108,6 +114,9 @@ public class Event extends BaseEntity {
             UsageStatus rsvpQuestionStatus,
             Integer mainEventMaxApplicantCount,
             Integer afterPartyMaxApplicantCount) {
+        validatePaymentDisabledWhenAfterPartyDisabled(afterPartyStatus, prePaymentStatus, postPaymentStatus);
+        validatePrePaymentAndPostPayment(prePaymentStatus, postPaymentStatus);
+
         return Event.builder()
                 .name(name)
                 .venue(venue)
@@ -121,5 +130,19 @@ public class Event extends BaseEntity {
                 .mainEventMaxApplicantCount(mainEventMaxApplicantCount)
                 .afterPartyMaxApplicantCount(afterPartyMaxApplicantCount)
                 .build();
+    }
+
+    // 검증 메서드
+    private static void validatePaymentDisabledWhenAfterPartyDisabled(
+            UsageStatus afterPartyStatus, UsageStatus prePaymentStatus, UsageStatus postPaymentStatus) {
+        if (afterPartyStatus == DISABLED && (prePaymentStatus == ENABLED || postPaymentStatus == ENABLED)) {
+            throw new CustomException(EVENT_NOT_CREATABLE_PAYMENT_ENABLED);
+        }
+    }
+
+    private static void validatePrePaymentAndPostPayment(UsageStatus prePaymentStatus, UsageStatus postPaymentStatus) {
+        if (prePaymentStatus == ENABLED && postPaymentStatus == ENABLED) {
+            throw new CustomException(EVENT_NOT_CREATABLE_PAYMENTS_BOTH_ENABLED);
+        }
     }
 }
