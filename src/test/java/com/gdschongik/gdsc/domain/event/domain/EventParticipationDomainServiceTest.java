@@ -1,6 +1,7 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
 import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.MemberConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -107,7 +108,7 @@ public class EventParticipationDomainServiceTest {
         @Test
         void 신청_기간이_아닌경우_실패한다() {
             // given
-            Participant participant = Participant.of("홍길동", "C011234", "01012345678");
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
             // 신청 기간 (25년 3월 1일 ~ 3월 14일)
             Event event = fixtureHelper.createEvent(
@@ -128,7 +129,7 @@ public class EventParticipationDomainServiceTest {
         @Test
         void 정회원만_참석_가능한_행사에_신청하면_실패한다() {
             // given
-            Participant participant = Participant.of("홍길동", "C011234", "01012345678");
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
             Event event = fixtureHelper.createEvent(
                     1L,
@@ -148,7 +149,7 @@ public class EventParticipationDomainServiceTest {
         @Test
         void 뒤풀이가_있는_행사에_뒤풀이_신청여부가_NONE이면_실패한다() {
             // given
-            Participant participant = Participant.of("홍길동", "C011234", "01012345678");
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus noneStatus = AfterPartyApplicationStatus.NONE;
             Event event = fixtureHelper.createEvent(
                     1L,
@@ -168,7 +169,7 @@ public class EventParticipationDomainServiceTest {
         @Test
         void 뒤풀이가_없는_행사에_뒤풀이_신청을_하면_실패한다() {
             // given
-            Participant participant = Participant.of("홍길동", "C011234", "01012345678");
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus appliedStatus = AfterPartyApplicationStatus.APPLIED;
             Event event = fixtureHelper.createEvent(
                     1L,
