@@ -80,7 +80,7 @@ class ParticipantRoleTest {
             // when & then
             assertThatThrownBy(() -> ParticipantRole.of(participationWithRegistered, null))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(PARTICIPANT_ROLE_NOT_CREATABLE_INVALID_PARAM.getMessage());
+                    .hasMessageContaining(PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_EXISTENCE_MISMATCH.getMessage());
         }
 
         @Test
@@ -92,7 +92,7 @@ class ParticipantRoleTest {
             // when & then
             assertThatThrownBy(() -> ParticipantRole.of(participationWithUnregistered, registeredRegularMember))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(PARTICIPANT_ROLE_NOT_CREATABLE_INVALID_PARAM.getMessage());
+                    .hasMessageContaining(PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_EXISTENCE_MISMATCH.getMessage());
         }
 
         @Test
@@ -105,7 +105,7 @@ class ParticipantRoleTest {
             // when & then
             assertThatThrownBy(() -> ParticipantRole.of(eventParticipation, member2))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(PARTICIPANT_ROLE_NOT_CREATABLE_INVALID_OWNERSHIP.getMessage());
+                    .hasMessageContaining(PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_ID_MISMATCH.getMessage());
         }
     }
 

@@ -14,53 +14,38 @@ public enum ParticipantRole {
     ;
 
     /**
-     * 참여자 역할을 반환합니다.
+     * 이벤트 참여정보 및 (존재하는 경우) 멤버 역할을 기반으로 참여자 역할을 결정합니다.
      *
      * @param member 이벤트 참여정보의 멤버 ID 필드가 null이 아닌 경우, 해당 ID의 멤버입니다. 멤버 ID가 없는 경우 null입니다.
-     * @throws CustomException 이벤트 참여정보
      */
     public static ParticipantRole of(EventParticipation participation, @Nullable Member member) {
-        validateParticipationBelongsToMember(participation, member);
-
-        if (isBothMemberNotNull(participation, member) && member.isRegular()) {
-            return REGULAR;
-        }
-
-        if (isBothMemberNotNull(participation, member) && member.isAssociate()) {
-            return ASSOCIATE;
-        }
-
-        if (isBothMemberNotNull(participation, member) && member.isGuest()) {
-            return GUEST;
-        }
+        validateParticipationAndMember(participation, member);
 
         if (member == null && participation.getMemberId() == null) {
             return NON_MEMBER;
         }
 
-        throw new CustomException(PARTICIPANT_ROLE_NOT_CREATABLE_INVALID_PARAM);
-    }
-
-    /**
-     * 이벤트 참여정보의 멤버 정보와 인자의 멤버 정보가 모두 존재해야 유효한 역할로 판정할 수 있습니다.
-     * 해당 조건에 부합하지 않는 경우, 마지막에 INVALID_PARAM 예외를 발생시킵니다.
-     */
-    private static boolean isBothMemberNotNull(EventParticipation participation, @Nullable Member member) {
-        return member != null && participation.getMemberId() != null;
-    }
-
-    /**
-     * 이벤트 참여정보의 멤버 정보 및 인자로 넘어온 멤버 정보가 둘 다 존재한다면
-     * 두 정보가 동일한 멤버의 정보인지 검증합니다.
-     */
-    private static void validateParticipationBelongsToMember(
-            EventParticipation participation, @Nullable Member member) {
-        if (member == null || participation.getMemberId() == null) {
-            return;
+        if (member.isRegular()) {
+            return REGULAR;
         }
 
-        if (!participation.getMemberId().equals(member.getId())) {
-            throw new CustomException(PARTICIPANT_ROLE_NOT_CREATABLE_INVALID_OWNERSHIP);
+        if (member.isAssociate()) {
+            return ASSOCIATE;
+        }
+
+        return GUEST;
+    }
+
+    private static void validateParticipationAndMember(EventParticipation participation, @Nullable Member member) {
+        boolean memberExists = member != null;
+        boolean participationMemberExists = participation.getMemberId() != null;
+
+        if (memberExists != participationMemberExists) {
+            throw new CustomException(PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_EXISTENCE_MISMATCH);
+        }
+
+        if (memberExists && !participation.getMemberId().equals(member.getId())) {
+            throw new CustomException(PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_ID_MISMATCH);
         }
     }
 }
