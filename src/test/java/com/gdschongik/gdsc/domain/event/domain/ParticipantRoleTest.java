@@ -72,7 +72,7 @@ class ParticipantRoleTest {
         }
 
         @Test
-        void 회원이_null이고_이벤트참여정보의_멤버_ID가_존재할때_예외를_발생시킨다() {
+        void 회원이_null이고_참여정보의_멤버_ID가_존재할때_예외를_발생시킨다() {
             // given
             Member ignored = fixtureHelper.createRegularMember(1L);
             EventParticipation participationWithRegistered = createEventParticipation(ignored);
@@ -84,7 +84,7 @@ class ParticipantRoleTest {
         }
 
         @Test
-        void 회원이_존재하지만_이벤트참여정보의_멤버_ID가_null일때_예외를_발생시킨다() {
+        void 회원이_존재하지만_참여정보의_멤버_ID가_null일때_예외를_발생시킨다() {
             // given
             Member registeredRegularMember = fixtureHelper.createRegularMember(1L);
             EventParticipation participationWithUnregistered = createEventParticipation(null);
@@ -96,7 +96,7 @@ class ParticipantRoleTest {
         }
 
         @Test
-        void 이벤트참여정보와_회원의_ID가_다를때_예외를_발생시킨다() {
+        void 참여정보와_회원의_ID가_다를때_예외를_발생시킨다() {
             // given
             Member member1 = fixtureHelper.createRegularMember(1L);
             Member member2 = fixtureHelper.createRegularMember(2L);
