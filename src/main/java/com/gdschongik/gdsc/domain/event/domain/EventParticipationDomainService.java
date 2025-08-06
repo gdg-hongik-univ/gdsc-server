@@ -74,7 +74,7 @@ public class EventParticipationDomainService {
     }
 
     /**
-     * 정규 회원만 허용되는 이벤트일 경우, 회원의 역할을 검증하는 메서드입니다.
+     * 정회원만 허용되는 이벤트일 경우, 회원의 역할을 검증하는 메서드입니다.
      * 회원 신청시에만 사용됩니다.
      */
     private void validateMemberWhenOnlyRegularRoleAllowed(Event event, Member member) {
@@ -84,7 +84,7 @@ public class EventParticipationDomainService {
     }
 
     /**
-     * 비 정규회원도 신청 가능한 이벤트인지 검증하는 메서드입니다.
+     * 비 정회원도 신청 가능한 이벤트인지 검증하는 메서드입니다.
      * 비회원 신청시에만 사용됩니다.
      */
     private void validateNotRegularRoleAllowed(Event event) {
