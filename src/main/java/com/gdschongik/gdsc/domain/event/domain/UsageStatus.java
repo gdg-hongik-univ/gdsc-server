@@ -3,6 +3,9 @@ package com.gdschongik.gdsc.domain.event.domain;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 행사 폼의 항목별 사용 여부를 나타내는 Enum입니다.
+ */
 @Getter
 @RequiredArgsConstructor
 public enum UsageStatus {

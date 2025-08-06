@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @DomainService
 public class EventParticipationDomainService {
 
+    /**
+     * 회원이 온라인을 통해 이벤트에 참여 신청하는 메서드입니다.
+     */
     public EventParticipation applyEventForRegistered(
             Member member, AfterPartyApplicationStatus afterPartyApplicationStatus, Event event, LocalDateTime now) {
 
@@ -31,6 +34,38 @@ public class EventParticipationDomainService {
                 event);
     }
 
+    /**
+     * 비회원이 온라인을 통해 이벤트에 참여 신청하는 메서드입니다.
+     */
+    public EventParticipation applyEventForUnregistered(
+            Participant participant,
+            AfterPartyApplicationStatus afterPartyApplicationStatus,
+            Event event,
+            LocalDateTime now) {
+
+        validateEventApplicationPeriod(event, now);
+        validateNotRegularRoleAllowed(event);
+        validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
+
+        AfterPartyAttendanceStatus afterPartyAttendanceStatus = AfterPartyAttendanceStatus.getInitialStatus(event);
+        PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
+        PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
+
+        return EventParticipation.createOnlineForUnregistered(
+                participant,
+                afterPartyApplicationStatus,
+                afterPartyAttendanceStatus,
+                prePaymentStatus,
+                postPaymentStatus,
+                event);
+    }
+
+    // 검증 로직
+
+    /**
+     * 이벤트 신청 기간을 검증하는 메서드입니다.
+     * 온라인 신청에만 사용됩니다.
+     */
     private void validateEventApplicationPeriod(Event event, LocalDateTime now) {
         Period applicationPeriod = event.getApplicationPeriod();
         if (!applicationPeriod.isWithin(now)) {
@@ -38,12 +73,30 @@ public class EventParticipationDomainService {
         }
     }
 
+    /**
+     * 정회원만 허용되는 이벤트일 경우, 회원의 역할을 검증하는 메서드입니다.
+     * 회원 신청시에만 사용됩니다.
+     */
     private void validateMemberWhenOnlyRegularRoleAllowed(Event event, Member member) {
         if (event.getRegularRoleOnlyStatus().isEnabled() && !member.isRegular()) {
             throw new CustomException(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
         }
     }
 
+    /**
+     * 비 정회원도 신청 가능한 이벤트인지 검증하는 메서드입니다.
+     * 비회원 신청시에만 사용됩니다.
+     */
+    private void validateNotRegularRoleAllowed(Event event) {
+        if (event.getRegularRoleOnlyStatus().isEnabled()) {
+            throw new CustomException(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
+        }
+    }
+
+    /**
+     * 뒤풀이 신청 상태를 검증하는 메서드입니다.
+     * 모든 이벤트 참여 신청에서 사용됩니다.
+     */
     private void validateAfterPartyApplicationStatus(
             Event event, AfterPartyApplicationStatus afterPartyApplicationStatus) {
         if (event.getAfterPartyStatus().isEnabled() && afterPartyApplicationStatus.isNone()) {
@@ -55,13 +108,6 @@ public class EventParticipationDomainService {
         }
     }
 
-    private void validateNotRegularRoleAllowed(Event event) {
-        // createXForUnregistered 메서드에서 사용
-        if (event.getRegularRoleOnlyStatus().isEnabled()) {
-            throw new CustomException(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
-        }
-    }
-
-    // TODO: applyEventForUnregistered, joinOnsiteForRegistered, joinOnsiteForUnregistered 메서드 구현
+    // TODO: joinOnsiteForRegistered, joinOnsiteForUnregistered 메서드 구현
     // TODO: 작업 분량이 많기에 메서드 하나씩 구현할 것
 }
