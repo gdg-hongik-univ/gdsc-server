@@ -198,7 +198,12 @@ public enum ErrorCode {
     EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE(CONFLICT, "뒤풀이가 활성화된 이벤트는 뒤풀이 신청 여부를 NONE으로 설정할 수 없습니다."),
     EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE(CONFLICT, "뒤풀이가 비활성화된 이벤트에 뒤풀이 신청을 할 수 없습니다."),
     PARTICIPANT_NOT_CREATABLE_INFO_NOT_SATISFIED(
-            INTERNAL_SERVER_ERROR, "기본 정보를 입력하지 않은 멤버로 참여자 정보 생성을 시도했습니다. 관리자에게 문의 바랍니다.");
+            INTERNAL_SERVER_ERROR, "기본 정보를 입력하지 않은 멤버로 참여자 정보 생성을 시도했습니다. 관리자에게 문의 바랍니다."),
+    PARTICIPANT_ROLE_NOT_CREATABLE_INVALID_PARAM(
+            INTERNAL_SERVER_ERROR, "이벤트 참여정보의 멤버 ID가 null인 경우, 멤버 인자도 null로 전달되어야 합니다."),
+    PARTICIPANT_ROLE_NOT_CREATABLE_INVALID_OWNERSHIP(INTERNAL_SERVER_ERROR, "이벤트 참여정보의 멤버 ID와 인자의 멤버 ID가 일치하지 않습니다."),
+    ;
+
     private final HttpStatus status;
     private final String message;
 }
