@@ -18,7 +18,7 @@ public class EventParticipationDomainServiceTest {
     FixtureHelper fixtureHelper = new FixtureHelper();
 
     @Nested
-    class 가입된_유저가_온라인으로_신청하는_경우 {
+    class 회원이_온라인으로_신청하는_경우 {
 
         @Test
         void 신청_기간이_아닌경우_실패한다() {
@@ -184,6 +184,50 @@ public class EventParticipationDomainServiceTest {
             assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, appliedStatus, event, now))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE.getMessage());
+        }
+    }
+
+    @Nested
+    class 회원이_뒤풀이_현장등록으로_신청하는_경우 {
+
+        @Test
+        void 정회원만_참석_가능한_행사에_정회원이_아닌_유저가_신청하면_실패한다() {
+            // given
+            Member guestMember = fixtureHelper.createGuestMember(1L);
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    UsageStatus.ENABLED, // 정회원 전용 신청 폼
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS,
+                    RSVP_QUESTION_STATUS);
+
+            // when & then
+            assertThatThrownBy(() -> domainService.joinOnsiteForRegistered(guestMember, event))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE.getMessage());
+        }
+    }
+
+    @Nested
+    class 비회원이_뒤풀이_현장등록으로_신청하는_경우 {
+
+        @Test
+        void 정회원만_참석_가능한_행사에_신청하면_실패한다() {
+            // given
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    UsageStatus.ENABLED, // 정회원 전용 신청 폼
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS,
+                    RSVP_QUESTION_STATUS);
+
+            // when & then
+            assertThatThrownBy(() -> domainService.joinOnsiteForUnregistered(participant, event))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE.getMessage());
         }
     }
 }
