@@ -12,11 +12,10 @@ import java.time.LocalDateTime;
 public class EventParticipationDomainService {
 
     /**
-     * 회원이 온라인을 통해 이벤트에 참여 신청하는 메서드입니다.
+     * 회원이 온라인을 통해 참여 신청하는 메서드입니다.
      */
     public EventParticipation applyEventForRegistered(
             Member member, AfterPartyApplicationStatus afterPartyApplicationStatus, Event event, LocalDateTime now) {
-
         validateEventApplicationPeriod(event, now);
         validateMemberWhenOnlyRegularRoleAllowed(event, member);
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
@@ -35,14 +34,13 @@ public class EventParticipationDomainService {
     }
 
     /**
-     * 비회원이 온라인을 통해 이벤트에 참여 신청하는 메서드입니다.
+     * 비회원이 온라인을 통해 참여 신청하는 메서드입니다.
      */
     public EventParticipation applyEventForUnregistered(
             Participant participant,
             AfterPartyApplicationStatus afterPartyApplicationStatus,
             Event event,
             LocalDateTime now) {
-
         validateEventApplicationPeriod(event, now);
         validateNotRegularRoleAllowed(event);
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
@@ -131,7 +129,4 @@ public class EventParticipationDomainService {
             throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE);
         }
     }
-
-    // TODO: joinOnsiteForRegistered, joinOnsiteForUnregistered 메서드 구현
-    // TODO: 작업 분량이 많기에 메서드 하나씩 구현할 것
 }
