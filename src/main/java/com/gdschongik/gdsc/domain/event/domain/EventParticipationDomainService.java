@@ -16,7 +16,6 @@ public class EventParticipationDomainService {
      */
     public EventParticipation applyEventForRegistered(
             Member member, AfterPartyApplicationStatus afterPartyApplicationStatus, Event event, LocalDateTime now) {
-
         validateEventApplicationPeriod(event, now);
         validateMemberWhenOnlyRegularRoleAllowed(event, member);
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
@@ -42,7 +41,6 @@ public class EventParticipationDomainService {
             AfterPartyApplicationStatus afterPartyApplicationStatus,
             Event event,
             LocalDateTime now) {
-
         validateEventApplicationPeriod(event, now);
         validateNotRegularRoleAllowed(event);
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
@@ -60,6 +58,30 @@ public class EventParticipationDomainService {
                 event);
     }
 
+    /**
+     * 회원이 현장등록을 통해 뒤풀이에 참여 신청하는 메서드입니다.
+     */
+    public EventParticipation joinOnsiteForRegistered(Member member, Event event) {
+        validateMemberWhenOnlyRegularRoleAllowed(event, member);
+
+        PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
+        PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
+
+        return EventParticipation.createOnsiteForRegistered(member, prePaymentStatus, postPaymentStatus, event);
+    }
+
+    /**
+     * 비회원이 현장등록을 통해 뒤풀이에 참여 신청하는 메서드입니다.
+     */
+    public EventParticipation joinOnsiteForUnregistered(Participant participant, Event event) {
+        validateNotRegularRoleAllowed(event);
+
+        PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
+        PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
+
+        return EventParticipation.createOnsiteForUnregistered(participant, prePaymentStatus, postPaymentStatus, event);
+    }
+
     // 검증 로직
 
     /**
@@ -70,6 +92,21 @@ public class EventParticipationDomainService {
         Period applicationPeriod = event.getApplicationPeriod();
         if (!applicationPeriod.isWithin(now)) {
             throw new CustomException(EVENT_NOT_APPLIABLE_APPLICATION_PERIOD_INVALID);
+        }
+    }
+
+    /**
+     * 뒤풀이 신청 상태를 검증하는 메서드입니다.
+     * 온라인 신청에서만 사용됩니다.
+     */
+    private void validateAfterPartyApplicationStatus(
+            Event event, AfterPartyApplicationStatus afterPartyApplicationStatus) {
+        if (event.getAfterPartyStatus().isEnabled() && afterPartyApplicationStatus.isNone()) {
+            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE);
+        }
+
+        if (!event.getAfterPartyStatus().isEnabled() && !afterPartyApplicationStatus.isNone()) {
+            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE);
         }
     }
 
@@ -92,22 +129,4 @@ public class EventParticipationDomainService {
             throw new CustomException(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
         }
     }
-
-    /**
-     * 뒤풀이 신청 상태를 검증하는 메서드입니다.
-     * 모든 이벤트 참여 신청에서 사용됩니다.
-     */
-    private void validateAfterPartyApplicationStatus(
-            Event event, AfterPartyApplicationStatus afterPartyApplicationStatus) {
-        if (event.getAfterPartyStatus().isEnabled() && afterPartyApplicationStatus.isNone()) {
-            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE);
-        }
-
-        if (!event.getAfterPartyStatus().isEnabled() && !afterPartyApplicationStatus.isNone()) {
-            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE);
-        }
-    }
-
-    // TODO: joinOnsiteForRegistered, joinOnsiteForUnregistered 메서드 구현
-    // TODO: 작업 분량이 많기에 메서드 하나씩 구현할 것
 }
