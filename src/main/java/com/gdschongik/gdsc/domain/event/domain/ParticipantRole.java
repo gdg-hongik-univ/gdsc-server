@@ -21,7 +21,7 @@ public enum ParticipantRole {
     public static ParticipantRole of(EventParticipation participation, @Nullable Member member) {
         validateParticipationAndMember(participation, member);
 
-        if (member == null && participation.getMemberId() == null) {
+        if (member == null) {
             return NON_MEMBER;
         }
 
