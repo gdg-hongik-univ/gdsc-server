@@ -96,6 +96,21 @@ public class EventParticipationDomainService {
     }
 
     /**
+     * 뒤풀이 신청 상태를 검증하는 메서드입니다.
+     * 온라인 신청에서만 사용됩니다.
+     */
+    private void validateAfterPartyApplicationStatus(
+            Event event, AfterPartyApplicationStatus afterPartyApplicationStatus) {
+        if (event.getAfterPartyStatus().isEnabled() && afterPartyApplicationStatus.isNone()) {
+            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE);
+        }
+
+        if (!event.getAfterPartyStatus().isEnabled() && !afterPartyApplicationStatus.isNone()) {
+            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE);
+        }
+    }
+
+    /**
      * 정회원만 허용되는 이벤트일 경우, 회원의 역할을 검증하는 메서드입니다.
      * 회원 신청시에만 사용됩니다.
      */
@@ -112,21 +127,6 @@ public class EventParticipationDomainService {
     private void validateNotRegularRoleAllowed(Event event) {
         if (event.getRegularRoleOnlyStatus().isEnabled()) {
             throw new CustomException(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
-        }
-    }
-
-    /**
-     * 뒤풀이 신청 상태를 검증하는 메서드입니다.
-     * 모든 이벤트 참여 신청에서 사용됩니다.
-     */
-    private void validateAfterPartyApplicationStatus(
-            Event event, AfterPartyApplicationStatus afterPartyApplicationStatus) {
-        if (event.getAfterPartyStatus().isEnabled() && afterPartyApplicationStatus.isNone()) {
-            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE);
-        }
-
-        if (!event.getAfterPartyStatus().isEnabled() && !afterPartyApplicationStatus.isNone()) {
-            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE);
         }
     }
 }
