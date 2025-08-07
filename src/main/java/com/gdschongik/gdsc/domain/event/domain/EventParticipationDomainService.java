@@ -60,6 +60,30 @@ public class EventParticipationDomainService {
                 event);
     }
 
+    /**
+     * 회원이 뒤풀이 현장등록을 통해 참여 신청하는 메서드입니다.
+     */
+    public EventParticipation joinOnsiteForRegistered(Member member, Event event) {
+        validateMemberWhenOnlyRegularRoleAllowed(event, member);
+
+        PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
+        PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
+
+        return EventParticipation.createOnsiteForRegistered(member, prePaymentStatus, postPaymentStatus, event);
+    }
+
+    /**
+     * 비회원이 뒤풀이 현장등록을 통해 참여 신청하는 메서드입니다.
+     */
+    public EventParticipation joinOnsiteForUnregistered(Participant participant, Event event) {
+        validateNotRegularRoleAllowed(event);
+
+        PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
+        PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
+
+        return EventParticipation.createOnsiteForUnregistered(participant, prePaymentStatus, postPaymentStatus, event);
+    }
+
     // 검증 로직
 
     /**
