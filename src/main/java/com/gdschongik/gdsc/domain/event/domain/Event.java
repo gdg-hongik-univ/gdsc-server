@@ -7,6 +7,7 @@ import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.common.vo.Period;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,6 +33,10 @@ public class Event extends BaseEntity {
     @Comment("행사 신청 폼 설명")
     @Column(columnDefinition = "TEXT")
     private String applicationDescription;
+
+    @Comment("행사 진행 일시")
+    @Column(name = "start_at")
+    private LocalDateTime startAt;
 
     @Comment("행사 신청 기간")
     @Embedded
@@ -80,6 +85,7 @@ public class Event extends BaseEntity {
             String name,
             String venue,
             String applicationDescription,
+            LocalDateTime startAt,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
             UsageStatus afterPartyStatus,
@@ -91,6 +97,7 @@ public class Event extends BaseEntity {
         this.name = name;
         this.venue = venue;
         this.applicationDescription = applicationDescription;
+        this.startAt = startAt;
         this.applicationPeriod = applicationPeriod;
         this.regularRoleOnlyStatus = regularRoleOnlyStatus;
         this.afterPartyStatus = afterPartyStatus;
@@ -106,6 +113,7 @@ public class Event extends BaseEntity {
             String name,
             String venue,
             String applicationDescription,
+            LocalDateTime startAt,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
             UsageStatus afterPartyStatus,
@@ -121,6 +129,7 @@ public class Event extends BaseEntity {
                 .name(name)
                 .venue(venue)
                 .applicationDescription(applicationDescription)
+                .startAt(startAt)
                 .applicationPeriod(applicationPeriod)
                 .regularRoleOnlyStatus(regularRoleOnlyStatus)
                 .afterPartyStatus(afterPartyStatus)
