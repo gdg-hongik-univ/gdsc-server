@@ -176,6 +176,7 @@ public class FixtureHelper {
                 EVENT_NAME,
                 VENUE,
                 APPLICATION_DESCRIPTION,
+                EVENT_START_AT,
                 EVENT_APPLICATION_PERIOD,
                 regularRoleOnlyStatus,
                 afterPartyStatus,
