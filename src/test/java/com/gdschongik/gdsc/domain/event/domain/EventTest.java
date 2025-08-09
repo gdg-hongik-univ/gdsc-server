@@ -24,8 +24,8 @@ public class EventTest {
             assertThatThrownBy(() -> Event.create(
                             EVENT_NAME,
                             VENUE,
-                            APPLICATION_DESCRIPTION,
                             EVENT_START_AT,
+                            APPLICATION_DESCRIPTION,
                             EVENT_APPLICATION_PERIOD,
                             REGULAR_ROLE_ONLY_STATUS,
                             afterPartyStatus,
@@ -49,8 +49,8 @@ public class EventTest {
             assertThatThrownBy(() -> Event.create(
                             EVENT_NAME,
                             VENUE,
-                            APPLICATION_DESCRIPTION,
                             EVENT_START_AT,
+                            APPLICATION_DESCRIPTION,
                             EVENT_APPLICATION_PERIOD,
                             REGULAR_ROLE_ONLY_STATUS,
                             afterPartyStatus,

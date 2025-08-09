@@ -34,13 +34,13 @@ public class Event extends BaseEntity {
     @Comment("[메타] 행사 진행 장소")
     private String venue;
 
+    @Comment("[메타] 행사 진행 일시")
+    @Column(name = "start_at")
+    private LocalDateTime startAt;
+
     @Comment("[메타] 행사 신청 폼 설명")
     @Column(columnDefinition = "TEXT")
     private String applicationDescription;
-
-    @Comment("행사 진행 일시")
-    @Column(name = "start_at")
-    private LocalDateTime startAt;
 
     @Comment("행사 신청 기간")
     @Embedded
@@ -87,8 +87,8 @@ public class Event extends BaseEntity {
     private Event(
             String name,
             String venue,
-            String applicationDescription,
             LocalDateTime startAt,
+            String applicationDescription,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
             UsageStatus afterPartyStatus,
@@ -99,8 +99,8 @@ public class Event extends BaseEntity {
             Integer afterPartyMaxApplicantCount) {
         this.name = name;
         this.venue = venue;
-        this.applicationDescription = applicationDescription;
         this.startAt = startAt;
+        this.applicationDescription = applicationDescription;
         this.applicationPeriod = applicationPeriod;
         this.regularRoleOnlyStatus = regularRoleOnlyStatus;
         this.afterPartyStatus = afterPartyStatus;
@@ -115,8 +115,8 @@ public class Event extends BaseEntity {
     public static Event create(
             String name,
             String venue,
-            String applicationDescription,
             LocalDateTime startAt,
+            String applicationDescription,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
             UsageStatus afterPartyStatus,
@@ -131,8 +131,8 @@ public class Event extends BaseEntity {
         return Event.builder()
                 .name(name)
                 .venue(venue)
-                .applicationDescription(applicationDescription)
                 .startAt(startAt)
+                .applicationDescription(applicationDescription)
                 .applicationPeriod(applicationPeriod)
                 .regularRoleOnlyStatus(regularRoleOnlyStatus)
                 .afterPartyStatus(afterPartyStatus)
