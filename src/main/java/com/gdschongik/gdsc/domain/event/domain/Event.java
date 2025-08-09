@@ -7,12 +7,17 @@ import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.common.vo.Period;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
+/**
+ * 행사 엔티티입니다.
+ * [메타] 태그가 있는 필드는 행사 신청 시 참고용으로만 사용되며, 엔티티 내부 상태 검증에 사용되지 않습니다.
+ */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,13 +28,17 @@ public class Event extends BaseEntity {
     @Column(name = "event_id")
     private Long id;
 
-    @Comment("행사 이름")
+    @Comment("[메타] 행사 이름")
     private String name;
 
-    @Comment("행사 진행 장소")
+    @Comment("[메타] 행사 진행 장소")
     private String venue;
 
-    @Comment("행사 신청 폼 설명")
+    @Comment("[메타] 행사 진행 일시")
+    @Column(name = "start_at")
+    private LocalDateTime startAt;
+
+    @Comment("[메타] 행사 신청 폼 설명")
     @Column(columnDefinition = "TEXT")
     private String applicationDescription;
 
@@ -64,7 +73,7 @@ public class Event extends BaseEntity {
     /**
      * 신청 폼에 RSVP 요청 리마인더 질문 포함 여부를 나타내는 필드입니다. 어떠한 검증에도 활용되지 않습니다.
      */
-    @Comment("RSVP 질문 활성화 상태")
+    @Comment("[메타] RSVP 질문 활성화 상태")
     @Enumerated(EnumType.STRING)
     private UsageStatus rsvpQuestionStatus;
 
@@ -74,11 +83,11 @@ public class Event extends BaseEntity {
     @Comment("뒤풀이 최대 신청 가능 인원")
     private Integer afterPartyMaxApplicantCount;
 
-    // TODO: 팩토리 메서드 제거하고 빌더만 사용하는 것 검토
     @Builder(access = AccessLevel.PRIVATE)
     private Event(
             String name,
             String venue,
+            LocalDateTime startAt,
             String applicationDescription,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
@@ -90,6 +99,7 @@ public class Event extends BaseEntity {
             Integer afterPartyMaxApplicantCount) {
         this.name = name;
         this.venue = venue;
+        this.startAt = startAt;
         this.applicationDescription = applicationDescription;
         this.applicationPeriod = applicationPeriod;
         this.regularRoleOnlyStatus = regularRoleOnlyStatus;
@@ -105,6 +115,7 @@ public class Event extends BaseEntity {
     public static Event create(
             String name,
             String venue,
+            LocalDateTime startAt,
             String applicationDescription,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
@@ -120,6 +131,7 @@ public class Event extends BaseEntity {
         return Event.builder()
                 .name(name)
                 .venue(venue)
+                .startAt(startAt)
                 .applicationDescription(applicationDescription)
                 .applicationPeriod(applicationPeriod)
                 .regularRoleOnlyStatus(regularRoleOnlyStatus)

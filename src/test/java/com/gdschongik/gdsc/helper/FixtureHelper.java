@@ -175,6 +175,7 @@ public class FixtureHelper {
         Event event = Event.create(
                 EVENT_NAME,
                 VENUE,
+                EVENT_START_AT,
                 APPLICATION_DESCRIPTION,
                 EVENT_APPLICATION_PERIOD,
                 regularRoleOnlyStatus,
