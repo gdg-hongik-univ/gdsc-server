@@ -4,9 +4,10 @@ import com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus;
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus;
 import com.gdschongik.gdsc.domain.event.domain.MainEventApplicationStatus;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
+import com.gdschongik.gdsc.domain.event.dto.EventParticipationDto;
+import com.gdschongik.gdsc.domain.event.dto.ParticipantDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
-import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyParticipationResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -34,17 +35,15 @@ public class AdminEventParticipationController {
 
     @Operation(summary = "뒤풀이 신청 정보 조회", description = "뒤풀이 신청 정보를 조회합니다.")
     @GetMapping("/after-party")
-    public ResponseEntity<Page<AfterPartyParticipationResponse>> getAfterPartyParticipations(
+    public ResponseEntity<Page<EventParticipationDto>> getAfterPartyParticipations(
             @RequestParam(name = "eventId") Long eventId,
             @ParameterObject EventParticipantQueryOption queryOption,
             @ParameterObject Pageable pageable) {
 
         // TODO: 임시 응답 제거 후 서비스 로직 구현
-        var exampleContent = List.of(new AfterPartyParticipationResponse(
+        var exampleContent = List.of(new EventParticipationDto(
                 1L,
-                "김홍익",
-                "C123456",
-                "010-1234-5678",
+                new ParticipantDto("김홍익", "C123456", "010-1234-5678"),
                 1L,
                 MainEventApplicationStatus.APPLIED,
                 AfterPartyApplicationStatus.APPLIED,
