@@ -36,14 +36,14 @@ public class AdminEventParticipationController {
     @Operation(summary = "뒤풀이 신청 정보 조회", description = "뒤풀이 신청 정보를 조회합니다.")
     @GetMapping("/after-party")
     public ResponseEntity<Page<EventParticipationDto>> getAfterPartyParticipations(
-            @RequestParam(name = "eventId") Long eventId,
+            @RequestParam(name = "event") Long eventId,
             @ParameterObject EventParticipantQueryOption queryOption,
             @ParameterObject Pageable pageable) {
 
         // TODO: 임시 응답 제거 후 서비스 로직 구현
         var exampleContent = List.of(new EventParticipationDto(
                 1L,
-                new ParticipantDto("김홍익", "C123456", "010-1234-5678"),
+                new ParticipantDto("김홍익", "C123456", "01012345678"),
                 1L,
                 MainEventApplicationStatus.APPLIED,
                 AfterPartyApplicationStatus.APPLIED,
