@@ -1,4 +1,4 @@
-package com.gdschongik.gdsc.domain.event.dto;
+package com.gdschongik.gdsc.domain.event.dto.dto;
 
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus;
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus;
