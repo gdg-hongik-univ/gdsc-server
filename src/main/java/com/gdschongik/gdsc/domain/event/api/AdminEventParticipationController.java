@@ -1,10 +1,9 @@
 package com.gdschongik.gdsc.domain.event.api;
 
+import com.gdschongik.gdsc.domain.event.application.EventParticipationService;
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus;
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus;
 import com.gdschongik.gdsc.domain.event.domain.MainEventApplicationStatus;
-import com.gdschongik.gdsc.domain.event.domain.Participant;
-import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
 import com.gdschongik.gdsc.domain.event.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.ParticipantDto;
@@ -28,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/event-participations")
 @RequiredArgsConstructor
 public class AdminEventParticipationController {
+
+    private final EventParticipationService eventParticipationService;
 
     @Operation(summary = "행사 신청 정보 삭제", description = "행사 신청 정보를 삭제합니다.")
     @DeleteMapping
@@ -64,14 +65,7 @@ public class AdminEventParticipationController {
             @RequestParam(name = "event") Long eventId,
             @ParameterObject EventParticipantQueryOption queryOption,
             @ParameterObject Pageable pageable) {
-
-        // TODO: 임시 응답 제거 후 서비스 로직 구현
-        var exampleContent = List.of(new EventApplicantResponse(
-                Participant.of("김홍익", "C123456", "01012345678"),
-                AfterPartyApplicationStatus.APPLIED,
-                ParticipantRole.NON_MEMBER));
-
-        var exampleResponse = new PageImpl<>(exampleContent, pageable, 1L);
-        return ResponseEntity.ok(exampleResponse);
+        var response = eventParticipationService.getEventApplicants(eventId, queryOption, pageable);
+        return ResponseEntity.ok(response);
     }
 }
