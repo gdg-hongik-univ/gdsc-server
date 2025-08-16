@@ -4,7 +4,7 @@ import com.gdschongik.gdsc.domain.event.domain.*;
 
 public record EventParticipationDto(
         Long eventParticipationId,
-        ParticipantDto participant,
+        Participant participant,
         Long memberId,
         MainEventApplicationStatus mainEventApplicationStatus,
         AfterPartyApplicationStatus afterPartyApplicationStatus,
@@ -15,7 +15,7 @@ public record EventParticipationDto(
     public static EventParticipationDto from(EventParticipation eventParticipation) {
         return new EventParticipationDto(
                 eventParticipation.getId(),
-                ParticipantDto.from(eventParticipation.getParticipant()),
+                eventParticipation.getParticipant(),
                 eventParticipation.getMemberId(),
                 eventParticipation.getMainEventApplicationStatus(),
                 eventParticipation.getAfterPartyApplicationStatus(),
