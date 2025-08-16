@@ -1,13 +1,15 @@
 package com.gdschongik.gdsc.domain.event.api;
 
+import com.gdschongik.gdsc.domain.event.application.AdminEventParticipationService;
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus;
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus;
 import com.gdschongik.gdsc.domain.event.domain.MainEventApplicationStatus;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
-import com.gdschongik.gdsc.domain.event.dto.EventParticipationDto;
-import com.gdschongik.gdsc.domain.event.dto.ParticipantDto;
+import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
+import com.gdschongik.gdsc.domain.event.dto.dto.ParticipantDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
+import com.gdschongik.gdsc.domain.event.dto.response.EventParticipationAfterPartyResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/event-participations")
 @RequiredArgsConstructor
 public class AdminEventParticipationController {
+
+    private final AdminEventParticipationService adminEventParticipationService;
 
     @Operation(summary = "행사 신청 정보 삭제", description = "행사 신청 정보를 삭제합니다.")
     @DeleteMapping
@@ -53,5 +57,13 @@ public class AdminEventParticipationController {
 
         var exampleResponse = new PageImpl<>(exampleContent, pageable, 1L);
         return ResponseEntity.ok(exampleResponse);
+    }
+
+    @Operation(summary = "뒤풀이 참석 현황 조회", description = "뒤풀이 참석 현황을 조회합니다.")
+    @GetMapping("/after-party/attendance")
+    public ResponseEntity<EventParticipationAfterPartyResponse> getAfterPartyAttendance(
+            @RequestParam(name = "event") Long eventId) {
+        var response = adminEventParticipationService.getAfterPartyAttendance(eventId);
+        return ResponseEntity.ok(response);
     }
 }
