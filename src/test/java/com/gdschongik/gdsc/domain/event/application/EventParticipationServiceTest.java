@@ -10,6 +10,8 @@ import com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus;
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
+import com.gdschongik.gdsc.domain.event.domain.Participant;
+import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
@@ -139,6 +141,28 @@ class EventParticipationServiceTest extends IntegrationTest {
                     .isInstanceOf(CustomException.class)
                     .hasMessage(SORT_NOT_SUPPORTED.getMessage());
         }
+
+        @Test
+        void 비회원_신청자가_조회된다() {
+            // given
+            Event event = createEvent();
+            Participant unregisteredParticipant = Participant.of("김홍익", "B000001", "01012345678");
+
+            // 비회원 신청
+            createUnregisteredEventParticipation(event, unregisteredParticipant);
+
+            EventParticipantQueryOption queryOption = new EventParticipantQueryOption(null, null, null);
+
+            // when
+            Page<EventApplicantResponse> result =
+                    eventParticipationService.getEventApplicants(event.getId(), queryOption, PageRequest.of(0, 10));
+
+            // then
+            EventApplicantResponse unregisteredResponse = result.getContent().get(0);
+            assertThat(unregisteredResponse.participantRole()).isEqualTo(ParticipantRole.NON_MEMBER);
+            assertThat(unregisteredResponse.discordUsername()).isNull();
+            assertThat(unregisteredResponse.nickname()).isNull();
+        }
     }
 
     private Event createEvent() {
@@ -168,6 +192,17 @@ class EventParticipationServiceTest extends IntegrationTest {
     private EventParticipation createEventParticipation(Event event, Member member) {
         EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
                 member,
+                AfterPartyApplicationStatus.NOT_APPLIED,
+                AfterPartyAttendanceStatus.NOT_ATTENDED,
+                PaymentStatus.NONE,
+                PaymentStatus.NONE,
+                event);
+        return eventParticipationRepository.save(eventParticipation);
+    }
+
+    private EventParticipation createUnregisteredEventParticipation(Event event, Participant participant) {
+        EventParticipation eventParticipation = EventParticipation.createOnlineForUnregistered(
+                participant,
                 AfterPartyApplicationStatus.NOT_APPLIED,
                 AfterPartyAttendanceStatus.NOT_ATTENDED,
                 PaymentStatus.NONE,
