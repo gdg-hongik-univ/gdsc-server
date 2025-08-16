@@ -13,4 +13,12 @@ public enum AfterPartyApplicationStatus {
     public boolean isNone() {
         return this == NONE;
     }
+
+    public boolean isApplied() {
+        return this == APPLIED;
+    }
+
+    public boolean isNotApplied() {
+        return this == NOT_APPLIED;
+    }
 }

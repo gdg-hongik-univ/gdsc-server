@@ -23,21 +23,21 @@ public class AdminEventParticipationService {
 
         long attendedAfterApplyingCount = eventParticipations.stream()
                 .filter(eventParticipation -> eventParticipation
-                                .getMainEventApplicationStatus()
+                                .getAfterPartyApplicationStatus()
                                 .isApplied()
                         && eventParticipation.getAfterPartyAttendanceStatus().isAttended())
                 .count();
 
         long notAttendedAfterApplyingCount = eventParticipations.stream()
                 .filter(eventParticipation -> eventParticipation
-                                .getMainEventApplicationStatus()
+                                .getAfterPartyApplicationStatus()
                                 .isApplied()
                         && eventParticipation.getAfterPartyAttendanceStatus().isNotAttended())
                 .count();
 
         long onSiteApplicationCount = eventParticipations.stream()
                 .filter(eventParticipation -> eventParticipation
-                                .getMainEventApplicationStatus()
+                                .getAfterPartyApplicationStatus()
                                 .isNotApplied()
                         && eventParticipation.getAfterPartyAttendanceStatus().isAttended())
                 .count();
