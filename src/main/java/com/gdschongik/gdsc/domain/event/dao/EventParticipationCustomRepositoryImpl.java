@@ -2,10 +2,12 @@ package com.gdschongik.gdsc.domain.event.dao;
 
 import static com.gdschongik.gdsc.domain.event.domain.QEventParticipation.*;
 import static com.gdschongik.gdsc.domain.member.domain.QMember.*;
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.QEventApplicantResponse;
+import com.gdschongik.gdsc.global.exception.CustomException;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -47,10 +49,17 @@ public class EventParticipationCustomRepositoryImpl
 
     private OrderSpecifier<?>[] getOrderSpecifiers(Pageable pageable) {
         Sort sort = pageable.getSort();
+
+        // 정렬 기준이 없으면 기본값으로 최신순 정렬
+        if (sort.isUnsorted()) {
+            return new OrderSpecifier<?>[] {eventParticipation.createdAt.desc(), eventParticipation.id.desc()};
+        }
+
         Sort.Order order = sort.getOrderFor("createdAt");
 
-        if (sort.isUnsorted() || order == null) {
-            return new OrderSpecifier<?>[] {eventParticipation.createdAt.desc(), eventParticipation.id.desc()};
+		// createdAt에 대한 정렬만 허용
+        if (order == null) {
+            throw new CustomException(SORT_NOT_SUPPORTED);
         }
 
         return order.isAscending()
