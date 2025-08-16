@@ -57,7 +57,7 @@ public class EventParticipationCustomRepositoryImpl
 
         Sort.Order order = sort.getOrderFor("createdAt");
 
-		// createdAt에 대한 정렬만 허용
+        // createdAt에 대한 정렬만 허용
         if (order == null) {
             throw new CustomException(SORT_NOT_SUPPORTED);
         }
