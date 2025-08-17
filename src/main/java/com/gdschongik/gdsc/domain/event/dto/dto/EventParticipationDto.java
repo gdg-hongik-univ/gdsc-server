@@ -4,7 +4,8 @@ import com.gdschongik.gdsc.domain.event.domain.*;
 
 public record EventParticipationDto(
         Long eventParticipationId,
-        Participant participant,
+        // TODO: DTO 대신 VO를 사용하도록 변경
+        ParticipantDto participant,
         Long memberId,
         MainEventApplicationStatus mainEventApplicationStatus,
         AfterPartyApplicationStatus afterPartyApplicationStatus,
@@ -15,7 +16,10 @@ public record EventParticipationDto(
     public static EventParticipationDto from(EventParticipation eventParticipation) {
         return new EventParticipationDto(
                 eventParticipation.getId(),
-                eventParticipation.getParticipant(),
+                new ParticipantDto(
+                        eventParticipation.getParticipant().getName(),
+                        eventParticipation.getParticipant().getStudentId(),
+                        eventParticipation.getParticipant().getPhone()),
                 eventParticipation.getMemberId(),
                 eventParticipation.getMainEventApplicationStatus(),
                 eventParticipation.getAfterPartyApplicationStatus(),

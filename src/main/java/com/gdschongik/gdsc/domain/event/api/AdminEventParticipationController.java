@@ -4,11 +4,14 @@ import com.gdschongik.gdsc.domain.event.application.AdminEventParticipationServi
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus;
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus;
 import com.gdschongik.gdsc.domain.event.domain.MainEventApplicationStatus;
+import com.gdschongik.gdsc.domain.event.domain.Participant;
+import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.ParticipantDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
+import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventParticipationAfterPartyResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -54,6 +57,23 @@ public class AdminEventParticipationController {
                 AfterPartyAttendanceStatus.NOT_ATTENDED,
                 PaymentStatus.UNPAID,
                 PaymentStatus.UNPAID));
+
+        var exampleResponse = new PageImpl<>(exampleContent, pageable, 1L);
+        return ResponseEntity.ok(exampleResponse);
+    }
+
+    @Operation(summary = "행사 신청자 목록 조회", description = "해당 행사의 신청자 목록을 조회합니다")
+    @GetMapping("/applicants")
+    public ResponseEntity<Page<EventApplicantResponse>> getEventApplicants(
+            @RequestParam(name = "event") Long eventId,
+            @ParameterObject EventParticipantQueryOption queryOption,
+            @ParameterObject Pageable pageable) {
+
+        // TODO: 임시 응답 제거 후 서비스 로직 구현
+        var exampleContent = List.of(new EventApplicantResponse(
+                Participant.of("김홍익", "C123456", "01012345678"),
+                AfterPartyApplicationStatus.APPLIED,
+                ParticipantRole.NON_MEMBER));
 
         var exampleResponse = new PageImpl<>(exampleContent, pageable, 1L);
         return ResponseEntity.ok(exampleResponse);
