@@ -76,7 +76,7 @@ public class EventParticipationCustomRepositoryImpl
                 .select(eventParticipation.id)
                 .from(eventParticipation)
                 .leftJoin(member)
-                .on(eventParticipation.memberId.eq(member.id))
+                .on(eqMemberId())
                 .where(eqEventId(eventId), matchesEventParticipantQueryOption(queryOption), predicate)
                 .orderBy(orderSpecifiers)
                 .fetch();
