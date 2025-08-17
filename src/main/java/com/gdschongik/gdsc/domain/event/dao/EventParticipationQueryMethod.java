@@ -33,6 +33,6 @@ public interface EventParticipationQueryMethod {
     }
 
     default BooleanExpression eqPhone(String phone) {
-        return phone != null ? member.phone.containsIgnoreCase(phone) : null;
+        return phone != null ? member.phone.contains(phone.replaceAll("-", "")) : null;
     }
 }
