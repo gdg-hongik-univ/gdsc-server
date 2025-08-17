@@ -9,9 +9,7 @@ import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.QEventApplicantResponse;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +29,7 @@ public class EventParticipationCustomRepositoryImpl
             Long eventId, EventParticipantQueryOption queryOption, Pageable pageable) {
 
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable);
-        List<Long> ids = getIdsByQueryOption(eventId, queryOption, null, orderSpecifiers);
+        List<Long> ids = getIdsByQueryOption(eventId, queryOption, orderSpecifiers);
 
         List<EventApplicantResponse> fetch = jpaQueryFactory
                 .select(new QEventApplicantResponse(eventParticipation, member))
@@ -68,16 +66,13 @@ public class EventParticipationCustomRepositoryImpl
     }
 
     private List<Long> getIdsByQueryOption(
-            Long eventId,
-            EventParticipantQueryOption queryOption,
-            @Nullable Predicate predicate,
-            @NonNull OrderSpecifier<?>... orderSpecifiers) {
+            Long eventId, EventParticipantQueryOption queryOption, @NonNull OrderSpecifier<?>... orderSpecifiers) {
         return jpaQueryFactory
                 .select(eventParticipation.id)
                 .from(eventParticipation)
                 .leftJoin(member)
                 .on(eqMemberId())
-                .where(eqEventId(eventId), matchesEventParticipantQueryOption(queryOption), predicate)
+                .where(eqEventId(eventId), matchesEventParticipantQueryOption(queryOption), null)
                 .orderBy(orderSpecifiers)
                 .fetch();
     }
