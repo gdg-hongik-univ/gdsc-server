@@ -14,6 +14,7 @@ public enum ErrorCode {
     METHOD_ARGUMENT_NOT_VALID(BAD_REQUEST, "인자가 유효하지 않습니다."),
     REGEX_VIOLATION(BAD_REQUEST, "정규표현식을 위반했습니다."),
     FORBIDDEN_ACCESS(FORBIDDEN, "접근 권한이 없습니다."),
+    SORT_NOT_SUPPORTED(BAD_REQUEST, "지원되지 않는 정렬 기준입니다."),
 
     // Auth
     INVALID_JWT_TOKEN(UNAUTHORIZED, "유효하지 않은 JWT 토큰입니다."),
