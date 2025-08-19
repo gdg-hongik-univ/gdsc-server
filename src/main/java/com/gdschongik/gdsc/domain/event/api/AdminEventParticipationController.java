@@ -7,6 +7,7 @@ import com.gdschongik.gdsc.domain.event.domain.MainEventApplicationStatus;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
 import com.gdschongik.gdsc.domain.event.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.ParticipantDto;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
@@ -67,5 +68,12 @@ public class AdminEventParticipationController {
             @ParameterObject Pageable pageable) {
         var response = eventParticipationService.getEventApplicants(eventId, queryOption, pageable);
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "뒤풀이 참석 처리", description = "뒤풀이에 참석 처리합니다.")
+    @PutMapping("/after-party/attend")
+    public ResponseEntity<Void> attendAfterParty(@Valid @RequestBody AfterPartyAttendRequest request) {
+        // TODO: 서비스 로직 구현
+        return ResponseEntity.ok().build();
     }
 }
