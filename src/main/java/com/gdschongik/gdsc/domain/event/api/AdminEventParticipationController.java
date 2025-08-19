@@ -33,9 +33,9 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "뒤풀이 신청 정보 조회", description = "뒤풀이 신청 정보를 조회합니다.")
+    @Operation(summary = "뒤풀이 신청자 정보 조회", description = "뒤풀이 신청자들의 신청 정보를 조회합니다.")
     @GetMapping("/after-party")
-    public ResponseEntity<AfterPartyAttendanceResponse> getAfterPartyParticipations(
+    public ResponseEntity<AfterPartyAttendanceResponse> getAfterPartyAttendances(
             @RequestParam(name = "event") Long eventId,
             @ParameterObject EventParticipantQueryOption queryOption,
             @ParameterObject Pageable pageable) {
