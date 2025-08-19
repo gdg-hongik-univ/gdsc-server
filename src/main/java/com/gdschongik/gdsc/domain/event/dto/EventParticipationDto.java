@@ -10,4 +10,17 @@ public record EventParticipationDto(
         AfterPartyApplicationStatus afterPartyApplicationStatus,
         AfterPartyAttendanceStatus afterPartyAttendanceStatus,
         PaymentStatus prePaymentStatus,
-        PaymentStatus postPaymentStatus) {}
+        PaymentStatus postPaymentStatus) {
+
+    public static EventParticipationDto from(EventParticipation eventParticipation) {
+        return new EventParticipationDto(
+                eventParticipation.getId(),
+                eventParticipation.getParticipant(),
+                eventParticipation.getMemberId(),
+                eventParticipation.getMainEventApplicationStatus(),
+                eventParticipation.getAfterPartyApplicationStatus(),
+                eventParticipation.getAfterPartyAttendanceStatus(),
+                eventParticipation.getPrePaymentStatus(),
+                eventParticipation.getPostPaymentStatus());
+    }
+}
