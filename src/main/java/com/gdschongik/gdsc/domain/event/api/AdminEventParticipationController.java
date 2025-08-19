@@ -9,6 +9,7 @@ import com.gdschongik.gdsc.domain.event.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.ParticipantDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
+import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,7 +40,7 @@ public class AdminEventParticipationController {
 
     @Operation(summary = "뒤풀이 신청 정보 조회", description = "뒤풀이 신청 정보를 조회합니다.")
     @GetMapping("/after-party")
-    public ResponseEntity<Page<EventParticipationDto>> getAfterPartyParticipations(
+    public ResponseEntity<AfterPartyAttendanceResponse> getAfterPartyParticipations(
             @RequestParam(name = "event") Long eventId,
             @ParameterObject EventParticipantQueryOption queryOption,
             @ParameterObject Pageable pageable) {
