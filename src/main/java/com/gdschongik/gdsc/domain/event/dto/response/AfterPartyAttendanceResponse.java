@@ -1,6 +1,6 @@
 package com.gdschongik.gdsc.domain.event.dto.response;
 
-import com.gdschongik.gdsc.domain.event.dto.EventParticipationDto;
+import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
