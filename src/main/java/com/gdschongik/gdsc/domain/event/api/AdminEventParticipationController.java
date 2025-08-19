@@ -1,15 +1,12 @@
 package com.gdschongik.gdsc.domain.event.api;
 
 import com.gdschongik.gdsc.domain.event.application.EventParticipationService;
-import com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus;
-import com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus;
-import com.gdschongik.gdsc.domain.event.domain.MainEventApplicationStatus;
-import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
-import com.gdschongik.gdsc.domain.event.dto.EventParticipationDto;
-import com.gdschongik.gdsc.domain.event.dto.ParticipantDto;
+import com.gdschongik.gdsc.domain.event.domain.*;
+import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
+import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +15,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,9 +34,9 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "뒤풀이 신청 정보 조회", description = "뒤풀이 신청 정보를 조회합니다.")
+    @Operation(summary = "뒤풀이 신청자 정보 조회", description = "뒤풀이 신청자들의 신청 정보를 조회합니다.")
     @GetMapping("/after-party")
-    public ResponseEntity<Page<EventParticipationDto>> getAfterPartyParticipations(
+    public ResponseEntity<AfterPartyAttendanceResponse> getAfterPartyAttendances(
             @RequestParam(name = "event") Long eventId,
             @ParameterObject EventParticipantQueryOption queryOption,
             @ParameterObject Pageable pageable) {
@@ -48,7 +44,7 @@ public class AdminEventParticipationController {
         // TODO: 임시 응답 제거 후 서비스 로직 구현
         var exampleContent = List.of(new EventParticipationDto(
                 1L,
-                new ParticipantDto("김홍익", "C123456", "01012345678"),
+                Participant.of("김홍익", "C123456", "01012345678"),
                 1L,
                 MainEventApplicationStatus.APPLIED,
                 AfterPartyApplicationStatus.APPLIED,
@@ -56,7 +52,11 @@ public class AdminEventParticipationController {
                 PaymentStatus.UNPAID,
                 PaymentStatus.UNPAID));
 
-        var exampleResponse = new PageImpl<>(exampleContent, pageable, 1L);
+        var exampleResponse = AfterPartyAttendanceResponse.of(
+                5L, // attendedAfterApplyingCount
+                2L, // notAttendedAfterApplyingCount
+                3L, // onSiteApplicationCount
+                exampleContent);
         return ResponseEntity.ok(exampleResponse);
     }
 
