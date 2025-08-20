@@ -2,7 +2,7 @@ package com.gdschongik.gdsc.domain.event.api;
 
 import com.gdschongik.gdsc.domain.event.application.EventParticipationService;
 import com.gdschongik.gdsc.domain.event.domain.*;
-import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipatableMemberDto;
+import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
@@ -85,10 +85,10 @@ public class AdminEventParticipationController {
 					해당 이벤트에 참여 가능한 멤버를 이름으로 검색합니다.
 					멤버 정보 및 해당 이벤트 기 신청 상태를 반환합니다.
 					이름과 정확히 일치하는 멤버만 검색하며, 동명이인인 경우 여러 건을 반환합니다.""")
-    @GetMapping("/members/participatable/search")
-    public ResponseEntity<List<EventParticipatableMemberDto>> searchParticipatableMembers(
+    @GetMapping("/members/participable/search")
+    public ResponseEntity<List<EventParticipableMemberDto>> searchParticipableMembers(
             @RequestParam(name = "event") Long eventId, @RequestParam(name = "name") String name) {
-        var response = eventParticipationService.searchParticipatableMembers(eventId, name);
+        var response = eventParticipationService.searchParticipableMembers(eventId, name);
         return ResponseEntity.ok(response);
     }
 }
