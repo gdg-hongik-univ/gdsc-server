@@ -1,5 +1,7 @@
 package com.gdschongik.gdsc.domain.event.application;
 
+import static com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus.*;
+import static com.gdschongik.gdsc.domain.member.domain.MemberRole.*;
 import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
@@ -7,17 +9,18 @@ import static org.assertj.core.api.Assertions.*;
 import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus;
-import com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
 import com.gdschongik.gdsc.domain.event.domain.Participant;
 import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.helper.IntegrationTest;
+import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,6 +168,49 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
     }
 
+    @Nested
+    class 뒤풀이_참석_처리할때 {
+        @Test
+        void 신청자의_뒤풀이_참석_상태가_ATTENDED가_된다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createEventParticipation(event, member);
+            AfterPartyAttendRequest request = new AfterPartyAttendRequest(List.of(eventParticipation.getId()));
+
+            Member admin = createMember();
+            admin.assignToAdmin();
+            logoutAndReloginAs(admin.getId(), REGULAR);
+
+            // when
+            eventParticipationService.attendAfterParty(request);
+
+            // then
+            EventParticipation afterPartyAttended = eventParticipationRepository
+                    .findById(eventParticipation.getId())
+                    .get();
+            assertThat(afterPartyAttended.getAfterPartyAttendanceStatus()).isEqualTo(ATTENDED);
+        }
+
+        @Test
+        void 어드민이_아니라면_예외가_발생한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createEventParticipation(event, member);
+            AfterPartyAttendRequest request = new AfterPartyAttendRequest(List.of(eventParticipation.getId()));
+
+            Member admin = createMember();
+            logoutAndReloginAs(admin.getId(), REGULAR);
+
+            // when & then
+            eventParticipationService.attendAfterParty(request);
+            assertThatThrownBy(() -> eventParticipationService.attendAfterParty(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(INVALID_ROLE.getMessage());
+        }
+    }
+
     private Event createEvent() {
         Event event = Event.create(
                 EVENT_NAME,
@@ -193,7 +239,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
                 member,
                 AfterPartyApplicationStatus.NOT_APPLIED,
-                AfterPartyAttendanceStatus.NOT_ATTENDED,
+                NOT_ATTENDED,
                 PaymentStatus.NONE,
                 PaymentStatus.NONE,
                 event);
@@ -204,7 +250,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         EventParticipation eventParticipation = EventParticipation.createOnlineForUnregistered(
                 participant,
                 AfterPartyApplicationStatus.NOT_APPLIED,
-                AfterPartyAttendanceStatus.NOT_ATTENDED,
+                NOT_ATTENDED,
                 PaymentStatus.NONE,
                 PaymentStatus.NONE,
                 event);
