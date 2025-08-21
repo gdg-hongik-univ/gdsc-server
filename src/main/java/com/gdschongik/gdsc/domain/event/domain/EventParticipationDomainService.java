@@ -1,5 +1,6 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
+import static com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.common.vo.Period;
@@ -50,6 +51,51 @@ public class EventParticipationDomainService {
         PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
 
         return EventParticipation.createOnlineForUnregistered(
+                participant,
+                afterPartyApplicationStatus,
+                afterPartyAttendanceStatus,
+                prePaymentStatus,
+                postPaymentStatus,
+                event);
+    }
+
+    /**
+     * 회원이 어드민 수동등록을 통해 참여하는 메서드입니다.
+     * 주로 본행사 현장등록 상황에서 뒤풀이 신청을 위해 사용됩니다. (뒤풀이 신청상태 APPLIED)
+     * 뒤풀이가 없는 행사인 경우에도 히스토리를 남기기 위해 사용됩니다. (뒤풀이 신청상태 NONE)
+     */
+    public EventParticipation applyManualForRegistered(Member member, Event event) {
+        validateMemberWhenOnlyRegularRoleAllowed(event, member);
+
+        // 뒤풀이가 존재하는 경우에만 항상 신청 처리
+        AfterPartyApplicationStatus afterPartyApplicationStatus = event.afterPartyExists() ? APPLIED : NONE;
+
+        AfterPartyAttendanceStatus afterPartyAttendanceStatus = AfterPartyAttendanceStatus.getInitialStatus(event);
+        PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
+        PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
+
+        return EventParticipation.createManualForRegistered(
+                member,
+                afterPartyApplicationStatus,
+                afterPartyAttendanceStatus,
+                prePaymentStatus,
+                postPaymentStatus,
+                event);
+    }
+
+    public EventParticipation applyManualForUnregistered(Participant participant, Event event) {
+        // TODO: Registered과 Unregistered 로직 중복 해결 방법 고민해보기
+
+        validateNotRegularRoleAllowed(event);
+
+        // 뒤풀이가 존재하는 경우에만 항상 신청 처리
+        AfterPartyApplicationStatus afterPartyApplicationStatus = event.afterPartyExists() ? APPLIED : NONE;
+
+        AfterPartyAttendanceStatus afterPartyAttendanceStatus = AfterPartyAttendanceStatus.getInitialStatus(event);
+        PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
+        PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
+
+        return EventParticipation.createManualForUnregistered(
                 participant,
                 afterPartyApplicationStatus,
                 afterPartyAttendanceStatus,
