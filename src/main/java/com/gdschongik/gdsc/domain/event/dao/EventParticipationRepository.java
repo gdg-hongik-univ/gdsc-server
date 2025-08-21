@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface EventParticipationRepository
         extends JpaRepository<EventParticipation, Long>, EventParticipationCustomRepository {
     List<EventParticipation> findAllByEventAndMemberIdIn(Event event, List<Long> memberIds);
+
+    List<EventParticipation> findAllByEventId(Long eventId);
 }
