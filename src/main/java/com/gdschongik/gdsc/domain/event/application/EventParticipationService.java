@@ -6,13 +6,15 @@ import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
+import com.gdschongik.gdsc.domain.event.domain.UsageStatus;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
+import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
+import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
-import com.gdschongik.gdsc.global.exception.ErrorCode;
 import java.util.List;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +56,44 @@ public class EventParticipationService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public AfterPartyAttendanceResponse getAfterPartyAttendances(Long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        validateEventEnabledForAfterParty(event);
+
+        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEventId(eventId);
+
+        long attendedAfterApplyingCount = eventParticipations.stream()
+                .filter(eventParticipation -> eventParticipation
+                                .getAfterPartyApplicationStatus()
+                                .isApplied()
+                        && eventParticipation.getAfterPartyAttendanceStatus().isAttended())
+                .count();
+
+        long notAttendedAfterApplyingCount = eventParticipations.stream()
+                .filter(eventParticipation -> eventParticipation
+                                .getAfterPartyApplicationStatus()
+                                .isApplied()
+                        && eventParticipation.getAfterPartyAttendanceStatus().isNotAttended())
+                .count();
+
+        long onSiteApplicationCount = eventParticipations.stream()
+                .filter(eventParticipation -> eventParticipation
+                                .getAfterPartyApplicationStatus()
+                                .isNotApplied()
+                        && eventParticipation.getAfterPartyAttendanceStatus().isAttended())
+                .count();
+
+        List<EventParticipationDto> eventParticipationDtos =
+                eventParticipations.stream().map(EventParticipationDto::from).toList();
+
+        return AfterPartyAttendanceResponse.of(
+                attendedAfterApplyingCount,
+                notAttendedAfterApplyingCount,
+                onSiteApplicationCount,
+                eventParticipationDtos);
+    }
+
     private static Predicate<Member> isThisMemberAllowedToParticipate(Event event) {
         return switch (event.getRegularRoleOnlyStatus()) {
             case ENABLED -> Member::isRegular;
@@ -64,5 +104,11 @@ public class EventParticipationService {
     private static boolean isNotAppliedToEvent(List<EventParticipation> participations, Member member) {
         return participations.stream()
                 .noneMatch(participation -> participation.getMemberId().equals(member.getId()));
+    }
+
+    private void validateEventEnabledForAfterParty(Event event) {
+        if (event.getAfterPartyStatus() == UsageStatus.DISABLED) {
+            throw new CustomException(EVENT_AFTER_PARTY_DISABLED);
+        }
     }
 }

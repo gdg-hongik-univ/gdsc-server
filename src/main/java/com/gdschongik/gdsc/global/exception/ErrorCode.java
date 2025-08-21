@@ -199,6 +199,7 @@ public enum ErrorCode {
     EVENT_NOT_APPLIABLE_APPLICATION_PERIOD_INVALID(CONFLICT, "이벤트 신청 기간이 아닙니다."),
     EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE(CONFLICT, "뒤풀이가 활성화된 이벤트는 뒤풀이 신청 여부를 NONE으로 설정할 수 없습니다."),
     EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE(CONFLICT, "뒤풀이가 비활성화된 이벤트에 뒤풀이 신청을 할 수 없습니다."),
+    EVENT_AFTER_PARTY_DISABLED(BAD_REQUEST, "뒤풀이가 비활성화된 이벤트입니다."),
     PARTICIPANT_NOT_CREATABLE_INFO_NOT_SATISFIED(
             INTERNAL_SERVER_ERROR, "기본 정보를 입력하지 않은 멤버로 참여자 정보 생성을 시도했습니다. 관리자에게 문의 바랍니다."),
     PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_EXISTENCE_MISMATCH(
