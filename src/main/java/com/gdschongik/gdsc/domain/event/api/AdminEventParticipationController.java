@@ -5,7 +5,7 @@ import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
-import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantsResponse;
+import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,14 +44,14 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "뒤풀이 신청 목록 조회", description = "해당 행사의 뒤풀이 신청자 목록과 결제 관련 통계를 조회합니다.")
+    @Operation(summary = "뒤풀이 신청자 목록 조회", description = "해당 행사의 뒤풀이 신청자 목록과 결제 관련 통계를 조회합니다.")
     @GetMapping("/after-party/applicants")
-    public ResponseEntity<AfterPartyApplicantsResponse> getAfterPartyApplicants(
+    public ResponseEntity<AfterPartyApplicantResponse> getAfterPartyApplicants(
             @RequestParam(name = "event") Long eventId,
             @ParameterObject EventParticipantQueryOption queryOption,
             @ParameterObject Pageable pageable) {
         // TODO: 서비스 로직 구현
-        var response = new AfterPartyApplicantsResponse(null, null);
+        var response = new AfterPartyApplicantResponse(null, null);
         return ResponseEntity.ok(response);
     }
 
