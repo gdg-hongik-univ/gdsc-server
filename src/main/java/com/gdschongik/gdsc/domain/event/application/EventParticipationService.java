@@ -1,5 +1,7 @@
 package com.gdschongik.gdsc.domain.event.application;
 
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+
 import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
@@ -35,9 +37,9 @@ public class EventParticipationService {
         return eventParticipationRepository.findEventApplicants(eventId, queryOption, pageable);
     }
 
+    @Transactional(readOnly = true)
     public List<EventParticipableMemberDto> searchParticipableMembers(Long eventId, String name) {
-        Event event =
-                eventRepository.findById(eventId).orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         List<Member> membersBySameName = memberRepository.findAllByName(name);
 
