@@ -59,7 +59,7 @@ public class EventParticipationDomainService {
     }
 
     /**
-     * 회원이 현장등록을 통해 뒤풀이에 참여 신청하는 메서드입니다.
+     * 회원이 뒤풀이 현장등록을 통해 뒤풀이에 참여 신청하는 메서드입니다.
      */
     public EventParticipation joinOnsiteForRegistered(Member member, Event event) {
         validateMemberWhenOnlyRegularRoleAllowed(event, member);
@@ -71,7 +71,7 @@ public class EventParticipationDomainService {
     }
 
     /**
-     * 비회원이 현장등록을 통해 뒤풀이에 참여 신청하는 메서드입니다.
+     * 비회원이 뒤풀이 현장등록을 통해 뒤풀이에 참여 신청하는 메서드입니다.
      */
     public EventParticipation joinOnsiteForUnregistered(Participant participant, Event event) {
         validateNotRegularRoleAllowed(event);
