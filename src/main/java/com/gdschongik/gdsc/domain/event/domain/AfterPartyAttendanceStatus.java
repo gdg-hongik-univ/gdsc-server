@@ -15,4 +15,16 @@ public enum AfterPartyAttendanceStatus {
         }
         return NONE;
     }
+
+    public boolean isAttended() {
+        return this == ATTENDED;
+    }
+
+    public boolean isNotAttended() {
+        return this == NOT_ATTENDED;
+    }
+
+    public boolean isNone() {
+        return this == NONE;
+    }
 }
