@@ -1,12 +1,11 @@
 package com.gdschongik.gdsc.domain.event.api;
 
 import com.gdschongik.gdsc.domain.event.application.EventParticipationService;
-import com.gdschongik.gdsc.domain.event.domain.*;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
-import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
+import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantsResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,7 +50,8 @@ public class AdminEventParticipationController {
             @RequestParam(name = "event") Long eventId,
             @ParameterObject EventParticipantQueryOption queryOption,
             @ParameterObject Pageable pageable) {
-        var response = eventParticipationService.getAfterPartyApplicants(eventId, queryOption, pageable);
+        // TODO: 서비스 로직 구현
+        var response = new AfterPartyApplicantsResponse(null, null);
         return ResponseEntity.ok(response);
     }
 
