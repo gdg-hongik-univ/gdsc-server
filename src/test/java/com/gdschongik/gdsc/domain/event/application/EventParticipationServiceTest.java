@@ -180,6 +180,7 @@ class EventParticipationServiceTest extends IntegrationTest {
 
             Member admin = createMember();
             admin.assignToAdmin();
+            memberRepository.save(admin);
             logoutAndReloginAs(admin.getId(), REGULAR);
 
             // when
@@ -204,7 +205,6 @@ class EventParticipationServiceTest extends IntegrationTest {
             logoutAndReloginAs(admin.getId(), REGULAR);
 
             // when & then
-            eventParticipationService.attendAfterParty(request);
             assertThatThrownBy(() -> eventParticipationService.attendAfterParty(request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(INVALID_ROLE.getMessage());
