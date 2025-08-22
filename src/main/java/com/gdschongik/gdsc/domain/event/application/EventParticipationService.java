@@ -61,7 +61,7 @@ public class EventParticipationService {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         validateEventEnabledForAfterParty(event);
 
-        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEventId(eventId);
+        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
         long attendedAfterApplyingCount = eventParticipations.stream()
                 .filter(eventParticipation -> eventParticipation

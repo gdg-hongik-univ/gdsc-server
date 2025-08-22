@@ -9,5 +9,5 @@ public interface EventParticipationRepository
         extends JpaRepository<EventParticipation, Long>, EventParticipationCustomRepository {
     List<EventParticipation> findAllByEventAndMemberIdIn(Event event, List<Long> memberIds);
 
-    List<EventParticipation> findAllByEventId(Long eventId);
+    List<EventParticipation> findAllByEvent(Event event);
 }
