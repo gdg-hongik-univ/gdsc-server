@@ -40,6 +40,7 @@ public class EventParticipationService {
         return eventParticipationRepository.findEventApplicants(eventId, queryOption, pageable);
     }
 
+    @Transactional(readOnly = true)
     public List<EventParticipableMemberDto> searchParticipableMembers(Long eventId, String name) {
         Event event =
                 eventRepository.findById(eventId).orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
