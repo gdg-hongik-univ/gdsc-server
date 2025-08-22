@@ -4,7 +4,6 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.common.vo.Period;
 import com.gdschongik.gdsc.domain.member.domain.Member;
-import com.gdschongik.gdsc.domain.member.domain.MemberManageRole;
 import com.gdschongik.gdsc.global.annotation.DomainService;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import java.time.LocalDateTime;
@@ -135,7 +134,7 @@ public class EventParticipationDomainService {
      * 어드민 권한을 검증하는 메서드입니다.
      */
     public void validateAdminPermission(Member currentMember) {
-        if (currentMember.getManageRole() != MemberManageRole.ADMIN) {
+        if (!currentMember.getManageRole().isAdmin()) {
             throw new CustomException(INVALID_ROLE);
         }
     }
