@@ -192,6 +192,7 @@ public enum ErrorCode {
     EXCEL_WORKSHEET_WRITE_FAILED(INTERNAL_SERVER_ERROR, "엑셀 워크시트 작성에 실패했습니다."),
 
     // Event
+    EVENT_NOT_FOUND(NOT_FOUND, "존재하지 않는 이벤트입니다."),
     EVENT_NOT_CREATABLE_PAYMENT_ENABLED(CONFLICT, "뒤풀이 상태가 비활성화된 경우, 선입금 및 후정산 상태도 비활성화 되어야 합니다."),
     EVENT_NOT_CREATABLE_PAYMENTS_BOTH_ENABLED(CONFLICT, "선입금과 후정산은 동시에 활성화될 수 없습니다."),
     EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE(CONFLICT, "정회원이 아닌 회원은 이벤트에 신청할 수 없습니다."),
