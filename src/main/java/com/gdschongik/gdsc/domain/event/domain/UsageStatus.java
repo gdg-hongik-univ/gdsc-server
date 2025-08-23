@@ -17,4 +17,8 @@ public enum UsageStatus {
     public boolean isEnabled() {
         return this == ENABLED;
     }
+
+    public boolean isDisabled() {
+        return this == DISABLED;
+    }
 }

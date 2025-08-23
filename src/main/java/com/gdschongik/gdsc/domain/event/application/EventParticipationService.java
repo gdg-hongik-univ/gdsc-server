@@ -13,7 +13,6 @@ import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
-import com.gdschongik.gdsc.global.util.MemberUtil;
 import java.util.List;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class EventParticipationService {
 
     private final EventRepository eventRepository;
-    private final MemberUtil memberUtil;
     private final EventParticipationDomainService eventParticipationDomainService;
     private final EventParticipationRepository eventParticipationRepository;
     private final MemberRepository memberRepository;
@@ -60,11 +58,13 @@ public class EventParticipationService {
 
     @Transactional
     public void attendAfterParty(AfterPartyAttendRequest request) {
-        Member currentMember = memberUtil.getCurrentMember();
-        eventParticipationDomainService.validateAdminPermission(currentMember);
-
         List<Long> eventParticipationIds = request.eventParticipationIds();
-        eventParticipationRepository.findAllById(eventParticipationIds).forEach(EventParticipation::attendAfterParty);
+        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllById(eventParticipationIds);
+        Event event = eventParticipations.get(0).getEvent();
+
+        eventParticipationDomainService.validateAfterPartyEnabled(event);
+
+        eventParticipations.forEach(EventParticipation::attendAfterParty);
 
         log.info("[EventParticipationService] 뒤풀이 참석 처리: eventParticipationIds={}", eventParticipationIds);
     }

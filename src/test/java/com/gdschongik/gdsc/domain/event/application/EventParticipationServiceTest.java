@@ -1,7 +1,7 @@
 package com.gdschongik.gdsc.domain.event.application;
 
 import static com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus.*;
-import static com.gdschongik.gdsc.domain.member.domain.MemberRole.*;
+import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.*;
 import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
@@ -178,11 +178,6 @@ class EventParticipationServiceTest extends IntegrationTest {
             EventParticipation eventParticipation = createEventParticipation(event, member);
             AfterPartyAttendRequest request = new AfterPartyAttendRequest(List.of(eventParticipation.getId()));
 
-            Member admin = createMember();
-            admin.assignToAdmin();
-            memberRepository.save(admin);
-            logoutAndReloginAs(admin.getId(), REGULAR);
-
             // when
             eventParticipationService.attendAfterParty(request);
 
@@ -194,20 +189,17 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 어드민이_아니라면_예외가_발생한다() {
+        void 뒤풀이가_비활성_상태라면_예외가_발생한다() {
             // given
-            Event event = createEvent();
+            Event event = createAfterPartyDisabledEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createEventParticipation(event, member);
             AfterPartyAttendRequest request = new AfterPartyAttendRequest(List.of(eventParticipation.getId()));
 
-            Member admin = createMember();
-            logoutAndReloginAs(admin.getId(), REGULAR);
-
             // when & then
             assertThatThrownBy(() -> eventParticipationService.attendAfterParty(request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(INVALID_ROLE.getMessage());
+                    .hasMessage(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE.getMessage());
         }
     }
 
@@ -222,6 +214,23 @@ class EventParticipationServiceTest extends IntegrationTest {
                 AFTER_PARTY_STATUS,
                 PRE_PAYMENT_STATUS,
                 POST_PAYMENT_STATUS,
+                RSVP_QUESTION_STATUS,
+                MAIN_EVENT_MAX_APPLICATION_COUNT,
+                AFTER_PARTY_MAX_APPLICATION_COUNT);
+        return eventRepository.save(event);
+    }
+
+    private Event createAfterPartyDisabledEvent() {
+        Event event = Event.create(
+                EVENT_NAME,
+                VENUE,
+                EVENT_START_AT,
+                APPLICATION_DESCRIPTION,
+                EVENT_APPLICATION_PERIOD,
+                REGULAR_ROLE_ONLY_STATUS,
+                DISABLED,
+                DISABLED,
+                DISABLED,
                 RSVP_QUESTION_STATUS,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,
                 AFTER_PARTY_MAX_APPLICATION_COUNT);
