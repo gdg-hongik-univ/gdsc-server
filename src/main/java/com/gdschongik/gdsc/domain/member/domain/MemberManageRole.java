@@ -10,8 +10,4 @@ public enum MemberManageRole {
     NONE("ROLE_NONE");
 
     private final String value;
-
-    public boolean isAdmin() {
-        return this == ADMIN;
-    }
 }
