@@ -199,6 +199,24 @@ class EventParticipationServiceTest extends IntegrationTest {
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PARTICIPATION_NOT_DELETABLE_INVALID_IDS.getMessage());
         }
+
+        @Test
+        void 중복된_ID가_있는_경우_예외가_발생한다() {
+            // given
+            Event event = createEvent();
+            Member member1 = createMember("C000001", "김홍익1");
+            Member member2 = createMember("C000002", "김홍익2");
+
+            createEventParticipation(event, member1);
+            createEventParticipation(event, member2);
+
+            var request = new EventParticipationDeleteRequest(List.of(1L, 1L)); // 중복된 ID
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.deleteEventParticipations(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(PARTICIPATION_NOT_DELETABLE_INVALID_IDS.getMessage());
+        }
     }
 
     private Event createEvent() {
