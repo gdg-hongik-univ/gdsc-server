@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.*;
 import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus;
+import com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
 import com.gdschongik.gdsc.domain.event.domain.Participant;
@@ -259,7 +260,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         EventParticipation eventParticipation = EventParticipation.createOnlineForUnregistered(
                 participant,
                 AfterPartyApplicationStatus.NOT_APPLIED,
-                NOT_ATTENDED,
+                AfterPartyAttendanceStatus.NOT_ATTENDED,
                 PaymentStatus.NONE,
                 PaymentStatus.NONE,
                 event);
