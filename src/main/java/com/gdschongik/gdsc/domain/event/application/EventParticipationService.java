@@ -1,16 +1,18 @@
 package com.gdschongik.gdsc.domain.event.application;
 
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+
 import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
+import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
-import com.gdschongik.gdsc.global.exception.ErrorCode;
 import java.util.List;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +38,7 @@ public class EventParticipationService {
     }
 
     public List<EventParticipableMemberDto> searchParticipableMembers(Long eventId, String name) {
-        Event event =
-                eventRepository.findById(eventId).orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         List<Member> membersBySameName = memberRepository.findAllByName(name);
 
@@ -62,5 +63,17 @@ public class EventParticipationService {
     private static boolean isNotAppliedToEvent(List<EventParticipation> participations, Member member) {
         return participations.stream()
                 .noneMatch(participation -> participation.getMemberId().equals(member.getId()));
+    }
+
+    @Transactional
+    public void deleteEventParticipations(EventParticipationDeleteRequest request) {
+        List<EventParticipation> participations =
+                eventParticipationRepository.findAllById(request.eventParticipationIds());
+
+        if (request.eventParticipationIds().size() != participations.size()) {
+            throw new CustomException(EVENT_PARTICIPATION_NOT_FOUND);
+        }
+
+        eventParticipationRepository.deleteAll(participations);
     }
 }
