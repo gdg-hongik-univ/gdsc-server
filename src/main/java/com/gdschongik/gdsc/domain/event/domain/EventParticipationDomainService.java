@@ -129,4 +129,13 @@ public class EventParticipationDomainService {
             throw new CustomException(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
         }
     }
+
+    /**
+     * 뒤풀이가 활성화된 이벤트인지 검증하는 메서드입니다.
+     */
+    public void validateAfterPartyEnabled(Event event) {
+        if (event.getAfterPartyStatus().isDisabled()) {
+            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE);
+        }
+    }
 }

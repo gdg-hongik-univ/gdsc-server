@@ -4,7 +4,9 @@ import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
+import com.gdschongik.gdsc.domain.event.domain.EventParticipationDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class EventParticipationService {
 
     private final EventRepository eventRepository;
+    private final EventParticipationDomainService eventParticipationDomainService;
     private final EventParticipationRepository eventParticipationRepository;
     private final MemberRepository memberRepository;
 
@@ -35,6 +38,7 @@ public class EventParticipationService {
         return eventParticipationRepository.findEventApplicants(eventId, queryOption, pageable);
     }
 
+    @Transactional(readOnly = true)
     public List<EventParticipableMemberDto> searchParticipableMembers(Long eventId, String name) {
         Event event =
                 eventRepository.findById(eventId).orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
@@ -50,6 +54,19 @@ public class EventParticipationService {
                 .filter(isThisMemberAllowedToParticipate(event))
                 .map(member -> EventParticipableMemberDto.from(member, isNotAppliedToEvent(participations, member)))
                 .toList();
+    }
+
+    @Transactional
+    public void attendAfterParty(AfterPartyAttendRequest request) {
+        List<Long> eventParticipationIds = request.eventParticipationIds();
+        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllById(eventParticipationIds);
+        Event event = eventParticipations.get(0).getEvent();
+
+        eventParticipationDomainService.validateAfterPartyEnabled(event);
+
+        eventParticipations.forEach(EventParticipation::attendAfterParty);
+
+        log.info("[EventParticipationService] 뒤풀이 참석 처리: eventParticipationIds={}", eventParticipationIds);
     }
 
     private static Predicate<Member> isThisMemberAllowedToParticipate(Event event) {
