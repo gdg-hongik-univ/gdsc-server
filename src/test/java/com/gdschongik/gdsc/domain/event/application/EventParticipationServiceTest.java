@@ -249,7 +249,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
                 member,
                 AfterPartyApplicationStatus.NOT_APPLIED,
-                NOT_ATTENDED,
+                AfterPartyAttendanceStatus.NOT_ATTENDED,
                 PaymentStatus.NONE,
                 PaymentStatus.NONE,
                 event);
