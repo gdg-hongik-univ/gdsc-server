@@ -150,4 +150,9 @@ public class EventParticipation extends BaseEntity {
                 .event(event)
                 .build();
     }
+
+    // 뒤풀이 정산 처리
+    public void checkPostPayment() {
+        this.postPaymentStatus = PaymentStatus.PAID;
+    }
 }

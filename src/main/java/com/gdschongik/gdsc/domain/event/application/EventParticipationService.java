@@ -4,7 +4,9 @@ import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
+import com.gdschongik.gdsc.domain.event.domain.EventParticipationDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentCheckRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
@@ -13,6 +15,8 @@ import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
 import java.util.List;
 import java.util.function.Predicate;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,6 +32,7 @@ public class EventParticipationService {
     private final EventRepository eventRepository;
     private final EventParticipationRepository eventParticipationRepository;
     private final MemberRepository memberRepository;
+    private final EventParticipationDomainService eventParticipationDomainService;
 
     @Transactional(readOnly = true)
     public Page<EventApplicantResponse> getEventApplicants(
@@ -50,6 +55,19 @@ public class EventParticipationService {
                 .filter(isThisMemberAllowedToParticipate(event))
                 .map(member -> EventParticipableMemberDto.from(member, isNotAppliedToEvent(participations, member)))
                 .toList();
+    }
+
+    @Transactional
+    public void checkPostPayment(@Valid AfterPartyPostPaymentCheckRequest request) {
+        List<Long> eventParticipationIds = request.eventParticipationIds();
+        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllById(eventParticipationIds);
+        Event event = eventParticipations.get(0).getEvent();
+
+        eventParticipationDomainService.validateAfterPartyEnabled(event);
+
+        eventParticipations.forEach(EventParticipation::checkPostPayment);
+
+        log.info("[EventParticipationService] 뒤풀이 정산 처리: eventParticipationIds={}", eventParticipationIds);
     }
 
     private static Predicate<Member> isThisMemberAllowedToParticipate(Event event) {

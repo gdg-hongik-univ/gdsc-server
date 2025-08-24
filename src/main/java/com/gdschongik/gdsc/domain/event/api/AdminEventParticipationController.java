@@ -5,6 +5,7 @@ import com.gdschongik.gdsc.domain.event.domain.*;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentCheckRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
@@ -78,6 +79,13 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "뒤풀이 정산 확인 처리", description = "뒤풀이 정산을 확인 처리합니다.")
+    @PutMapping("/after-party/post-payment/check")
+    public ResponseEntity<Void> cancelAfterPartyAttendance(@Valid @RequestBody AfterPartyPostPaymentCheckRequest request) {
+        eventParticipationService.checkPostPayment(request);
+        return ResponseEntity.ok().build();
+    }
+
     @Operation(
             summary = "행사 참여 가능 멤버 검색",
             description =
@@ -91,4 +99,6 @@ public class AdminEventParticipationController {
         var response = eventParticipationService.searchParticipableMembers(eventId, name);
         return ResponseEntity.ok(response);
     }
+
+
 }
