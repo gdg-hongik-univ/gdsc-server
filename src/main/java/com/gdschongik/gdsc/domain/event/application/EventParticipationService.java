@@ -69,11 +69,15 @@ public class EventParticipationService {
     public void deleteEventParticipations(EventParticipationDeleteRequest request) {
         List<EventParticipation> participations =
                 eventParticipationRepository.findAllById(request.eventParticipationIds());
-
-        if (request.eventParticipationIds().size() != participations.size()) {
-            throw new CustomException(EVENT_PARTICIPATION_NOT_FOUND);
-        }
+        validateRequestParticipationIds(request.eventParticipationIds(), participations);
 
         eventParticipationRepository.deleteAll(participations);
+    }
+
+    // 요청 ID에 해당하는 참여정보가 존재하지 않거나 중복이 있는지 검증
+    private void validateRequestParticipationIds(List<Long> requestIds, List<EventParticipation> participations) {
+        if (requestIds.size() != participations.size()) {
+            throw new CustomException(EVENT_PARTICIPATION_NOT_FOUND);
+        }
     }
 }
