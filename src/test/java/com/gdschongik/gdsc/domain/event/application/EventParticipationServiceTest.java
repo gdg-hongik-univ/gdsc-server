@@ -1,5 +1,6 @@
 package com.gdschongik.gdsc.domain.event.application;
 
+import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.DISABLED;
 import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
@@ -13,6 +14,7 @@ import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
 import com.gdschongik.gdsc.domain.event.domain.Participant;
 import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentCheckRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.domain.Member;
@@ -25,6 +27,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.List;
 
 class EventParticipationServiceTest extends IntegrationTest {
 
@@ -165,6 +169,41 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
     }
 
+    @Nested
+    class 뒤풀이_정산_처리할_때 {
+        @Test
+        void 신청자의_뒤풀이_정산_상태가_PAID가_된다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createEventParticipation(event, member);
+            AfterPartyPostPaymentCheckRequest request = new AfterPartyPostPaymentCheckRequest(List.of(eventParticipation.getId()));
+
+            // when
+            eventParticipationService.checkPostPayment(request);
+
+            // then
+            EventParticipation afterPartyPostPaid = eventParticipationRepository
+                    .findById(eventParticipation.getId())
+                    .get();
+            assertThat(afterPartyPostPaid.getPostPaymentStatus()).isEqualTo(PaymentStatus.PAID);
+        }
+
+        @Test
+        void 뒤풀이가_비활성화_상태라면_에러가_발생한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createEventParticipation(event, member);
+            AfterPartyPostPaymentCheckRequest request = new AfterPartyPostPaymentCheckRequest(List.of(eventParticipation.getId()));
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.checkPostPayment(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
+        }
+    }
+
     private Event createEvent() {
         Event event = Event.create(
                 EVENT_NAME,
@@ -176,6 +215,23 @@ class EventParticipationServiceTest extends IntegrationTest {
                 AFTER_PARTY_STATUS,
                 PRE_PAYMENT_STATUS,
                 POST_PAYMENT_STATUS,
+                RSVP_QUESTION_STATUS,
+                MAIN_EVENT_MAX_APPLICATION_COUNT,
+                AFTER_PARTY_MAX_APPLICATION_COUNT);
+        return eventRepository.save(event);
+    }
+
+    private Event createAfterPartyDisabledEvent() {
+        Event event = Event.create(
+                EVENT_NAME,
+                VENUE,
+                EVENT_START_AT,
+                APPLICATION_DESCRIPTION,
+                EVENT_APPLICATION_PERIOD,
+                REGULAR_ROLE_ONLY_STATUS,
+                DISABLED,
+                DISABLED,
+                DISABLED,
                 RSVP_QUESTION_STATUS,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,
                 AFTER_PARTY_MAX_APPLICATION_COUNT);
