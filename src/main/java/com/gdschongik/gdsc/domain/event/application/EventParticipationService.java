@@ -77,7 +77,7 @@ public class EventParticipationService {
     // 요청 ID에 해당하는 참여정보가 존재하지 않거나 중복이 있는지 검증
     private void validateRequestParticipationIds(List<Long> requestIds, List<EventParticipation> participations) {
         if (requestIds.size() != participations.size()) {
-            throw new CustomException(EVENT_PARTICIPATION_NOT_FOUND);
+            throw new CustomException(PARTICIPATION_NOT_DELETABLE_INVALID_IDS);
         }
     }
 }
