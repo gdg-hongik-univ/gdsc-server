@@ -4,10 +4,7 @@ import com.gdschongik.gdsc.domain.event.application.EventParticipationService;
 import com.gdschongik.gdsc.domain.event.domain.*;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentCheckRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
-import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.*;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,8 +78,15 @@ public class AdminEventParticipationController {
 
     @Operation(summary = "뒤풀이 정산 확인 처리", description = "뒤풀이 정산을 확인 처리합니다.")
     @PutMapping("/after-party/post-payment/check")
-    public ResponseEntity<Void> cancelAfterPartyAttendance(@Valid @RequestBody AfterPartyPostPaymentCheckRequest request) {
+    public ResponseEntity<Void> checkAfterPartyPostPayment(@Valid @RequestBody AfterPartyPostPaymentCheckRequest request) {
         eventParticipationService.checkPostPayment(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "뒤풀이 정산 확인 취소", description = "뒤풀이 정산 확인을 취소합니다.")
+    @PutMapping("/after-party/post-payment/check")
+    public ResponseEntity<Void> uncheckAfterPartyPostPayment(@Valid @RequestBody AfterPartyPostPaymentUncheckRequest request) {
+        eventParticipationService.uncheckPostPayment(request);
         return ResponseEntity.ok().build();
     }
 

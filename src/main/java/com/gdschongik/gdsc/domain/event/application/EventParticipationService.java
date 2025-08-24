@@ -7,6 +7,7 @@ import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipationDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentCheckRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentUncheckRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
@@ -68,6 +69,19 @@ public class EventParticipationService {
         eventParticipations.forEach(EventParticipation::checkPostPayment);
 
         log.info("[EventParticipationService] 뒤풀이 정산 처리: eventParticipationIds={}", eventParticipationIds);
+    }
+
+    @Transactional
+    public void uncheckPostPayment(@Valid AfterPartyPostPaymentUncheckRequest request) {
+        List<Long> eventParticipationIds = request.eventParticipationIds();
+        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllById(eventParticipationIds);
+        Event event = eventParticipations.get(0).getEvent();
+
+        eventParticipationDomainService.validateAfterPartyEnabled(event);
+
+        eventParticipations.forEach(EventParticipation::uncheckPostPayment);
+
+        log.info("[EventParticipationService] 뒤풀이 정산 취소 처리: eventParticipationIds={}", eventParticipationIds);
     }
 
     private static Predicate<Member> isThisMemberAllowedToParticipate(Event event) {
