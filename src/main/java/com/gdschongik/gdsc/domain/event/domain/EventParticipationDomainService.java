@@ -91,7 +91,7 @@ public class EventParticipationDomainService {
     private void validateEventApplicationPeriod(Event event, LocalDateTime now) {
         Period applicationPeriod = event.getApplicationPeriod();
         if (!applicationPeriod.isWithin(now)) {
-            throw new CustomException(EVENT_NOT_APPLIABLE_APPLICATION_PERIOD_INVALID);
+            throw new CustomException(EVENT_NOT_APPLICABLE_APPLICATION_PERIOD_INVALID);
         }
     }
 
@@ -102,11 +102,11 @@ public class EventParticipationDomainService {
     private void validateAfterPartyApplicationStatus(
             Event event, AfterPartyApplicationStatus afterPartyApplicationStatus) {
         if (event.getAfterPartyStatus().isEnabled() && afterPartyApplicationStatus.isNone()) {
-            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE);
+            throw new CustomException(EVENT_NOT_APPLICABLE_AFTER_PARTY_NONE);
         }
 
         if (!event.getAfterPartyStatus().isEnabled() && !afterPartyApplicationStatus.isNone()) {
-            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE);
+            throw new CustomException(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED);
         }
     }
 
@@ -116,7 +116,7 @@ public class EventParticipationDomainService {
      */
     private void validateMemberWhenOnlyRegularRoleAllowed(Event event, Member member) {
         if (event.getRegularRoleOnlyStatus().isEnabled() && !member.isRegular()) {
-            throw new CustomException(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
+            throw new CustomException(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE);
         }
     }
 
@@ -126,7 +126,7 @@ public class EventParticipationDomainService {
      */
     private void validateNotRegularRoleAllowed(Event event) {
         if (event.getRegularRoleOnlyStatus().isEnabled()) {
-            throw new CustomException(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE);
+            throw new CustomException(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE);
         }
     }
 
@@ -135,7 +135,7 @@ public class EventParticipationDomainService {
      */
     public void validateAfterPartyEnabled(Event event) {
         if (event.getAfterPartyStatus().isDisabled()) {
-            throw new CustomException(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE);
+            throw new CustomException(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED);
         }
     }
 }
