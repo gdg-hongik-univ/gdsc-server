@@ -14,10 +14,12 @@ import com.gdschongik.gdsc.domain.event.domain.Participant;
 import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
+import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.helper.IntegrationTest;
+import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,6 +164,40 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThat(unregisteredResponse.participantRole()).isEqualTo(ParticipantRole.NON_MEMBER);
             assertThat(unregisteredResponse.discordUsername()).isNull();
             assertThat(unregisteredResponse.nickname()).isNull();
+        }
+    }
+
+    @Nested
+    class 이벤트_신청_정보_삭제시 {
+
+        @Test
+        void 성공한다() {
+            // given
+            Event event = createEvent();
+            Member member1 = createMember("C000001", "김홍익1");
+            createEventParticipation(event, member1);
+
+            var request = new EventParticipationDeleteRequest(List.of(1L));
+            // when
+            eventParticipationService.deleteEventParticipations(request);
+
+            // then
+            assertThat(eventParticipationRepository.findAll()).isEmpty(); // 신청 정보가 삭제된다
+        }
+
+        @Test
+        void 존재하지_않는_신청자_ID가_포함된_경우_예외가_발생한다() {
+            // given
+            Event event = createEvent();
+            Member member1 = createMember("C000001", "김홍익1");
+            createEventParticipation(event, member1);
+
+            var request = new EventParticipationDeleteRequest(List.of(1L, 999L)); // 999L은 존재하지 않는 ID
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.deleteEventParticipations(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EVENT_PARTICIPATION_NOT_FOUND.getMessage());
         }
     }
 
