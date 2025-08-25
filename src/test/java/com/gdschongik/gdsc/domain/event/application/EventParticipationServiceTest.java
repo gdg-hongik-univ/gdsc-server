@@ -21,6 +21,7 @@ import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.helper.IntegrationTest;
+import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.List;
 
 class EventParticipationServiceTest extends IntegrationTest {
 
@@ -178,7 +177,8 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createEventParticipation(event, member);
-            AfterPartyPostPaymentCheckRequest request = new AfterPartyPostPaymentCheckRequest(List.of(eventParticipation.getId()));
+            AfterPartyPostPaymentCheckRequest request =
+                    new AfterPartyPostPaymentCheckRequest(List.of(eventParticipation.getId()));
 
             // when
             eventParticipationService.checkPostPayment(request);
@@ -196,7 +196,8 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createAfterPartyDisabledEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createEventParticipation(event, member);
-            AfterPartyPostPaymentCheckRequest request = new AfterPartyPostPaymentCheckRequest(List.of(eventParticipation.getId()));
+            AfterPartyPostPaymentCheckRequest request =
+                    new AfterPartyPostPaymentCheckRequest(List.of(eventParticipation.getId()));
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.checkPostPayment(request))
@@ -213,7 +214,8 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createPostPaidEventParticipation(event, member);
-            AfterPartyPostPaymentUncheckRequest request = new AfterPartyPostPaymentUncheckRequest(List.of(eventParticipation.getId()));
+            AfterPartyPostPaymentUncheckRequest request =
+                    new AfterPartyPostPaymentUncheckRequest(List.of(eventParticipation.getId()));
 
             // when
             eventParticipationService.uncheckPostPayment(request);
@@ -231,7 +233,8 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createAfterPartyDisabledEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createEventParticipation(event, member);
-            AfterPartyPostPaymentUncheckRequest request = new AfterPartyPostPaymentUncheckRequest(List.of(eventParticipation.getId()));
+            AfterPartyPostPaymentUncheckRequest request =
+                    new AfterPartyPostPaymentUncheckRequest(List.of(eventParticipation.getId()));
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.uncheckPostPayment(request))

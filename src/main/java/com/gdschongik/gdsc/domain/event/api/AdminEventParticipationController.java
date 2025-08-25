@@ -78,14 +78,16 @@ public class AdminEventParticipationController {
 
     @Operation(summary = "뒤풀이 정산 확인 처리", description = "뒤풀이 정산을 확인 처리합니다.")
     @PutMapping("/after-party/post-payment/check")
-    public ResponseEntity<Void> checkAfterPartyPostPayment(@Valid @RequestBody AfterPartyPostPaymentCheckRequest request) {
+    public ResponseEntity<Void> checkAfterPartyPostPayment(
+            @Valid @RequestBody AfterPartyPostPaymentCheckRequest request) {
         eventParticipationService.checkPostPayment(request);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "뒤풀이 정산 확인 취소", description = "뒤풀이 정산 확인을 취소합니다.")
     @PutMapping("/after-party/post-payment/uncheck")
-    public ResponseEntity<Void> uncheckAfterPartyPostPayment(@Valid @RequestBody AfterPartyPostPaymentUncheckRequest request) {
+    public ResponseEntity<Void> uncheckAfterPartyPostPayment(
+            @Valid @RequestBody AfterPartyPostPaymentUncheckRequest request) {
         eventParticipationService.uncheckPostPayment(request);
         return ResponseEntity.ok().build();
     }
@@ -103,6 +105,4 @@ public class AdminEventParticipationController {
         var response = eventParticipationService.searchParticipableMembers(eventId, name);
         return ResponseEntity.ok(response);
     }
-
-
 }
