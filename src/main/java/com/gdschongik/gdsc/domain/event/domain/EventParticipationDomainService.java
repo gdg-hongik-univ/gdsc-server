@@ -135,15 +135,6 @@ public class EventParticipationDomainService {
      */
     public void validateAfterPartyEnabled(Event event) {
         if (event.getAfterPartyStatus().isDisabled()) {
-            throw new CustomException(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED);
-        }
-    }
-
-    /**
-     * 뒤풀이가 활성화된 이벤트인지 검증하는 메서드입니다.
-     */
-    public void validateAfterPartyEnabled(Event event) {
-        if (event.getAfterPartyStatus().isDisabled()) {
             throw new CustomException(EVENT_AFTER_PARTY_DISABLED);
         }
     }
