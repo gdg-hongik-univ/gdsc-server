@@ -84,7 +84,7 @@ public class AdminEventParticipationController {
     }
 
     @Operation(summary = "뒤풀이 정산 확인 취소", description = "뒤풀이 정산 확인을 취소합니다.")
-    @PutMapping("/after-party/post-payment/check")
+    @PutMapping("/after-party/post-payment/uncheck")
     public ResponseEntity<Void> uncheckAfterPartyPostPayment(@Valid @RequestBody AfterPartyPostPaymentUncheckRequest request) {
         eventParticipationService.uncheckPostPayment(request);
         return ResponseEntity.ok().build();
