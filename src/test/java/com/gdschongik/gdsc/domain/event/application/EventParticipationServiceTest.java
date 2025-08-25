@@ -1,8 +1,8 @@
 package com.gdschongik.gdsc.domain.event.application;
 
-import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.DISABLED;
 import static com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus.*;
 import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.*;
+import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.DISABLED;
 import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
@@ -16,9 +16,9 @@ import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
 import com.gdschongik.gdsc.domain.event.domain.Participant;
 import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentCheckRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentUncheckRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
@@ -204,7 +204,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             // when & then
             assertThatThrownBy(() -> eventParticipationService.attendAfterParty(request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
+                    .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
         }
     }
 
