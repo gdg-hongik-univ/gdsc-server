@@ -22,4 +22,16 @@ public enum PaymentStatus {
         }
         return NONE;
     }
+
+    public boolean isPaid() {
+        return this == PAID;
+    }
+
+    public boolean isUnpaid() {
+        return this == UNPAID;
+    }
+
+    public boolean isNone() {
+        return this == NONE;
+    }
 }

@@ -1,6 +1,8 @@
 package com.gdschongik.gdsc.domain.event.application;
 
 import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.DISABLED;
+import static com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus.*;
+import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.*;
 import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
@@ -16,7 +18,9 @@ import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentCheckRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentUncheckRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
+import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
@@ -166,6 +170,93 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThat(unregisteredResponse.participantRole()).isEqualTo(ParticipantRole.NON_MEMBER);
             assertThat(unregisteredResponse.discordUsername()).isNull();
             assertThat(unregisteredResponse.nickname()).isNull();
+        }
+    }
+
+    @Nested
+    class 뒤풀이_참석_처리할때 {
+        @Test
+        void 신청자의_뒤풀이_참석_상태가_ATTENDED가_된다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createEventParticipation(event, member);
+            AfterPartyAttendRequest request = new AfterPartyAttendRequest(List.of(eventParticipation.getId()));
+
+            // when
+            eventParticipationService.attendAfterParty(request);
+
+            // then
+            EventParticipation afterPartyAttended = eventParticipationRepository
+                    .findById(eventParticipation.getId())
+                    .get();
+            assertThat(afterPartyAttended.getAfterPartyAttendanceStatus()).isEqualTo(ATTENDED);
+        }
+
+        @Test
+        void 뒤풀이가_비활성_상태라면_예외가_발생한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createEventParticipation(event, member);
+            AfterPartyAttendRequest request = new AfterPartyAttendRequest(List.of(eventParticipation.getId()));
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.attendAfterParty(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
+        }
+    }
+
+    @Nested
+    class 이벤트_신청_정보_삭제시 {
+
+        @Test
+        void 성공한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember("C00000", "김홍익");
+            createEventParticipation(event, member);
+
+            var request = new EventParticipationDeleteRequest(List.of(1L));
+            // when
+            eventParticipationService.deleteEventParticipations(request);
+
+            // then
+            assertThat(eventParticipationRepository.findAll()).isEmpty(); // 신청 정보가 삭제된다
+        }
+
+        @Test
+        void 존재하지_않는_신청자_ID가_포함된_경우_예외가_발생한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember("C000001", "김홍익");
+            createEventParticipation(event, member);
+
+            var request = new EventParticipationDeleteRequest(List.of(1L, 999L)); // 999L은 존재하지 않는 ID
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.deleteEventParticipations(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(PARTICIPATION_NOT_DELETABLE_INVALID_IDS.getMessage());
+        }
+
+        @Test
+        void 중복된_ID가_있는_경우_예외가_발생한다() {
+            // given
+            Event event = createEvent();
+            Member member1 = createMember("C000001", "김홍익1");
+            Member member2 = createMember("C000002", "김홍익2");
+
+            createEventParticipation(event, member1);
+            createEventParticipation(event, member2);
+
+            var request = new EventParticipationDeleteRequest(List.of(1L, 1L)); // 중복된 ID
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.deleteEventParticipations(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(PARTICIPATION_NOT_DELETABLE_INVALID_IDS.getMessage());
         }
     }
 
