@@ -10,8 +10,6 @@ import com.gdschongik.gdsc.domain.event.domain.EventParticipationDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentCheckRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentUncheckRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
@@ -19,7 +17,6 @@ import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
-import jakarta.validation.Valid;
 import java.util.List;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -114,29 +111,31 @@ public class EventParticipationService {
     }
 
     @Transactional
-    public void checkPostPayment(@Valid AfterPartyPostPaymentCheckRequest request) {
-        List<Long> eventParticipationIds = request.eventParticipationIds();
-        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllById(eventParticipationIds);
-        Event event = eventParticipations.get(0).getEvent();
+    public void checkPostPayment(Long eventParticipationId) {
+        EventParticipation eventParticipation = eventParticipationRepository
+                .findById(eventParticipationId)
+                .orElseThrow(() -> new CustomException(PARTICIPATION_NOT_FOUND));
+        Event event = eventParticipation.getEvent();
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
 
-        eventParticipations.forEach(EventParticipation::checkPostPayment);
+        eventParticipation.checkPostPayment();
 
-        log.info("[EventParticipationService] 뒤풀이 정산 처리: eventParticipationIds={}", eventParticipationIds);
+        log.info("[EventParticipationService] 뒤풀이 정산 완료 처리: eventParticipationId={}", eventParticipationId);
     }
 
     @Transactional
-    public void uncheckPostPayment(@Valid AfterPartyPostPaymentUncheckRequest request) {
-        List<Long> eventParticipationIds = request.eventParticipationIds();
-        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllById(eventParticipationIds);
-        Event event = eventParticipations.get(0).getEvent();
+    public void uncheckPostPayment(Long eventParticipationId) {
+        EventParticipation eventParticipation = eventParticipationRepository
+                .findById(eventParticipationId)
+                .orElseThrow(() -> new CustomException(PARTICIPATION_NOT_FOUND));
+        Event event = eventParticipation.getEvent();
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
 
-        eventParticipations.forEach(EventParticipation::uncheckPostPayment);
+        eventParticipation.uncheckPostPayment();
 
-        log.info("[EventParticipationService] 뒤풀이 정산 취소 처리: eventParticipationIds={}", eventParticipationIds);
+        log.info("[EventParticipationService] 뒤풀이 정산 취소 처리: eventParticipationId={}", eventParticipationId);
     }
 
     private static Predicate<Member> isThisMemberAllowedToParticipate(Event event) {
