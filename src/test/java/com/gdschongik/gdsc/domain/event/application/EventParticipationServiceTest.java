@@ -231,10 +231,10 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createAfterPartyDisabledEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createEventParticipation(event, member);
-            AfterPartyPostPaymentCheckRequest request = new AfterPartyPostPaymentCheckRequest(List.of(eventParticipation.getId()));
+            AfterPartyPostPaymentUncheckRequest request = new AfterPartyPostPaymentUncheckRequest(List.of(eventParticipation.getId()));
 
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.checkPostPayment(request))
+            assertThatThrownBy(() -> eventParticipationService.uncheckPostPayment(request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
         }
