@@ -135,6 +135,9 @@ public class EventParticipationService {
         validateRequestParticipationIds(request.eventParticipationIds(), participations);
 
         eventParticipationRepository.deleteAll(participations);
+        log.info(
+                "[EventParticipationService] 행사 참여 정보 삭제 완료: eventParticipationIds={}",
+                request.eventParticipationIds());
     }
 
     // 요청 ID에 해당하는 참여정보가 존재하지 않거나 중복이 있는지 검증
