@@ -1,12 +1,11 @@
 package com.gdschongik.gdsc.domain.event.api;
 
 import com.gdschongik.gdsc.domain.event.application.EventParticipationService;
-import com.gdschongik.gdsc.domain.event.domain.*;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
-import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
+import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,32 +34,6 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "뒤풀이 신청자 정보 조회", description = "뒤풀이 신청자들의 신청 정보를 조회합니다.")
-    @GetMapping("/after-party")
-    public ResponseEntity<AfterPartyAttendanceResponse> getAfterPartyAttendances(
-            @RequestParam(name = "event") Long eventId,
-            @ParameterObject EventParticipantQueryOption queryOption,
-            @ParameterObject Pageable pageable) {
-
-        // TODO: 임시 응답 제거 후 서비스 로직 구현
-        var exampleContent = List.of(new EventParticipationDto(
-                1L,
-                Participant.of("김홍익", "C123456", "01012345678"),
-                1L,
-                MainEventApplicationStatus.APPLIED,
-                AfterPartyApplicationStatus.APPLIED,
-                AfterPartyAttendanceStatus.NOT_ATTENDED,
-                PaymentStatus.UNPAID,
-                PaymentStatus.UNPAID));
-
-        var exampleResponse = AfterPartyAttendanceResponse.of(
-                5L, // attendedAfterApplyingCount
-                2L, // notAttendedAfterApplyingCount
-                3L, // onSiteApplicationCount
-                exampleContent);
-        return ResponseEntity.ok(exampleResponse);
-    }
-
     @Operation(summary = "행사 신청자 목록 조회", description = "해당 행사의 신청자 목록을 조회합니다")
     @GetMapping("/applicants")
     public ResponseEntity<Page<EventApplicantResponse>> getEventApplicants(
@@ -71,10 +44,29 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "뒤풀이 신청자 목록 조회", description = "해당 행사의 뒤풀이 신청자 목록과 결제 관련 통계를 조회합니다.")
+    @GetMapping("/after-party/applicants")
+    public ResponseEntity<AfterPartyApplicantResponse> getAfterPartyApplicants(
+            @RequestParam(name = "event") Long eventId,
+            @ParameterObject EventParticipantQueryOption queryOption,
+            @ParameterObject Pageable pageable) {
+        // TODO: 서비스 로직 구현
+        var response = new AfterPartyApplicantResponse(null, null);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "뒤풀이 참석자 조회", description = "해당 행사의 뒤풀이 신청자 목록과 참석자 통계를 조회합니다. 현장 출석체크 용으로 사용합니다.")
+    @GetMapping("/after-party/attendances")
+    public ResponseEntity<AfterPartyAttendanceResponse> getAfterPartyAttendances(
+            @RequestParam(name = "event") Long eventId) {
+        var response = eventParticipationService.getAfterPartyAttendances(eventId);
+        return ResponseEntity.ok(response);
+    }
+
     @Operation(summary = "뒤풀이 참석 처리", description = "뒤풀이에 참석 처리합니다.")
     @PutMapping("/after-party/attend")
     public ResponseEntity<Void> attendAfterParty(@Valid @RequestBody AfterPartyAttendRequest request) {
-        // TODO: 서비스 로직 구현
+        eventParticipationService.attendAfterParty(request);
         return ResponseEntity.ok().build();
     }
 

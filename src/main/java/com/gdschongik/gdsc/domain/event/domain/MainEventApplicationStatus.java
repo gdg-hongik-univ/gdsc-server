@@ -8,4 +8,12 @@ public enum MainEventApplicationStatus {
     NOT_APPLIED,
     APPLIED,
     ;
+
+    public boolean isApplied() {
+        return this == APPLIED;
+    }
+
+    public boolean isNotApplied() {
+        return this == NOT_APPLIED;
+    }
 }
