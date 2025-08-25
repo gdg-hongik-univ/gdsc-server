@@ -7,6 +7,8 @@ import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventUnregisteredApplyRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -90,5 +92,19 @@ public class AdminEventParticipationController {
             @RequestParam(name = "event") Long eventId, @RequestParam(name = "name") String name) {
         var response = eventParticipationService.searchParticipableMembers(eventId, name);
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "행사 수동 신청 (회원)", description = "관리자가 회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다.")
+    @PostMapping("/apply/manual/registered")
+    public ResponseEntity<Void> applyManualForRegistered(@Valid @RequestBody EventRegisteredApplyRequest request) {
+        eventParticipationService.applyManualForRegistered(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "행사 수동 신청 (비회원)", description = "관리자가 비회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다.")
+    @PostMapping("/apply/manual/unregistered")
+    public ResponseEntity<Void> applyManualForUnregistered(@Valid @RequestBody EventUnregisteredApplyRequest request) {
+        eventParticipationService.applyManualForUnregistered(request);
+        return ResponseEntity.ok().build();
     }
 }
