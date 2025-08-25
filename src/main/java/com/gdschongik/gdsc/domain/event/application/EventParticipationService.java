@@ -107,7 +107,7 @@ public class EventParticipationService {
     }
 
     private void validateEventEnabledForAfterParty(Event event) {
-        if (event.getAfterPartyStatus() == UsageStatus.DISABLED) {
+        if (event.getAfterPartyStatus().isDisabled()) {
             throw new CustomException(PARTICIPATION_NOT_READABLE_AFTER_PARTY_DISABLED);
         }
     }
