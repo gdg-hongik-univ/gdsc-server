@@ -407,7 +407,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createAfterPartyDisabledEvent();
 
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.checkAllPostPayment(event.getId()))
+            assertThatThrownBy(() -> eventParticipationService.uncheckAllPostPayment(event.getId()))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
         }
@@ -415,7 +415,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         @Test
         void 존재하지_않는_이벤트라면_에러가_발생한다() {
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.checkAllPostPayment(9999L))
+            assertThatThrownBy(() -> eventParticipationService.uncheckAllPostPayment(9999L))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EVENT_NOT_FOUND.getMessage());
         }
