@@ -15,6 +15,7 @@ import com.gdschongik.gdsc.domain.event.domain.Participant;
 import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentCheckRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentUncheckRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.domain.Member;
@@ -204,6 +205,41 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
     }
 
+    @Nested
+    class 뒤풀이_정산_처리_취소할_때 {
+        @Test
+        void 신청자의_뒤풀이_정산_상태가_UNPAID가_된다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createPostPaidEventParticipation(event, member);
+            AfterPartyPostPaymentUncheckRequest request = new AfterPartyPostPaymentUncheckRequest(List.of(eventParticipation.getId()));
+
+            // when
+            eventParticipationService.uncheckPostPayment(request);
+
+            // then
+            EventParticipation afterPartyPostPaid = eventParticipationRepository
+                    .findById(eventParticipation.getId())
+                    .get();
+            assertThat(afterPartyPostPaid.getPostPaymentStatus()).isEqualTo(PaymentStatus.UNPAID);
+        }
+
+        @Test
+        void 뒤풀이가_비활성화_상태라면_에러가_발생한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createEventParticipation(event, member);
+            AfterPartyPostPaymentCheckRequest request = new AfterPartyPostPaymentCheckRequest(List.of(eventParticipation.getId()));
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.checkPostPayment(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
+        }
+    }
+
     private Event createEvent() {
         Event event = Event.create(
                 EVENT_NAME,
@@ -252,6 +288,17 @@ class EventParticipationServiceTest extends IntegrationTest {
                 AfterPartyAttendanceStatus.NOT_ATTENDED,
                 PaymentStatus.NONE,
                 PaymentStatus.NONE,
+                event);
+        return eventParticipationRepository.save(eventParticipation);
+    }
+
+    private EventParticipation createPostPaidEventParticipation(Event event, Member member) {
+        EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
+                member,
+                AfterPartyApplicationStatus.NOT_APPLIED,
+                AfterPartyAttendanceStatus.NOT_ATTENDED,
+                PaymentStatus.NONE,
+                PaymentStatus.PAID,
                 event);
         return eventParticipationRepository.save(eventParticipation);
     }
