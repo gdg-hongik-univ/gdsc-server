@@ -38,7 +38,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForRegistered(member, status, event, invalidDate))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(EVENT_NOT_APPLIABLE_APPLICATION_PERIOD_INVALID.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_APPLICATION_PERIOD_INVALID.getMessage());
         }
 
         @Test
@@ -58,7 +58,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForRegistered(guestMember, status, event, now))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
         }
 
         @Test
@@ -78,7 +78,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForRegistered(member, noneStatus, event, now))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_NONE.getMessage());
         }
 
         @Test
@@ -98,7 +98,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForRegistered(member, appliedStatus, event, now))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
         }
     }
 
@@ -123,7 +123,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, status, event, invalidDate))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(EVENT_NOT_APPLIABLE_APPLICATION_PERIOD_INVALID.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_APPLICATION_PERIOD_INVALID.getMessage());
         }
 
         @Test
@@ -143,7 +143,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, status, event, now))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
         }
 
         @Test
@@ -163,7 +163,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, noneStatus, event, now))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(EVENT_NOT_APPLIABLE_AFTER_PARTY_NONE.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_NONE.getMessage());
         }
 
         @Test
@@ -183,7 +183,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, appliedStatus, event, now))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(EVENT_NOT_APPLIABLE_AFTER_PARTY_NOT_NONE.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
         }
     }
 
@@ -205,7 +205,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.joinOnsiteForRegistered(guestMember, event))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
         }
     }
 
@@ -227,7 +227,7 @@ public class EventParticipationDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> domainService.joinOnsiteForUnregistered(participant, event))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(EVENT_NOT_APPLIABLE_NOT_REGULAR_ROLE.getMessage());
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
         }
     }
 }
