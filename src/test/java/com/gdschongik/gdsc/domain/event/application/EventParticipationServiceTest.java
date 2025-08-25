@@ -299,6 +299,47 @@ class EventParticipationServiceTest extends IntegrationTest {
     }
 
     @Nested
+    class 뒤풀이_전체_정산_처리할_때 {
+        @Test
+        void 모든_신청자의_뒤풀이_정산_상태가_PAID가_된다() {
+            // given
+            Event event = createEvent();
+            Member member1 = createMember("C000001", "김홍익1");
+            Member member2 = createMember("C000002", "김홍익2");
+            createEventParticipation(event, member1);
+            createEventParticipation(event, member2);
+
+            // when
+            eventParticipationService.checkAllPostPayment(event.getId());
+
+            // then
+            List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
+            eventParticipations.forEach(eventParticipation -> {
+                assertThat(eventParticipation.getPostPaymentStatus()).isEqualTo(PaymentStatus.PAID);
+            });
+        }
+
+        @Test
+        void 뒤풀이가_비활성화_상태라면_에러가_발생한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.checkAllPostPayment(event.getId()))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
+        }
+
+        @Test
+        void 존재하지_않는_이벤트라면_에러가_발생한다() {
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.checkAllPostPayment(9999L))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EVENT_NOT_FOUND.getMessage());
+        }
+    }
+
+    @Nested
     class 뒤풀이_정산_처리_취소할_때 {
         @Test
         void 신청자의_뒤풀이_정산_상태가_UNPAID가_된다() {
@@ -336,6 +377,47 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> eventParticipationService.uncheckPostPayment(9999L))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PARTICIPATION_NOT_FOUND.getMessage());
+        }
+    }
+
+    @Nested
+    class 뒤풀이_전체_정산_취소할_때 {
+        @Test
+        void 모든_신청자의_뒤풀이_정산_상태가_UNPAID가_된다() {
+            // given
+            Event event = createEvent();
+            Member member1 = createMember("C000001", "김홍익1");
+            Member member2 = createMember("C000002", "김홍익2");
+            createPostPaidEventParticipation(event, member1);
+            createPostPaidEventParticipation(event, member2);
+
+            // when
+            eventParticipationService.uncheckAllPostPayment(event.getId());
+
+            // then
+            List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
+            eventParticipations.forEach(eventParticipation -> {
+                assertThat(eventParticipation.getPostPaymentStatus()).isEqualTo(PaymentStatus.UNPAID);
+            });
+        }
+
+        @Test
+        void 뒤풀이가_비활성화_상태라면_에러가_발생한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.checkAllPostPayment(event.getId()))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
+        }
+
+        @Test
+        void 존재하지_않는_이벤트라면_에러가_발생한다() {
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.checkAllPostPayment(9999L))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EVENT_NOT_FOUND.getMessage());
         }
     }
 
