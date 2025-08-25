@@ -11,6 +11,7 @@ import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
+import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
@@ -124,6 +125,25 @@ public class EventParticipationService {
     private void validateEventEnabledForAfterParty(Event event) {
         if (event.getAfterPartyStatus().isDisabled()) {
             throw new CustomException(PARTICIPATION_NOT_READABLE_AFTER_PARTY_DISABLED);
+        }
+    }
+
+    @Transactional
+    public void deleteEventParticipations(EventParticipationDeleteRequest request) {
+        List<EventParticipation> participations =
+                eventParticipationRepository.findAllById(request.eventParticipationIds());
+        validateRequestParticipationIds(request.eventParticipationIds(), participations);
+
+        eventParticipationRepository.deleteAll(participations);
+        log.info(
+                "[EventParticipationService] 행사 참여 정보 삭제 완료: eventParticipationIds={}",
+                request.eventParticipationIds());
+    }
+
+    // 요청 ID에 해당하는 참여정보가 존재하지 않거나 중복이 있는지 검증
+    private void validateRequestParticipationIds(List<Long> requestIds, List<EventParticipation> participations) {
+        if (requestIds.size() != participations.size()) {
+            throw new CustomException(PARTICIPATION_NOT_DELETABLE_INVALID_IDS);
         }
     }
 }

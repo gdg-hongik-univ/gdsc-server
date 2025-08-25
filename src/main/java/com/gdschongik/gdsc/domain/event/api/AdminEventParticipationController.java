@@ -30,7 +30,7 @@ public class AdminEventParticipationController {
     @Operation(summary = "행사 신청 정보 삭제", description = "행사 신청 정보를 삭제합니다.")
     @DeleteMapping
     public ResponseEntity<Void> deleteEventParticipations(@Valid @RequestBody EventParticipationDeleteRequest request) {
-        // TODO: 서비스 로직 구현
+        eventParticipationService.deleteEventParticipations(request);
         return ResponseEntity.ok().build();
     }
 
