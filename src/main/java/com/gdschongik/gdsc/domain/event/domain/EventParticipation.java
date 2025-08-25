@@ -150,4 +150,9 @@ public class EventParticipation extends BaseEntity {
                 .event(event)
                 .build();
     }
+
+    // 뒤풀이 참석 처리
+    public void attendAfterParty() {
+        this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.ATTENDED;
+    }
 }
