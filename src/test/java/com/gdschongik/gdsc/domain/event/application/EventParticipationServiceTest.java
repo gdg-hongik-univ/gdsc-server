@@ -1,7 +1,6 @@
 package com.gdschongik.gdsc.domain.event.application;
 
 import static com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus.*;
-import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.*;
 import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.DISABLED;
 import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
@@ -17,8 +16,6 @@ import com.gdschongik.gdsc.domain.event.domain.Participant;
 import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentCheckRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyPostPaymentUncheckRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
@@ -268,11 +265,9 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createEventParticipation(event, member);
-            AfterPartyPostPaymentCheckRequest request =
-                    new AfterPartyPostPaymentCheckRequest(List.of(eventParticipation.getId()));
 
             // when
-            eventParticipationService.checkPostPayment(request);
+            eventParticipationService.checkPostPayment(eventParticipation.getId());
 
             // then
             EventParticipation afterPartyPostPaid = eventParticipationRepository
@@ -287,13 +282,19 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createAfterPartyDisabledEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createEventParticipation(event, member);
-            AfterPartyPostPaymentCheckRequest request =
-                    new AfterPartyPostPaymentCheckRequest(List.of(eventParticipation.getId()));
 
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.checkPostPayment(request))
+            assertThatThrownBy(() -> eventParticipationService.checkPostPayment(eventParticipation.getId()))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
+        }
+
+        @Test
+        void 존재하지_않는_참여정보라면_에러가_발생한다() {
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.checkPostPayment(9999L))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(PARTICIPATION_NOT_FOUND.getMessage());
         }
     }
 
@@ -305,11 +306,9 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createPostPaidEventParticipation(event, member);
-            AfterPartyPostPaymentUncheckRequest request =
-                    new AfterPartyPostPaymentUncheckRequest(List.of(eventParticipation.getId()));
 
             // when
-            eventParticipationService.uncheckPostPayment(request);
+            eventParticipationService.uncheckPostPayment(eventParticipation.getId());
 
             // then
             EventParticipation afterPartyPostPaid = eventParticipationRepository
@@ -324,13 +323,19 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createAfterPartyDisabledEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createEventParticipation(event, member);
-            AfterPartyPostPaymentUncheckRequest request =
-                    new AfterPartyPostPaymentUncheckRequest(List.of(eventParticipation.getId()));
 
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.uncheckPostPayment(request))
+            assertThatThrownBy(() -> eventParticipationService.uncheckPostPayment(eventParticipation.getId()))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
+        }
+
+        @Test
+        void 존재하지_않는_참여정보라면_에러가_발생한다() {
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.uncheckPostPayment(9999L))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(PARTICIPATION_NOT_FOUND.getMessage());
         }
     }
 
