@@ -77,10 +77,24 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "뒤풀이 정산 전체 확인 처리", description = "뒤풀이 정산을 전체 확인 처리합니다.")
+    @PutMapping("/after-party/post-payment/check-all")
+    public ResponseEntity<Void> checkAllAfterPartyPostPayment(@RequestParam Long eventId) {
+        eventParticipationService.checkAllPostPayment(eventId);
+        return ResponseEntity.ok().build();
+    }
+
     @Operation(summary = "뒤풀이 정산 확인 취소", description = "뒤풀이 정산 확인을 취소합니다.")
     @PutMapping("/{eventParticipationId}/after-party/post-payment/uncheck")
     public ResponseEntity<Void> uncheckAfterPartyPostPayment(@PathVariable Long eventParticipationId) {
         eventParticipationService.uncheckPostPayment(eventParticipationId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "뒤풀이 정산 전체 확인 취소", description = "뒤풀이 정산 확인을 전체 취소합니다.")
+    @PutMapping("/after-party/post-payment/uncheck-all")
+    public ResponseEntity<Void> uncheckAllAfterPartyPostPayment(@RequestParam Long eventId) {
+        eventParticipationService.uncheckAllPostPayment(eventId);
         return ResponseEntity.ok().build();
     }
 
