@@ -212,7 +212,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         void 성공한다() {
             // given
             Event event = createEvent();
-            Member member = createMember("C00000", "김홍익");
+            Member member = createMember("C000001", "김홍익");
             createEventParticipation(event, member);
 
             var request = new EventParticipationDeleteRequest(List.of(1L));
