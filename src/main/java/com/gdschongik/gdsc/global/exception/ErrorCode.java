@@ -203,6 +203,9 @@ public enum ErrorCode {
     PARTICIPATION_NOT_DELETABLE_INVALID_IDS(BAD_REQUEST, "존재하지 않거나 중복된 참여 정보 ID가 포함되어 있습니다."),
     PARTICIPANT_NOT_CREATABLE_INFO_NOT_SATISFIED(
             INTERNAL_SERVER_ERROR, "기본 정보를 입력하지 않은 멤버로 참여자 정보 생성을 시도했습니다. 관리자에게 문의 바랍니다."),
+    PARTICIPANT_NOT_CREATABLE_FIELD_NOT_NULL(BAD_REQUEST, "참여자 정보의 이름, 학번, 전화번호는 null이 될 수 없습니다."),
+    PARTICIPANT_NOT_CREATABLE_STUDENT_ID_INVALID(BAD_REQUEST, "참여자 정보의 학번 형식이 올바르지 않습니다."),
+    PARTICIPANT_NOT_CREATABLE_PHONE_INVALID(BAD_REQUEST, "참여자 정보의 전화번호 형식이 올바르지 않습니다."),
     PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_EXISTENCE_MISMATCH(
             INTERNAL_SERVER_ERROR, "이벤트 참여정보의 멤버 ID와 멤버 인자는 둘 다 null이거나 not null이어야 합니다."),
     PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_ID_MISMATCH(INTERNAL_SERVER_ERROR, "이벤트 참여정보의 멤버 ID와 인자의 멤버 ID가 일치하지 않습니다."),
