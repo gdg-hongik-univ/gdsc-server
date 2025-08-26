@@ -127,9 +127,8 @@ public class EventParticipationService {
 
     @Transactional
     public void applyManualForRegistered(EventRegisteredApplyRequest request) {
-        Event event = eventRepository
-                .findById(request.eventId())
-                .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
+        Event event =
+                eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         Member member = memberRepository
                 .findById(request.memberId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
@@ -145,9 +144,8 @@ public class EventParticipationService {
 
     @Transactional
     public void applyManualForUnregistered(EventUnregisteredApplyRequest request) {
-        Event event = eventRepository
-                .findById(request.eventId())
-                .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
+        Event event =
+                eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         EventParticipation participation =
                 eventParticipationDomainService.applyManualForUnregistered(request.participant(), event);
