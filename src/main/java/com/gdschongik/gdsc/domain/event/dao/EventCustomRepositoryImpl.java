@@ -29,15 +29,7 @@ public class EventCustomRepositoryImpl implements EventCustomRepository {
     }
 
     private OrderSpecifier<?>[] getOrderSpecifiers(Sort sort) {
-        Sort.Order order = sort.getOrderFor("createdAt");
-
-        if (order != null) {
-            return order.isAscending()
-                    ? new OrderSpecifier<?>[] {event.createdAt.asc(), event.id.asc()}
-                    : new OrderSpecifier<?>[] {event.createdAt.desc(), event.id.desc()};
-        }
-
-        order = sort.getOrderFor("name");
+        Sort.Order order = sort.getOrderFor("name");
 
         if (order != null) {
             return order.isAscending()
