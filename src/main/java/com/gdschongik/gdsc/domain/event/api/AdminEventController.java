@@ -21,7 +21,7 @@ public class AdminEventController {
 
     private final EventService eventService;
 
-    @Operation(summary = "행사 목록 조회", description = "행사 목록을 조회합니다.")
+    @Operation(summary = "행사 목록 조회", description = "행사 목록을 조회합니다. 정렬 조건 없이 조회시 최신순으로 정렬됩니다.")
     @GetMapping
     public ResponseEntity<List<EventResponse>> getEvents(@ParameterObject Sort sort) {
         var response = eventService.getEvents(sort);
