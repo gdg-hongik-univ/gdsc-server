@@ -28,6 +28,7 @@ public class EventService {
         events.forEach(event -> {
             long count = eventParticipationRepository.countByEvent(event);
             response.add(new EventResponse(event, count));
+            long countByEvent = eventParticipationRepository.countByEvent(event);
         });
 
         return new PageImpl<>(response, pageable, events.getTotalElements());
