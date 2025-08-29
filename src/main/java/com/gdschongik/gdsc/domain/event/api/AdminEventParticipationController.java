@@ -3,6 +3,7 @@ package com.gdschongik.gdsc.domain.event.api;
 import com.gdschongik.gdsc.domain.event.application.EventParticipationService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantResponse;
@@ -70,31 +71,10 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "뒤풀이 정산 확인 처리", description = "뒤풀이 정산을 확인 처리합니다.")
-    @PutMapping("/{eventParticipationId}/after-party/post-payment/check")
-    public ResponseEntity<Void> checkAfterPartyPostPayment(@PathVariable Long eventParticipationId) {
-        eventParticipationService.checkPostPayment(eventParticipationId);
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "뒤풀이 정산 전체 확인 처리", description = "뒤풀이 정산을 전체 확인 처리합니다.")
-    @PutMapping("/after-party/post-payment/check-all")
-    public ResponseEntity<Void> checkAllAfterPartyPostPayment(@RequestParam Long eventId) {
-        eventParticipationService.checkAllPostPayment(eventId);
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "뒤풀이 정산 확인 취소", description = "뒤풀이 정산 확인을 취소합니다.")
-    @PutMapping("/{eventParticipationId}/after-party/post-payment/uncheck")
-    public ResponseEntity<Void> uncheckAfterPartyPostPayment(@PathVariable Long eventParticipationId) {
-        eventParticipationService.uncheckPostPayment(eventParticipationId);
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "뒤풀이 정산 전체 확인 취소", description = "뒤풀이 정산 확인을 전체 취소합니다.")
-    @PutMapping("/after-party/post-payment/uncheck-all")
-    public ResponseEntity<Void> uncheckAllAfterPartyPostPayment(@RequestParam Long eventId) {
-        eventParticipationService.uncheckAllPostPayment(eventId);
+    @Operation(summary = "뒤풀이 참석 및 정산 상태 변경", description = "뒤풀이 참석 및 정산 현황을 수정합니다.")
+    @PutMapping("/after-party/status")
+    public ResponseEntity<Void> updateAfterPartyStatus(@Valid @RequestBody AfterPartyStatusUpdateRequest request) {
+        eventParticipationService.checkPostPayment(request);
         return ResponseEntity.ok().build();
     }
 

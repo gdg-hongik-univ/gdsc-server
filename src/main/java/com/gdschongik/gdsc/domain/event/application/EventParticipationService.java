@@ -10,6 +10,7 @@ import com.gdschongik.gdsc.domain.event.domain.EventParticipationDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
@@ -111,17 +112,8 @@ public class EventParticipationService {
     }
 
     @Transactional
-    public void checkPostPayment(Long eventParticipationId) {
-        EventParticipation eventParticipation = eventParticipationRepository
-                .findById(eventParticipationId)
-                .orElseThrow(() -> new CustomException(PARTICIPATION_NOT_FOUND));
-        Event event = eventParticipation.getEvent();
-
-        eventParticipationDomainService.validateAfterPartyEnabled(event);
-
-        eventParticipation.checkPostPayment();
-
-        log.info("[EventParticipationService] 뒤풀이 정산 완료 처리: eventParticipationId={}", eventParticipationId);
+    public void checkPostPayment(AfterPartyStatusUpdateRequest request) {
+        log.info("[EventParticipationService] 뒤풀이 정산, 참석 현황 수정 : eventParticipationIds={}", List.of());
     }
 
     @Transactional
