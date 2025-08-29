@@ -147,46 +147,6 @@ public class EventParticipationService {
         log.info("[EventParticipationService] 뒤풀이 정산, 참석 현황 수정 : eventId={}, eventParticipationIds={}", event.getId(), eventParticipationIds);
     }
 
-    @Transactional
-    public void checkAllPostPayment(Long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
-
-        eventParticipationDomainService.validateAfterPartyEnabled(event);
-
-        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
-
-        eventParticipations.forEach(EventParticipation::checkPostPayment);
-
-        log.info("[EventParticipationService] 뒤풀이 정산 전체 완료 처리: eventId={}", eventId);
-    }
-
-    @Transactional
-    public void uncheckPostPayment(Long eventParticipationId) {
-        EventParticipation eventParticipation = eventParticipationRepository
-                .findById(eventParticipationId)
-                .orElseThrow(() -> new CustomException(PARTICIPATION_NOT_FOUND));
-        Event event = eventParticipation.getEvent();
-
-        eventParticipationDomainService.validateAfterPartyEnabled(event);
-
-        eventParticipation.uncheckPostPayment();
-
-        log.info("[EventParticipationService] 뒤풀이 정산 취소 처리: eventParticipationId={}", eventParticipationId);
-    }
-
-    @Transactional
-    public void uncheckAllPostPayment(Long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
-
-        eventParticipationDomainService.validateAfterPartyEnabled(event);
-
-        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
-
-        eventParticipations.forEach(EventParticipation::uncheckPostPayment);
-
-        log.info("[EventParticipationService] 뒤풀이 정산 전체 취소 처리: eventId={}", eventId);
-    }
-
     private static Predicate<Member> isThisMemberAllowedToParticipate(Event event) {
         return switch (event.getRegularRoleOnlyStatus()) {
             case ENABLED -> Member::isRegular;
