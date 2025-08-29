@@ -26,7 +26,7 @@ public class EventService {
 
         List<EventResponse> response = new ArrayList<>();
         events.forEach(event -> {
-            long count = eventParticipationRepository.countAllByEvent(event);
+            long count = eventParticipationRepository.countByEvent(event);
             response.add(new EventResponse(event, count));
         });
 

@@ -11,5 +11,5 @@ public interface EventParticipationRepository
 
     List<EventParticipation> findAllByEvent(Event event);
 
-    long countAllByEvent(Event event);
+    long countByEvent(Event event);
 }
