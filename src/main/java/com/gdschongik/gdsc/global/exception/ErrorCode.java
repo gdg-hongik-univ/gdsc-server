@@ -202,7 +202,7 @@ public enum ErrorCode {
     EVENT_AFTER_PARTY_DISABLED(CONFLICT, "뒤풀이가 비활성화된 이벤트입니다."),
     PARTICIPATION_NOT_FOUND(NOT_FOUND, "존재하지 않는 이벤트 참여정보입니다."),
     PARTICIPATION_NOT_READABLE_AFTER_PARTY_DISABLED(CONFLICT, "뒤풀이가 비활성화된 이벤트의 참여정보는 조회할 수 없습니다."),
-    PARTICIPATION_NOT_DELETABLE_INVALID_IDS(BAD_REQUEST, "존재하지 않거나 중복된 참여 정보 ID가 포함되어 있습니다."),
+    PARTICIPATION_CONTAINS_INVALID_IDS(BAD_REQUEST, "존재하지 않거나 중복된 참여 정보 ID가 포함되어 있습니다."),
     PARTICIPANT_NOT_CREATABLE_INFO_NOT_SATISFIED(
             INTERNAL_SERVER_ERROR, "기본 정보를 입력하지 않은 멤버로 참여자 정보 생성을 시도했습니다. 관리자에게 문의 바랍니다."),
     PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_EXISTENCE_MISMATCH(

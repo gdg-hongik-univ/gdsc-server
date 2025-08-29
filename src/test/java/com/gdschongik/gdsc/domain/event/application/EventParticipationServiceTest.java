@@ -235,7 +235,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             // when & then
             assertThatThrownBy(() -> eventParticipationService.deleteEventParticipations(request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(PARTICIPATION_NOT_DELETABLE_INVALID_IDS.getMessage());
+                    .hasMessage(PARTICIPATION_CONTAINS_INVALID_IDS.getMessage());
         }
 
         @Test
@@ -253,7 +253,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             // when & then
             assertThatThrownBy(() -> eventParticipationService.deleteEventParticipations(request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(PARTICIPATION_NOT_DELETABLE_INVALID_IDS.getMessage());
+                    .hasMessage(PARTICIPATION_CONTAINS_INVALID_IDS.getMessage());
         }
     }
 

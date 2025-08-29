@@ -7,6 +7,7 @@ import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipationDomainService;
+import com.gdschongik.gdsc.domain.event.dto.dto.AfterPartyStatusDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
@@ -19,7 +20,11 @@ import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -113,7 +118,33 @@ public class EventParticipationService {
 
     @Transactional
     public void checkPostPayment(AfterPartyStatusUpdateRequest request) {
-        log.info("[EventParticipationService] 뒤풀이 정산, 참석 현황 수정 : eventParticipationIds={}", List.of());
+        Event event = eventRepository.findById(request.eventId())
+                        .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
+        eventParticipationDomainService.validateAfterPartyEnabled(event);
+
+        // TODO : NONE 업데이트 방지를 위한 검증 추가
+        List<Long> eventParticipationIds = request.afterPartyStatusList().stream()
+                .map(AfterPartyStatusDto::eventParticipationId)
+                .toList();
+        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEventAndIdIn(event, eventParticipationIds);
+
+        validateRequestParticipationIds(eventParticipationIds, eventParticipations);
+
+        Map<Long, EventParticipation> eventParticipationMap = eventParticipations.stream().collect(
+                Collectors.toMap(EventParticipation::getId, Function.identity())
+        );
+
+        for (AfterPartyStatusDto dto : request.afterPartyStatusList()) {
+            EventParticipation eventParticipation = eventParticipationMap.get(dto.eventParticipationId());
+            eventParticipation.updateStatus(
+                    dto.prePaymentStatus(),
+                    dto.afterPartyAttendanceStatus(),
+                    dto.postPaymentStatus()
+            );
+        }
+
+        log.info("[EventParticipationService] 뒤풀이 정산, 참석 현황 수정 : eventId={}, eventParticipationIds={}", event.getId(), eventParticipationIds);
     }
 
     @Transactional
@@ -189,7 +220,7 @@ public class EventParticipationService {
     // 요청 ID에 해당하는 참여정보가 존재하지 않거나 중복이 있는지 검증
     private void validateRequestParticipationIds(List<Long> requestIds, List<EventParticipation> participations) {
         if (requestIds.size() != participations.size()) {
-            throw new CustomException(PARTICIPATION_NOT_DELETABLE_INVALID_IDS);
+            throw new CustomException(PARTICIPATION_CONTAINS_INVALID_IDS);
         }
     }
 }
