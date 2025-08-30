@@ -122,7 +122,6 @@ public class EventParticipationService {
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
 
-        // TODO : NONE 업데이트 방지를 위한 검증 추가
         List<Long> eventParticipationIds = request.afterPartyStatusList().stream()
                 .map(AfterPartyStatusDto::eventParticipationId)
                 .toList();
@@ -136,10 +135,8 @@ public class EventParticipationService {
 
         for (AfterPartyStatusDto dto : request.afterPartyStatusList()) {
             EventParticipation eventParticipation = eventParticipationMap.get(dto.eventParticipationId());
-            System.out.println(eventParticipation.getAfterPartyAttendanceStatus());
             eventParticipation.updateStatus(
                     dto.afterPartyAttendanceStatus(), dto.prePaymentStatus(), dto.postPaymentStatus());
-            System.out.println(eventParticipation.getAfterPartyAttendanceStatus());
         }
 
         log.info(
