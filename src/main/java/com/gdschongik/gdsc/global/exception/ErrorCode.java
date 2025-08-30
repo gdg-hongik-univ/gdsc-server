@@ -201,7 +201,7 @@ public enum ErrorCode {
     EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED(CONFLICT, "뒤풀이가 비활성화된 이벤트에 뒤풀이 신청을 할 수 없습니다."),
     EVENT_NOT_APPLICABLE_MEMBER_INFO_NOT_SATISFIED(CONFLICT, "기본 회원정보 작성이 완료되지 않은 회원은 이벤트에 신청할 수 없습니다."),
     EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED(CONFLICT, "기본 회원정보가 작성된 회원의 학번으로는 비회원 신청을 할 수 없습니다."),
-    PARTICIPATION_NOT_READABLE_AFTER_PARTY_DISABLED(CONFLICT, "뒤풀이가 비활성화된 이벤트의 참여정보는 조회할 수 없습니다."),
+    PARTICIPATION_NOT_READABLE_AFTER_PARTY_DISABLED(BAD_REQUEST, "뒤풀이가 비활성화된 이벤트의 참여정보는 조회할 수 없습니다."),
     PARTICIPATION_NOT_DELETABLE_INVALID_IDS(BAD_REQUEST, "존재하지 않거나 중복된 참여 정보 ID가 포함되어 있습니다."),
     PARTICIPANT_NOT_CREATABLE_INFO_NOT_SATISFIED(
             INTERNAL_SERVER_ERROR, "기본 정보를 입력하지 않은 멤버로 참여자 정보 생성을 시도했습니다. 관리자에게 문의 바랍니다."),

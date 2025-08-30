@@ -14,6 +14,7 @@ import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredApplyRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUnregisteredApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
@@ -43,6 +44,14 @@ public class EventParticipationService {
     public Page<EventApplicantResponse> getEventApplicants(
             Long eventId, EventParticipantQueryOption queryOption, Pageable pageable) {
         return eventParticipationRepository.findEventApplicants(eventId, queryOption, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public AfterPartyApplicantResponse getAfterPartyApplicants(
+            Long eventId, EventParticipantQueryOption queryOption, Pageable pageable) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        validateEventEnabledForAfterParty(event);
+        return eventParticipationRepository.findAfterPartyApplicants(eventId, queryOption, pageable);
     }
 
     @Transactional(readOnly = true)
