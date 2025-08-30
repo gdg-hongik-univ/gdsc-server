@@ -4,8 +4,6 @@ import com.gdschongik.gdsc.domain.common.vo.Period;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import java.time.LocalDateTime;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 public record EventResponse(EventDto event, Long totalAttendeesCount, EventStatus eventStatus) {
 
@@ -15,8 +13,6 @@ public record EventResponse(EventDto event, Long totalAttendeesCount, EventStatu
         return new EventResponse(eventDto, totalAttendeesCount, eventStatus);
     }
 
-    @Getter
-    @RequiredArgsConstructor
     public enum EventStatus {
         BEFORE_APPLICATION,
         APPLICATION_OPEN,
