@@ -132,6 +132,34 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 이름_오름차순으로_정렬된다() {
+            // given
+            Event event = createEvent();
+
+            Member member1 = createMember("C000001", "김홍익1");
+            Member member2 = createMember("C000002", "김홍익2");
+            Member member3 = createMember("C000003", "김홍익3");
+
+            // (3, 1, 2) 순서로 생성
+            EventParticipation participation3 = createEventParticipation(event, member3);
+            EventParticipation participation1 = createEventParticipation(event, member1);
+            EventParticipation participation2 = createEventParticipation(event, member2);
+
+            EventParticipantQueryOption queryOption = new EventParticipantQueryOption(null, null, null);
+            PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("name").ascending());
+
+            // when
+            Page<EventApplicantResponse> result =
+                    eventParticipationService.getEventApplicants(event.getId(), queryOption, pageRequest);
+
+            // then - 이름 오름차순으로 조회되는지 확인
+            assertThat(result.getContent())
+                    .hasSize(3)
+                    .extracting(EventApplicantResponse::eventParticipationId)
+                    .containsExactly(participation1.getId(), participation2.getId(), participation3.getId());
+        }
+
+        @Test
         void 지원하지_않는_정렬_조건이면_예외가_발생한다() {
             // given
             Event event = createEvent();
