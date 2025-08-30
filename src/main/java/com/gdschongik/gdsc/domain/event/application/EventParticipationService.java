@@ -156,8 +156,11 @@ public class EventParticipationService {
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
-        EventParticipation participation =
-                eventParticipationDomainService.applyManualForUnregistered(request.participant(), event);
+        boolean infoStatusSatisfiedMemberExists = memberRepository.existsInfoStatusSatisfiedMemberByStudentId(
+                request.participant().getStudentId());
+
+        EventParticipation participation = eventParticipationDomainService.applyManualForUnregistered(
+                request.participant(), event, infoStatusSatisfiedMemberExists);
         eventParticipationRepository.save(participation);
 
         log.info(

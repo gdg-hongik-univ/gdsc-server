@@ -20,4 +20,6 @@ public interface MemberCustomRepository {
     List<Member> findAllByDiscordStatus(RequirementStatus discordStatus);
 
     List<Member> findAllAdvanceFailedMembers(@NonNull Semester semester);
+
+    boolean existsInfoStatusSatisfiedMemberByStudentId(String studentId);
 }

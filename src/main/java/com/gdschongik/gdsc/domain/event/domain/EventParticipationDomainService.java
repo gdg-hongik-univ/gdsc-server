@@ -19,6 +19,7 @@ public class EventParticipationDomainService {
             Member member, AfterPartyApplicationStatus afterPartyApplicationStatus, Event event, LocalDateTime now) {
         validateEventApplicationPeriod(event, now);
         validateMemberWhenOnlyRegularRoleAllowed(event, member);
+        validateMemberBasicInfoSatisfied(member);
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
 
         AfterPartyAttendanceStatus afterPartyAttendanceStatus = AfterPartyAttendanceStatus.getInitialStatus(event);
@@ -41,9 +42,11 @@ public class EventParticipationDomainService {
             Participant participant,
             AfterPartyApplicationStatus afterPartyApplicationStatus,
             Event event,
-            LocalDateTime now) {
+            LocalDateTime now,
+            boolean infoStatusSatisfiedMemberExists) {
         validateEventApplicationPeriod(event, now);
         validateNotRegularRoleAllowed(event);
+        validateMemberInfoForUnregistered(infoStatusSatisfiedMemberExists);
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
 
         AfterPartyAttendanceStatus afterPartyAttendanceStatus = AfterPartyAttendanceStatus.getInitialStatus(event);
@@ -65,8 +68,8 @@ public class EventParticipationDomainService {
      * 뒤풀이가 없는 행사인 경우에도 히스토리를 남기기 위해 사용됩니다. (뒤풀이 신청상태 NONE)
      */
     public EventParticipation applyManualForRegistered(Member member, Event event) {
-        // TODO: 기본회원정보 작성 여부에 대한 검증 추가
         validateMemberWhenOnlyRegularRoleAllowed(event, member);
+        validateMemberBasicInfoSatisfied(member);
 
         // 뒤풀이가 존재하는 경우에만 항상 신청 처리
         AfterPartyApplicationStatus afterPartyApplicationStatus = event.afterPartyExists() ? APPLIED : NONE;
@@ -84,11 +87,10 @@ public class EventParticipationDomainService {
                 event);
     }
 
-    public EventParticipation applyManualForUnregistered(Participant participant, Event event) {
-        // TODO: Registered과 Unregistered 로직 중복 해결 방법 고민해보기
-        // TODO: memberExistsAndBasicInfoNotSatisfied 불린 값 받아서 검증하기 (모든 Unregistered 로직에 적용 필요)
-
+    public EventParticipation applyManualForUnregistered(
+            Participant participant, Event event, boolean infoStatusSatisfiedMemberExists) {
         validateNotRegularRoleAllowed(event);
+        validateMemberInfoForUnregistered(infoStatusSatisfiedMemberExists);
 
         // 뒤풀이가 존재하는 경우에만 항상 신청 처리
         AfterPartyApplicationStatus afterPartyApplicationStatus = event.afterPartyExists() ? APPLIED : NONE;
@@ -121,8 +123,10 @@ public class EventParticipationDomainService {
     /**
      * 비회원이 뒤풀이 현장등록을 통해 뒤풀이에 확정 참여하는 메서드입니다.
      */
-    public EventParticipation joinOnsiteForUnregistered(Participant participant, Event event) {
+    public EventParticipation joinOnsiteForUnregistered(
+            Participant participant, Event event, boolean infoStatusSatisfiedMemberExists) {
         validateNotRegularRoleAllowed(event);
+        validateMemberInfoForUnregistered(infoStatusSatisfiedMemberExists);
 
         PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
         PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
@@ -184,6 +188,29 @@ public class EventParticipationDomainService {
     public void validateAfterPartyEnabled(Event event) {
         if (event.getAfterPartyStatus().isDisabled()) {
             throw new CustomException(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED);
+        }
+    }
+
+    /**
+     * 회원의 기본 정보가 작성되었는지 검증하는 메서드입니다.
+     * 회원 신청 시 기본 정보 작성이 완료되어야 합니다.
+     * ForRegistered 메서드들에서 사용됩니다.
+     */
+    private void validateMemberBasicInfoSatisfied(Member member) {
+        if (!member.getAssociateRequirement().isInfoSatisfied()) {
+            throw new CustomException(EVENT_NOT_APPLICABLE_MEMBER_INFO_NOT_SATISFIED);
+        }
+    }
+
+    /**
+     * 비회원 신청 시 해당 학번으로 가입된 회원의 기본 정보 작성 여부를 검증하는 메서드입니다.
+     * 비회원 신청 시에는 해당 학번으로 가입된 회원이 존재하지 않거나,
+     * 존재하더라도 기본 정보가 작성되지 않아야 합니다.
+     * ForUnregistered 메서드들에서 사용됩니다.
+     */
+    private void validateMemberInfoForUnregistered(boolean infoStatusSatisfiedMemberExists) {
+        if (infoStatusSatisfiedMemberExists) {
+            throw new CustomException(EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED);
         }
     }
 }

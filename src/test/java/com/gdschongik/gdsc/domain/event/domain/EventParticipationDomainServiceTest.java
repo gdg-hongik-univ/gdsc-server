@@ -100,6 +100,26 @@ public class EventParticipationDomainServiceTest {
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
         }
+
+        @Test
+        void 기본_정보가_작성되지_않은_회원이_신청하면_실패한다() {
+            // given
+            Member guestMember = fixtureHelper.createGuestMember(1L); // 기본 정보 미작성
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    REGULAR_ROLE_ONLY_STATUS,
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS,
+                    RSVP_QUESTION_STATUS);
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
+
+            // when & then
+            assertThatThrownBy(() -> domainService.applyEventForRegistered(guestMember, status, event, now))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_MEMBER_INFO_NOT_SATISFIED.getMessage());
+        }
     }
 
     @Nested
@@ -121,7 +141,8 @@ public class EventParticipationDomainServiceTest {
             LocalDateTime invalidDate = LocalDateTime.of(2025, 4, 1, 0, 0);
 
             // when & then
-            assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, status, event, invalidDate))
+            assertThatThrownBy(() ->
+                            domainService.applyEventForUnregistered(participant, status, event, invalidDate, false))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_APPLICATION_PERIOD_INVALID.getMessage());
         }
@@ -141,7 +162,7 @@ public class EventParticipationDomainServiceTest {
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
-            assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, status, event, now))
+            assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, status, event, now, false))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
         }
@@ -161,7 +182,8 @@ public class EventParticipationDomainServiceTest {
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
-            assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, noneStatus, event, now))
+            assertThatThrownBy(
+                            () -> domainService.applyEventForUnregistered(participant, noneStatus, event, now, false))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_NONE.getMessage());
         }
@@ -181,9 +203,33 @@ public class EventParticipationDomainServiceTest {
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
-            assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, appliedStatus, event, now))
+            assertThatThrownBy(() ->
+                            domainService.applyEventForUnregistered(participant, appliedStatus, event, now, false))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
+        }
+
+        @Test
+        void 기본_정보가_작성된_학번으로_신청하면_실패한다() {
+            // given
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    REGULAR_ROLE_ONLY_STATUS,
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS,
+                    RSVP_QUESTION_STATUS);
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
+
+            boolean infoStatusSatisfiedMemberExists = true; // 기본정보가 작성된 회원이 존재함
+
+            // when & then
+            assertThatThrownBy(() -> domainService.applyEventForUnregistered(
+                            participant, status, event, now, infoStatusSatisfiedMemberExists))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED.getMessage());
         }
     }
 
@@ -225,7 +271,7 @@ public class EventParticipationDomainServiceTest {
                     RSVP_QUESTION_STATUS);
 
             // when & then
-            assertThatThrownBy(() -> domainService.joinOnsiteForUnregistered(participant, event))
+            assertThatThrownBy(() -> domainService.joinOnsiteForUnregistered(participant, event, false))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
         }
@@ -291,6 +337,24 @@ public class EventParticipationDomainServiceTest {
             assertThat(participation.getAfterPartyApplicationStatus()).isEqualTo(AfterPartyApplicationStatus.NONE);
             assertThat(participation.getMainEventApplicationStatus()).isEqualTo(MainEventApplicationStatus.NOT_APPLIED);
         }
+
+        @Test
+        void 기본_정보가_작성되지_않은_회원이_신청하면_실패한다() {
+            // given
+            Member guestMember = fixtureHelper.createGuestMember(1L); // 기본 정보 미작성
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    REGULAR_ROLE_ONLY_STATUS,
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS,
+                    RSVP_QUESTION_STATUS);
+
+            // when & then
+            assertThatThrownBy(() -> domainService.applyManualForRegistered(guestMember, event))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_MEMBER_INFO_NOT_SATISFIED.getMessage());
+        }
     }
 
     @Nested
@@ -309,7 +373,7 @@ public class EventParticipationDomainServiceTest {
                     RSVP_QUESTION_STATUS);
 
             // when & then
-            assertThatThrownBy(() -> domainService.applyManualForUnregistered(participant, event))
+            assertThatThrownBy(() -> domainService.applyManualForUnregistered(participant, event, false))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
         }
@@ -328,7 +392,7 @@ public class EventParticipationDomainServiceTest {
 
             // when
             EventParticipation participation =
-                    domainService.applyManualForUnregistered(participant, eventWithAfterParty);
+                    domainService.applyManualForUnregistered(participant, eventWithAfterParty, false);
 
             // then
             assertThat(participation.getAfterPartyApplicationStatus()).isEqualTo(AfterPartyApplicationStatus.APPLIED);
@@ -349,11 +413,32 @@ public class EventParticipationDomainServiceTest {
 
             // when
             EventParticipation participation =
-                    domainService.applyManualForUnregistered(participant, eventWithoutAfterParty);
+                    domainService.applyManualForUnregistered(participant, eventWithoutAfterParty, false);
 
             // then
             assertThat(participation.getAfterPartyApplicationStatus()).isEqualTo(AfterPartyApplicationStatus.NONE);
             assertThat(participation.getMainEventApplicationStatus()).isEqualTo(MainEventApplicationStatus.NOT_APPLIED);
+        }
+
+        @Test
+        void 기본_정보가_작성된_학번으로_신청하면_실패한다() {
+            // given
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    REGULAR_ROLE_ONLY_STATUS,
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS,
+                    RSVP_QUESTION_STATUS);
+
+            boolean infoStatusSatisfiedMemberExists = true; // 기본정보가 작성된 회원이 존재함
+
+            // when & then
+            assertThatThrownBy(() -> domainService.applyManualForUnregistered(
+                            participant, event, infoStatusSatisfiedMemberExists))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED.getMessage());
         }
     }
 }
