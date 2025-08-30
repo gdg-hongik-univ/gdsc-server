@@ -142,7 +142,7 @@ public class EventParticipationDomainServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                            domainService.applyEventForUnregistered(participant, status, event, invalidDate, true))
+                            domainService.applyEventForUnregistered(participant, status, event, invalidDate, false))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_APPLICATION_PERIOD_INVALID.getMessage());
         }
@@ -162,7 +162,7 @@ public class EventParticipationDomainServiceTest {
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
-            assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, status, event, now, true))
+            assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, status, event, now, false))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
         }
@@ -182,7 +182,8 @@ public class EventParticipationDomainServiceTest {
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
-            assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, noneStatus, event, now, true))
+            assertThatThrownBy(
+                            () -> domainService.applyEventForUnregistered(participant, noneStatus, event, now, false))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_NONE.getMessage());
         }
@@ -202,8 +203,8 @@ public class EventParticipationDomainServiceTest {
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
-            assertThatThrownBy(
-                            () -> domainService.applyEventForUnregistered(participant, appliedStatus, event, now, true))
+            assertThatThrownBy(() ->
+                            domainService.applyEventForUnregistered(participant, appliedStatus, event, now, false))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
         }
@@ -222,8 +223,11 @@ public class EventParticipationDomainServiceTest {
                     RSVP_QUESTION_STATUS);
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
+            boolean infoStatusSatisfiedMemberExists = true; // 기본정보가 작성된 회원이 존재함
+
             // when & then
-            assertThatThrownBy(() -> domainService.applyEventForUnregistered(participant, status, event, now, true))
+            assertThatThrownBy(() -> domainService.applyEventForUnregistered(
+                            participant, status, event, now, infoStatusSatisfiedMemberExists))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED.getMessage());
         }
@@ -267,7 +271,7 @@ public class EventParticipationDomainServiceTest {
                     RSVP_QUESTION_STATUS);
 
             // when & then
-            assertThatThrownBy(() -> domainService.joinOnsiteForUnregistered(participant, event, true))
+            assertThatThrownBy(() -> domainService.joinOnsiteForUnregistered(participant, event, false))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
         }
@@ -369,7 +373,7 @@ public class EventParticipationDomainServiceTest {
                     RSVP_QUESTION_STATUS);
 
             // when & then
-            assertThatThrownBy(() -> domainService.applyManualForUnregistered(participant, event, true))
+            assertThatThrownBy(() -> domainService.applyManualForUnregistered(participant, event, false))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
         }
@@ -388,7 +392,7 @@ public class EventParticipationDomainServiceTest {
 
             // when
             EventParticipation participation =
-                    domainService.applyManualForUnregistered(participant, eventWithAfterParty, true);
+                    domainService.applyManualForUnregistered(participant, eventWithAfterParty, false);
 
             // then
             assertThat(participation.getAfterPartyApplicationStatus()).isEqualTo(AfterPartyApplicationStatus.APPLIED);
@@ -409,7 +413,7 @@ public class EventParticipationDomainServiceTest {
 
             // when
             EventParticipation participation =
-                    domainService.applyManualForUnregistered(participant, eventWithoutAfterParty, true);
+                    domainService.applyManualForUnregistered(participant, eventWithoutAfterParty, false);
 
             // then
             assertThat(participation.getAfterPartyApplicationStatus()).isEqualTo(AfterPartyApplicationStatus.NONE);
@@ -428,8 +432,11 @@ public class EventParticipationDomainServiceTest {
                     POST_PAYMENT_STATUS,
                     RSVP_QUESTION_STATUS);
 
+            boolean infoStatusSatisfiedMemberExists = true; // 기본정보가 작성된 회원이 존재함
+
             // when & then
-            assertThatThrownBy(() -> domainService.applyManualForUnregistered(participant, event, true))
+            assertThatThrownBy(() -> domainService.applyManualForUnregistered(
+                            participant, event, infoStatusSatisfiedMemberExists))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED.getMessage());
         }
