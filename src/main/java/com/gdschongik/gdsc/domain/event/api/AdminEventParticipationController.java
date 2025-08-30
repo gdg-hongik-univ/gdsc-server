@@ -36,7 +36,7 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "행사 신청자 목록 조회", description = "해당 행사의 신청자 목록을 조회합니다")
+    @Operation(summary = "행사 신청자 목록 조회", description = "해당 행사의 신청자 목록을 조회합니다.")
     @GetMapping("/applicants")
     public ResponseEntity<Page<EventApplicantResponse>> getEventApplicants(
             @RequestParam(name = "event") Long eventId,

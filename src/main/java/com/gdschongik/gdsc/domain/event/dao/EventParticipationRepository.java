@@ -10,4 +10,6 @@ public interface EventParticipationRepository
     List<EventParticipation> findAllByEventAndMemberIdIn(Event event, List<Long> memberIds);
 
     List<EventParticipation> findAllByEvent(Event event);
+
+    long countByEvent(Event event);
 }
