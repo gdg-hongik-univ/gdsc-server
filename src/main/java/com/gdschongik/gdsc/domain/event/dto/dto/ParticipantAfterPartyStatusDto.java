@@ -5,8 +5,8 @@ import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-public record AfterPartyStatusDto(
-        @NotNull @Positive Long eventParticipationId,
+public record ParticipantAfterPartyStatusDto(
+        @NotNull @Positive Long participantId,
         @NotNull PaymentStatus prePaymentStatus,
         @NotNull AfterPartyAttendanceStatus afterPartyAttendanceStatus,
         @NotNull PaymentStatus postPaymentStatus) {}

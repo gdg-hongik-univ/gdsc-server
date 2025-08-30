@@ -4,11 +4,7 @@ import com.gdschongik.gdsc.domain.event.dto.dto.AfterPartyStatusDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-
 import java.util.List;
 
 public record AfterPartyStatusUpdateRequest(
-        @NotNull @Positive
-        Long eventId,
-        List<@Valid AfterPartyStatusDto> afterPartyStatusList
-) {}
+        @NotNull @Positive Long eventId, List<@Valid AfterPartyStatusDto> afterPartyStatusList) {}

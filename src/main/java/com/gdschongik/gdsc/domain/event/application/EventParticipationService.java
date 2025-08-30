@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -118,8 +117,8 @@ public class EventParticipationService {
 
     @Transactional
     public void checkPostPayment(AfterPartyStatusUpdateRequest request) {
-        Event event = eventRepository.findById(request.eventId())
-                        .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        Event event =
+                eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
 
@@ -127,24 +126,24 @@ public class EventParticipationService {
         List<Long> eventParticipationIds = request.afterPartyStatusList().stream()
                 .map(AfterPartyStatusDto::eventParticipationId)
                 .toList();
-        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEventAndIdIn(event, eventParticipationIds);
+        List<EventParticipation> eventParticipations =
+                eventParticipationRepository.findAllByEventAndIdIn(event, eventParticipationIds);
 
         validateRequestParticipationIds(eventParticipationIds, eventParticipations);
 
-        Map<Long, EventParticipation> eventParticipationMap = eventParticipations.stream().collect(
-                Collectors.toMap(EventParticipation::getId, Function.identity())
-        );
+        Map<Long, EventParticipation> eventParticipationMap =
+                eventParticipations.stream().collect(Collectors.toMap(EventParticipation::getId, Function.identity()));
 
         for (AfterPartyStatusDto dto : request.afterPartyStatusList()) {
             EventParticipation eventParticipation = eventParticipationMap.get(dto.eventParticipationId());
             eventParticipation.updateStatus(
-                    dto.prePaymentStatus(),
-                    dto.afterPartyAttendanceStatus(),
-                    dto.postPaymentStatus()
-            );
+                    dto.prePaymentStatus(), dto.afterPartyAttendanceStatus(), dto.postPaymentStatus());
         }
 
-        log.info("[EventParticipationService] 뒤풀이 정산, 참석 현황 수정 : eventId={}, eventParticipationIds={}", event.getId(), eventParticipationIds);
+        log.info(
+                "[EventParticipationService] 뒤풀이 정산, 참석 현황 수정 : eventId={}, eventParticipationIds={}",
+                event.getId(),
+                eventParticipationIds);
     }
 
     private static Predicate<Member> isThisMemberAllowedToParticipate(Event event) {

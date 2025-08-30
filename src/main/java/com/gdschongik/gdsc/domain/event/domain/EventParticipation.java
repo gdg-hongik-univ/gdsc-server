@@ -15,7 +15,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -168,7 +167,10 @@ public class EventParticipation extends BaseEntity {
     }
 
     // 뒤풀이 참석, 정산 현황 수정
-    public void updateStatus(PaymentStatus prePaymentStatus, AfterPartyAttendanceStatus afterPartyAttendanceStatus, PaymentStatus postPaymentStatus) {
+    public void updateStatus(
+            PaymentStatus prePaymentStatus,
+            AfterPartyAttendanceStatus afterPartyAttendanceStatus,
+            PaymentStatus postPaymentStatus) {
         this.prePaymentStatus = prePaymentStatus;
         this.afterPartyAttendanceStatus = afterPartyAttendanceStatus;
         this.postPaymentStatus = postPaymentStatus;
