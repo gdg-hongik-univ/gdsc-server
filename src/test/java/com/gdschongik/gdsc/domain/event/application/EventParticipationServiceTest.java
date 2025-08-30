@@ -272,41 +272,35 @@ class EventParticipationServiceTest extends IntegrationTest {
                     member1,
                     AfterPartyAttendanceStatus.NOT_ATTENDED,
                     PaymentStatus.UNPAID,
-                    PaymentStatus.UNPAID
-            );
+                    PaymentStatus.UNPAID);
             EventParticipation eventParticipation2 = createAppliedEventParticipation(
-                    event,
-                    member2,
-                    AfterPartyAttendanceStatus.ATTENDED,
-                    PaymentStatus.PAID,
-                    PaymentStatus.PAID
-            );
+                    event, member2, AfterPartyAttendanceStatus.ATTENDED, PaymentStatus.PAID, PaymentStatus.PAID);
 
             AfterPartyStatusDto afterPartyStatusDto1 = new AfterPartyStatusDto(
                     eventParticipation1.getId(),
                     AfterPartyAttendanceStatus.ATTENDED,
                     PaymentStatus.PAID,
-                    PaymentStatus.PAID
-            );
+                    PaymentStatus.PAID);
 
             AfterPartyStatusDto afterPartyStatusDto2 = new AfterPartyStatusDto(
                     eventParticipation2.getId(),
                     AfterPartyAttendanceStatus.NOT_ATTENDED,
                     PaymentStatus.UNPAID,
-                    PaymentStatus.UNPAID
-            );
+                    PaymentStatus.UNPAID);
 
             AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(
-                    event.getId(),
-                    List.of(afterPartyStatusDto1, afterPartyStatusDto2)
-            );
+                    event.getId(), List.of(afterPartyStatusDto1, afterPartyStatusDto2));
 
             // when
             eventParticipationService.updateAfterPartyStatus(request);
 
             // then
-            EventParticipation updatedEventParticipation1 = eventParticipationRepository.findById(eventParticipation1.getId()).get();
-            EventParticipation updatedEventParticipation2 = eventParticipationRepository.findById(eventParticipation2.getId()).get();
+            EventParticipation updatedEventParticipation1 = eventParticipationRepository
+                    .findById(eventParticipation1.getId())
+                    .get();
+            EventParticipation updatedEventParticipation2 = eventParticipationRepository
+                    .findById(eventParticipation2.getId())
+                    .get();
 
             assertThat(updatedEventParticipation1.getAfterPartyAttendanceStatus())
                     .isEqualTo(afterPartyStatusDto1.afterPartyAttendanceStatus());
@@ -329,16 +323,10 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createEvent();
 
             AfterPartyStatusDto afterPartyStatusDto = new AfterPartyStatusDto(
-                    9999L,
-                    AfterPartyAttendanceStatus.ATTENDED,
-                    PaymentStatus.PAID,
-                    PaymentStatus.PAID
-            );
+                    9999L, AfterPartyAttendanceStatus.ATTENDED, PaymentStatus.PAID, PaymentStatus.PAID);
 
-            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(
-                    event.getId(),
-                    List.of(afterPartyStatusDto)
-            );
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(event.getId(), List.of(afterPartyStatusDto));
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.updateAfterPartyStatus(request))
@@ -352,31 +340,22 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createEvent();
             Member member = createMember("C000001", "김홍익1");
             EventParticipation eventParticipation = createAppliedEventParticipation(
-                    event,
-                    member,
-                    AfterPartyAttendanceStatus.NOT_ATTENDED,
-                    PaymentStatus.UNPAID,
-                    PaymentStatus.UNPAID
-            );
+                    event, member, AfterPartyAttendanceStatus.NOT_ATTENDED, PaymentStatus.UNPAID, PaymentStatus.UNPAID);
 
             AfterPartyStatusDto afterPartyStatusDto1 = new AfterPartyStatusDto(
                     eventParticipation.getId(),
                     AfterPartyAttendanceStatus.ATTENDED,
                     PaymentStatus.PAID,
-                    PaymentStatus.PAID
-            );
+                    PaymentStatus.PAID);
 
             AfterPartyStatusDto afterPartyStatusDto2 = new AfterPartyStatusDto(
                     eventParticipation.getId(),
                     AfterPartyAttendanceStatus.NOT_ATTENDED,
                     PaymentStatus.UNPAID,
-                    PaymentStatus.UNPAID
-            );
+                    PaymentStatus.UNPAID);
 
             AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(
-                    event.getId(),
-                    List.of(afterPartyStatusDto1, afterPartyStatusDto2)
-            );
+                    event.getId(), List.of(afterPartyStatusDto1, afterPartyStatusDto2));
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.updateAfterPartyStatus(request))
@@ -387,10 +366,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         @Test
         void 존재하지_않는_이벤트라면_에러가_발생한다() {
             // given
-            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(
-                    9999L,
-                    List.of()
-            );
+            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(9999L, List.of());
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.updateAfterPartyStatus(request))
@@ -402,10 +378,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         void 뒤풀이가_비활성화된_이벤트라면_에러가_발생한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
-            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(
-                    event.getId(),
-                    List.of()
-            );
+            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(event.getId(), List.of());
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.updateAfterPartyStatus(request))
