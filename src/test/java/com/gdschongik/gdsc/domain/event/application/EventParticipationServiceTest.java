@@ -15,7 +15,9 @@ import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
 import com.gdschongik.gdsc.domain.event.domain.Participant;
 import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
+import com.gdschongik.gdsc.domain.event.dto.dto.AfterPartyStatusDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
@@ -258,43 +260,157 @@ class EventParticipationServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 뒤풀이_정산_처리할_때 {
+    class 뒤풀이_상태_변경시 {
         @Test
-        void 신청자의_뒤풀이_정산_상태가_PAID가_된다() {
+        void 신청자들의_뒤풀이_상태를_수정한다() {
             // given
             Event event = createEvent();
-            Member member = createMember();
-            EventParticipation eventParticipation = createEventParticipation(event, member);
+            Member member1 = createMember("C000001", "김홍익1");
+            Member member2 = createMember("C000002", "김홍익2");
+            EventParticipation eventParticipation1 = createAppliedEventParticipation(
+                    event,
+                    member1,
+                    AfterPartyAttendanceStatus.NOT_ATTENDED,
+                    PaymentStatus.UNPAID,
+                    PaymentStatus.UNPAID
+            );
+            EventParticipation eventParticipation2 = createAppliedEventParticipation(
+                    event,
+                    member2,
+                    AfterPartyAttendanceStatus.ATTENDED,
+                    PaymentStatus.PAID,
+                    PaymentStatus.PAID
+            );
+
+            AfterPartyStatusDto afterPartyStatusDto1 = new AfterPartyStatusDto(
+                    eventParticipation1.getId(),
+                    AfterPartyAttendanceStatus.ATTENDED,
+                    PaymentStatus.PAID,
+                    PaymentStatus.PAID
+            );
+
+            AfterPartyStatusDto afterPartyStatusDto2 = new AfterPartyStatusDto(
+                    eventParticipation2.getId(),
+                    AfterPartyAttendanceStatus.NOT_ATTENDED,
+                    PaymentStatus.UNPAID,
+                    PaymentStatus.UNPAID
+            );
+
+            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(
+                    event.getId(),
+                    List.of(afterPartyStatusDto1, afterPartyStatusDto2)
+            );
 
             // when
-            eventParticipationService.checkPostPayment(eventParticipation.getId());
+            eventParticipationService.updateAfterPartyStatus(request);
 
             // then
-            EventParticipation afterPartyPostPaid = eventParticipationRepository
-                    .findById(eventParticipation.getId())
-                    .get();
-            assertThat(afterPartyPostPaid.getPostPaymentStatus()).isEqualTo(PaymentStatus.PAID);
+            EventParticipation updatedEventParticipation1 = eventParticipationRepository.findById(eventParticipation1.getId()).get();
+            EventParticipation updatedEventParticipation2 = eventParticipationRepository.findById(eventParticipation2.getId()).get();
+
+            assertThat(updatedEventParticipation1.getAfterPartyAttendanceStatus())
+                    .isEqualTo(afterPartyStatusDto1.afterPartyAttendanceStatus());
+            assertThat(updatedEventParticipation1.getPrePaymentStatus())
+                    .isEqualTo(afterPartyStatusDto1.prePaymentStatus());
+            assertThat(updatedEventParticipation1.getPostPaymentStatus())
+                    .isEqualTo(afterPartyStatusDto1.postPaymentStatus());
+
+            assertThat(updatedEventParticipation2.getAfterPartyAttendanceStatus())
+                    .isEqualTo(afterPartyStatusDto2.afterPartyAttendanceStatus());
+            assertThat(updatedEventParticipation2.getPrePaymentStatus())
+                    .isEqualTo(afterPartyStatusDto2.prePaymentStatus());
+            assertThat(updatedEventParticipation2.getPostPaymentStatus())
+                    .isEqualTo(afterPartyStatusDto2.postPaymentStatus());
         }
 
         @Test
-        void 뒤풀이가_비활성화_상태라면_에러가_발생한다() {
+        void 존재하지_않는_참여정보가_존재한다면_에러가_발생한다() {
+            // given
+            Event event = createEvent();
+
+            AfterPartyStatusDto afterPartyStatusDto = new AfterPartyStatusDto(
+                    9999L,
+                    AfterPartyAttendanceStatus.ATTENDED,
+                    PaymentStatus.PAID,
+                    PaymentStatus.PAID
+            );
+
+            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(
+                    event.getId(),
+                    List.of(afterPartyStatusDto)
+            );
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.updateAfterPartyStatus(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(PARTICIPATION_CONTAINS_INVALID_IDS.getMessage());
+        }
+
+        @Test
+        void 중복된_참여정보가_존재한다면_에러가_발생한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember("C000001", "김홍익1");
+            EventParticipation eventParticipation = createAppliedEventParticipation(
+                    event,
+                    member,
+                    AfterPartyAttendanceStatus.NOT_ATTENDED,
+                    PaymentStatus.UNPAID,
+                    PaymentStatus.UNPAID
+            );
+
+            AfterPartyStatusDto afterPartyStatusDto1 = new AfterPartyStatusDto(
+                    eventParticipation.getId(),
+                    AfterPartyAttendanceStatus.ATTENDED,
+                    PaymentStatus.PAID,
+                    PaymentStatus.PAID
+            );
+
+            AfterPartyStatusDto afterPartyStatusDto2 = new AfterPartyStatusDto(
+                    eventParticipation.getId(),
+                    AfterPartyAttendanceStatus.NOT_ATTENDED,
+                    PaymentStatus.UNPAID,
+                    PaymentStatus.UNPAID
+            );
+
+            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(
+                    event.getId(),
+                    List.of(afterPartyStatusDto1, afterPartyStatusDto2)
+            );
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.updateAfterPartyStatus(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(PARTICIPATION_CONTAINS_INVALID_IDS.getMessage());
+        }
+
+        @Test
+        void 존재하지_않는_이벤트라면_에러가_발생한다() {
+            // given
+            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(
+                    9999L,
+                    List.of()
+            );
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.updateAfterPartyStatus(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EVENT_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        void 뒤풀이가_비활성화된_이벤트라면_에러가_발생한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
-            Member member = createMember();
-            EventParticipation eventParticipation = createEventParticipation(event, member);
+            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(
+                    event.getId(),
+                    List.of()
+            );
 
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.checkPostPayment(eventParticipation.getId()))
+            assertThatThrownBy(() -> eventParticipationService.updateAfterPartyStatus(request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
-        }
-
-        @Test
-        void 존재하지_않는_참여정보라면_에러가_발생한다() {
-            // when & then
-            assertThatThrownBy(() -> eventParticipationService.checkPostPayment(9999L))
-                    .isInstanceOf(CustomException.class)
-                    .hasMessage(PARTICIPATION_NOT_FOUND.getMessage());
         }
     }
 
@@ -350,13 +466,18 @@ class EventParticipationServiceTest extends IntegrationTest {
         return eventParticipationRepository.save(eventParticipation);
     }
 
-    private EventParticipation createPostPaidEventParticipation(Event event, Member member) {
+    private EventParticipation createAppliedEventParticipation(
+            Event event,
+            Member member,
+            AfterPartyAttendanceStatus afterPartyAttendanceStatus,
+            PaymentStatus prePaymentStatus,
+            PaymentStatus postPaymentStatus) {
         EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
                 member,
-                AfterPartyApplicationStatus.NOT_APPLIED,
-                AfterPartyAttendanceStatus.NOT_ATTENDED,
-                PaymentStatus.NONE,
-                PaymentStatus.PAID,
+                AfterPartyApplicationStatus.APPLIED,
+                afterPartyAttendanceStatus,
+                prePaymentStatus,
+                postPaymentStatus,
                 event);
         return eventParticipationRepository.save(eventParticipation);
     }
