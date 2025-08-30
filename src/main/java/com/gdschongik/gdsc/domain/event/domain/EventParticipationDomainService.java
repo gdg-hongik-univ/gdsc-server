@@ -149,11 +149,11 @@ public class EventParticipationDomainService {
      */
     private void validateAfterPartyApplicationStatus(
             Event event, AfterPartyApplicationStatus afterPartyApplicationStatus) {
-        if (event.getAfterPartyStatus().isEnabled() && afterPartyApplicationStatus.isNone()) {
+        if (event.afterPartyExists() && afterPartyApplicationStatus.isNone()) {
             throw new CustomException(EVENT_NOT_APPLICABLE_AFTER_PARTY_NONE);
         }
 
-        if (!event.getAfterPartyStatus().isEnabled() && !afterPartyApplicationStatus.isNone()) {
+        if (!event.afterPartyExists() && !afterPartyApplicationStatus.isNone()) {
             throw new CustomException(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED);
         }
     }
@@ -182,7 +182,7 @@ public class EventParticipationDomainService {
      * 뒤풀이가 활성화된 이벤트인지 검증하는 메서드입니다.
      */
     public void validateAfterPartyEnabled(Event event) {
-        if (event.getAfterPartyStatus().isDisabled()) {
+        if (!event.afterPartyExists()) {
             throw new CustomException(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED);
         }
     }
