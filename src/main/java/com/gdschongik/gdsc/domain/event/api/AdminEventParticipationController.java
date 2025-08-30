@@ -2,10 +2,7 @@ package com.gdschongik.gdsc.domain.event.api;
 
 import com.gdschongik.gdsc.domain.event.application.EventParticipationService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
-import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.*;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
@@ -73,7 +70,8 @@ public class AdminEventParticipationController {
 
     @Operation(summary = "뒤풀이 참석 및 정산 상태 변경", description = "뒤풀이 참석 및 정산 현황을 수정합니다.")
     @PutMapping("/after-party/status")
-    public ResponseEntity<Void> updateAfterPartyStatus(@Valid @RequestBody AfterPartyStatusUpdateRequest request) {
+    public ResponseEntity<Void> updateAfterPartyStatus(
+            @Valid @RequestBody AfterPartyApplicantStatusUpdateRequest request) {
         eventParticipationService.updateAfterPartyStatus(request);
         return ResponseEntity.ok().build();
     }

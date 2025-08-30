@@ -16,10 +16,7 @@ import com.gdschongik.gdsc.domain.event.domain.Participant;
 import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
 import com.gdschongik.gdsc.domain.event.dto.dto.AfterPartyStatusDto;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
-import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.*;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
@@ -288,7 +285,7 @@ class EventParticipationServiceTest extends IntegrationTest {
                     PaymentStatus.UNPAID,
                     PaymentStatus.UNPAID);
 
-            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(
+            AfterPartyApplicantStatusUpdateRequest request = new AfterPartyApplicantStatusUpdateRequest(
                     event.getId(), List.of(afterPartyStatusDto1, afterPartyStatusDto2));
 
             // when
@@ -325,8 +322,8 @@ class EventParticipationServiceTest extends IntegrationTest {
             AfterPartyStatusDto afterPartyStatusDto = new AfterPartyStatusDto(
                     9999L, AfterPartyAttendanceStatus.ATTENDED, PaymentStatus.PAID, PaymentStatus.PAID);
 
-            AfterPartyStatusUpdateRequest request =
-                    new AfterPartyStatusUpdateRequest(event.getId(), List.of(afterPartyStatusDto));
+            AfterPartyApplicantStatusUpdateRequest request =
+                    new AfterPartyApplicantStatusUpdateRequest(event.getId(), List.of(afterPartyStatusDto));
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.updateAfterPartyStatus(request))
@@ -354,7 +351,7 @@ class EventParticipationServiceTest extends IntegrationTest {
                     PaymentStatus.UNPAID,
                     PaymentStatus.UNPAID);
 
-            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(
+            AfterPartyApplicantStatusUpdateRequest request = new AfterPartyApplicantStatusUpdateRequest(
                     event.getId(), List.of(afterPartyStatusDto1, afterPartyStatusDto2));
 
             // when & then
@@ -366,7 +363,8 @@ class EventParticipationServiceTest extends IntegrationTest {
         @Test
         void 존재하지_않는_이벤트라면_에러가_발생한다() {
             // given
-            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(9999L, List.of());
+            AfterPartyApplicantStatusUpdateRequest request =
+                    new AfterPartyApplicantStatusUpdateRequest(9999L, List.of());
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.updateAfterPartyStatus(request))
@@ -378,7 +376,8 @@ class EventParticipationServiceTest extends IntegrationTest {
         void 뒤풀이가_비활성화된_이벤트라면_에러가_발생한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
-            AfterPartyStatusUpdateRequest request = new AfterPartyStatusUpdateRequest(event.getId(), List.of());
+            AfterPartyApplicantStatusUpdateRequest request =
+                    new AfterPartyApplicantStatusUpdateRequest(event.getId(), List.of());
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.updateAfterPartyStatus(request))
