@@ -52,8 +52,7 @@ public class AdminEventParticipationController {
             @RequestParam(name = "event") Long eventId,
             @ParameterObject EventParticipantQueryOption queryOption,
             @ParameterObject Pageable pageable) {
-        // TODO: 서비스 로직 구현
-        var response = new AfterPartyApplicantResponse(null, null);
+        var response = eventParticipationService.getAfterPartyApplicants(eventId, queryOption, pageable);
         return ResponseEntity.ok(response);
     }
 
