@@ -156,16 +156,6 @@ public class EventParticipation extends BaseEntity {
         this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.ATTENDED;
     }
 
-    // 뒤풀이 정산 처리
-    public void checkPostPayment() {
-        this.postPaymentStatus = PaymentStatus.PAID;
-    }
-
-    // 뒤풀이 정산 취소 처리
-    public void uncheckPostPayment() {
-        this.postPaymentStatus = PaymentStatus.UNPAID;
-    }
-
     // 뒤풀이 참석, 정산 현황 수정
     public void updateStatus(
             AfterPartyAttendanceStatus afterPartyAttendanceStatus,
