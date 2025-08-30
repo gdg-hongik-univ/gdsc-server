@@ -18,12 +18,10 @@ public record EventResponse(EventDto event, Long totalAttendeesCount, EventStatu
     @Getter
     @RequiredArgsConstructor
     public enum EventStatus {
-        BEFORE_APPLICATION("신청 전"),
-        APPLICATION_OPEN("신청 중"),
-        APPLICATION_CLOSED("신청 종료"),
-        EVENT_ENDED("행사 종료");
-
-        private final String value;
+        BEFORE_APPLICATION,
+        APPLICATION_OPEN,
+        APPLICATION_CLOSED,
+        EVENT_ENDED;
 
         private static EventStatus of(Period applicationPeriod, LocalDateTime startAt, LocalDateTime now) {
             if (now.isBefore(applicationPeriod.getStartDate())) {
