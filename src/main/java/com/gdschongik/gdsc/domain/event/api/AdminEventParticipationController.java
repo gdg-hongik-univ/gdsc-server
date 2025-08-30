@@ -74,7 +74,7 @@ public class AdminEventParticipationController {
     @Operation(summary = "뒤풀이 참석 및 정산 상태 변경", description = "뒤풀이 참석 및 정산 현황을 수정합니다.")
     @PutMapping("/after-party/status")
     public ResponseEntity<Void> updateAfterPartyStatus(@Valid @RequestBody AfterPartyStatusUpdateRequest request) {
-        eventParticipationService.checkPostPayment(request);
+        eventParticipationService.updateAfterPartyStatus(request);
         return ResponseEntity.ok().build();
     }
 

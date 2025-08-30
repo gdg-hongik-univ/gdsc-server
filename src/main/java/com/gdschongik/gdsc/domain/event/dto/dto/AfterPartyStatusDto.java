@@ -7,6 +7,6 @@ import jakarta.validation.constraints.Positive;
 
 public record AfterPartyStatusDto(
         @NotNull @Positive Long eventParticipationId,
-        @NotNull PaymentStatus prePaymentStatus,
         @NotNull AfterPartyAttendanceStatus afterPartyAttendanceStatus,
+        @NotNull PaymentStatus prePaymentStatus,
         @NotNull PaymentStatus postPaymentStatus) {}

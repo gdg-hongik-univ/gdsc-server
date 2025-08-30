@@ -116,7 +116,7 @@ public class EventParticipationService {
     }
 
     @Transactional
-    public void checkPostPayment(AfterPartyStatusUpdateRequest request) {
+    public void updateAfterPartyStatus(AfterPartyStatusUpdateRequest request) {
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
@@ -136,8 +136,10 @@ public class EventParticipationService {
 
         for (AfterPartyStatusDto dto : request.afterPartyStatusList()) {
             EventParticipation eventParticipation = eventParticipationMap.get(dto.eventParticipationId());
+            System.out.println(eventParticipation.getAfterPartyAttendanceStatus());
             eventParticipation.updateStatus(
-                    dto.prePaymentStatus(), dto.afterPartyAttendanceStatus(), dto.postPaymentStatus());
+                    dto.afterPartyAttendanceStatus(), dto.prePaymentStatus(), dto.postPaymentStatus());
+            System.out.println(eventParticipation.getAfterPartyAttendanceStatus());
         }
 
         log.info(

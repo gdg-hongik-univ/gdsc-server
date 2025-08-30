@@ -168,11 +168,11 @@ public class EventParticipation extends BaseEntity {
 
     // 뒤풀이 참석, 정산 현황 수정
     public void updateStatus(
-            PaymentStatus prePaymentStatus,
             AfterPartyAttendanceStatus afterPartyAttendanceStatus,
+            PaymentStatus prePaymentStatus,
             PaymentStatus postPaymentStatus) {
-        this.prePaymentStatus = prePaymentStatus;
         this.afterPartyAttendanceStatus = afterPartyAttendanceStatus;
+        this.prePaymentStatus = prePaymentStatus;
         this.postPaymentStatus = postPaymentStatus;
     }
 }
