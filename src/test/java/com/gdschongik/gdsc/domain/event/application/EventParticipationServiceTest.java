@@ -15,6 +15,8 @@ import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
 import com.gdschongik.gdsc.domain.event.domain.Participant;
 import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
+import com.gdschongik.gdsc.domain.event.dto.dto.AfterPartyApplicantCountDto;
+import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
@@ -132,6 +134,34 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 이름_오름차순으로_정렬된다() {
+            // given
+            Event event = createEvent();
+
+            Member member1 = createMember("C000001", "김홍익1");
+            Member member2 = createMember("C000002", "김홍익2");
+            Member member3 = createMember("C000003", "김홍익3");
+
+            // (3, 1, 2) 순서로 생성
+            EventParticipation participation3 = createEventParticipation(event, member3);
+            EventParticipation participation1 = createEventParticipation(event, member1);
+            EventParticipation participation2 = createEventParticipation(event, member2);
+
+            EventParticipantQueryOption queryOption = new EventParticipantQueryOption(null, null, null);
+            PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("name").ascending());
+
+            // when
+            Page<EventApplicantResponse> result =
+                    eventParticipationService.getEventApplicants(event.getId(), queryOption, pageRequest);
+
+            // then - 이름 오름차순으로 조회되는지 확인
+            assertThat(result.getContent())
+                    .hasSize(3)
+                    .extracting(EventApplicantResponse::eventParticipationId)
+                    .containsExactly(participation1.getId(), participation2.getId(), participation3.getId());
+        }
+
+        @Test
         void 지원하지_않는_정렬_조건이면_예외가_발생한다() {
             // given
             Event event = createEvent();
@@ -167,6 +197,192 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThat(unregisteredResponse.participantRole()).isEqualTo(ParticipantRole.NON_MEMBER);
             assertThat(unregisteredResponse.discordUsername()).isNull();
             assertThat(unregisteredResponse.nickname()).isNull();
+        }
+    }
+
+    @Nested
+    class 뒤풀이_신청자_목록_조회할때 {
+
+        @Test
+        void 뒤풀이가_비활성화된_이벤트이면_실패한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            EventParticipantQueryOption queryOption = new EventParticipantQueryOption(null, null, null);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.getAfterPartyApplicants(
+                            event.getId(), queryOption, PageRequest.of(0, 10)))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(PARTICIPATION_NOT_READABLE_AFTER_PARTY_DISABLED.getMessage());
+        }
+
+        @Test
+        void 이벤트_ID가_일치하는_신청자만_조회된다() {
+            // given
+            Event event1 = createEvent();
+            Event event2 = createEvent();
+
+            Member member1 = createMember("C000001", "김홍익1");
+            Member member2 = createMember("C000002", "김홍익2");
+            Member member3 = createMember("B000001", "김홍익3");
+
+            // event1에 신청한 사용자들
+            createAfterPartyParticipation(event1, member1);
+            createAfterPartyParticipation(event1, member2);
+
+            // event2에 신청한 사용자
+            createEventParticipation(event2, member3);
+
+            EventParticipantQueryOption queryOption = new EventParticipantQueryOption(null, null, null);
+
+            // when
+            Page<EventParticipationDto> result = eventParticipationService
+                    .getAfterPartyApplicants(event1.getId(), queryOption, PageRequest.of(0, 10))
+                    .applicants();
+
+            // then
+            assertThat(result.getContent())
+                    .hasSize(2)
+                    .extracting(response -> response.participant().getStudentId())
+                    .containsExactlyInAnyOrder("C000001", "C000002");
+        }
+
+        @Test
+        void 학번_키워드를_포함하는_신청자만_조회된다() {
+            // given
+            Event event = createEvent();
+
+            Member memberC1 = createMember("C000001", "김홍익1");
+            Member memberC2 = createMember("C000002", "김홍익2");
+            Member memberB1 = createMember("B000001", "김홍익3");
+            Member memberB2 = createMember("B000002", "김홍익4");
+
+            createAfterPartyParticipation(event, memberC1);
+            createAfterPartyParticipation(event, memberC2);
+            createAfterPartyParticipation(event, memberB1);
+            createAfterPartyParticipation(event, memberB2);
+
+            EventParticipantQueryOption queryOption = new EventParticipantQueryOption(null, "C", null);
+
+            // when
+            Page<EventParticipationDto> result = eventParticipationService
+                    .getAfterPartyApplicants(event.getId(), queryOption, PageRequest.of(0, 10))
+                    .applicants();
+
+            // then
+            assertThat(result.getContent())
+                    .hasSize(2)
+                    .extracting(response -> response.participant().getStudentId())
+                    .containsExactlyInAnyOrder("C000001", "C000002");
+        }
+
+        @Test
+        void createdAt_오름차순으로_정렬된다() {
+            // given
+            Event event = createEvent();
+
+            Member member1 = createMember("C000001", "김홍익1");
+            Member member2 = createMember("C000002", "김홍익2");
+            Member member3 = createMember("C000003", "김홍익3");
+
+            // (3, 1, 2) 순서로 생성
+            EventParticipation participation3 = createAfterPartyParticipation(event, member3);
+            EventParticipation participation1 = createAfterPartyParticipation(event, member1);
+            EventParticipation participation2 = createAfterPartyParticipation(event, member2);
+
+            EventParticipantQueryOption queryOption = new EventParticipantQueryOption(null, null, null);
+            PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("createdAt").ascending());
+
+            // when
+            Page<EventParticipationDto> result = eventParticipationService
+                    .getAfterPartyApplicants(event.getId(), queryOption, pageRequest)
+                    .applicants();
+
+            // then - (3, 1, 2) 순서로 조회되는지 확인
+            assertThat(result.getContent())
+                    .hasSize(3)
+                    .extracting(EventParticipationDto::eventParticipationId)
+                    .containsExactly(participation3.getId(), participation1.getId(), participation2.getId());
+        }
+
+        @Test
+        void 이름_오름차순으로_정렬된다() {
+            // given
+            Event event = createEvent();
+
+            Member member1 = createMember("C000001", "김홍익1");
+            Member member2 = createMember("C000002", "김홍익2");
+            Member member3 = createMember("C000003", "김홍익3");
+
+            // (3, 1, 2) 순서로 생성
+            EventParticipation participation3 = createAfterPartyParticipation(event, member3);
+            EventParticipation participation1 = createAfterPartyParticipation(event, member1);
+            EventParticipation participation2 = createAfterPartyParticipation(event, member2);
+
+            EventParticipantQueryOption queryOption = new EventParticipantQueryOption(null, null, null);
+            PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("name").ascending());
+
+            // when
+            Page<EventParticipationDto> result = eventParticipationService
+                    .getAfterPartyApplicants(event.getId(), queryOption, pageRequest)
+                    .applicants();
+
+            // then - 이름 오름차순으로 조회되는지 확인
+            assertThat(result.getContent())
+                    .hasSize(3)
+                    .extracting(EventParticipationDto::eventParticipationId)
+                    .containsExactly(participation1.getId(), participation2.getId(), participation3.getId());
+        }
+
+        @Test
+        void 지원하지_않는_정렬_조건이면_예외가_발생한다() {
+            // given
+            Event event = createEvent();
+
+            EventParticipantQueryOption queryOption = new EventParticipantQueryOption(null, null, null);
+            PageRequest pageRequest =
+                    PageRequest.of(0, 10, Sort.by("invalidField").ascending());
+
+            // when & then
+            assertThatThrownBy(() ->
+                            eventParticipationService.getAfterPartyApplicants(event.getId(), queryOption, pageRequest))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(SORT_NOT_SUPPORTED.getMessage());
+        }
+
+        @Test
+        void 정산_통계가_올바르게_조회된다() {
+            // given
+            Event event = createEvent();
+
+            Member member1 = createMember("C000001", "김홍익1");
+            Member member2 = createMember("C000002", "김홍익2");
+            Member member3 = createMember("B000001", "김홍익3");
+
+            // event에 신청한 사용자들
+            EventParticipation participation1 = createAfterPartyParticipation(event, member1);
+            EventParticipation participation2 = createAfterPartyParticipation(event, member2);
+            EventParticipation participation3 = createAfterPartyParticipation(event, member3);
+
+            // 결제 상태 변경
+            // TODO: 이벤트 참여정보 변경 API 구현 후 대체
+            ReflectionTestUtils.setField(participation1, "prePaymentStatus", PaymentStatus.PAID);
+            ReflectionTestUtils.setField(participation2, "prePaymentStatus", PaymentStatus.PAID);
+            ReflectionTestUtils.setField(participation3, "prePaymentStatus", PaymentStatus.PAID);
+
+            eventParticipationRepository.saveAll(List.of(participation1, participation2, participation3));
+
+            EventParticipantQueryOption queryOption = new EventParticipantQueryOption(null, null, null);
+
+            // when
+            AfterPartyApplicantCountDto result = eventParticipationService
+                    .getAfterPartyApplicants(event.getId(), queryOption, PageRequest.of(0, 10))
+                    .counts();
+
+            // then
+            assertThat(result.prePaymentPaidCount()).isEqualTo(3);
+            assertThat(result.afterPartyAttendedCount()).isEqualTo(0);
+            assertThat(result.postPaymentPaidCount()).isEqualTo(0);
         }
     }
 
@@ -302,6 +518,17 @@ class EventParticipationServiceTest extends IntegrationTest {
         EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
                 member,
                 AfterPartyApplicationStatus.NOT_APPLIED,
+                AfterPartyAttendanceStatus.NOT_ATTENDED,
+                PaymentStatus.NONE,
+                PaymentStatus.NONE,
+                event);
+        return eventParticipationRepository.save(eventParticipation);
+    }
+
+    private EventParticipation createAfterPartyParticipation(Event event, Member member) {
+        EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
+                member,
+                AfterPartyApplicationStatus.APPLIED,
                 AfterPartyAttendanceStatus.NOT_ATTENDED,
                 PaymentStatus.NONE,
                 PaymentStatus.NONE,
