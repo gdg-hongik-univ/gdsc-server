@@ -25,14 +25,14 @@ public interface EventParticipationQueryMethod {
     }
 
     default BooleanExpression eqName(String name) {
-        return name != null ? member.name.contains(name) : null;
+        return name != null ? eventParticipation.participant.name.contains(name) : null;
     }
 
     default BooleanExpression eqStudentId(String studentId) {
-        return studentId != null ? member.studentId.containsIgnoreCase(studentId) : null;
+        return studentId != null ? eventParticipation.participant.studentId.containsIgnoreCase(studentId) : null;
     }
 
     default BooleanExpression eqPhone(String phone) {
-        return phone != null ? member.phone.contains(phone.replaceAll("-", "")) : null;
+        return phone != null ? eventParticipation.participant.phone.contains(phone.replaceAll("-", "")) : null;
     }
 }

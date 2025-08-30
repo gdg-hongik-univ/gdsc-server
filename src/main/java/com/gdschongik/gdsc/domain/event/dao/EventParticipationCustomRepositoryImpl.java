@@ -8,8 +8,10 @@ import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.QEventApplicantResponse;
 import com.gdschongik.gdsc.global.exception.CustomException;
+import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -53,16 +55,20 @@ public class EventParticipationCustomRepositoryImpl
             return new OrderSpecifier<?>[] {eventParticipation.createdAt.desc(), eventParticipation.id.desc()};
         }
 
-        Sort.Order order = sort.getOrderFor("createdAt");
-
-        // createdAt에 대한 정렬만 허용
-        if (order == null) {
-            throw new CustomException(SORT_NOT_SUPPORTED);
+        // 정렬 기준에 따라 OrderSpecifier 생성
+        List<OrderSpecifier<?>> orders = new ArrayList<>();
+        for (Sort.Order order : sort) {
+            Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+            switch (order.getProperty()) {
+                case "createdAt" -> {
+                    orders.add(new OrderSpecifier<>(direction, eventParticipation.createdAt));
+                    orders.add(new OrderSpecifier<>(direction, eventParticipation.id));
+                }
+                case "name" -> orders.add(new OrderSpecifier<>(direction, eventParticipation.participant.name));
+                default -> throw new CustomException(SORT_NOT_SUPPORTED);
+            }
         }
-
-        return order.isAscending()
-                ? new OrderSpecifier<?>[] {eventParticipation.createdAt.asc(), eventParticipation.id.asc()}
-                : new OrderSpecifier<?>[] {eventParticipation.createdAt.desc(), eventParticipation.id.desc()};
+        return orders.toArray(OrderSpecifier[]::new);
     }
 
     private List<Long> getIdsByQueryOption(
