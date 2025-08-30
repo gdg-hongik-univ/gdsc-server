@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-public record EventResponse(EventDto eventDto, Long totalAttendeesCount, EventStatusType eventStatusType) {
+public record EventResponse(EventDto event, Long totalAttendeesCount, EventStatusType eventStatusType) {
 
     public static EventResponse of(Event event, Long totalAttendeesCount) {
         EventDto eventDto = EventDto.from(event);
