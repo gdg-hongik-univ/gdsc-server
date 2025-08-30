@@ -77,6 +77,18 @@ public class MemberCustomRepositoryImpl implements MemberCustomRepository, Membe
                 .fetch();
     }
 
+    @Override
+    public boolean existsInfoStatusSatisfiedMemberByStudentId(String studentId) {
+        return queryFactory
+                        .selectOne()
+                        .from(member)
+                        .where(
+                                eqStudentId(studentId),
+                                eqRequirementStatus(member.associateRequirement.infoStatus, SATISFIED))
+                        .fetchFirst()
+                != null;
+    }
+
     /**
      * queryOption으로 정렬된 상태로id값들을 가져옵니다.
      * 이 id값들로 페이지네이션 content를 조인하는 쿼리 생성시 추가적인 정렬은 없어야하며, 정렬이 필요한경우 해당 함수에 넣어주세요.
