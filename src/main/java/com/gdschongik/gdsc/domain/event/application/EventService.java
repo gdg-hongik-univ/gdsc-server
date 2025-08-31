@@ -3,6 +3,7 @@ package com.gdschongik.gdsc.domain.event.application;
 import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
+import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,23 @@ public class EventService {
                 .toList();
 
         return new PageImpl<>(response, pageable, events.getTotalElements());
+    }
+
+    @Transactional
+    public void createEvent(EventCreateRequest request) {
+        Event event = Event.create(
+                request.name(),
+                request.venue(),
+                request.startAt(),
+                request.applicationDescription(),
+                request.applicationPeriod(),
+                request.regularRoleOnlyStatus(),
+                request.afterPartyStatus(),
+                request.prePaymentStatus(),
+                request.postPaymentStatus(),
+                request.rsvpQuestionStatus(),
+                request.mainEventMaxApplicantCount(),
+                request.afterPartyMaxApplicantCount());
+        eventRepository.save(event);
     }
 }
