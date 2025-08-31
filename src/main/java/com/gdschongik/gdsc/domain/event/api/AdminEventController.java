@@ -1,6 +1,7 @@
 package com.gdschongik.gdsc.domain.event.api;
 
 import com.gdschongik.gdsc.domain.event.application.EventService;
+import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,5 +28,12 @@ public class AdminEventController {
     public ResponseEntity<Page<EventResponse>> getEvents(@ParameterObject Pageable pageable) {
         var response = eventService.getEvents(pageable);
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "행사 생성", description = "행사를 생성합니다")
+    @PostMapping
+    public ResponseEntity<Void> createEvent(EventCreateRequest request) {
+        eventService.createEvent(request);
+        return ResponseEntity.ok().build();
     }
 }
