@@ -75,21 +75,21 @@ public class AdminEventParticipationController {
     }
 
     @Operation(summary = "뒤풀이 정산 전체 확인 처리", description = "뒤풀이 정산을 전체 확인 처리합니다.")
-    @PutMapping("/after-party/post-payment/check-all")
+    @PutMapping("/after-party/confirm-all")
     public ResponseEntity<Void> checkAllAfterPartyPostPayment(@RequestParam Long eventId, @RequestParam AfterPartyStatusUpdateOption afterPartyStatusUpdateOption) {
         eventParticipationService.confirmAllAfterPartyStatus(eventId, afterPartyStatusUpdateOption);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "뒤풀이 정산 확인 취소", description = "뒤풀이 정산 확인을 취소합니다.")
-    @PutMapping("/{eventParticipationId}/after-party/post-payment/uncheck")
+    @PutMapping("/{eventParticipationId}/after-party/revoke")
     public ResponseEntity<Void> uncheckAfterPartyPostPayment(@PathVariable Long eventParticipationId, @RequestParam AfterPartyStatusUpdateOption afterPartyStatusUpdateOption) {
         eventParticipationService.revokeAfterPartyStatusConfirm(eventParticipationId, afterPartyStatusUpdateOption);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "뒤풀이 정산 전체 확인 취소", description = "뒤풀이 정산 확인을 전체 취소합니다.")
-    @PutMapping("/after-party/post-payment/uncheck-all")
+    @PutMapping("/after-party/revoke-all")
     public ResponseEntity<Void> uncheckAllAfterPartyPostPayment(@RequestParam Long eventId, @RequestParam AfterPartyStatusUpdateOption afterPartyStatusUpdateOption) {
         eventParticipationService.revokeAllAfterPartyStatusConfirm(eventId, afterPartyStatusUpdateOption);
         return ResponseEntity.ok().build();
