@@ -67,28 +67,28 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "뒤풀이 참석 및 정산 개별 확인 처리", description = "뒤풀이 참석 또는 정산 현황을 확인 처리합니다.")
+    @Operation(summary = "뒤풀이 참석/정산 확인 처리", description = "뒤풀이 참석/정산에 대해 확인 처리합니다.")
     @PutMapping("/{eventParticipationId}/after-party/confirm")
     public ResponseEntity<Void> checkAfterPartyPostPayment(@PathVariable Long eventParticipationId, @RequestParam AfterPartyStatusUpdateOption afterPartyStatusUpdateOption) {
         eventParticipationService.confirmAfterPartyStatus(eventParticipationId, afterPartyStatusUpdateOption);
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "뒤풀이 정산 전체 확인 처리", description = "뒤풀이 정산을 전체 확인 처리합니다.")
+    @Operation(summary = "뒤풀이 참석/정산 전체 확인 처리", description = "뒤풀이 참석/정산에 대해 전체 확인 처리합니다.")
     @PutMapping("/after-party/confirm-all")
     public ResponseEntity<Void> checkAllAfterPartyPostPayment(@RequestParam Long eventId, @RequestParam AfterPartyStatusUpdateOption afterPartyStatusUpdateOption) {
         eventParticipationService.confirmAllAfterPartyStatus(eventId, afterPartyStatusUpdateOption);
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "뒤풀이 정산 확인 취소", description = "뒤풀이 정산 확인을 취소합니다.")
+    @Operation(summary = "뒤풀이 참석/정산 확인 취소", description = "뒤풀이 참석/정산 확인을 취소합니다.")
     @PutMapping("/{eventParticipationId}/after-party/revoke")
     public ResponseEntity<Void> uncheckAfterPartyPostPayment(@PathVariable Long eventParticipationId, @RequestParam AfterPartyStatusUpdateOption afterPartyStatusUpdateOption) {
         eventParticipationService.revokeAfterPartyStatusConfirm(eventParticipationId, afterPartyStatusUpdateOption);
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "뒤풀이 정산 전체 확인 취소", description = "뒤풀이 정산 확인을 전체 취소합니다.")
+    @Operation(summary = "뒤풀이 참석/정산 전체 확인 취소", description = "뒤풀이 참석/정산 확인을 전체 취소합니다.")
     @PutMapping("/after-party/revoke-all")
     public ResponseEntity<Void> uncheckAllAfterPartyPostPayment(@RequestParam Long eventId, @RequestParam AfterPartyStatusUpdateOption afterPartyStatusUpdateOption) {
         eventParticipationService.revokeAllAfterPartyStatusConfirm(eventId, afterPartyStatusUpdateOption);
