@@ -7,12 +7,14 @@ import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventService {
@@ -47,5 +49,6 @@ public class EventService {
                 request.mainEventMaxApplicantCount(),
                 request.afterPartyMaxApplicantCount());
         eventRepository.save(event);
+        log.info("[EventService] 이벤트 생성: eventId={}", event.getId());
     }
 }

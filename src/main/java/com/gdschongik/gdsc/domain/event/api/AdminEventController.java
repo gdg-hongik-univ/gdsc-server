@@ -28,7 +28,7 @@ public class AdminEventController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "행사 생성", description = "행사를 생성합니다")
+    @Operation(summary = "행사 생성", description = "행사를 생성합니다.")
     @PostMapping
     public ResponseEntity<Void> createEvent(@Valid @RequestBody EventCreateRequest request) {
         eventService.createEvent(request);
