@@ -195,13 +195,33 @@ public class EventParticipation extends BaseEntity {
         this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.ATTENDED;
     }
 
+    // 뒤풀이 선입금 처리
+    public void confirmPrePayment() {
+        this.prePaymentStatus = PaymentStatus.PAID;
+    }
+
+    // 뒤풀이 선입금 취소 처리
+    public void revokePrePayment() {
+        this.prePaymentStatus = PaymentStatus.UNPAID;
+    }
+
     // 뒤풀이 정산 처리
-    public void checkPostPayment() {
+    public void confirmPostPayment() {
         this.postPaymentStatus = PaymentStatus.PAID;
     }
 
     // 뒤풀이 정산 취소 처리
-    public void uncheckPostPayment() {
+    public void revokePostPayment() {
         this.postPaymentStatus = PaymentStatus.UNPAID;
+    }
+
+    // 뒤풀이 참석 처리
+    public void confirmAttendance() {
+        this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.ATTENDED;
+    }
+
+    // 뒤풀이 참석 취소 처리
+    public void revokeAttendance() {
+        this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.NOT_ATTENDED;
     }
 }

@@ -9,11 +9,7 @@ import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipationDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
-import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredApplyRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventUnregisteredApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.*;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
@@ -123,7 +119,7 @@ public class EventParticipationService {
     }
 
     @Transactional
-    public void checkPostPayment(Long eventParticipationId) {
+    public void confirmAfterPartyStatus(Long eventParticipationId, AfterPartyStatusUpdateOption option) {
         EventParticipation eventParticipation = eventParticipationRepository
                 .findById(eventParticipationId)
                 .orElseThrow(() -> new CustomException(PARTICIPATION_NOT_FOUND));
@@ -131,26 +127,44 @@ public class EventParticipationService {
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
 
-        eventParticipation.checkPostPayment();
+        switch (option) {
+            case ATTENDANCE:
+                eventParticipation.confirmAttendance();
+                break;
+            case PRE_PAYMENT:
+                eventParticipation.confirmPrePayment();
+                break;
+            case POST_PAYMENT:
+                eventParticipation.confirmPostPayment();
+        }
 
-        log.info("[EventParticipationService] 뒤풀이 정산 완료 처리: eventParticipationId={}", eventParticipationId);
+        log.info("[EventParticipationService] 뒤풀이 참석/정산 확인 처리: eventParticipationId={}, afterPartyStatusUpdateOption={}", eventParticipationId, option);
     }
 
     @Transactional
-    public void checkAllPostPayment(Long eventId) {
+    public void confirmAllAfterPartyStatus(Long eventId, AfterPartyStatusUpdateOption option) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
 
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
-        eventParticipations.forEach(EventParticipation::checkPostPayment);
+        switch (option) {
+            case ATTENDANCE:
+                eventParticipations.forEach(EventParticipation::confirmAttendance);
+                break;
+            case PRE_PAYMENT:
+                eventParticipations.forEach(EventParticipation::confirmPrePayment);
+                break;
+            case POST_PAYMENT:
+                eventParticipations.forEach(EventParticipation::confirmPostPayment);
+        }
 
-        log.info("[EventParticipationService] 뒤풀이 정산 전체 완료 처리: eventId={}", eventId);
+        log.info("[EventParticipationService] 뒤풀이 참석/정산 전체 확인 처리: eventId={}, afterPartyStatusUpdateOption={}", eventId, option);
     }
 
     @Transactional
-    public void uncheckPostPayment(Long eventParticipationId) {
+    public void revokeAfterPartyStatusConfirm(Long eventParticipationId, AfterPartyStatusUpdateOption option) {
         EventParticipation eventParticipation = eventParticipationRepository
                 .findById(eventParticipationId)
                 .orElseThrow(() -> new CustomException(PARTICIPATION_NOT_FOUND));
@@ -158,22 +172,40 @@ public class EventParticipationService {
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
 
-        eventParticipation.uncheckPostPayment();
+        switch (option) {
+            case ATTENDANCE:
+                eventParticipation.revokeAttendance();
+                break;
+            case PRE_PAYMENT:
+                eventParticipation.revokePrePayment();
+                break;
+            case POST_PAYMENT:
+                eventParticipation.revokePostPayment();
+        }
 
-        log.info("[EventParticipationService] 뒤풀이 정산 취소 처리: eventParticipationId={}", eventParticipationId);
+        log.info("[EventParticipationService] 뒤풀이 참석/정산 확인 취소 처리: eventParticipationId={}, afterPartyStatusUpdateOption={}", eventParticipationId, option);
     }
 
     @Transactional
-    public void uncheckAllPostPayment(Long eventId) {
+    public void revokeAllAfterPartyStatusConfirm(Long eventId, AfterPartyStatusUpdateOption option) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
 
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
-        eventParticipations.forEach(EventParticipation::uncheckPostPayment);
+        switch (option) {
+            case ATTENDANCE:
+                eventParticipations.forEach(EventParticipation::revokeAttendance);
+                break;
+            case PRE_PAYMENT:
+                eventParticipations.forEach(EventParticipation::revokePrePayment);
+                break;
+            case POST_PAYMENT:
+                eventParticipations.forEach(EventParticipation::revokePostPayment);
+        }
 
-        log.info("[EventParticipationService] 뒤풀이 정산 전체 취소 처리: eventId={}", eventId);
+        log.info("[EventParticipationService] 뒤풀이 참석 / 정산 현황 전체 확인 취소 처리: eventId={}, afterPartyStatusUpdateOption={}", eventId, option);
     }
 
     private static Predicate<Member> isThisMemberAllowedToParticipate(Event event) {
