@@ -49,6 +49,7 @@ public class EventService {
                 request.mainEventMaxApplicantCount(),
                 request.afterPartyMaxApplicantCount());
         eventRepository.save(event);
+
         log.info("[EventService] 이벤트 생성: eventId={}", event.getId());
     }
 }
