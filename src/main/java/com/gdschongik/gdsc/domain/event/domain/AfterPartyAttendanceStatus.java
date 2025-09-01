@@ -10,7 +10,7 @@ public enum AfterPartyAttendanceStatus {
     ;
 
     public static AfterPartyAttendanceStatus getInitialStatus(Event event) {
-        if (event.getAfterPartyStatus().isEnabled()) {
+        if (event.afterPartyExists()) {
             return NOT_ATTENDED;
         }
         return NONE;

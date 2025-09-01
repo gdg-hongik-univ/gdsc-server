@@ -1,8 +1,7 @@
-name: PR Automation
+name: PR Auto Fill
 
 on:
   pull_request:
-    types: [opened, reopened]
     branches: ["develop"]
 
 jobs:

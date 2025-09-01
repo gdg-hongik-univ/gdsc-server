@@ -1,10 +1,13 @@
 package com.gdschongik.gdsc.domain.event.dto.response;
 
+import com.gdschongik.gdsc.domain.event.dto.dto.AfterPartyApplicantCountDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import org.springframework.data.domain.Page;
 
-public record AfterPartyApplicantResponse(Page<EventParticipationDto> applicants, CountDto counts) {
+public record AfterPartyApplicantResponse(Page<EventParticipationDto> applicants, AfterPartyApplicantCountDto counts) {
 
-    // TODO: CountDto 네이밍 적절하게 변경, 내용 구현, 별도 DTO로 분리 검토
-    public record CountDto() {}
+    public static AfterPartyApplicantResponse of(
+            Page<EventParticipationDto> applicants, AfterPartyApplicantCountDto counts) {
+        return new AfterPartyApplicantResponse(applicants, counts);
+    }
 }

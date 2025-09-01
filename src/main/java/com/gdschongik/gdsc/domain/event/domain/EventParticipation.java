@@ -122,6 +122,45 @@ public class EventParticipation extends BaseEntity {
                 .build();
     }
 
+    // 어드민 수동등록을 통해 생성된 참여정보
+
+    public static EventParticipation createManualForRegistered(
+            Member member,
+            AfterPartyApplicationStatus afterPartyApplicationStatus,
+            AfterPartyAttendanceStatus afterPartyAttendanceStatus,
+            PaymentStatus prePaymentStatus,
+            PaymentStatus postPaymentStatus,
+            Event event) {
+        return EventParticipation.builder()
+                .participant(Participant.from(member))
+                .memberId(member.getId())
+                .mainEventApplicationStatus(MainEventApplicationStatus.NOT_APPLIED)
+                .afterPartyApplicationStatus(afterPartyApplicationStatus)
+                .afterPartyAttendanceStatus(afterPartyAttendanceStatus)
+                .prePaymentStatus(prePaymentStatus)
+                .postPaymentStatus(postPaymentStatus)
+                .event(event)
+                .build();
+    }
+
+    public static EventParticipation createManualForUnregistered(
+            Participant participant,
+            AfterPartyApplicationStatus afterPartyApplicationStatus,
+            AfterPartyAttendanceStatus afterPartyAttendanceStatus,
+            PaymentStatus prePaymentStatus,
+            PaymentStatus postPaymentStatus,
+            Event event) {
+        return EventParticipation.builder()
+                .participant(participant)
+                .mainEventApplicationStatus(MainEventApplicationStatus.NOT_APPLIED)
+                .afterPartyApplicationStatus(afterPartyApplicationStatus)
+                .afterPartyAttendanceStatus(afterPartyAttendanceStatus)
+                .prePaymentStatus(prePaymentStatus)
+                .postPaymentStatus(postPaymentStatus)
+                .event(event)
+                .build();
+    }
+
     // 뒤풀이 현장등록을 통해 생성된 참여정보
 
     public static EventParticipation createOnsiteForRegistered(

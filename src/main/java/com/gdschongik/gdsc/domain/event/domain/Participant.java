@@ -1,5 +1,6 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
+import static com.gdschongik.gdsc.global.common.constant.RegexConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.member.domain.Member;
@@ -25,6 +26,9 @@ public final class Participant {
 
     @Builder(access = AccessLevel.PRIVATE)
     private Participant(String name, String studentId, String phone) {
+        validateNotNull(name, studentId, phone);
+        validateStudentIdFormat(studentId);
+        validatePhoneFormat(phone);
         this.name = name;
         this.studentId = studentId;
         this.phone = phone;
@@ -48,5 +52,23 @@ public final class Participant {
                 .studentId(member.getStudentId())
                 .phone(member.getPhone())
                 .build();
+    }
+
+    private static void validateNotNull(String name, String studentId, String phone) {
+        if (name == null || studentId == null || phone == null) {
+            throw new CustomException(PARTICIPANT_NOT_CREATABLE_FIELD_NOT_NULL);
+        }
+    }
+
+    private static void validateStudentIdFormat(String studentId) {
+        if (!studentId.matches(STUDENT_ID)) {
+            throw new CustomException(PARTICIPANT_NOT_CREATABLE_STUDENT_ID_INVALID);
+        }
+    }
+
+    private static void validatePhoneFormat(String phone) {
+        if (!phone.matches(PHONE_WITHOUT_HYPHEN)) {
+            throw new CustomException(PARTICIPANT_NOT_CREATABLE_PHONE_INVALID);
+        }
     }
 }

@@ -157,4 +157,10 @@ public class Event extends BaseEntity {
             throw new CustomException(EVENT_NOT_CREATABLE_PAYMENTS_BOTH_ENABLED);
         }
     }
+
+    // 데이터 조회 로직
+
+    public boolean afterPartyExists() {
+        return afterPartyStatus.isEnabled();
+    }
 }
