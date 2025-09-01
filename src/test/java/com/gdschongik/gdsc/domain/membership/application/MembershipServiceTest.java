@@ -39,7 +39,7 @@ public class MembershipServiceTest extends IntegrationTest {
         @Test
         void 멤버십을_1차모집시_생성했지만_정회원_가입조건을_만족하지_않았다면_2차모집에서_멤버십_가입신청에_성공한다() {
             // given
-            createMember();
+            createAssociateMember();
             logoutAndReloginAs(1L, ASSOCIATE);
 
             RecruitmentRound firstRound = createRecruitmentRound(
