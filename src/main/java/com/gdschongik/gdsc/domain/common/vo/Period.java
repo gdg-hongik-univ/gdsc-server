@@ -29,7 +29,7 @@ public final class Period {
         this.endDate = endDate;
     }
 
-    @JsonCreator
+    @JsonCreator // TODO: 레코드로 변경 후 제거
     public static Period of(LocalDateTime startDate, LocalDateTime endDate) {
         validatePeriod(startDate, endDate);
         return Period.builder().startDate(startDate).endDate(endDate).build();
