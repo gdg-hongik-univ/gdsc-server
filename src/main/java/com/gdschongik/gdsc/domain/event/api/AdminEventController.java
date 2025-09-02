@@ -39,8 +39,7 @@ public class AdminEventController {
 
     @Operation(summary = "이벤트 검색", description = "이벤트를 검색합니다.")
     @GetMapping("/search")
-    public ResponseEntity<List<EventDto>> searchEvent(
-            @RequestParam(name = "event", required = false) String eventName) {
+    public ResponseEntity<List<EventDto>> searchEvent(@RequestParam(name = "event") String eventName) {
         var response = eventService.searchEvent(eventName);
         return ResponseEntity.ok(response);
     }
