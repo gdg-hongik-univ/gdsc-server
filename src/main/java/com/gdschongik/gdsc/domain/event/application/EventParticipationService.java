@@ -132,16 +132,7 @@ public class EventParticipationService {
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
 
-        switch (afterPartyUpdateStatus) {
-            case ATTENDANCE:
-                eventParticipation.confirmAttendance();
-                break;
-            case PRE_PAYMENT:
-                eventParticipation.confirmPrePayment();
-                break;
-            case POST_PAYMENT:
-                eventParticipation.confirmPostPayment();
-        }
+        confirmAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateStatus);
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석/정산 확인 처리: eventParticipationId={}, afterPartyStatusField={}",
@@ -157,16 +148,9 @@ public class EventParticipationService {
 
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
-        switch (afterPartyUpdateStatus) {
-            case ATTENDANCE:
-                eventParticipations.forEach(EventParticipation::confirmAttendance);
-                break;
-            case PRE_PAYMENT:
-                eventParticipations.forEach(EventParticipation::confirmPrePayment);
-                break;
-            case POST_PAYMENT:
-                eventParticipations.forEach(EventParticipation::confirmPostPayment);
-        }
+        eventParticipations.forEach(eventParticipation -> {
+            confirmAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateStatus);
+        });
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석/정산 전체 확인 처리: eventId={}, afterPartyStatusField={}",
@@ -184,16 +168,7 @@ public class EventParticipationService {
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
 
-        switch (afterPartyUpdateStatus) {
-            case ATTENDANCE:
-                eventParticipation.revokeAttendance();
-                break;
-            case PRE_PAYMENT:
-                eventParticipation.revokePrePayment();
-                break;
-            case POST_PAYMENT:
-                eventParticipation.revokePostPayment();
-        }
+        revokeAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateStatus);
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석/정산 확인 취소 처리: eventParticipationId={}, afterPartyStatusField={}",
@@ -209,16 +184,9 @@ public class EventParticipationService {
 
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
-        switch (afterPartyUpdateStatus) {
-            case ATTENDANCE:
-                eventParticipations.forEach(EventParticipation::revokeAttendance);
-                break;
-            case PRE_PAYMENT:
-                eventParticipations.forEach(EventParticipation::revokePrePayment);
-                break;
-            case POST_PAYMENT:
-                eventParticipations.forEach(EventParticipation::revokePostPayment);
-        }
+        eventParticipations.forEach(eventParticipation -> {
+            revokeAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateStatus);
+        });
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석 / 정산 현황 전체 확인 취소 처리: eventId={}, afterPartyStatusField={}",
@@ -295,6 +263,35 @@ public class EventParticipationService {
     private void validateRequestParticipationIds(List<Long> requestIds, List<EventParticipation> participations) {
         if (requestIds.size() != participations.size()) {
             throw new CustomException(PARTICIPATION_NOT_DELETABLE_INVALID_IDS);
+        }
+    }
+
+    //
+    private void confirmAfterPartyStatusByAfterPartyUpdateStatus(
+            EventParticipation participation, AfterPartyUpdateStatus afterPartyUpdateStatus) {
+        switch (afterPartyUpdateStatus) {
+            case ATTENDANCE:
+                participation.confirmAttendance();
+                break;
+            case PRE_PAYMENT:
+                participation.confirmPrePayment();
+                break;
+            case POST_PAYMENT:
+                participation.confirmPostPayment();
+        }
+    }
+
+    private void revokeAfterPartyStatusByAfterPartyUpdateStatus(
+            EventParticipation participation, AfterPartyUpdateStatus afterPartyUpdateStatus) {
+        switch (afterPartyUpdateStatus) {
+            case ATTENDANCE:
+                participation.revokeAttendance();
+                break;
+            case PRE_PAYMENT:
+                participation.revokePrePayment();
+                break;
+            case POST_PAYMENT:
+                participation.revokePostPayment();
         }
     }
 }
