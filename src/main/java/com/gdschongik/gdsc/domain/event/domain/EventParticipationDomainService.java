@@ -187,7 +187,7 @@ public class EventParticipationDomainService {
      */
     public void validateAfterPartyEnabled(Event event) {
         if (!event.afterPartyExists()) {
-            throw new CustomException(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED);
+            throw new CustomException(EVENT_AFTER_PARTY_DISABLED);
         }
     }
 
