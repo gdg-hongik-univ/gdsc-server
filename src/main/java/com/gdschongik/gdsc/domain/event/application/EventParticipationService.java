@@ -266,7 +266,7 @@ public class EventParticipationService {
         }
     }
 
-    //
+    // AfterPartyUpdateStatus 가 가리키는 필드 값을 확인 처리
     private void confirmAfterPartyStatusByAfterPartyUpdateStatus(
             EventParticipation participation, AfterPartyUpdateStatus afterPartyUpdateStatus) {
         switch (afterPartyUpdateStatus) {
@@ -281,6 +281,7 @@ public class EventParticipationService {
         }
     }
 
+    // AfterPartyUpdateStatus 가 가리키는 필드 값을 확인 취소 처리
     private void revokeAfterPartyStatusByAfterPartyUpdateStatus(
             EventParticipation participation, AfterPartyUpdateStatus afterPartyUpdateStatus) {
         switch (afterPartyUpdateStatus) {
