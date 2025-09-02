@@ -849,22 +849,6 @@ class EventParticipationServiceTest extends IntegrationTest {
         return eventParticipationRepository.save(eventParticipation);
     }
 
-    private EventParticipation createAppliedAfterPartyEventParticipation(
-            Event event,
-            Member member,
-            AfterPartyAttendanceStatus attendanceStatus,
-            PaymentStatus prePaymentStatus,
-            PaymentStatus postPaymentStatus) {
-        EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
-                member,
-                AfterPartyApplicationStatus.APPLIED,
-                attendanceStatus,
-                prePaymentStatus,
-                postPaymentStatus,
-                event);
-        return eventParticipationRepository.save(eventParticipation);
-    }
-
     private EventParticipation createAfterPartyParticipation(Event event, Member member) {
         EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
                 member,
