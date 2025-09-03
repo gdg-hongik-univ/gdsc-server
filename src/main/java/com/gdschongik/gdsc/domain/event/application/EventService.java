@@ -3,6 +3,7 @@ package com.gdschongik.gdsc.domain.event.application;
 import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
+import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import java.util.List;
@@ -51,5 +52,11 @@ public class EventService {
         eventRepository.save(event);
 
         log.info("[EventService] 이벤트 생성: eventId={}", event.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<EventDto> searchEvent(String name) {
+        List<Event> events = eventRepository.findAllByNameContains(name);
+        return events.stream().map(EventDto::from).toList();
     }
 }
