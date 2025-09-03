@@ -478,7 +478,7 @@ class EventParticipationServiceTest extends IntegrationTest {
     class 뒤풀이_참석_및_정산_상태를_수정할_때 {
 
         @Test
-        void 신청자의_뒤풀이_참석_상태를_확인_처리한다() {
+        void 뒤풀이_참석_상태를_확인_처리한다() {
             // given
             Event event = createEvent();
             Member member = createMember();
@@ -496,7 +496,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 신청자의_뒤풀이_선입금_상태를_확인_처리한다() {
+        void 뒤풀이_선입금_상태를_확인_처리한다() {
             // given
             Event event = createEvent();
             Member member = createMember();
@@ -514,7 +514,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 신청자의_뒤풀이_정산_상태를_확인_처리한다() {
+        void 뒤풀이_정산_상태를_확인_처리한다() {
             // given
             Event event = createEvent();
             Member member = createMember();
@@ -532,7 +532,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 신청자의_뒤풀이_참석_상태를_확인_취소한다() {
+        void 뒤풀이_참석_상태를_확인_취소한다() {
             // given
             Event event = createEvent();
             Member member = createMember();
@@ -550,7 +550,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 신청자의_뒤풀이_선입금_상태를_확인_취소한다() {
+        void 뒤풀이_선입금_상태를_확인_취소한다() {
             // given
             Event event = createEvent();
             Member member = createMember();
@@ -568,7 +568,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 신청자의_뒤풀이_정산_상태를_확인_취소한다() {
+        void 뒤풀이_정산_상태를_확인_취소한다() {
             // given
             Event event = createEvent();
             Member member = createMember();
@@ -586,7 +586,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 신청자의_뒤풀이_참석_상태를_전체_확인_처리한다() {
+        void 뒤풀이_참석_상태를_전체_확인_처리한다() {
             // given
             Event event = createEvent();
             Member member1 = createMember("C000001", "김홍익");
@@ -606,7 +606,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 신청자의_뒤풀이_선입금_상태를_전체_확인_처리한다() {
+        void 뒤풀이_선입금_상태를_전체_확인_처리한다() {
             // given
             Event event = createEvent();
             Member member1 = createMember("C000001", "김홍익");
@@ -626,7 +626,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 신청자의_뒤풀이_정산_상태를_전체_확인_처리한다() {
+        void 뒤풀이_정산_상태를_전체_확인_처리한다() {
             // given
             Event event = createEvent();
             Member member1 = createMember("C000001", "김홍익");
@@ -646,7 +646,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 신청자의_뒤풀이_참석_상태를_전체_확인_취소한다() {
+        void 뒤풀이_참석_상태를_전체_확인_취소한다() {
             // given
             Event event = createEvent();
             Member member1 = createMember("C000001", "김홍익");
@@ -667,7 +667,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 신청자의_뒤풀이_선입금_상태를_전체_확인_취소한다() {
+        void 뒤풀이_선입금_상태를_전체_확인_취소한다() {
             // given
             Event event = createEvent();
             Member member1 = createMember("C000001", "김홍익");
@@ -688,7 +688,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 신청자의_뒤풀이_정산_상태를_전체_확인_취소한다() {
+        void 뒤풀이_정산_상태를_전체_확인_취소한다() {
             // given
             Event event = createEvent();
             Member member1 = createMember("C000001", "김홍익");
