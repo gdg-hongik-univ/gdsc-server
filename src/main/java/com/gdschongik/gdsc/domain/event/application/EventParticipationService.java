@@ -269,28 +269,18 @@ public class EventParticipationService {
     private void confirmAfterPartyStatusByAfterPartyUpdateStatus(
             EventParticipation participation, AfterPartyUpdateStatus afterPartyUpdateStatus) {
         switch (afterPartyUpdateStatus) {
-            case ATTENDANCE:
-                participation.confirmAttendance();
-                break;
-            case PRE_PAYMENT:
-                participation.confirmPrePayment();
-                break;
-            case POST_PAYMENT:
-                participation.confirmPostPayment();
+            case ATTENDANCE -> participation.confirmAttendance();
+            case PRE_PAYMENT -> participation.confirmPrePayment();
+            case POST_PAYMENT -> participation.confirmPostPayment();
         }
     }
 
     private void revokeAfterPartyStatusByAfterPartyUpdateStatus(
             EventParticipation participation, AfterPartyUpdateStatus afterPartyUpdateStatus) {
         switch (afterPartyUpdateStatus) {
-            case ATTENDANCE:
-                participation.revokeAttendance();
-                break;
-            case PRE_PAYMENT:
-                participation.revokePrePayment();
-                break;
-            case POST_PAYMENT:
-                participation.revokePostPayment();
+            case ATTENDANCE -> participation.revokeAttendance();
+            case PRE_PAYMENT -> participation.revokePrePayment();
+            case POST_PAYMENT -> participation.revokePostPayment();
         }
     }
 }
