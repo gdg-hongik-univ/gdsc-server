@@ -10,7 +10,7 @@ import com.gdschongik.gdsc.domain.event.domain.EventParticipationDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateStatus;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateTarget;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredApplyRequest;
@@ -124,7 +124,7 @@ public class EventParticipationService {
     }
 
     @Transactional
-    public void confirmAfterPartyStatus(Long eventParticipationId, AfterPartyUpdateStatus afterPartyUpdateStatus) {
+    public void confirmAfterPartyStatus(Long eventParticipationId, AfterPartyUpdateTarget afterPartyUpdateTarget) {
         EventParticipation eventParticipation = eventParticipationRepository
                 .findById(eventParticipationId)
                 .orElseThrow(() -> new CustomException(PARTICIPATION_NOT_FOUND));
@@ -132,16 +132,16 @@ public class EventParticipationService {
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
 
-        confirmAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateStatus);
+        confirmAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateTarget);
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석/정산 확인 처리: eventParticipationId={}, afterPartyStatusField={}",
                 eventParticipationId,
-                afterPartyUpdateStatus);
+                afterPartyUpdateTarget);
     }
 
     @Transactional
-    public void confirmAllAfterPartyStatus(Long eventId, AfterPartyUpdateStatus afterPartyUpdateStatus) {
+    public void confirmAllAfterPartyStatus(Long eventId, AfterPartyUpdateTarget afterPartyUpdateTarget) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
@@ -149,18 +149,18 @@ public class EventParticipationService {
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
         eventParticipations.forEach(eventParticipation -> {
-            confirmAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateStatus);
+            confirmAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateTarget);
         });
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석/정산 전체 확인 처리: eventId={}, afterPartyStatusField={}",
                 eventId,
-                afterPartyUpdateStatus);
+                afterPartyUpdateTarget);
     }
 
     @Transactional
     public void revokeAfterPartyStatusConfirm(
-            Long eventParticipationId, AfterPartyUpdateStatus afterPartyUpdateStatus) {
+            Long eventParticipationId, AfterPartyUpdateTarget afterPartyUpdateTarget) {
         EventParticipation eventParticipation = eventParticipationRepository
                 .findById(eventParticipationId)
                 .orElseThrow(() -> new CustomException(PARTICIPATION_NOT_FOUND));
@@ -168,16 +168,16 @@ public class EventParticipationService {
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
 
-        revokeAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateStatus);
+        revokeAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateTarget);
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석/정산 확인 취소 처리: eventParticipationId={}, afterPartyStatusField={}",
                 eventParticipationId,
-                afterPartyUpdateStatus);
+                afterPartyUpdateTarget);
     }
 
     @Transactional
-    public void revokeAllAfterPartyStatusConfirm(Long eventId, AfterPartyUpdateStatus afterPartyUpdateStatus) {
+    public void revokeAllAfterPartyStatusConfirm(Long eventId, AfterPartyUpdateTarget afterPartyUpdateTarget) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         eventParticipationDomainService.validateAfterPartyEnabled(event);
@@ -185,13 +185,13 @@ public class EventParticipationService {
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
         eventParticipations.forEach(eventParticipation -> {
-            revokeAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateStatus);
+            revokeAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateTarget);
         });
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석 / 정산 현황 전체 확인 취소 처리: eventId={}, afterPartyStatusField={}",
                 eventId,
-                afterPartyUpdateStatus);
+                afterPartyUpdateTarget);
     }
 
     private static Predicate<Member> isThisMemberAllowedToParticipate(Event event) {
@@ -267,8 +267,8 @@ public class EventParticipationService {
     }
 
     private void confirmAfterPartyStatusByAfterPartyUpdateStatus(
-            EventParticipation participation, AfterPartyUpdateStatus afterPartyUpdateStatus) {
-        switch (afterPartyUpdateStatus) {
+            EventParticipation participation, AfterPartyUpdateTarget afterPartyUpdateTarget) {
+        switch (afterPartyUpdateTarget) {
             case ATTENDANCE -> participation.confirmAttendance();
             case PRE_PAYMENT -> participation.confirmPrePayment();
             case POST_PAYMENT -> participation.confirmPostPayment();
@@ -276,8 +276,8 @@ public class EventParticipationService {
     }
 
     private void revokeAfterPartyStatusByAfterPartyUpdateStatus(
-            EventParticipation participation, AfterPartyUpdateStatus afterPartyUpdateStatus) {
-        switch (afterPartyUpdateStatus) {
+            EventParticipation participation, AfterPartyUpdateTarget afterPartyUpdateTarget) {
+        switch (afterPartyUpdateTarget) {
             case ATTENDANCE -> participation.revokeAttendance();
             case PRE_PAYMENT -> participation.revokePrePayment();
             case POST_PAYMENT -> participation.revokePostPayment();

@@ -3,7 +3,7 @@ package com.gdschongik.gdsc.domain.event.api;
 import com.gdschongik.gdsc.domain.event.application.EventParticipationService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateStatus;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateTarget;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredApplyRequest;
@@ -75,32 +75,32 @@ public class AdminEventParticipationController {
     @Operation(summary = "뒤풀이 참석/정산 확인 처리", description = "뒤풀이 참석/정산에 대해 확인 처리합니다.")
     @PutMapping("/{eventParticipationId}/after-party/confirm")
     public ResponseEntity<Void> confirmAfterPartyStatus(
-            @PathVariable Long eventParticipationId, @RequestParam AfterPartyUpdateStatus afterPartyUpdateStatus) {
-        eventParticipationService.confirmAfterPartyStatus(eventParticipationId, afterPartyUpdateStatus);
+            @PathVariable Long eventParticipationId, @RequestParam AfterPartyUpdateTarget afterPartyUpdateTarget) {
+        eventParticipationService.confirmAfterPartyStatus(eventParticipationId, afterPartyUpdateTarget);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "뒤풀이 참석/정산 전체 확인 처리", description = "뒤풀이 참석/정산에 대해 전체 확인 처리합니다.")
     @PutMapping("/after-party/confirm-all")
     public ResponseEntity<Void> confirmAllAfterPartyStatus(
-            @RequestParam Long eventId, @RequestParam AfterPartyUpdateStatus afterPartyUpdateStatus) {
-        eventParticipationService.confirmAllAfterPartyStatus(eventId, afterPartyUpdateStatus);
+            @RequestParam Long eventId, @RequestParam AfterPartyUpdateTarget afterPartyUpdateTarget) {
+        eventParticipationService.confirmAllAfterPartyStatus(eventId, afterPartyUpdateTarget);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "뒤풀이 참석/정산 확인 취소", description = "뒤풀이 참석/정산 확인을 취소합니다.")
     @PutMapping("/{eventParticipationId}/after-party/revoke")
     public ResponseEntity<Void> revokeAfterPartyStatusConfirm(
-            @PathVariable Long eventParticipationId, @RequestParam AfterPartyUpdateStatus afterPartyUpdateStatus) {
-        eventParticipationService.revokeAfterPartyStatusConfirm(eventParticipationId, afterPartyUpdateStatus);
+            @PathVariable Long eventParticipationId, @RequestParam AfterPartyUpdateTarget afterPartyUpdateTarget) {
+        eventParticipationService.revokeAfterPartyStatusConfirm(eventParticipationId, afterPartyUpdateTarget);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "뒤풀이 참석/정산 전체 확인 취소", description = "뒤풀이 참석/정산 확인을 전체 취소합니다.")
     @PutMapping("/after-party/revoke-all")
     public ResponseEntity<Void> revokeAllAfterPartyStatusConfirm(
-            @RequestParam Long eventId, @RequestParam AfterPartyUpdateStatus afterPartyUpdateStatus) {
-        eventParticipationService.revokeAllAfterPartyStatusConfirm(eventId, afterPartyUpdateStatus);
+            @RequestParam Long eventId, @RequestParam AfterPartyUpdateTarget afterPartyUpdateTarget) {
+        eventParticipationService.revokeAllAfterPartyStatusConfirm(eventId, afterPartyUpdateTarget);
         return ResponseEntity.ok().build();
     }
 
