@@ -2,6 +2,7 @@ package com.gdschongik.gdsc.helper;
 
 import static com.gdschongik.gdsc.domain.member.domain.Department.*;
 import static com.gdschongik.gdsc.global.common.constant.CouponConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.MemberConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.RecruitmentConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.StudyConstant.*;
@@ -20,6 +21,8 @@ import com.gdschongik.gdsc.domain.coupon.domain.IssuedCoupon;
 import com.gdschongik.gdsc.domain.discord.application.handler.DelegateMemberDiscordEventHandler;
 import com.gdschongik.gdsc.domain.discord.application.handler.MemberDiscordRoleRevokeHandler;
 import com.gdschongik.gdsc.domain.discord.application.handler.SpringEventHandler;
+import com.gdschongik.gdsc.domain.event.dao.EventRepository;
+import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.member.domain.MemberManageRole;
@@ -109,6 +112,9 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected StudyHistoryV2Repository studyHistoryV2Repository;
+
+    @Autowired
+    protected EventRepository eventRepository;
 
     @MockBean
     protected OnboardingRecruitmentService onboardingRecruitmentService;
@@ -330,5 +336,23 @@ public abstract class IntegrationTest {
     protected StudyHistoryV2 createStudyHistory(Member member, StudyV2 study) {
         StudyHistoryV2 studyHistory = StudyHistoryV2.create(member, study);
         return studyHistoryV2Repository.save(studyHistory);
+    }
+
+    protected Event createEvent() {
+        Event event = Event.create(
+                EVENT_NAME,
+                VENUE,
+                EVENT_START_AT,
+                APPLICATION_DESCRIPTION,
+                EVENT_APPLICATION_PERIOD,
+                REGULAR_ROLE_ONLY_STATUS,
+                AFTER_PARTY_STATUS,
+                PRE_PAYMENT_STATUS,
+                POST_PAYMENT_STATUS,
+                RSVP_QUESTION_STATUS,
+                MAIN_EVENT_MAX_APPLICATION_COUNT,
+                AFTER_PARTY_MAX_APPLICATION_COUNT);
+
+        return eventRepository.save(event);
     }
 }
