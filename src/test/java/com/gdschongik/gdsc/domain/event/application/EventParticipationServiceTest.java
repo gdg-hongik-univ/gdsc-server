@@ -418,7 +418,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             // when & then
             assertThatThrownBy(() -> eventParticipationService.attendAfterParty(request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
+                    .hasMessage(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
         }
     }
 
@@ -719,7 +719,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(
                             eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
+                    .hasMessage(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
         }
 
         @Test
@@ -733,7 +733,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
                             eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
+                    .hasMessage(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
         }
 
         @Test
@@ -745,7 +745,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> eventParticipationService.confirmAllAfterPartyStatus(
                             event.getId(), AfterPartyUpdateTarget.ATTENDANCE))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
+                    .hasMessage(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
         }
 
         @Test
@@ -757,7 +757,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> eventParticipationService.revokeAllAfterPartyStatusConfirm(
                             event.getId(), AfterPartyUpdateTarget.ATTENDANCE))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(EVENT_AFTER_PARTY_DISABLED.getMessage());
+                    .hasMessage(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
         }
 
         @Test
