@@ -55,8 +55,8 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public List<EventDto> searchEvent(String eventName) {
-        List<Event> events = eventRepository.findAllByNameContains(eventName);
+    public List<EventDto> searchEvent(String name) {
+        List<Event> events = eventRepository.findAllByNameContains(name);
         return events.stream().map(EventDto::from).toList();
     }
 }
