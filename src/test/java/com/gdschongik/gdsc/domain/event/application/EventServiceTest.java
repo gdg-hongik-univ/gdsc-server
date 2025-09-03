@@ -5,6 +5,7 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateRequest;
 import com.gdschongik.gdsc.helper.IntegrationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,32 @@ public class EventServiceTest extends IntegrationTest {
 
             // when & then
             assertThatCode(() -> eventService.createEvent(request)).doesNotThrowAnyException();
+        }
+    }
+
+    @Nested
+    class 이벤트_수정시 {
+
+        @Test
+        void 성공한다() {
+            // given
+            createEvent();
+
+            String updatedName = "수정된 행사 이름";
+            var request = new EventUpdateRequest(
+                    updatedName,
+                    VENUE,
+                    EVENT_START_AT,
+                    APPLICATION_DESCRIPTION,
+                    EVENT_APPLICATION_PERIOD,
+                    MAIN_EVENT_MAX_APPLICATION_COUNT,
+                    AFTER_PARTY_MAX_APPLICATION_COUNT);
+
+            // when
+            eventService.updateEvent(1L, request);
+
+            // then
+            assertThat(eventRepository.findById(1L).get().getName()).isEqualTo(updatedName);
         }
     }
 }
