@@ -2,7 +2,9 @@ package com.gdschongik.gdsc.domain.event.application;
 
 import static com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus.*;
 import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.*;
+import static com.gdschongik.gdsc.domain.member.domain.Department.*;
 import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.MemberConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -103,6 +105,43 @@ class EventParticipationServiceTest extends IntegrationTest {
                     .hasSize(2)
                     .extracting(response -> response.participant().getStudentId())
                     .containsExactlyInAnyOrder("C000001", "C000002");
+        }
+
+        @Test
+        void 정렬_기준이_없으면_참여자_역할순으로_정렬된다() {
+            // given
+            Event event = createEvent();
+
+            // 생성 순서 : 게스트 -> 정회원 -> 준회원 -> 비회원
+            Member guestMember = createGuestMemberForEvent("C000001", "게스트");
+            Member regularMember = createRegularMemberForEvent("C000003", "정회원");
+            Member associateMember = createAssociateMemberForEvent("C000002", "준회원");
+            Participant nonMember = Participant.of("비회원", "C000004", "01012345678");
+
+            createEventParticipation(event, guestMember);
+            createEventParticipation(event, regularMember);
+            createEventParticipation(event, associateMember);
+            createUnregisteredEventParticipation(event, nonMember);
+
+            var queryOption = new EventParticipantQueryOption(null, null, null);
+
+            // when
+            Page<EventApplicantResponse> result =
+                    eventParticipationService.getEventApplicants(event.getId(), queryOption, PageRequest.of(0, 10));
+
+            // then - NON_MEMBER(4) -> GUEST(1) -> ASSOCIATE(3) -> REGULAR(2) 순으로 정렬되어야 함
+            assertThat(result.getContent()).hasSize(4);
+            assertThat(result.getContent())
+                    .extracting(EventApplicantResponse::participantRole)
+                    .containsExactly(
+                            ParticipantRole.NON_MEMBER,
+                            ParticipantRole.GUEST,
+                            ParticipantRole.ASSOCIATE,
+                            ParticipantRole.REGULAR);
+
+            assertThat(result.getContent())
+                    .extracting(EventApplicantResponse::eventParticipationId)
+                    .containsExactly(4L, 1L, 3L, 2L);
         }
 
         @Test
@@ -509,8 +548,7 @@ class EventParticipationServiceTest extends IntegrationTest {
 
     private Member createGuestMemberForEvent(String studentId, String name) {
         Member member = createGuestMember();
-        ReflectionTestUtils.setField(member, "studentId", studentId);
-        ReflectionTestUtils.setField(member, "name", name);
+        member.updateBasicMemberInfo(studentId, name, PHONE_NUMBER, D022, EMAIL);
         return memberRepository.save(member);
     }
 
