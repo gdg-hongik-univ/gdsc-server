@@ -158,9 +158,28 @@ public class Event extends BaseEntity {
         }
     }
 
-    // 데이터 조회 로직
+    // 데이터 조회 메서드
 
     public boolean afterPartyExists() {
         return afterPartyStatus.isEnabled();
+    }
+
+    // 수정 메서드
+
+    public void update(
+            String name,
+            String venue,
+            LocalDateTime startAt,
+            String applicationDescription,
+            Period applicationPeriod,
+            Integer mainEventMaxApplicantCount,
+            Integer afterPartyMaxApplicantCount) {
+        this.name = name;
+        this.venue = venue;
+        this.startAt = startAt;
+        this.applicationDescription = applicationDescription;
+        this.applicationPeriod = applicationPeriod;
+        this.mainEventMaxApplicantCount = mainEventMaxApplicantCount;
+        this.afterPartyMaxApplicantCount = afterPartyMaxApplicantCount;
     }
 }
