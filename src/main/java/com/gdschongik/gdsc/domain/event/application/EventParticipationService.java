@@ -148,9 +148,8 @@ public class EventParticipationService {
 
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
-        eventParticipations.forEach(eventParticipation -> {
-            confirmAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateTarget);
-        });
+        eventParticipations.forEach(eventParticipation ->
+                confirmAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateTarget));
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석/정산 전체 확인 처리: eventId={}, afterPartyStatusField={}",
@@ -184,9 +183,8 @@ public class EventParticipationService {
 
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
-        eventParticipations.forEach(eventParticipation -> {
-            revokeAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateTarget);
-        });
+        eventParticipations.forEach(eventParticipation ->
+                revokeAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateTarget));
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석 / 정산 현황 전체 확인 취소 처리: eventId={}, afterPartyStatusField={}",
