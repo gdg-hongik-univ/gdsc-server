@@ -2,7 +2,9 @@ package com.gdschongik.gdsc.domain.event.application;
 
 import static com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus.*;
 import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.*;
+import static com.gdschongik.gdsc.domain.member.domain.Department.*;
 import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.MemberConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -53,9 +55,9 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event1 = createEvent();
             Event event2 = createEvent();
 
-            Member member1 = createMember("C000001", "김홍익1");
-            Member member2 = createMember("C000002", "김홍익2");
-            Member member3 = createMember("B000001", "김홍익3");
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익1");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익2");
+            Member member3 = createAssociateMemberForEvent("B000001", "김홍익3");
 
             // event1에 신청한 사용자들
             createEventParticipation(event1, member1);
@@ -82,10 +84,10 @@ class EventParticipationServiceTest extends IntegrationTest {
             // given
             Event event = createEvent();
 
-            Member memberC1 = createMember("C000001", "김홍익1");
-            Member memberC2 = createMember("C000002", "김홍익2");
-            Member memberB1 = createMember("B000001", "김홍익3");
-            Member memberB2 = createMember("B000002", "김홍익4");
+            Member memberC1 = createAssociateMemberForEvent("C000001", "김홍익1");
+            Member memberC2 = createAssociateMemberForEvent("C000002", "김홍익2");
+            Member memberB1 = createAssociateMemberForEvent("B000001", "김홍익3");
+            Member memberB2 = createAssociateMemberForEvent("B000002", "김홍익4");
 
             createEventParticipation(event, memberC1);
             createEventParticipation(event, memberC2);
@@ -106,13 +108,50 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 정렬_기준이_없으면_참여자_역할순으로_정렬된다() {
+            // given
+            Event event = createEvent();
+
+            // 생성 순서 : 게스트 -> 정회원 -> 준회원 -> 비회원
+            Member guestMember = createGuestMemberForEvent("C000001", "게스트");
+            Member regularMember = createRegularMemberForEvent("C000003", "정회원");
+            Member associateMember = createAssociateMemberForEvent("C000002", "준회원");
+            Participant nonMember = Participant.of("비회원", "C000004", "01012345678");
+
+            createEventParticipation(event, guestMember);
+            createEventParticipation(event, regularMember);
+            createEventParticipation(event, associateMember);
+            createUnregisteredEventParticipation(event, nonMember);
+
+            var queryOption = new EventParticipantQueryOption(null, null, null);
+
+            // when
+            Page<EventApplicantResponse> result =
+                    eventParticipationService.getEventApplicants(event.getId(), queryOption, PageRequest.of(0, 10));
+
+            // then - NON_MEMBER(4) -> GUEST(1) -> ASSOCIATE(3) -> REGULAR(2) 순으로 정렬되어야 함
+            assertThat(result.getContent()).hasSize(4);
+            assertThat(result.getContent())
+                    .extracting(EventApplicantResponse::participantRole)
+                    .containsExactly(
+                            ParticipantRole.NON_MEMBER,
+                            ParticipantRole.GUEST,
+                            ParticipantRole.ASSOCIATE,
+                            ParticipantRole.REGULAR);
+
+            assertThat(result.getContent())
+                    .extracting(EventApplicantResponse::eventParticipationId)
+                    .containsExactly(4L, 1L, 3L, 2L);
+        }
+
+        @Test
         void createdAt_오름차순으로_정렬된다() {
             // given
             Event event = createEvent();
 
-            Member member1 = createMember("C000001", "김홍익1");
-            Member member2 = createMember("C000002", "김홍익2");
-            Member member3 = createMember("C000003", "김홍익3");
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익1");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익2");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익3");
 
             // (3, 1, 2) 순서로 생성
             EventParticipation participation3 = createEventParticipation(event, member3);
@@ -138,9 +177,9 @@ class EventParticipationServiceTest extends IntegrationTest {
             // given
             Event event = createEvent();
 
-            Member member1 = createMember("C000001", "김홍익1");
-            Member member2 = createMember("C000002", "김홍익2");
-            Member member3 = createMember("C000003", "김홍익3");
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익1");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익2");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익3");
 
             // (3, 1, 2) 순서로 생성
             EventParticipation participation3 = createEventParticipation(event, member3);
@@ -222,9 +261,9 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event1 = createEvent();
             Event event2 = createEvent();
 
-            Member member1 = createMember("C000001", "김홍익1");
-            Member member2 = createMember("C000002", "김홍익2");
-            Member member3 = createMember("B000001", "김홍익3");
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익1");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익2");
+            Member member3 = createAssociateMemberForEvent("B000001", "김홍익3");
 
             // event1에 신청한 사용자들
             createAfterPartyParticipation(event1, member1);
@@ -252,10 +291,10 @@ class EventParticipationServiceTest extends IntegrationTest {
             // given
             Event event = createEvent();
 
-            Member memberC1 = createMember("C000001", "김홍익1");
-            Member memberC2 = createMember("C000002", "김홍익2");
-            Member memberB1 = createMember("B000001", "김홍익3");
-            Member memberB2 = createMember("B000002", "김홍익4");
+            Member memberC1 = createAssociateMemberForEvent("C000001", "김홍익1");
+            Member memberC2 = createAssociateMemberForEvent("C000002", "김홍익2");
+            Member memberB1 = createAssociateMemberForEvent("B000001", "김홍익3");
+            Member memberB2 = createAssociateMemberForEvent("B000002", "김홍익4");
 
             createAfterPartyParticipation(event, memberC1);
             createAfterPartyParticipation(event, memberC2);
@@ -281,9 +320,9 @@ class EventParticipationServiceTest extends IntegrationTest {
             // given
             Event event = createEvent();
 
-            Member member1 = createMember("C000001", "김홍익1");
-            Member member2 = createMember("C000002", "김홍익2");
-            Member member3 = createMember("C000003", "김홍익3");
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익1");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익2");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익3");
 
             // (3, 1, 2) 순서로 생성
             EventParticipation participation3 = createAfterPartyParticipation(event, member3);
@@ -310,9 +349,9 @@ class EventParticipationServiceTest extends IntegrationTest {
             // given
             Event event = createEvent();
 
-            Member member1 = createMember("C000001", "김홍익1");
-            Member member2 = createMember("C000002", "김홍익2");
-            Member member3 = createMember("C000003", "김홍익3");
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익1");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익2");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익3");
 
             // (3, 1, 2) 순서로 생성
             EventParticipation participation3 = createAfterPartyParticipation(event, member3);
@@ -355,9 +394,9 @@ class EventParticipationServiceTest extends IntegrationTest {
             // given
             Event event = createEvent();
 
-            Member member1 = createMember("C000001", "김홍익1");
-            Member member2 = createMember("C000002", "김홍익2");
-            Member member3 = createMember("B000001", "김홍익3");
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익1");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익2");
+            Member member3 = createAssociateMemberForEvent("B000001", "김홍익3");
 
             // event에 신청한 사용자들
             EventParticipation participation1 = createAfterPartyParticipation(event, member1);
@@ -428,7 +467,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         void 성공한다() {
             // given
             Event event = createEvent();
-            Member member = createMember("C000001", "김홍익");
+            Member member = createAssociateMemberForEvent("C000001", "김홍익");
             createEventParticipation(event, member);
 
             var request = new EventParticipationDeleteRequest(List.of(1L));
@@ -443,7 +482,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         void 존재하지_않는_신청자_ID가_포함된_경우_예외가_발생한다() {
             // given
             Event event = createEvent();
-            Member member = createMember("C000001", "김홍익");
+            Member member = createAssociateMemberForEvent("C000001", "김홍익");
             createEventParticipation(event, member);
 
             var request = new EventParticipationDeleteRequest(List.of(1L, 999L)); // 999L은 존재하지 않는 ID
@@ -458,8 +497,8 @@ class EventParticipationServiceTest extends IntegrationTest {
         void 중복된_ID가_있는_경우_예외가_발생한다() {
             // given
             Event event = createEvent();
-            Member member1 = createMember("C000001", "김홍익1");
-            Member member2 = createMember("C000002", "김홍익2");
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익1");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익2");
 
             createEventParticipation(event, member1);
             createEventParticipation(event, member2);
@@ -507,8 +546,21 @@ class EventParticipationServiceTest extends IntegrationTest {
         return eventRepository.save(event);
     }
 
-    private Member createMember(String studentId, String name) {
+    private Member createGuestMemberForEvent(String studentId, String name) {
+        Member member = createGuestMember();
+        member.updateBasicMemberInfo(studentId, name, PHONE_NUMBER, D022, EMAIL);
+        return memberRepository.save(member);
+    }
+
+    private Member createAssociateMemberForEvent(String studentId, String name) {
         Member member = createAssociateMember();
+        ReflectionTestUtils.setField(member, "studentId", studentId);
+        ReflectionTestUtils.setField(member, "name", name);
+        return memberRepository.save(member);
+    }
+
+    private Member createRegularMemberForEvent(String studentId, String name) {
+        Member member = createRegularMember();
         ReflectionTestUtils.setField(member, "studentId", studentId);
         ReflectionTestUtils.setField(member, "name", name);
         return memberRepository.save(member);

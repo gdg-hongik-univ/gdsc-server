@@ -14,10 +14,13 @@ import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.QEventApplicantResponse;
+import com.gdschongik.gdsc.domain.member.domain.MemberRole;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +41,7 @@ public class EventParticipationCustomRepositoryImpl
     public Page<EventApplicantResponse> findEventApplicants(
             Long eventId, EventParticipantQueryOption queryOption, Pageable pageable) {
 
-        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable);
+        OrderSpecifier<?>[] orderSpecifiers = getEventApplicantOrderSpecifiers(pageable);
         List<Long> ids = getIdsByQueryOption(eventId, queryOption, orderSpecifiers);
 
         List<EventApplicantResponse> fetch = jpaQueryFactory
@@ -53,30 +56,6 @@ public class EventParticipationCustomRepositoryImpl
                 .fetch();
 
         return PageableExecutionUtils.getPage(fetch, pageable, ids::size);
-    }
-
-    private OrderSpecifier<?>[] getOrderSpecifiers(Pageable pageable) {
-        Sort sort = pageable.getSort();
-
-        // 정렬 기준이 없으면 기본값으로 최신순 정렬
-        if (sort.isUnsorted()) {
-            return new OrderSpecifier<?>[] {eventParticipation.createdAt.desc(), eventParticipation.id.desc()};
-        }
-
-        // 정렬 기준에 따라 OrderSpecifier 생성
-        List<OrderSpecifier<?>> orders = new ArrayList<>();
-        for (Sort.Order order : sort) {
-            Order direction = order.isAscending() ? Order.ASC : Order.DESC;
-            switch (order.getProperty()) {
-                case "createdAt" -> {
-                    orders.add(new OrderSpecifier<>(direction, eventParticipation.createdAt));
-                    orders.add(new OrderSpecifier<>(direction, eventParticipation.id));
-                }
-                case "name" -> orders.add(new OrderSpecifier<>(direction, eventParticipation.participant.name));
-                default -> throw new CustomException(SORT_NOT_SUPPORTED);
-            }
-        }
-        return orders.toArray(OrderSpecifier[]::new);
     }
 
     private List<Long> getIdsByQueryOption(
@@ -95,7 +74,7 @@ public class EventParticipationCustomRepositoryImpl
     public AfterPartyApplicantResponse findAfterPartyApplicants(
             Long eventId, EventParticipantQueryOption queryOption, Pageable pageable) {
 
-        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable);
+        OrderSpecifier<?>[] orderSpecifiers = getAfterPartyOrderSpecifiers(pageable);
         List<Long> ids = getAfterPartyApplicantIdsByQueryOption(eventId, queryOption, orderSpecifiers);
 
         List<EventParticipationDto> fetch = jpaQueryFactory
@@ -151,5 +130,62 @@ public class EventParticipationCustomRepositoryImpl
                         .then(eventParticipation.id)
                         .otherwise((Long) null)
                         .count());
+    }
+
+    private OrderSpecifier<?>[] getEventApplicantOrderSpecifiers(Pageable pageable) {
+        Sort sort = pageable.getSort();
+
+        // 정렬 기준이 없으면 기본값으로 참여자 역할순 -> 최신순 정렬
+        if (sort.isUnsorted()) {
+            return new OrderSpecifier<?>[] {
+                new OrderSpecifier<>(Order.ASC, getParticipantRoleOrderExpression()),
+                eventParticipation.createdAt.desc(),
+                eventParticipation.id.desc()
+            };
+        }
+
+        return getDefaultOrderSpecifiers(sort);
+    }
+
+    /**
+     * 참여자 역할별 정렬을 위한 숫자 표현식을 생성합니다.
+     * NON_MEMBER(0) -> GUEST(1) -> ASSOCIATE(2) -> REGULAR(3) 순으로 정렬됩니다.
+     */
+    private NumberExpression<Integer> getParticipantRoleOrderExpression() {
+        return new CaseBuilder()
+                .when(member.isNull())
+                .then(0)
+                .when(member.role.eq(MemberRole.REGULAR))
+                .then(3)
+                .when(member.role.eq(MemberRole.ASSOCIATE))
+                .then(2)
+                .otherwise(1);
+    }
+
+    private OrderSpecifier<?>[] getAfterPartyOrderSpecifiers(Pageable pageable) {
+        Sort sort = pageable.getSort();
+
+        // 정렬 기준이 없으면 기본값으로 최신순 정렬
+        if (sort.isUnsorted()) {
+            return new OrderSpecifier<?>[] {eventParticipation.createdAt.desc(), eventParticipation.id.desc()};
+        }
+
+        return getDefaultOrderSpecifiers(sort);
+    }
+
+    private OrderSpecifier<?>[] getDefaultOrderSpecifiers(Sort sort) {
+        List<OrderSpecifier<?>> orders = new ArrayList<>();
+        for (Sort.Order order : sort) {
+            Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+            switch (order.getProperty()) {
+                case "createdAt" -> {
+                    orders.add(new OrderSpecifier<>(direction, eventParticipation.createdAt));
+                    orders.add(new OrderSpecifier<>(direction, eventParticipation.id));
+                }
+                case "name" -> orders.add(new OrderSpecifier<>(direction, eventParticipation.participant.name));
+                default -> throw new CustomException(SORT_NOT_SUPPORTED);
+            }
+        }
+        return orders.toArray(OrderSpecifier[]::new);
     }
 }
