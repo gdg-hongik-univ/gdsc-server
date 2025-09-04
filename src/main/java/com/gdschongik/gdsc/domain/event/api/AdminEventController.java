@@ -47,7 +47,7 @@ public class AdminEventController {
 
     @Operation(summary = "이벤트 수정", description = "이벤트 기본 정보를 수정합니다.")
     @PutMapping("/{eventId}")
-    public ResponseEntity<Void> createEvent(
+    public ResponseEntity<Void> updateEvent(
             @PathVariable Long eventId, @Valid @RequestBody EventUpdateRequest request) {
         eventService.updateEvent(eventId, request);
         return ResponseEntity.ok().build();
