@@ -1,12 +1,14 @@
 package com.gdschongik.gdsc.domain.event.dao;
 
-import static com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus.APPLIED;
+import static com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus.*;
 import static com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus.ATTENDED;
 import static com.gdschongik.gdsc.domain.event.domain.PaymentStatus.*;
 import static com.gdschongik.gdsc.domain.event.domain.QEventParticipation.*;
 import static com.gdschongik.gdsc.domain.member.domain.QMember.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
+import com.gdschongik.gdsc.domain.event.domain.Event;
+import com.gdschongik.gdsc.domain.event.domain.MainEventApplicationStatus;
 import com.gdschongik.gdsc.domain.event.dto.dto.AfterPartyApplicantCountDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.QAfterPartyApplicantCountDto;
@@ -187,5 +189,23 @@ public class EventParticipationCustomRepositoryImpl
             }
         }
         return orders.toArray(OrderSpecifier[]::new);
+    }
+
+    @Override
+    public int countMainEventApplicantsByEvent(Event event) {
+        return jpaQueryFactory
+                .selectFrom(eventParticipation)
+                .where(eqEventId(event.getId()), eqMainEventApplicationStatus(MainEventApplicationStatus.APPLIED))
+                .fetch()
+                .size();
+    }
+
+    @Override
+    public int countAfterPartyApplicantsByEvent(Event event) {
+        return jpaQueryFactory
+                .selectFrom(eventParticipation)
+                .where(eqEventId(event.getId()), eqAfterPartyApplicationStatus(APPLIED))
+                .fetch()
+                .size();
     }
 }
