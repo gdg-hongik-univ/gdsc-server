@@ -5,6 +5,7 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
+import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateRequest;
@@ -26,6 +27,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventParticipationRepository eventParticipationRepository;
+    private final EventDomainService eventDomainService;
 
     @Transactional(readOnly = true)
     public Page<EventResponse> getEvents(Pageable pageable) {
@@ -67,6 +69,14 @@ public class EventService {
     @Transactional
     public void updateEvent(Long eventId, EventUpdateRequest request) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
+        int currentMainEventApplicants = eventParticipationRepository.countMainEventApplicantsByEvent(event);
+        eventDomainService.validateWhenUpdateMaxApplicantCount(
+                currentMainEventApplicants, request.mainEventMaxApplicantCount());
+
+        int currentAfterPartyApplicants = eventParticipationRepository.countAfterPartyApplicantsByEvent(event);
+        eventDomainService.validateWhenUpdateMaxApplicantCount(
+                currentAfterPartyApplicants, request.afterPartyMaxApplicantCount());
 
         event.update(
                 request.name(),
