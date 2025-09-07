@@ -199,7 +199,6 @@ public enum ErrorCode {
     EVENT_NOT_APPLICABLE_APPLICATION_PERIOD_INVALID(CONFLICT, "이벤트 신청 기간이 아닙니다."),
     EVENT_NOT_APPLICABLE_AFTER_PARTY_NONE(CONFLICT, "뒤풀이가 활성화된 이벤트는 뒤풀이 신청 여부를 NONE으로 설정할 수 없습니다."),
     EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED(CONFLICT, "뒤풀이가 비활성화된 이벤트에 뒤풀이 신청을 할 수 없습니다."),
-    EVENT_AFTER_PARTY_DISABLED(CONFLICT, "뒤풀이가 비활성화된 이벤트입니다."),
     PARTICIPATION_NOT_FOUND(NOT_FOUND, "존재하지 않는 이벤트 참여정보입니다."),
     EVENT_NOT_APPLICABLE_MEMBER_INFO_NOT_SATISFIED(CONFLICT, "기본 회원정보 작성이 완료되지 않은 회원은 이벤트에 신청할 수 없습니다."),
     EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED(CONFLICT, "기본 회원정보가 작성된 회원의 학번으로는 비회원 신청을 할 수 없습니다."),
@@ -213,6 +212,10 @@ public enum ErrorCode {
     PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_EXISTENCE_MISMATCH(
             INTERNAL_SERVER_ERROR, "이벤트 참여정보의 멤버 ID와 멤버 인자는 둘 다 null이거나 not null이어야 합니다."),
     PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_ID_MISMATCH(INTERNAL_SERVER_ERROR, "이벤트 참여정보의 멤버 ID와 인자의 멤버 ID가 일치하지 않습니다."),
+    PAYMENT_STATUS_NOT_UPDATABLE_NONE(CONFLICT, "결제 상태가 None 일 때는 수정할 수 없습니다."),
+    PAYMENT_STATUS_ALREADY_UPDATED(CONFLICT, "결제 상태가 이미 요청 상태로 수정되어있습니다."),
+    AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE(CONFLICT, "뒤풀이 참석 상태가 None 일 때는 수정할 수 없습니다."),
+    AFTER_PARTY_ATTENDANCE_STATUS_ALREADY_UPDATED(CONFLICT, "뒤풀이 참석 상태가 이미 요청 상태로 수정되어있습니다."),
     ;
 
     private final HttpStatus status;

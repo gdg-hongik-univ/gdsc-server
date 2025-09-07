@@ -128,11 +128,8 @@ public class EventParticipationService {
         EventParticipation eventParticipation = eventParticipationRepository
                 .findById(eventParticipationId)
                 .orElseThrow(() -> new CustomException(PARTICIPATION_NOT_FOUND));
-        Event event = eventParticipation.getEvent();
 
-        eventParticipationDomainService.validateAfterPartyEnabled(event);
-
-        confirmAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateTarget);
+        confirmAfterPartyStatusByAfterPartyUpdateTarget(eventParticipation, afterPartyUpdateTarget);
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석/정산 확인 처리: eventParticipationId={}, afterPartyStatusField={}",
@@ -143,13 +140,10 @@ public class EventParticipationService {
     @Transactional
     public void confirmAllAfterPartyStatus(Long eventId, AfterPartyUpdateTarget afterPartyUpdateTarget) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
-
-        eventParticipationDomainService.validateAfterPartyEnabled(event);
-
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
         eventParticipations.forEach(eventParticipation ->
-                confirmAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateTarget));
+                confirmAfterPartyStatusByAfterPartyUpdateTarget(eventParticipation, afterPartyUpdateTarget));
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석/정산 전체 확인 처리: eventId={}, afterPartyStatusField={}",
@@ -163,11 +157,8 @@ public class EventParticipationService {
         EventParticipation eventParticipation = eventParticipationRepository
                 .findById(eventParticipationId)
                 .orElseThrow(() -> new CustomException(PARTICIPATION_NOT_FOUND));
-        Event event = eventParticipation.getEvent();
 
-        eventParticipationDomainService.validateAfterPartyEnabled(event);
-
-        revokeAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateTarget);
+        revokeAfterPartyStatusByAfterPartyUpdateTarget(eventParticipation, afterPartyUpdateTarget);
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석/정산 확인 취소 처리: eventParticipationId={}, afterPartyStatusField={}",
@@ -178,13 +169,10 @@ public class EventParticipationService {
     @Transactional
     public void revokeAllAfterPartyStatusConfirm(Long eventId, AfterPartyUpdateTarget afterPartyUpdateTarget) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
-
-        eventParticipationDomainService.validateAfterPartyEnabled(event);
-
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
         eventParticipations.forEach(eventParticipation ->
-                revokeAfterPartyStatusByAfterPartyUpdateStatus(eventParticipation, afterPartyUpdateTarget));
+                revokeAfterPartyStatusByAfterPartyUpdateTarget(eventParticipation, afterPartyUpdateTarget));
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석 / 정산 현황 전체 확인 취소 처리: eventId={}, afterPartyStatusField={}",
@@ -264,7 +252,7 @@ public class EventParticipationService {
         }
     }
 
-    private void confirmAfterPartyStatusByAfterPartyUpdateStatus(
+    private void confirmAfterPartyStatusByAfterPartyUpdateTarget(
             EventParticipation participation, AfterPartyUpdateTarget afterPartyUpdateTarget) {
         switch (afterPartyUpdateTarget) {
             case ATTENDANCE -> participation.confirmAttendance();
@@ -273,7 +261,7 @@ public class EventParticipationService {
         }
     }
 
-    private void revokeAfterPartyStatusByAfterPartyUpdateStatus(
+    private void revokeAfterPartyStatusByAfterPartyUpdateTarget(
             EventParticipation participation, AfterPartyUpdateTarget afterPartyUpdateTarget) {
         switch (afterPartyUpdateTarget) {
             case ATTENDANCE -> participation.revokeAttendance();

@@ -1,5 +1,9 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+
+import com.gdschongik.gdsc.global.exception.CustomException;
+
 /**
  * 뒤풀이 참석 상태를 나타내는 Enum입니다.
  */
@@ -26,5 +30,17 @@ public enum AfterPartyAttendanceStatus {
 
     public boolean isNone() {
         return this == NONE;
+    }
+
+    public AfterPartyAttendanceStatus confirm() {
+        if (isNone()) throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE);
+        if (isAttended()) throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_ALREADY_UPDATED);
+        return ATTENDED;
+    }
+
+    public AfterPartyAttendanceStatus revoke() {
+        if (isNone()) throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE);
+        if (isNotAttended()) throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_ALREADY_UPDATED);
+        return NOT_ATTENDED;
     }
 }

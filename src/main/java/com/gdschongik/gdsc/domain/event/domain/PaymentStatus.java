@@ -1,5 +1,10 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
+import static com.gdschongik.gdsc.global.exception.ErrorCode.PAYMENT_STATUS_ALREADY_UPDATED;
+import static com.gdschongik.gdsc.global.exception.ErrorCode.PAYMENT_STATUS_NOT_UPDATABLE_NONE;
+
+import com.gdschongik.gdsc.global.exception.CustomException;
+
 /**
  * 선입금/후정산 정산 상태를 나타내는 Enum입니다.
  */
@@ -33,5 +38,17 @@ public enum PaymentStatus {
 
     public boolean isNone() {
         return this == NONE;
+    }
+
+    public PaymentStatus confirm() {
+        if (isNone()) throw new CustomException(PAYMENT_STATUS_NOT_UPDATABLE_NONE);
+        if (isPaid()) throw new CustomException(PAYMENT_STATUS_ALREADY_UPDATED);
+        return PAID;
+    }
+
+    public PaymentStatus revoke() {
+        if (isNone()) throw new CustomException(PAYMENT_STATUS_NOT_UPDATABLE_NONE);
+        if (isUnpaid()) throw new CustomException(PAYMENT_STATUS_ALREADY_UPDATED);
+        return UNPAID;
     }
 }
