@@ -5,6 +5,7 @@ import static com.gdschongik.gdsc.domain.member.domain.QMember.*;
 
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus;
 import com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus;
+import com.gdschongik.gdsc.domain.event.domain.MainEventApplicationStatus;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.querydsl.core.BooleanBuilder;
@@ -37,6 +38,10 @@ public interface EventParticipationQueryMethod {
 
     default BooleanExpression eqPhone(String phone) {
         return phone != null ? eventParticipation.participant.phone.contains(phone.replaceAll("-", "")) : null;
+    }
+
+    default BooleanExpression eqMainEventApplicationStatus(MainEventApplicationStatus status) {
+        return status != null ? eventParticipation.mainEventApplicationStatus.eq(status) : null;
     }
 
     default BooleanExpression eqAfterPartyApplicationStatus(AfterPartyApplicationStatus status) {

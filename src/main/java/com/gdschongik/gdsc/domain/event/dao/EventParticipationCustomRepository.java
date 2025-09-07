@@ -1,5 +1,6 @@
 package com.gdschongik.gdsc.domain.event.dao;
 
+import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
@@ -12,4 +13,8 @@ public interface EventParticipationCustomRepository {
 
     AfterPartyApplicantResponse findAfterPartyApplicants(
             Long eventId, EventParticipantQueryOption queryOption, Pageable pageable);
+
+    long countMainEventApplicantsByEvent(Event event);
+
+    long countAfterPartyApplicantsByEvent(Event event);
 }
