@@ -70,13 +70,14 @@ public class EventService {
     public void updateEvent(Long eventId, EventUpdateRequest request) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
-        long currentMainEventApplicants = eventParticipationRepository.countMainEventApplicantsByEvent(event);
-        eventDomainService.validateUpdateMaxApplicantCount(
-                currentMainEventApplicants, request.mainEventMaxApplicantCount());
+        long currentMainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
+        long currentAfterPartyApplicantCount = eventParticipationRepository.countAfterPartyApplicantsByEvent(event);
 
-        long currentAfterPartyApplicants = eventParticipationRepository.countAfterPartyApplicantsByEvent(event);
-        eventDomainService.validateUpdateMaxApplicantCount(
-                currentAfterPartyApplicants, request.afterPartyMaxApplicantCount());
+        eventDomainService.validateUpdate(
+                currentMainEventApplicantCount,
+                request.mainEventMaxApplicantCount(),
+                currentAfterPartyApplicantCount,
+                request.afterPartyMaxApplicantCount());
 
         event.update(
                 request.name(),
