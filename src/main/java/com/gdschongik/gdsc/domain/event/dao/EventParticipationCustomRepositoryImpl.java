@@ -93,6 +93,7 @@ public class EventParticipationCustomRepositoryImpl
         AfterPartyApplicantCountDto counts = jpaQueryFactory
                 .select(getEventParticipationCounts())
                 .from(eventParticipation)
+                .where(eqEventId(eventId))
                 .fetchOne();
 
         return AfterPartyApplicantResponse.of(PageableExecutionUtils.getPage(fetch, pageable, ids::size), counts);
