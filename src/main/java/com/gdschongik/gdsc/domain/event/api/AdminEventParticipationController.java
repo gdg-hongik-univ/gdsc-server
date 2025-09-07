@@ -77,7 +77,8 @@ public class AdminEventParticipationController {
 
     @Operation(summary = "뒤풀이 참석/정산 전체 확인 처리", description = "뒤풀이 참석/정산에 대해 전체 확인 처리합니다.")
     @PutMapping("/after-party/confirm-all")
-    public ResponseEntity<Void> confirmAllAfterPartyStatus(@RequestBody @Valid AfterPartyStatusUpdateAllRequest request) {
+    public ResponseEntity<Void> confirmAllAfterPartyStatus(
+            @RequestBody @Valid AfterPartyStatusUpdateAllRequest request) {
         eventParticipationService.confirmAllAfterPartyStatus(request);
         return ResponseEntity.ok().build();
     }

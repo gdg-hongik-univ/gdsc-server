@@ -1,7 +1,10 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+
 import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.member.domain.Member;
+import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -197,31 +200,67 @@ public class EventParticipation extends BaseEntity {
 
     // 뒤풀이 선입금 처리
     public void confirmPrePayment() {
-        this.prePaymentStatus = this.prePaymentStatus.confirm();
+        if (this.prePaymentStatus.isNone()) {
+            throw new CustomException(PAYMENT_STATUS_NOT_UPDATABLE_NONE);
+        }
+        if (this.prePaymentStatus.isPaid()) {
+            throw new CustomException(PAYMENT_STATUS_ALREADY_UPDATED);
+        }
+        this.prePaymentStatus = PaymentStatus.PAID;
     }
 
     // 뒤풀이 선입금 취소 처리
     public void revokePrePayment() {
-        this.prePaymentStatus = this.prePaymentStatus.revoke();
+        if (this.prePaymentStatus.isNone()) {
+            throw new CustomException(PAYMENT_STATUS_NOT_UPDATABLE_NONE);
+        }
+        if (this.prePaymentStatus.isUnpaid()) {
+            throw new CustomException(PAYMENT_STATUS_ALREADY_UPDATED);
+        }
+        this.prePaymentStatus = PaymentStatus.UNPAID;
     }
 
     // 뒤풀이 정산 처리
     public void confirmPostPayment() {
-        this.postPaymentStatus = this.postPaymentStatus.confirm();
+        if (this.postPaymentStatus.isNone()) {
+            throw new CustomException(PAYMENT_STATUS_NOT_UPDATABLE_NONE);
+        }
+        if (this.postPaymentStatus.isPaid()) {
+            throw new CustomException(PAYMENT_STATUS_ALREADY_UPDATED);
+        }
+        this.postPaymentStatus = PaymentStatus.PAID;
     }
 
     // 뒤풀이 정산 취소 처리
     public void revokePostPayment() {
-        this.postPaymentStatus = this.postPaymentStatus.revoke();
+        if (this.postPaymentStatus.isNone()) {
+            throw new CustomException(PAYMENT_STATUS_NOT_UPDATABLE_NONE);
+        }
+        if (this.postPaymentStatus.isUnpaid()) {
+            throw new CustomException(PAYMENT_STATUS_ALREADY_UPDATED);
+        }
+        this.postPaymentStatus = PaymentStatus.UNPAID;
     }
 
     // 뒤풀이 참석 처리
     public void confirmAttendance() {
-        this.afterPartyAttendanceStatus = this.afterPartyAttendanceStatus.confirm();
+        if (this.afterPartyAttendanceStatus.isNone()) {
+            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE);
+        }
+        if (this.afterPartyAttendanceStatus.isAttended()) {
+            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_ALREADY_UPDATED);
+        }
+        this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.ATTENDED;
     }
 
     // 뒤풀이 참석 취소 처리
     public void revokeAttendance() {
-        this.afterPartyAttendanceStatus = this.afterPartyAttendanceStatus.revoke();
+        if (this.afterPartyAttendanceStatus.isNone()) {
+            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE);
+        }
+        if (this.afterPartyAttendanceStatus.isNotAttended()) {
+            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_ALREADY_UPDATED);
+        }
+        this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.NOT_ATTENDED;
     }
 }
