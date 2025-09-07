@@ -17,10 +17,7 @@ import com.gdschongik.gdsc.domain.event.domain.ParticipantRole;
 import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
 import com.gdschongik.gdsc.domain.event.dto.dto.AfterPartyApplicantCountDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateTarget;
-import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
-import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.*;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
@@ -483,10 +480,11 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createUnconfirmedAfterPartyEventParticipation(event, member);
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
 
             // when
-            eventParticipationService.confirmAfterPartyStatus(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE);
+            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request);
 
             // then
             EventParticipation afterPartyPostPaid = eventParticipationRepository
@@ -501,10 +499,11 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createUnconfirmedAfterPartyEventParticipation(event, member);
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.PRE_PAYMENT);
 
             // when
-            eventParticipationService.confirmAfterPartyStatus(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT);
+            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request);
 
             // then
             EventParticipation afterPartyPostPaid = eventParticipationRepository
@@ -519,10 +518,11 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createUnconfirmedAfterPartyEventParticipation(event, member);
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.POST_PAYMENT);
 
             // when
-            eventParticipationService.confirmAfterPartyStatus(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.POST_PAYMENT);
+            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request);
 
             // then
             EventParticipation afterPartyPostPaid = eventParticipationRepository
@@ -537,10 +537,11 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createConfirmedAfterPartyEventParticipation(event, member);
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
 
             // when
-            eventParticipationService.revokeAfterPartyStatusConfirm(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE);
+            eventParticipationService.revokeAfterPartyStatusConfirm(eventParticipation.getId(), request);
 
             // then
             EventParticipation afterPartyPostPaid = eventParticipationRepository
@@ -555,10 +556,11 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createConfirmedAfterPartyEventParticipation(event, member);
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.PRE_PAYMENT);
 
             // when
-            eventParticipationService.revokeAfterPartyStatusConfirm(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT);
+            eventParticipationService.revokeAfterPartyStatusConfirm(eventParticipation.getId(), request);
 
             // then
             EventParticipation afterPartyPostPaid = eventParticipationRepository
@@ -573,10 +575,11 @@ class EventParticipationServiceTest extends IntegrationTest {
             Event event = createEvent();
             Member member = createMember();
             EventParticipation eventParticipation = createConfirmedAfterPartyEventParticipation(event, member);
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.POST_PAYMENT);
 
             // when
-            eventParticipationService.revokeAfterPartyStatusConfirm(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.POST_PAYMENT);
+            eventParticipationService.revokeAfterPartyStatusConfirm(eventParticipation.getId(), request);
 
             // then
             EventParticipation afterPartyPostPaid = eventParticipationRepository
@@ -596,8 +599,11 @@ class EventParticipationServiceTest extends IntegrationTest {
             createUnconfirmedAfterPartyEventParticipation(event, member2);
             createUnconfirmedAfterPartyEventParticipation(event, member3);
 
+            AfterPartyStatusUpdateAllRequest request =
+                    new AfterPartyStatusUpdateAllRequest(event.getId(), AfterPartyUpdateTarget.ATTENDANCE);
+
             // when
-            eventParticipationService.confirmAllAfterPartyStatus(event.getId(), AfterPartyUpdateTarget.ATTENDANCE);
+            eventParticipationService.confirmAllAfterPartyStatus(request);
 
             // then
             eventParticipationRepository.findAllByEvent(event).forEach(eventParticipation -> {
@@ -616,8 +622,11 @@ class EventParticipationServiceTest extends IntegrationTest {
             createUnconfirmedAfterPartyEventParticipation(event, member2);
             createUnconfirmedAfterPartyEventParticipation(event, member3);
 
+            AfterPartyStatusUpdateAllRequest request =
+                    new AfterPartyStatusUpdateAllRequest(event.getId(), AfterPartyUpdateTarget.PRE_PAYMENT);
+
             // when
-            eventParticipationService.confirmAllAfterPartyStatus(event.getId(), AfterPartyUpdateTarget.PRE_PAYMENT);
+            eventParticipationService.confirmAllAfterPartyStatus(request);
 
             // then
             eventParticipationRepository.findAllByEvent(event).forEach(eventParticipation -> {
@@ -636,8 +645,11 @@ class EventParticipationServiceTest extends IntegrationTest {
             createUnconfirmedAfterPartyEventParticipation(event, member2);
             createUnconfirmedAfterPartyEventParticipation(event, member3);
 
+            AfterPartyStatusUpdateAllRequest request =
+                    new AfterPartyStatusUpdateAllRequest(event.getId(), AfterPartyUpdateTarget.POST_PAYMENT);
+
             // when
-            eventParticipationService.confirmAllAfterPartyStatus(event.getId(), AfterPartyUpdateTarget.POST_PAYMENT);
+            eventParticipationService.confirmAllAfterPartyStatus(request);
 
             // then
             eventParticipationRepository.findAllByEvent(event).forEach(eventParticipation -> {
@@ -656,9 +668,11 @@ class EventParticipationServiceTest extends IntegrationTest {
             createConfirmedAfterPartyEventParticipation(event, member2);
             createConfirmedAfterPartyEventParticipation(event, member3);
 
+            AfterPartyStatusUpdateAllRequest request =
+                    new AfterPartyStatusUpdateAllRequest(event.getId(), AfterPartyUpdateTarget.ATTENDANCE);
+
             // when
-            eventParticipationService.revokeAllAfterPartyStatusConfirm(
-                    event.getId(), AfterPartyUpdateTarget.ATTENDANCE);
+            eventParticipationService.revokeAllAfterPartyStatusConfirm(request);
 
             // then
             eventParticipationRepository.findAllByEvent(event).forEach(eventParticipation -> {
@@ -677,9 +691,11 @@ class EventParticipationServiceTest extends IntegrationTest {
             createConfirmedAfterPartyEventParticipation(event, member2);
             createConfirmedAfterPartyEventParticipation(event, member3);
 
+            AfterPartyStatusUpdateAllRequest request =
+                    new AfterPartyStatusUpdateAllRequest(event.getId(), AfterPartyUpdateTarget.PRE_PAYMENT);
+
             // when
-            eventParticipationService.revokeAllAfterPartyStatusConfirm(
-                    event.getId(), AfterPartyUpdateTarget.PRE_PAYMENT);
+            eventParticipationService.revokeAllAfterPartyStatusConfirm(request);
 
             // then
             eventParticipationRepository.findAllByEvent(event).forEach(eventParticipation -> {
@@ -698,9 +714,11 @@ class EventParticipationServiceTest extends IntegrationTest {
             createConfirmedAfterPartyEventParticipation(event, member2);
             createConfirmedAfterPartyEventParticipation(event, member3);
 
+            AfterPartyStatusUpdateAllRequest request =
+                    new AfterPartyStatusUpdateAllRequest(event.getId(), AfterPartyUpdateTarget.POST_PAYMENT);
+
             // when
-            eventParticipationService.revokeAllAfterPartyStatusConfirm(
-                    event.getId(), AfterPartyUpdateTarget.POST_PAYMENT);
+            eventParticipationService.revokeAllAfterPartyStatusConfirm(request);
 
             // then
             eventParticipationRepository.findAllByEvent(event).forEach(eventParticipation -> {
@@ -715,9 +733,12 @@ class EventParticipationServiceTest extends IntegrationTest {
             Member member = createMember();
             EventParticipation eventParticipation = createAfterPartyDisabledEventParticipation(event, member);
 
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(
-                            eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE))
+            assertThatThrownBy(() ->
+                            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE.getMessage());
         }
@@ -729,9 +750,12 @@ class EventParticipationServiceTest extends IntegrationTest {
             Member member = createMember();
             EventParticipation eventParticipation = createConfirmedAfterPartyEventParticipation(event, member);
 
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(
-                            eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE))
+            assertThatThrownBy(() ->
+                            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_ALREADY_UPDATED.getMessage());
         }
@@ -743,9 +767,12 @@ class EventParticipationServiceTest extends IntegrationTest {
             Member member = createMember();
             EventParticipation eventParticipation = createAfterPartyDisabledEventParticipation(event, member);
 
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.PRE_PAYMENT);
+
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(
-                            eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT))
+            assertThatThrownBy(() ->
+                            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
         }
@@ -757,9 +784,12 @@ class EventParticipationServiceTest extends IntegrationTest {
             Member member = createMember();
             EventParticipation eventParticipation = createConfirmedAfterPartyEventParticipation(event, member);
 
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.PRE_PAYMENT);
+
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(
-                            eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT))
+            assertThatThrownBy(() ->
+                            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PAYMENT_STATUS_ALREADY_UPDATED.getMessage());
         }
@@ -771,9 +801,12 @@ class EventParticipationServiceTest extends IntegrationTest {
             Member member = createMember();
             EventParticipation eventParticipation = createAfterPartyDisabledEventParticipation(event, member);
 
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.POST_PAYMENT);
+
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(
-                            eventParticipation.getId(), AfterPartyUpdateTarget.POST_PAYMENT))
+            assertThatThrownBy(() ->
+                            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
         }
@@ -785,9 +818,12 @@ class EventParticipationServiceTest extends IntegrationTest {
             Member member = createMember();
             EventParticipation eventParticipation = createConfirmedAfterPartyEventParticipation(event, member);
 
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.POST_PAYMENT);
+
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(
-                            eventParticipation.getId(), AfterPartyUpdateTarget.POST_PAYMENT))
+            assertThatThrownBy(() ->
+                            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PAYMENT_STATUS_ALREADY_UPDATED.getMessage());
         }
@@ -800,9 +836,12 @@ class EventParticipationServiceTest extends IntegrationTest {
             Member member = createMember();
             EventParticipation eventParticipation = createAfterPartyDisabledEventParticipation(event, member);
 
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
             // when & then
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
-                            eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE))
+                            eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE.getMessage());
         }
@@ -814,9 +853,12 @@ class EventParticipationServiceTest extends IntegrationTest {
             Member member = createMember();
             EventParticipation eventParticipation = createUnconfirmedAfterPartyEventParticipation(event, member);
 
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
             // when & then
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
-                            eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE))
+                            eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_ALREADY_UPDATED.getMessage());
         }
@@ -828,9 +870,12 @@ class EventParticipationServiceTest extends IntegrationTest {
             Member member = createMember();
             EventParticipation eventParticipation = createAfterPartyDisabledEventParticipation(event, member);
 
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.PRE_PAYMENT);
+
             // when & then
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
-                            eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT))
+                            eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
         }
@@ -842,9 +887,12 @@ class EventParticipationServiceTest extends IntegrationTest {
             Member member = createMember();
             EventParticipation eventParticipation = createUnconfirmedAfterPartyEventParticipation(event, member);
 
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.PRE_PAYMENT);
+
             // when & then
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
-                            eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT))
+                            eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PAYMENT_STATUS_ALREADY_UPDATED.getMessage());
         }
@@ -854,36 +902,48 @@ class EventParticipationServiceTest extends IntegrationTest {
 
         @Test
         void 존재하지_않는_참여정보라면_확인_처리에_실패한다() {
+            // given
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
             // when & then
-            assertThatThrownBy(() ->
-                            eventParticipationService.confirmAfterPartyStatus(9999L, AfterPartyUpdateTarget.ATTENDANCE))
+            assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(9999L, request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PARTICIPATION_NOT_FOUND.getMessage());
         }
 
         @Test
         void 존재하지_않는_참여정보라면_확인_취소_처리에_실패한다() {
+            // given
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
-                            9999L, AfterPartyUpdateTarget.ATTENDANCE))
+            assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(9999L, request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PARTICIPATION_NOT_FOUND.getMessage());
         }
 
         @Test
         void 존재하지_않는_이벤트라면_전체_확인_처리에_실패한다() {
+            // given
+            AfterPartyStatusUpdateAllRequest request =
+                    new AfterPartyStatusUpdateAllRequest(9999L, AfterPartyUpdateTarget.ATTENDANCE);
+
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.confirmAllAfterPartyStatus(
-                            9999L, AfterPartyUpdateTarget.ATTENDANCE))
+            assertThatThrownBy(() -> eventParticipationService.confirmAllAfterPartyStatus(request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EVENT_NOT_FOUND.getMessage());
         }
 
         @Test
         void 존재하지_않는_이벤트라면_전체_확인_취소_처리에_실패한다() {
+            // given
+            AfterPartyStatusUpdateAllRequest request =
+                    new AfterPartyStatusUpdateAllRequest(9999L, AfterPartyUpdateTarget.ATTENDANCE);
+
             // when & then
-            assertThatThrownBy(() -> eventParticipationService.revokeAllAfterPartyStatusConfirm(
-                            9999L, AfterPartyUpdateTarget.ATTENDANCE))
+            assertThatThrownBy(() -> eventParticipationService.revokeAllAfterPartyStatusConfirm(request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EVENT_NOT_FOUND.getMessage());
         }
