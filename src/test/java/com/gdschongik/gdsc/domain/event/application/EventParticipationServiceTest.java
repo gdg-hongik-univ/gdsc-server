@@ -28,7 +28,6 @@ import com.gdschongik.gdsc.helper.IntegrationTest;
 import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -732,7 +731,7 @@ class EventParticipationServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE))
+                            eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_ALREADY_UPDATED.getMessage());
         }
@@ -746,7 +745,7 @@ class EventParticipationServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT))
+                            eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
         }
@@ -760,7 +759,7 @@ class EventParticipationServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT))
+                            eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PAYMENT_STATUS_ALREADY_UPDATED.getMessage());
         }
@@ -774,7 +773,7 @@ class EventParticipationServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.POST_PAYMENT))
+                            eventParticipation.getId(), AfterPartyUpdateTarget.POST_PAYMENT))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
         }
@@ -788,7 +787,7 @@ class EventParticipationServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.POST_PAYMENT))
+                            eventParticipation.getId(), AfterPartyUpdateTarget.POST_PAYMENT))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PAYMENT_STATUS_ALREADY_UPDATED.getMessage());
         }
@@ -803,7 +802,7 @@ class EventParticipationServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE))
+                            eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE.getMessage());
         }
@@ -817,7 +816,7 @@ class EventParticipationServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE))
+                            eventParticipation.getId(), AfterPartyUpdateTarget.ATTENDANCE))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_ALREADY_UPDATED.getMessage());
         }
@@ -831,7 +830,7 @@ class EventParticipationServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT))
+                            eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
         }
@@ -845,7 +844,7 @@ class EventParticipationServiceTest extends IntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
-                    eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT))
+                            eventParticipation.getId(), AfterPartyUpdateTarget.PRE_PAYMENT))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(PAYMENT_STATUS_ALREADY_UPDATED.getMessage());
         }
