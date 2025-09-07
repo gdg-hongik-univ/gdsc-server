@@ -69,24 +69,20 @@ public class EventService {
     @Transactional
     public void updateEvent(Long eventId, EventUpdateRequest request) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
-
         long currentMainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
         long currentAfterPartyApplicantCount = eventParticipationRepository.countAfterPartyApplicantsByEvent(event);
 
-        eventDomainService.validateUpdate(
-                currentMainEventApplicantCount,
-                request.mainEventMaxApplicantCount(),
-                currentAfterPartyApplicantCount,
-                request.afterPartyMaxApplicantCount());
-
-        event.update(
+        eventDomainService.update(
+                event,
                 request.name(),
                 request.venue(),
                 request.startAt(),
                 request.applicationDescription(),
                 request.applicationPeriod(),
                 request.mainEventMaxApplicantCount(),
-                request.afterPartyMaxApplicantCount());
+                request.afterPartyMaxApplicantCount(),
+                currentMainEventApplicantCount,
+                currentAfterPartyApplicantCount);
 
         eventRepository.save(event);
 
