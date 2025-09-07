@@ -133,8 +133,9 @@ public class EventParticipationService {
     }
 
     @Transactional
-    public void confirmAllAfterPartyStatus(AfterPartyStatusAllUpdateRequest request) {
-        Event event = eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+    public void confirmAllAfterPartyStatus(AfterPartyStatusUpdateAllRequest request) {
+        Event event =
+                eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
         eventParticipations.forEach(eventParticipation ->
@@ -147,8 +148,7 @@ public class EventParticipationService {
     }
 
     @Transactional
-    public void revokeAfterPartyStatusConfirm(
-            Long eventParticipationId, AfterPartyStatusUpdateRequest request) {
+    public void revokeAfterPartyStatusConfirm(Long eventParticipationId, AfterPartyStatusUpdateRequest request) {
         EventParticipation eventParticipation = eventParticipationRepository
                 .findById(eventParticipationId)
                 .orElseThrow(() -> new CustomException(PARTICIPATION_NOT_FOUND));
@@ -162,8 +162,9 @@ public class EventParticipationService {
     }
 
     @Transactional
-    public void revokeAllAfterPartyStatusConfirm(AfterPartyStatusAllUpdateRequest request) {
-        Event event = eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+    public void revokeAllAfterPartyStatusConfirm(AfterPartyStatusUpdateAllRequest request) {
+        Event event =
+                eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
         eventParticipations.forEach(eventParticipation ->
