@@ -85,14 +85,14 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "행사 수동 신청 (회원)", description = "관리자가 회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다.")
+    @Operation(summary = "행사 수동 신청 (회원)", description = "관리자가 회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 이벤트 뒤풀이가 있는 행사라면 뒤풀이 참석 상태로 신청처리합니다.")
     @PostMapping("/apply/manual/registered")
     public ResponseEntity<Void> applyManualForRegistered(@Valid @RequestBody EventRegisteredApplyRequest request) {
         eventParticipationService.applyManualForRegistered(request);
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "행사 수동 신청 (비회원)", description = "관리자가 비회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다.")
+    @Operation(summary = "행사 수동 신청 (비회원)", description = "관리자가 비회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 이벤트 뒤풀이가 있는 행사라면 뒤풀이 참석 상태로 신청처리합니다.")
     @PostMapping("/apply/manual/unregistered")
     public ResponseEntity<Void> applyManualForUnregistered(@Valid @RequestBody EventUnregisteredApplyRequest request) {
         eventParticipationService.applyManualForUnregistered(request);
