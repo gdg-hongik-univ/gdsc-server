@@ -26,6 +26,7 @@ import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -192,20 +193,20 @@ public class EventParticipationCustomRepositoryImpl
     }
 
     @Override
-    public int countMainEventApplicantsByEvent(Event event) {
-        return jpaQueryFactory
-                .selectFrom(eventParticipation)
+    public long countMainEventApplicantsByEvent(Event event) {
+        return Objects.requireNonNull(jpaQueryFactory
+                .select(eventParticipation.count())
+                .from(eventParticipation)
                 .where(eqEventId(event.getId()), eqMainEventApplicationStatus(MainEventApplicationStatus.APPLIED))
-                .fetch()
-                .size();
+                .fetchOne());
     }
 
     @Override
-    public int countAfterPartyApplicantsByEvent(Event event) {
-        return jpaQueryFactory
-                .selectFrom(eventParticipation)
+    public long countAfterPartyApplicantsByEvent(Event event) {
+        return Objects.requireNonNull(jpaQueryFactory
+                .select(eventParticipation.count())
+                .from(eventParticipation)
                 .where(eqEventId(event.getId()), eqAfterPartyApplicationStatus(APPLIED))
-                .fetch()
-                .size();
+                .fetchOne());
     }
 }

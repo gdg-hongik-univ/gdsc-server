@@ -14,7 +14,7 @@ public interface EventParticipationCustomRepository {
     AfterPartyApplicantResponse findAfterPartyApplicants(
             Long eventId, EventParticipantQueryOption queryOption, Pageable pageable);
 
-    int countMainEventApplicantsByEvent(Event event);
+    long countMainEventApplicantsByEvent(Event event);
 
-    int countAfterPartyApplicantsByEvent(Event event);
+    long countAfterPartyApplicantsByEvent(Event event);
 }
