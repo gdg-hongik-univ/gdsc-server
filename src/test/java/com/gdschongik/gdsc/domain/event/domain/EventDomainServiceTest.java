@@ -19,7 +19,7 @@ public class EventDomainServiceTest {
 
         // when & then
         assertThatCode(() ->
-                        eventDomainService.validateWhenUpdateMaxApplicantCount(currentApplicants, newMaxApplicantCount))
+                        eventDomainService.validateUpdateMaxApplicantCount(currentApplicants, newMaxApplicantCount))
                 .doesNotThrowAnyException();
     }
 
@@ -31,7 +31,7 @@ public class EventDomainServiceTest {
 
         // when & then
         assertThatCode(() ->
-                        eventDomainService.validateWhenUpdateMaxApplicantCount(currentApplicants, newMaxApplicantCount))
+                        eventDomainService.validateUpdateMaxApplicantCount(currentApplicants, newMaxApplicantCount))
                 .doesNotThrowAnyException();
     }
 
@@ -43,7 +43,7 @@ public class EventDomainServiceTest {
 
         // when & then
         assertThatThrownBy(() ->
-                        eventDomainService.validateWhenUpdateMaxApplicantCount(currentApplicants, newMaxApplicantCount))
+                        eventDomainService.validateUpdateMaxApplicantCount(currentApplicants, newMaxApplicantCount))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(EVENT_NOT_UPDATABLE_MAX_APPLICANT_COUNT_INVALID.getMessage());
     }
