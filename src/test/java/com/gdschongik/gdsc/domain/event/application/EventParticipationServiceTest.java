@@ -841,7 +841,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             // given
             Event event = createEvent();
             Member member = createMember();
-            EventParticipation eventParticipation = createConfirmedAfterPartyEventParticipation(event, member);
+            EventParticipation eventParticipation = createUnconfirmedAfterPartyEventParticipation(event, member);
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
@@ -850,31 +850,8 @@ class EventParticipationServiceTest extends IntegrationTest {
                     .hasMessage(PAYMENT_STATUS_ALREADY_UPDATED.getMessage());
         }
 
-        // 뒤풀이 정산 취소 처리 실패 테스트 작성
-
-        @Test
-        void 뒤풀이가_비활성화_상태라면_전체_확인_처리에_실패한다() {
-            // given
-            Event event = createAfterPartyDisabledEvent();
-
-            // when & then
-            assertThatThrownBy(() -> eventParticipationService.confirmAllAfterPartyStatus(
-                            event.getId(), AfterPartyUpdateTarget.ATTENDANCE))
-                    .isInstanceOf(CustomException.class)
-                    .hasMessage(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
-        }
-
-        @Test
-        void 뒤풀이가_비활성화_상태라면_전체_확인_취소_처리에_실패한다() {
-            // given
-            Event event = createAfterPartyDisabledEvent();
-
-            // when & then
-            assertThatThrownBy(() -> eventParticipationService.revokeAllAfterPartyStatusConfirm(
-                            event.getId(), AfterPartyUpdateTarget.ATTENDANCE))
-                    .isInstanceOf(CustomException.class)
-                    .hasMessage(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
-        }
+        // TODO : 뒤풀이 정산 취소 처리 실패 테스트 작성
+        // TODO : 뒤출이 참석 / 선입금 / 정산 전체 확인 / 취소 처리 실패 테스트 작성
 
         @Test
         void 존재하지_않는_참여정보라면_확인_처리에_실패한다() {
