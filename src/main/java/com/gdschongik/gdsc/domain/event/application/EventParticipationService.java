@@ -10,7 +10,7 @@ import com.gdschongik.gdsc.domain.event.domain.service.EventParticipationDomainS
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateAllRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusesUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateTarget;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
@@ -140,7 +140,7 @@ public class EventParticipationService {
     }
 
     @Transactional
-    public void confirmAllAfterPartyStatus(AfterPartyStatusUpdateAllRequest request) {
+    public void confirmAllAfterPartyStatus(AfterPartyStatusesUpdateRequest request) {
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
@@ -169,7 +169,7 @@ public class EventParticipationService {
     }
 
     @Transactional
-    public void revokeAllAfterPartyStatusConfirm(AfterPartyStatusUpdateAllRequest request) {
+    public void revokeAllAfterPartyStatusConfirm(AfterPartyStatusesUpdateRequest request) {
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
