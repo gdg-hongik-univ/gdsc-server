@@ -100,7 +100,7 @@ public class AdminEventParticipationController {
     @Operation(summary = "뒤풀이 참석/정산 전체 확인 취소", description = "뒤풀이 참석/정산 확인을 전체 취소합니다.")
     @PutMapping("/after-party/revoke-all")
     public ResponseEntity<Void> revokeAllAfterPartyStatusConfirm(
-            @RequestBody @Valid AfterPartyStatusesUpdateRequest request) {
+            @Valid @RequestBody AfterPartyStatusesUpdateRequest request) {
         eventParticipationService.revokeAllAfterPartyStatusConfirm(request);
         return ResponseEntity.ok().build();
     }
