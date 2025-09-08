@@ -201,10 +201,10 @@ public class EventParticipation extends BaseEntity {
     // 뒤풀이 선입금 처리
     public void confirmPrePayment() {
         if (this.prePaymentStatus.isNone()) {
-            throw new CustomException(PAYMENT_STATUS_NOT_UPDATABLE_NONE);
+            throw new CustomException(AFTER_PARTY_PRE_PAYMENT_STATUS_NOT_UPDATABLE_NONE);
         }
         if (this.prePaymentStatus.isPaid()) {
-            throw new CustomException(PAYMENT_STATUS_ALREADY_UPDATED);
+            throw new CustomException(AFTER_PARTY_PRE_PAYMENT_STATUS_ALREADY_UPDATED);
         }
         this.prePaymentStatus = PaymentStatus.PAID;
     }
@@ -212,10 +212,10 @@ public class EventParticipation extends BaseEntity {
     // 뒤풀이 선입금 취소 처리
     public void revokePrePayment() {
         if (this.prePaymentStatus.isNone()) {
-            throw new CustomException(PAYMENT_STATUS_NOT_UPDATABLE_NONE);
+            throw new CustomException(AFTER_PARTY_PRE_PAYMENT_STATUS_NOT_UPDATABLE_NONE);
         }
         if (this.prePaymentStatus.isUnpaid()) {
-            throw new CustomException(PAYMENT_STATUS_ALREADY_UPDATED);
+            throw new CustomException(AFTER_PARTY_PRE_PAYMENT_STATUS_ALREADY_UPDATED);
         }
         this.prePaymentStatus = PaymentStatus.UNPAID;
     }
@@ -223,10 +223,10 @@ public class EventParticipation extends BaseEntity {
     // 뒤풀이 정산 처리
     public void confirmPostPayment() {
         if (this.postPaymentStatus.isNone()) {
-            throw new CustomException(PAYMENT_STATUS_NOT_UPDATABLE_NONE);
+            throw new CustomException(AFTER_PARTY_POST_PAYMENT_STATUS_NOT_UPDATABLE_NONE);
         }
         if (this.postPaymentStatus.isPaid()) {
-            throw new CustomException(PAYMENT_STATUS_ALREADY_UPDATED);
+            throw new CustomException(AFTER_PARTY_POST_PAYMENT_STATUS_ALREADY_UPDATED);
         }
         this.postPaymentStatus = PaymentStatus.PAID;
     }
@@ -234,10 +234,10 @@ public class EventParticipation extends BaseEntity {
     // 뒤풀이 정산 취소 처리
     public void revokePostPayment() {
         if (this.postPaymentStatus.isNone()) {
-            throw new CustomException(PAYMENT_STATUS_NOT_UPDATABLE_NONE);
+            throw new CustomException(AFTER_PARTY_POST_PAYMENT_STATUS_NOT_UPDATABLE_NONE);
         }
         if (this.postPaymentStatus.isUnpaid()) {
-            throw new CustomException(PAYMENT_STATUS_ALREADY_UPDATED);
+            throw new CustomException(AFTER_PARTY_POST_PAYMENT_STATUS_ALREADY_UPDATED);
         }
         this.postPaymentStatus = PaymentStatus.UNPAID;
     }

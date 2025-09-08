@@ -10,8 +10,8 @@ import com.gdschongik.gdsc.domain.event.domain.service.EventParticipationDomainS
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusesUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusesUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateTarget;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
