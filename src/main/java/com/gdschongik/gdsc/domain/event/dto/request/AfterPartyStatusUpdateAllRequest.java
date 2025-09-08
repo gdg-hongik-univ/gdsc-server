@@ -4,4 +4,4 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public record AfterPartyStatusUpdateAllRequest(
-        @NotNull @Positive Long eventId, AfterPartyUpdateTarget afterPartyUpdateTarget) {}
+        @NotNull @Positive Long eventId, @NotNull AfterPartyUpdateTarget afterPartyUpdateTarget) {}

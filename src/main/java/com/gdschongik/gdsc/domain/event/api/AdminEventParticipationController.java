@@ -68,7 +68,7 @@ public class AdminEventParticipationController {
 
     @Operation(summary = "뒤풀이 참석 처리", description = "뒤풀이에 참석 처리합니다.")
     @PutMapping("/after-party/attend")
-    public ResponseEntity<Void> attendAfterParty(@Valid @RequestBody AfterPartyAttendRequest request) {
+    public ResponseEntity<Void> attendAfterParty(@RequestBody @Valid AfterPartyAttendRequest request) {
         eventParticipationService.attendAfterParty(request);
         return ResponseEntity.ok().build();
     }
@@ -76,7 +76,7 @@ public class AdminEventParticipationController {
     @Operation(summary = "뒤풀이 참석/정산 확인 처리", description = "뒤풀이 참석/정산에 대해 확인 처리합니다.")
     @PutMapping("/{eventParticipationId}/after-party/confirm")
     public ResponseEntity<Void> confirmAfterPartyStatus(
-            @PathVariable Long eventParticipationId, @RequestBody AfterPartyStatusUpdateRequest request) {
+            @PathVariable Long eventParticipationId, @RequestBody @Valid AfterPartyStatusUpdateRequest request) {
         eventParticipationService.confirmAfterPartyStatus(eventParticipationId, request);
         return ResponseEntity.ok().build();
     }
@@ -92,7 +92,7 @@ public class AdminEventParticipationController {
     @Operation(summary = "뒤풀이 참석/정산 확인 취소", description = "뒤풀이 참석/정산 확인을 취소합니다.")
     @PutMapping("/{eventParticipationId}/after-party/revoke")
     public ResponseEntity<Void> revokeAfterPartyStatusConfirm(
-            @PathVariable Long eventParticipationId, @RequestBody AfterPartyStatusUpdateRequest request) {
+            @PathVariable Long eventParticipationId, @RequestBody @Valid AfterPartyStatusUpdateRequest request) {
         eventParticipationService.revokeAfterPartyStatusConfirm(eventParticipationId, request);
         return ResponseEntity.ok().build();
     }
