@@ -20,6 +20,9 @@ import com.gdschongik.gdsc.domain.event.domain.PaymentStatus;
 import com.gdschongik.gdsc.domain.event.dto.dto.AfterPartyApplicantCountDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusesUpdateRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateTarget;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
@@ -512,6 +515,517 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
     }
 
+    @Nested
+    class 뒤풀이_참석_및_정산_상태를_수정할_때 {
+
+        @Test
+        void 뒤풀이_참석_상태를_확인_처리한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createUnconfirmedAfterPartyEventParticipation(event, member);
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when
+            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request);
+
+            // then
+            EventParticipation afterPartyPostPaid = eventParticipationRepository
+                    .findById(eventParticipation.getId())
+                    .get();
+            assertThat(afterPartyPostPaid.getAfterPartyAttendanceStatus()).isEqualTo(ATTENDED);
+        }
+
+        @Test
+        void 뒤풀이_선입금_상태를_확인_처리한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createUnconfirmedAfterPartyEventParticipation(event, member);
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.PRE_PAYMENT);
+
+            // when
+            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request);
+
+            // then
+            EventParticipation afterPartyPostPaid = eventParticipationRepository
+                    .findById(eventParticipation.getId())
+                    .get();
+            assertThat(afterPartyPostPaid.getPrePaymentStatus()).isEqualTo(PaymentStatus.PAID);
+        }
+
+        @Test
+        void 뒤풀이_정산_상태를_확인_처리한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createUnconfirmedAfterPartyEventParticipation(event, member);
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.POST_PAYMENT);
+
+            // when
+            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request);
+
+            // then
+            EventParticipation afterPartyPostPaid = eventParticipationRepository
+                    .findById(eventParticipation.getId())
+                    .get();
+            assertThat(afterPartyPostPaid.getPostPaymentStatus()).isEqualTo(PaymentStatus.PAID);
+        }
+
+        @Test
+        void 뒤풀이_참석_상태를_확인_취소한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createConfirmedAfterPartyEventParticipation(event, member);
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when
+            eventParticipationService.revokeAfterPartyStatusConfirm(eventParticipation.getId(), request);
+
+            // then
+            EventParticipation afterPartyPostPaid = eventParticipationRepository
+                    .findById(eventParticipation.getId())
+                    .get();
+            assertThat(afterPartyPostPaid.getAfterPartyAttendanceStatus()).isEqualTo(NOT_ATTENDED);
+        }
+
+        @Test
+        void 뒤풀이_선입금_상태를_확인_취소한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createConfirmedAfterPartyEventParticipation(event, member);
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.PRE_PAYMENT);
+
+            // when
+            eventParticipationService.revokeAfterPartyStatusConfirm(eventParticipation.getId(), request);
+
+            // then
+            EventParticipation afterPartyPostPaid = eventParticipationRepository
+                    .findById(eventParticipation.getId())
+                    .get();
+            assertThat(afterPartyPostPaid.getPrePaymentStatus()).isEqualTo(PaymentStatus.UNPAID);
+        }
+
+        @Test
+        void 뒤풀이_정산_상태를_확인_취소한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createConfirmedAfterPartyEventParticipation(event, member);
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.POST_PAYMENT);
+
+            // when
+            eventParticipationService.revokeAfterPartyStatusConfirm(eventParticipation.getId(), request);
+
+            // then
+            EventParticipation afterPartyPostPaid = eventParticipationRepository
+                    .findById(eventParticipation.getId())
+                    .get();
+            assertThat(afterPartyPostPaid.getPostPaymentStatus()).isEqualTo(PaymentStatus.UNPAID);
+        }
+
+        @Test
+        void 뒤풀이_참석_상태를_전체_확인_처리한다() {
+            // given
+            Event event = createEvent();
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익");
+            createUnconfirmedAfterPartyEventParticipation(event, member1);
+            createUnconfirmedAfterPartyEventParticipation(event, member2);
+            createUnconfirmedAfterPartyEventParticipation(event, member3);
+
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(event.getId(), AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when
+            eventParticipationService.confirmAllAfterPartyStatus(request);
+
+            // then
+            eventParticipationRepository.findAllByEvent(event).forEach(eventParticipation -> {
+                assertThat(eventParticipation.getAfterPartyAttendanceStatus()).isEqualTo(ATTENDED);
+            });
+        }
+
+        @Test
+        void 뒤풀이_선입금_상태를_전체_확인_처리한다() {
+            // given
+            Event event = createEvent();
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익");
+            createUnconfirmedAfterPartyEventParticipation(event, member1);
+            createUnconfirmedAfterPartyEventParticipation(event, member2);
+            createUnconfirmedAfterPartyEventParticipation(event, member3);
+
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(event.getId(), AfterPartyUpdateTarget.PRE_PAYMENT);
+
+            // when
+            eventParticipationService.confirmAllAfterPartyStatus(request);
+
+            // then
+            eventParticipationRepository.findAllByEvent(event).forEach(eventParticipation -> {
+                assertThat(eventParticipation.getPrePaymentStatus()).isEqualTo(PaymentStatus.PAID);
+            });
+        }
+
+        @Test
+        void 뒤풀이_정산_상태를_전체_확인_처리한다() {
+            // given
+            Event event = createEvent();
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익");
+            createUnconfirmedAfterPartyEventParticipation(event, member1);
+            createUnconfirmedAfterPartyEventParticipation(event, member2);
+            createUnconfirmedAfterPartyEventParticipation(event, member3);
+
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(event.getId(), AfterPartyUpdateTarget.POST_PAYMENT);
+
+            // when
+            eventParticipationService.confirmAllAfterPartyStatus(request);
+
+            // then
+            eventParticipationRepository.findAllByEvent(event).forEach(eventParticipation -> {
+                assertThat(eventParticipation.getPostPaymentStatus()).isEqualTo(PaymentStatus.PAID);
+            });
+        }
+
+        @Test
+        void 뒤풀이_참석_상태를_전체_확인_취소한다() {
+            // given
+            Event event = createEvent();
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익");
+            createConfirmedAfterPartyEventParticipation(event, member1);
+            createConfirmedAfterPartyEventParticipation(event, member2);
+            createConfirmedAfterPartyEventParticipation(event, member3);
+
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(event.getId(), AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when
+            eventParticipationService.revokeAllAfterPartyStatusConfirm(request);
+
+            // then
+            eventParticipationRepository.findAllByEvent(event).forEach(eventParticipation -> {
+                assertThat(eventParticipation.getAfterPartyAttendanceStatus()).isEqualTo(NOT_ATTENDED);
+            });
+        }
+
+        @Test
+        void 뒤풀이_선입금_상태를_전체_확인_취소한다() {
+            // given
+            Event event = createEvent();
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익");
+            createConfirmedAfterPartyEventParticipation(event, member1);
+            createConfirmedAfterPartyEventParticipation(event, member2);
+            createConfirmedAfterPartyEventParticipation(event, member3);
+
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(event.getId(), AfterPartyUpdateTarget.PRE_PAYMENT);
+
+            // when
+            eventParticipationService.revokeAllAfterPartyStatusConfirm(request);
+
+            // then
+            eventParticipationRepository.findAllByEvent(event).forEach(eventParticipation -> {
+                assertThat(eventParticipation.getPrePaymentStatus()).isEqualTo(PaymentStatus.UNPAID);
+            });
+        }
+
+        @Test
+        void 뒤풀이_정산_상태를_전체_확인_취소한다() {
+            // given
+            Event event = createEvent();
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익");
+            createConfirmedAfterPartyEventParticipation(event, member1);
+            createConfirmedAfterPartyEventParticipation(event, member2);
+            createConfirmedAfterPartyEventParticipation(event, member3);
+
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(event.getId(), AfterPartyUpdateTarget.POST_PAYMENT);
+
+            // when
+            eventParticipationService.revokeAllAfterPartyStatusConfirm(request);
+
+            // then
+            eventParticipationRepository.findAllByEvent(event).forEach(eventParticipation -> {
+                assertThat(eventParticipation.getPostPaymentStatus()).isEqualTo(PaymentStatus.UNPAID);
+            });
+        }
+
+        @Test
+        void 뒤풀이가_비활성화된_이벤트_참석정보라면_뒤풀이_첨석_처리에_실패한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createAfterPartyDisabledEventParticipation(event, member);
+
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when & then
+            assertThatThrownBy(() ->
+                            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE.getMessage());
+        }
+
+        @Test
+        void 뒤풀이에_이미_참석처리했다면_뒤풀이_첨석_처리에_실패한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createConfirmedAfterPartyEventParticipation(event, member);
+
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when & then
+            assertThatThrownBy(() ->
+                            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
+        }
+
+        @Test
+        void 뒤풀이가_비활성화된_이벤트_참석정보라면_선입금_확인_처리에_실패한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createAfterPartyDisabledEventParticipation(event, member);
+
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.PRE_PAYMENT);
+
+            // when & then
+            assertThatThrownBy(() ->
+                            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
+        }
+
+        @Test
+        void 뒤풀이에_이미_선입금_확인처리했다면_선입금_확인_처리에_실패한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createConfirmedAfterPartyEventParticipation(event, member);
+
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.PRE_PAYMENT);
+
+            // when & then
+            assertThatThrownBy(() ->
+                            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
+        }
+
+        @Test
+        void 뒤풀이가_비활성화된_이벤트_참석정보라면_정산_확인_처리에_실패한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createAfterPartyDisabledEventParticipation(event, member);
+
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.POST_PAYMENT);
+
+            // when & then
+            assertThatThrownBy(() ->
+                            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
+        }
+
+        @Test
+        void 뒤풀이에_이미_정산_확인처리했다면_정산_확인_처리에_실패한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createConfirmedAfterPartyEventParticipation(event, member);
+
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.POST_PAYMENT);
+
+            // when & then
+            assertThatThrownBy(() ->
+                            eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
+        }
+        //
+
+        @Test
+        void 뒤풀이가_비활성화된_이벤트_참석정보라면_뒤풀이_첨석_취소_처리에_실패한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createAfterPartyDisabledEventParticipation(event, member);
+
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
+                            eventParticipation.getId(), request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE.getMessage());
+        }
+
+        @Test
+        void 뒤풀이에_참석_처리하지_않았다면_뒤풀이_첨석_취소_처리에_실패한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createUnconfirmedAfterPartyEventParticipation(event, member);
+
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
+                            eventParticipation.getId(), request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
+        }
+
+        @Test
+        void 뒤풀이가_비활성화된_이벤트_참석정보라면_선입금_확인_취소_처리에_실패한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createAfterPartyDisabledEventParticipation(event, member);
+
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.PRE_PAYMENT);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
+                            eventParticipation.getId(), request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
+        }
+
+        @Test
+        void 뒤풀이에_선입금_처리하지_않았다면_선입금_확인_취소_처리에_실패한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createUnconfirmedAfterPartyEventParticipation(event, member);
+
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.PRE_PAYMENT);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
+                            eventParticipation.getId(), request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
+        }
+
+        @Test
+        void 뒤풀이가_비활성화된_이벤트_참석정보라면_정산_확인_취소_처리에_실패한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createAfterPartyDisabledEventParticipation(event, member);
+
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.POST_PAYMENT);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
+                            eventParticipation.getId(), request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
+        }
+
+        @Test
+        void 뒤풀이에_정산_처리하지_않았다면_정산_확인_취소_처리에_실패한다() {
+            // given
+            Event event = createEvent();
+            Member member = createMember();
+            EventParticipation eventParticipation = createUnconfirmedAfterPartyEventParticipation(event, member);
+
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.POST_PAYMENT);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
+                            eventParticipation.getId(), request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
+        }
+
+        // TODO : 뒤출이 참석 / 선입금 / 정산 전체 확인 / 취소 처리 실패 테스트 작성
+
+        @Test
+        void 존재하지_않는_참여정보라면_확인_처리에_실패한다() {
+            // given
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.confirmAfterPartyStatus(9999L, request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(PARTICIPATION_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        void 존재하지_않는_참여정보라면_확인_취소_처리에_실패한다() {
+            // given
+            AfterPartyStatusUpdateRequest request =
+                    new AfterPartyStatusUpdateRequest(AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(9999L, request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(PARTICIPATION_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        void 존재하지_않는_이벤트라면_전체_확인_처리에_실패한다() {
+            // given
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(9999L, AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.confirmAllAfterPartyStatus(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EVENT_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        void 존재하지_않는_이벤트라면_전체_확인_취소_처리에_실패한다() {
+            // given
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(9999L, AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.revokeAllAfterPartyStatusConfirm(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EVENT_NOT_FOUND.getMessage());
+        }
+    }
+
     private Event createAfterPartyDisabledEvent() {
         Event event = Event.create(
                 EVENT_NAME,
@@ -567,6 +1081,39 @@ class EventParticipationServiceTest extends IntegrationTest {
                 AfterPartyAttendanceStatus.NOT_ATTENDED,
                 PaymentStatus.NONE,
                 PaymentStatus.NONE,
+                event);
+        return eventParticipationRepository.save(eventParticipation);
+    }
+
+    private EventParticipation createAfterPartyDisabledEventParticipation(Event event, Member member) {
+        EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
+                member,
+                AfterPartyApplicationStatus.NONE,
+                AfterPartyAttendanceStatus.NONE,
+                PaymentStatus.NONE,
+                PaymentStatus.NONE,
+                event);
+        return eventParticipationRepository.save(eventParticipation);
+    }
+
+    private EventParticipation createUnconfirmedAfterPartyEventParticipation(Event event, Member member) {
+        EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
+                member,
+                AfterPartyApplicationStatus.APPLIED,
+                AfterPartyAttendanceStatus.NOT_ATTENDED,
+                PaymentStatus.UNPAID,
+                PaymentStatus.UNPAID,
+                event);
+        return eventParticipationRepository.save(eventParticipation);
+    }
+
+    private EventParticipation createConfirmedAfterPartyEventParticipation(Event event, Member member) {
+        EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
+                member,
+                AfterPartyApplicationStatus.APPLIED,
+                AfterPartyAttendanceStatus.ATTENDED,
+                PaymentStatus.PAID,
+                PaymentStatus.PAID,
                 event);
         return eventParticipationRepository.save(eventParticipation);
     }
