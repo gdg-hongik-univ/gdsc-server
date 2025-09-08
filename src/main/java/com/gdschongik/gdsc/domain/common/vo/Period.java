@@ -2,6 +2,7 @@ package com.gdschongik.gdsc.domain.common.vo;
 
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.Embeddable;
@@ -28,6 +29,7 @@ public final class Period {
         this.endDate = endDate;
     }
 
+    @JsonCreator // TODO: 레코드로 변경 후 제거
     public static Period of(LocalDateTime startDate, LocalDateTime endDate) {
         validatePeriod(startDate, endDate);
         return Period.builder().startDate(startDate).endDate(endDate).build();

@@ -1,17 +1,20 @@
 package com.gdschongik.gdsc.domain.event.api;
 
 import com.gdschongik.gdsc.domain.event.application.EventService;
+import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
+import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Event - Admin", description = "어드민 행사 관리 API입니다.")
 @RestController
@@ -26,5 +29,27 @@ public class AdminEventController {
     public ResponseEntity<Page<EventResponse>> getEvents(@ParameterObject Pageable pageable) {
         var response = eventService.getEvents(pageable);
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "행사 생성", description = "행사를 생성합니다.")
+    @PostMapping
+    public ResponseEntity<Void> createEvent(@Valid @RequestBody EventCreateRequest request) {
+        eventService.createEvent(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "이벤트 검색", description = "이벤트를 검색합니다.")
+    @GetMapping("/search")
+    public ResponseEntity<List<EventDto>> searchEvent(@RequestParam String name) {
+        var response = eventService.searchEvent(name);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "이벤트 수정", description = "이벤트 기본 정보를 수정합니다.")
+    @PutMapping("/{eventId}")
+    public ResponseEntity<Void> updateEvent(
+            @PathVariable Long eventId, @Valid @RequestBody EventUpdateRequest request) {
+        eventService.updateEvent(eventId, request);
+        return ResponseEntity.ok().build();
     }
 }

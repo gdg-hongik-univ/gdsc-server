@@ -1,9 +1,10 @@
-package com.gdschongik.gdsc.domain.event.domain;
+package com.gdschongik.gdsc.domain.event.domain.service;
 
 import static com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.common.vo.Period;
+import com.gdschongik.gdsc.domain.event.domain.*;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.annotation.DomainService;
 import com.gdschongik.gdsc.global.exception.CustomException;

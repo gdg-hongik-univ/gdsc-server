@@ -5,6 +5,7 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.common.vo.Period;
+import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -158,9 +159,33 @@ public class Event extends BaseEntity {
         }
     }
 
-    // 데이터 조회 로직
+    // 데이터 조회 메서드
 
     public boolean afterPartyExists() {
         return afterPartyStatus.isEnabled();
+    }
+
+    // 수정 메서드
+
+    /**
+     * 이벤트 정보를 수정합니다.
+     * 도메인 서비스를 통해서만 호출되어야 합니다.
+     * @see EventDomainService
+     */
+    public void update(
+            String name,
+            String venue,
+            LocalDateTime startAt,
+            String applicationDescription,
+            Period applicationPeriod,
+            Integer mainEventMaxApplicantCount,
+            Integer afterPartyMaxApplicantCount) {
+        this.name = name;
+        this.venue = venue;
+        this.startAt = startAt;
+        this.applicationDescription = applicationDescription;
+        this.applicationPeriod = applicationPeriod;
+        this.mainEventMaxApplicantCount = mainEventMaxApplicantCount;
+        this.afterPartyMaxApplicantCount = afterPartyMaxApplicantCount;
     }
 }
