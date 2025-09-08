@@ -78,6 +78,10 @@ public class Event extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UsageStatus rsvpQuestionStatus;
 
+    @Comment("[메타] 유의사항 확인 질문 활성화 상태")
+    @Enumerated(EnumType.STRING)
+    private UsageStatus noticeConfirmQuestionStatus;
+
     @Comment("본행사 최대 신청 가능 인원")
     private Integer mainEventMaxApplicantCount;
 
@@ -96,6 +100,7 @@ public class Event extends BaseEntity {
             UsageStatus prePaymentStatus,
             UsageStatus postPaymentStatus,
             UsageStatus rsvpQuestionStatus,
+            UsageStatus noticeConfirmQuestionStatus,
             Integer mainEventMaxApplicantCount,
             Integer afterPartyMaxApplicantCount) {
         this.name = name;
@@ -108,6 +113,7 @@ public class Event extends BaseEntity {
         this.prePaymentStatus = prePaymentStatus;
         this.postPaymentStatus = postPaymentStatus;
         this.rsvpQuestionStatus = rsvpQuestionStatus;
+        this.noticeConfirmQuestionStatus = noticeConfirmQuestionStatus;
         this.mainEventMaxApplicantCount = mainEventMaxApplicantCount;
         this.afterPartyMaxApplicantCount = afterPartyMaxApplicantCount;
     }
@@ -124,6 +130,7 @@ public class Event extends BaseEntity {
             UsageStatus prePaymentStatus,
             UsageStatus postPaymentStatus,
             UsageStatus rsvpQuestionStatus,
+            UsageStatus noticeConfirmQuestionStatus,
             Integer mainEventMaxApplicantCount,
             Integer afterPartyMaxApplicantCount) {
         validatePaymentDisabledWhenAfterPartyDisabled(afterPartyStatus, prePaymentStatus, postPaymentStatus);
@@ -140,6 +147,7 @@ public class Event extends BaseEntity {
                 .prePaymentStatus(prePaymentStatus)
                 .postPaymentStatus(postPaymentStatus)
                 .rsvpQuestionStatus(rsvpQuestionStatus)
+                .noticeConfirmQuestionStatus(noticeConfirmQuestionStatus)
                 .mainEventMaxApplicantCount(mainEventMaxApplicantCount)
                 .afterPartyMaxApplicantCount(afterPartyMaxApplicantCount)
                 .build();
