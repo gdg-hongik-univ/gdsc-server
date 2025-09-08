@@ -524,6 +524,7 @@ class EventParticipationServiceTest extends IntegrationTest {
                 DISABLED,
                 DISABLED,
                 RSVP_QUESTION_STATUS,
+                NOTICE_CONFIRM_QUESTION_STATUS,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,
                 AFTER_PARTY_MAX_APPLICATION_COUNT);
         return eventRepository.save(event);

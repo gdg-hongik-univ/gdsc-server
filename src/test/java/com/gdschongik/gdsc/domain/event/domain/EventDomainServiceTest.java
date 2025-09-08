@@ -21,12 +21,7 @@ public class EventDomainServiceTest {
         void 현재_신청인원보다_최대_신청인원을_많게_변경하는_경우_성공한다() {
             // given
             Event event = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS,
-                    RSVP_QUESTION_STATUS);
+                    1L, REGULAR_ROLE_ONLY_STATUS, AFTER_PARTY_STATUS, PRE_PAYMENT_STATUS, POST_PAYMENT_STATUS);
 
             Integer newMainEventMaxApplicantCount = 15;
             Integer newAfterPartyMaxApplicantCount = 15;
@@ -54,12 +49,7 @@ public class EventDomainServiceTest {
         void 최대_신청인원_제한을_없애는_경우_성공한다() {
             // given
             Event event = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS,
-                    RSVP_QUESTION_STATUS);
+                    1L, REGULAR_ROLE_ONLY_STATUS, AFTER_PARTY_STATUS, PRE_PAYMENT_STATUS, POST_PAYMENT_STATUS);
 
             Integer newMainEventMaxApplicantCount = null;
             Integer newAfterPartyMaxApplicantCount = null;
@@ -87,12 +77,7 @@ public class EventDomainServiceTest {
         void 현재_신청인원보다_최대_신청인원을_적게_변경하는_경우_실패한다() {
             // given
             Event event = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS,
-                    RSVP_QUESTION_STATUS);
+                    1L, REGULAR_ROLE_ONLY_STATUS, AFTER_PARTY_STATUS, PRE_PAYMENT_STATUS, POST_PAYMENT_STATUS);
 
             Integer newMainEventMaxApplicantCount = 0;
             Integer newAfterPartyMaxApplicantCount = 0;

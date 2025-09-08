@@ -170,8 +170,7 @@ public class FixtureHelper {
             UsageStatus regularRoleOnlyStatus,
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus,
-            UsageStatus postPaymentStatus,
-            UsageStatus rsvpQuestionStatus) {
+            UsageStatus postPaymentStatus) {
         Event event = Event.create(
                 EVENT_NAME,
                 VENUE,
@@ -182,7 +181,8 @@ public class FixtureHelper {
                 afterPartyStatus,
                 prePaymentStatus,
                 postPaymentStatus,
-                rsvpQuestionStatus,
+                RSVP_QUESTION_STATUS,
+                NOTICE_CONFIRM_QUESTION_STATUS,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,
                 AFTER_PARTY_MAX_APPLICATION_COUNT);
 
