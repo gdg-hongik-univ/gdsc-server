@@ -1,7 +1,5 @@
 package com.gdschongik.gdsc.domain.event.domain;
 
-import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
-
 /**
  * 뒤풀이 참석 상태를 나타내는 Enum입니다.
  */
