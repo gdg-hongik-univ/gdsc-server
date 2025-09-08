@@ -1,7 +1,7 @@
 package com.gdschongik.gdsc.domain.event.application;
 
 import static com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus.*;
-import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.DISABLED;
+import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.*;
 import static com.gdschongik.gdsc.domain.member.domain.Department.*;
 import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.MemberConstant.*;
