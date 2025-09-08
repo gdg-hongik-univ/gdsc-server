@@ -204,7 +204,7 @@ public class EventParticipation extends BaseEntity {
             throw new CustomException(AFTER_PARTY_PRE_PAYMENT_STATUS_NOT_UPDATABLE_NONE);
         }
         if (this.prePaymentStatus.isPaid()) {
-            throw new CustomException(AFTER_PARTY_PRE_PAYMENT_STATUS_ALREADY_UPDATED);
+            throw new CustomException(AFTER_PARTY_PRE_PAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED);
         }
         this.prePaymentStatus = PaymentStatus.PAID;
     }
@@ -215,7 +215,7 @@ public class EventParticipation extends BaseEntity {
             throw new CustomException(AFTER_PARTY_PRE_PAYMENT_STATUS_NOT_UPDATABLE_NONE);
         }
         if (this.prePaymentStatus.isUnpaid()) {
-            throw new CustomException(AFTER_PARTY_PRE_PAYMENT_STATUS_ALREADY_UPDATED);
+            throw new CustomException(AFTER_PARTY_PRE_PAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED);
         }
         this.prePaymentStatus = PaymentStatus.UNPAID;
     }
@@ -226,7 +226,7 @@ public class EventParticipation extends BaseEntity {
             throw new CustomException(AFTER_PARTY_POST_PAYMENT_STATUS_NOT_UPDATABLE_NONE);
         }
         if (this.postPaymentStatus.isPaid()) {
-            throw new CustomException(AFTER_PARTY_POST_PAYMENT_STATUS_ALREADY_UPDATED);
+            throw new CustomException(AFTER_PARTY_POST_PAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED);
         }
         this.postPaymentStatus = PaymentStatus.PAID;
     }
@@ -237,7 +237,7 @@ public class EventParticipation extends BaseEntity {
             throw new CustomException(AFTER_PARTY_POST_PAYMENT_STATUS_NOT_UPDATABLE_NONE);
         }
         if (this.postPaymentStatus.isUnpaid()) {
-            throw new CustomException(AFTER_PARTY_POST_PAYMENT_STATUS_ALREADY_UPDATED);
+            throw new CustomException(AFTER_PARTY_POST_PAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED);
         }
         this.postPaymentStatus = PaymentStatus.UNPAID;
     }
@@ -248,7 +248,7 @@ public class EventParticipation extends BaseEntity {
             throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE);
         }
         if (this.afterPartyAttendanceStatus.isAttended()) {
-            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_ALREADY_UPDATED);
+            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_ALREADY_UPDATED);
         }
         this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.ATTENDED;
     }
@@ -259,7 +259,7 @@ public class EventParticipation extends BaseEntity {
             throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE);
         }
         if (this.afterPartyAttendanceStatus.isNotAttended()) {
-            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_ALREADY_UPDATED);
+            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_ALREADY_UPDATED);
         }
         this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.NOT_ATTENDED;
     }

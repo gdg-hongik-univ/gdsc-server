@@ -801,7 +801,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() ->
                             eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_ALREADY_UPDATED.getMessage());
+                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
         }
 
         @Test
@@ -835,7 +835,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() ->
                             eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(AFTER_PARTY_PRE_PAYMENT_STATUS_ALREADY_UPDATED.getMessage());
+                    .hasMessage(AFTER_PARTY_PRE_PAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
         }
 
         @Test
@@ -869,7 +869,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() ->
                             eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(AFTER_PARTY_POST_PAYMENT_STATUS_ALREADY_UPDATED.getMessage());
+                    .hasMessage(AFTER_PARTY_POST_PAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
         }
         //
 
@@ -904,7 +904,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
                             eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_ALREADY_UPDATED.getMessage());
+                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
         }
 
         @Test
@@ -938,7 +938,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
                             eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(AFTER_PARTY_PRE_PAYMENT_STATUS_ALREADY_UPDATED.getMessage());
+                    .hasMessage(AFTER_PARTY_PRE_PAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
         }
 
         @Test
@@ -972,7 +972,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
                             eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(AFTER_PARTY_POST_PAYMENT_STATUS_ALREADY_UPDATED.getMessage());
+                    .hasMessage(AFTER_PARTY_POST_PAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
         }
 
         // TODO : 뒤출이 참석 / 선입금 / 정산 전체 확인 / 취소 처리 실패 테스트 작성
