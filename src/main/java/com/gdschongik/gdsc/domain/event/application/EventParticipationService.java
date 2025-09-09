@@ -310,6 +310,7 @@ public class EventParticipationService {
 
     @Transactional
     public void applyEventParticipation(EventApplyRequest request) {
+        // TODO: 메서드 및 DTO applyOnline으로 이름 변경
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
