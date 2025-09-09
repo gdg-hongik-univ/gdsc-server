@@ -195,6 +195,12 @@ public class EventParticipation extends BaseEntity {
 
     // 뒤풀이 참석 처리
     public void attendAfterParty() {
+        if (this.afterPartyAttendanceStatus.isNone()) {
+            throw new CustomException(AFTER_PARTY_NOT_ATTENDABLE_NONE);
+        }
+        if (this.afterPartyAttendanceStatus.isAttended()) {
+            throw new CustomException(AFTER_PARTY_NOT_ATTENDABLE_ALREADY_ATTENDED);
+        }
         this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.ATTENDED;
     }
 
