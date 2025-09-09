@@ -257,10 +257,10 @@ public class EventParticipationService {
     // 요청 ID에 해당하는 참여정보가 모두 같은 이벤트에 대한 참여 정보인지 검증
     private void validateRequestParticipationsSameEvent(List<EventParticipation> participations) {
         Event event = participations.get(0).getEvent();
-        boolean hasSameEventAll = participations.stream()
-                .allMatch(participation -> participation.getEvent().equals(event));
+        boolean hasDifferentEvent = participations.stream()
+                .anyMatch(participation -> !participation.getEvent().equals(event));
 
-        if (!hasSameEventAll) {
+        if (hasDifferentEvent) {
             throw new CustomException(PARTICIPATION_NOT_UPDATABLE_DIFFERENT_EVENT);
         }
     }
