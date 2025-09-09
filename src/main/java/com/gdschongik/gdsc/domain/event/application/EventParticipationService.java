@@ -242,11 +242,11 @@ public class EventParticipationService {
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         Participant participant = request.participant();
-        Member optMemberByParticipant =
+        Member memberByParticipant =
                 memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
 
         EventParticipation participation =
-                eventParticipationDomainService.applyManual(participant, optMemberByParticipant, event);
+                eventParticipationDomainService.applyManual(participant, memberByParticipant, event);
         eventParticipationRepository.save(participation);
 
         log.info(
