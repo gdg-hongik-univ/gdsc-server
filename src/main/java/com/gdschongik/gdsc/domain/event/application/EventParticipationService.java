@@ -1,6 +1,7 @@
 package com.gdschongik.gdsc.domain.event.application;
 
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+import static java.time.LocalDateTime.*;
 
 import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
@@ -28,7 +29,6 @@ import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
 import com.gdschongik.gdsc.global.util.MemberUtil;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -286,7 +286,7 @@ public class EventParticipationService {
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         EventParticipation eventParticipation = eventParticipationDomainService.applyEventForRegistered(
-                currentMember, request.afterPartyApplicationStatus(), event, LocalDateTime.now());
+                currentMember, request.afterPartyApplicationStatus(), event, now());
 
         eventParticipationRepository.save(eventParticipation);
 
@@ -308,11 +308,7 @@ public class EventParticipationService {
                 .orElse(false);
 
         EventParticipation eventParticipation = eventParticipationDomainService.applyEventForUnregistered(
-                participant,
-                request.afterPartyApplicationStatus(),
-                event,
-                LocalDateTime.now(),
-                infoStatusSatisfiedMemberExists);
+                participant, request.afterPartyApplicationStatus(), event, now(), infoStatusSatisfiedMemberExists);
 
         eventParticipationRepository.save(eventParticipation);
 
