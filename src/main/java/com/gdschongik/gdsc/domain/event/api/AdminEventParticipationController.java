@@ -7,8 +7,8 @@ import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateReques
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusesUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredApplyRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventUnregisteredApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredManualApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventUnregisteredManualApplyRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
@@ -123,7 +123,8 @@ public class AdminEventParticipationController {
             summary = "행사 및 뒤풀이 수동 신청 (회원)",
             description = "관리자가 회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 이벤트 뒤풀이가 있는 행사라면 뒤풀이 신청 상태로 신청 처리합니다.")
     @PostMapping("/apply/manual/registered")
-    public ResponseEntity<Void> applyManualForRegistered(@Valid @RequestBody EventRegisteredApplyRequest request) {
+    public ResponseEntity<Void> applyManualForRegistered(
+            @Valid @RequestBody EventRegisteredManualApplyRequest request) {
         eventParticipationService.applyManualForRegistered(request);
         return ResponseEntity.ok().build();
     }
@@ -132,7 +133,8 @@ public class AdminEventParticipationController {
             summary = "행사 및 뒤풀이 수동 신청 (비회원)",
             description = "관리자가 비회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 이벤트 뒤풀이가 있는 행사라면 뒤풀이 신청 상태로 신청 처리합니다.")
     @PostMapping("/apply/manual/unregistered")
-    public ResponseEntity<Void> applyManualForUnregistered(@Valid @RequestBody EventUnregisteredApplyRequest request) {
+    public ResponseEntity<Void> applyManualForUnregistered(
+            @Valid @RequestBody EventUnregisteredManualApplyRequest request) {
         eventParticipationService.applyManualForUnregistered(request);
         return ResponseEntity.ok().build();
     }
