@@ -1,11 +1,13 @@
 package com.gdschongik.gdsc.domain.event.application;
 
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+import static java.time.LocalDateTime.*;
 
 import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
+import com.gdschongik.gdsc.domain.event.domain.Participant;
 import com.gdschongik.gdsc.domain.event.domain.service.EventParticipationDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
@@ -13,6 +15,7 @@ import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusesUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateTarget;
+import com.gdschongik.gdsc.domain.event.dto.request.EventApplyRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredApplyRequest;
@@ -25,6 +28,7 @@ import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -271,5 +275,29 @@ public class EventParticipationService {
             case PRE_PAYMENT -> participation.revokePrePayment();
             case POST_PAYMENT -> participation.revokePostPayment();
         }
+    }
+
+    @Transactional
+    public void applyEventParticipation(EventApplyRequest request) {
+        Event event =
+                eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        Participant participant = request.participant();
+        Optional<Member> optionalMember = memberRepository.findByStudentId(participant.getStudentId());
+
+        EventParticipation eventParticipation;
+        if (optionalMember.isPresent()
+                && optionalMember.get().getAssociateRequirement().isInfoSatisfied()) {
+            eventParticipation = eventParticipationDomainService.applyEventForRegistered(
+                    optionalMember.get(), request.afterPartyApplicationStatus(), event, now());
+        } else {
+            eventParticipation = eventParticipationDomainService.applyEventForUnregistered(
+                    participant, request.afterPartyApplicationStatus(), event, now());
+        }
+        eventParticipationRepository.save(eventParticipation);
+
+        log.info(
+                "[EventParticipationService] 이벤트 참여 신청: eventId={}, memberStudentId={}",
+                event.getId(),
+                participant.getStudentId());
     }
 }
