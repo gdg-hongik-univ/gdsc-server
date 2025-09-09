@@ -119,6 +119,7 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok(response);
     }
 
+    @Deprecated(forRemoval = true)
     @Operation(
             summary = "행사 및 뒤풀이 수동 신청 (회원)",
             description = "관리자가 회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 이벤트 뒤풀이가 있는 행사라면 뒤풀이 신청 상태로 신청 처리합니다.")
@@ -129,6 +130,7 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok().build();
     }
 
+    @Deprecated(forRemoval = true)
     @Operation(
             summary = "행사 및 뒤풀이 수동 신청 (비회원)",
             description = "관리자가 비회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 이벤트 뒤풀이가 있는 행사라면 뒤풀이 신청 상태로 신청 처리합니다.")
