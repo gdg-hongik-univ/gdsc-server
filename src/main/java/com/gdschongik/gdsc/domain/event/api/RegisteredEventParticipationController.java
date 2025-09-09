@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/registered/event-participations")
 @RequiredArgsConstructor
-public class ParticipantEventParticipationController {
+public class RegisteredEventParticipationController {
 
     private final EventParticipationService eventParticipationService;
 
