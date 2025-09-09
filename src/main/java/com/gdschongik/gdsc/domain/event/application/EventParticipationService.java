@@ -258,7 +258,7 @@ public class EventParticipationService {
     private void validateRequestParticipationsSameEvent(List<EventParticipation> participations) {
         Event event = participations.get(0).getEvent();
         boolean hasSameEventAll = participations.stream()
-                .anyMatch(participation -> participation.getEvent().equals(event));
+                .allMatch(participation -> participation.getEvent().equals(event));
 
         if (!hasSameEventAll) {
             throw new CustomException(PARTICIPATION_NOT_UPDATABLE_DIFFERENT_EVENT);
