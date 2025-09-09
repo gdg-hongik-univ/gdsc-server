@@ -42,6 +42,10 @@ public final class Participant {
                 .build();
     }
 
+    /**
+     * @deprecated registered / unregistered 통합에 따른 registered 전용 from 메서드 제거
+     */
+    @Deprecated(forRemoval = true)
     public static Participant from(Member member) {
         if (!member.getAssociateRequirement().isInfoSatisfied()) {
             throw new CustomException(PARTICIPANT_NOT_CREATABLE_INFO_NOT_SATISFIED);
