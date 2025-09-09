@@ -14,7 +14,7 @@ import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredApplyRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredManualApplyRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventUnregisteredApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventUnregisteredManualApplyRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
@@ -156,7 +156,7 @@ public class EventParticipationService {
     }
 
     @Transactional
-    public void applyManualForUnregistered(EventUnregisteredApplyRequest request) {
+    public void applyManualForUnregistered(EventUnregisteredManualApplyRequest request) {
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
