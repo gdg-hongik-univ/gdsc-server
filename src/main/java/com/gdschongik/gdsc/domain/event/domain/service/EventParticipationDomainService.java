@@ -14,13 +14,12 @@ import java.time.LocalDateTime;
 public class EventParticipationDomainService {
 
     /**
-     * 회원이 온라인을 통해 이벤트에 참여 신청하는 메서드입니다.
+     * 기본 정보 입력을 마친 회원이 온라인을 통해 이벤트에 참여 신청하는 메서드입니다.
      */
     public EventParticipation applyEventForRegistered(
             Member member, AfterPartyApplicationStatus afterPartyApplicationStatus, Event event, LocalDateTime now) {
         validateEventApplicationPeriod(event, now);
         validateMemberWhenOnlyRegularRoleAllowed(event, member);
-        validateMemberBasicInfoSatisfied(member);
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
 
         AfterPartyAttendanceStatus afterPartyAttendanceStatus = AfterPartyAttendanceStatus.getInitialStatus(event);
@@ -37,17 +36,15 @@ public class EventParticipationDomainService {
     }
 
     /**
-     * 비회원이 온라인을 통해 이벤트에 참여 신청하는 메서드입니다.
+     * 기본 정보 입력을 마치지 않은 회원이나 비회원이 온라인을 통해 이벤트에 참여 신청하는 메서드입니다.
      */
     public EventParticipation applyEventForUnregistered(
             Participant participant,
             AfterPartyApplicationStatus afterPartyApplicationStatus,
             Event event,
-            LocalDateTime now,
-            boolean infoStatusSatisfiedMemberExists) {
+            LocalDateTime now) {
         validateEventApplicationPeriod(event, now);
         validateNotRegularRoleAllowed(event);
-        validateMemberInfoForUnregistered(infoStatusSatisfiedMemberExists);
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
 
         AfterPartyAttendanceStatus afterPartyAttendanceStatus = AfterPartyAttendanceStatus.getInitialStatus(event);
