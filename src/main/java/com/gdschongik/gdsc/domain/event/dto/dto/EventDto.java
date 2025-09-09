@@ -17,6 +17,7 @@ public record EventDto(
         UsageStatus prePaymentStatus,
         UsageStatus postPaymentStatus,
         UsageStatus rsvpQuestionStatus,
+        UsageStatus noticeConfirmQuestionStatus,
         Integer mainEventMaxApplicantCount,
         Integer afterPartyMaxApplicantCount) {
 
@@ -33,6 +34,7 @@ public record EventDto(
                 event.getPrePaymentStatus(),
                 event.getPostPaymentStatus(),
                 event.getRsvpQuestionStatus(),
+                event.getNoticeConfirmQuestionStatus(),
                 event.getMainEventMaxApplicantCount(),
                 event.getAfterPartyMaxApplicantCount());
     }

@@ -3,6 +3,8 @@ package com.gdschongik.gdsc.domain.event.api;
 import com.gdschongik.gdsc.domain.event.application.EventParticipationService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusesUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredManualApplyRequest;
@@ -71,6 +73,38 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "뒤풀이 참석/정산 확인 처리", description = "뒤풀이 참석/정산에 대해 확인 처리합니다.")
+    @PutMapping("/{eventParticipationId}/after-party/confirm")
+    public ResponseEntity<Void> confirmAfterPartyStatus(
+            @PathVariable Long eventParticipationId, @Valid @RequestBody AfterPartyStatusUpdateRequest request) {
+        eventParticipationService.confirmAfterPartyStatus(eventParticipationId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "뒤풀이 참석/정산 전체 확인 처리", description = "뒤풀이 참석/정산에 대해 전체 확인 처리합니다.")
+    @PutMapping("/after-party/confirm-all")
+    public ResponseEntity<Void> confirmAllAfterPartyStatus(
+            @Valid @RequestBody AfterPartyStatusesUpdateRequest request) {
+        eventParticipationService.confirmAllAfterPartyStatus(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "뒤풀이 참석/정산 확인 취소", description = "뒤풀이 참석/정산 확인을 취소합니다.")
+    @PutMapping("/{eventParticipationId}/after-party/revoke")
+    public ResponseEntity<Void> revokeAfterPartyStatusConfirm(
+            @PathVariable Long eventParticipationId, @Valid @RequestBody AfterPartyStatusUpdateRequest request) {
+        eventParticipationService.revokeAfterPartyStatusConfirm(eventParticipationId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "뒤풀이 참석/정산 전체 확인 취소", description = "뒤풀이 참석/정산 확인을 전체 취소합니다.")
+    @PutMapping("/after-party/revoke-all")
+    public ResponseEntity<Void> revokeAllAfterPartyStatusConfirm(
+            @Valid @RequestBody AfterPartyStatusesUpdateRequest request) {
+        eventParticipationService.revokeAllAfterPartyStatusConfirm(request);
+        return ResponseEntity.ok().build();
+    }
+
     @Operation(
             summary = "행사 참여 가능 멤버 검색",
             description =
@@ -85,7 +119,9 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "행사 수동 신청 (회원)", description = "관리자가 회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다.")
+    @Operation(
+            summary = "행사 및 뒤풀이 수동 신청 (회원)",
+            description = "관리자가 회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 이벤트 뒤풀이가 있는 행사라면 뒤풀이 신청 상태로 신청 처리합니다.")
     @PostMapping("/apply/manual/registered")
     public ResponseEntity<Void> applyManualForRegistered(
             @Valid @RequestBody EventRegisteredManualApplyRequest request) {
@@ -93,7 +129,9 @@ public class AdminEventParticipationController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "행사 수동 신청 (비회원)", description = "관리자가 비회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다.")
+    @Operation(
+            summary = "행사 및 뒤풀이 수동 신청 (비회원)",
+            description = "관리자가 비회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 이벤트 뒤풀이가 있는 행사라면 뒤풀이 신청 상태로 신청 처리합니다.")
     @PostMapping("/apply/manual/unregistered")
     public ResponseEntity<Void> applyManualForUnregistered(
             @Valid @RequestBody EventUnregisteredManualApplyRequest request) {

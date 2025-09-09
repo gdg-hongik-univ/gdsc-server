@@ -1,12 +1,14 @@
 package com.gdschongik.gdsc.domain.event.dao;
 
-import static com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus.APPLIED;
 import static com.gdschongik.gdsc.domain.event.domain.AfterPartyAttendanceStatus.ATTENDED;
 import static com.gdschongik.gdsc.domain.event.domain.PaymentStatus.*;
 import static com.gdschongik.gdsc.domain.event.domain.QEventParticipation.*;
 import static com.gdschongik.gdsc.domain.member.domain.QMember.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
+import com.gdschongik.gdsc.domain.event.domain.AfterPartyApplicationStatus;
+import com.gdschongik.gdsc.domain.event.domain.Event;
+import com.gdschongik.gdsc.domain.event.domain.MainEventApplicationStatus;
 import com.gdschongik.gdsc.domain.event.dto.dto.AfterPartyApplicantCountDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.QAfterPartyApplicantCountDto;
@@ -24,6 +26,7 @@ import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -90,6 +93,7 @@ public class EventParticipationCustomRepositoryImpl
         AfterPartyApplicantCountDto counts = jpaQueryFactory
                 .select(getEventParticipationCounts())
                 .from(eventParticipation)
+                .where(eqEventId(eventId))
                 .fetchOne();
 
         return AfterPartyApplicantResponse.of(PageableExecutionUtils.getPage(fetch, pageable, ids::size), counts);
@@ -102,7 +106,8 @@ public class EventParticipationCustomRepositoryImpl
                 .from(eventParticipation)
                 .where(
                         eqEventId(eventId),
-                        eqAfterPartyApplicationStatus(APPLIED).or(eqAfterPartyAttendanceStatus(ATTENDED)),
+                        eqAfterPartyApplicationStatus(AfterPartyApplicationStatus.APPLIED)
+                                .or(eqAfterPartyAttendanceStatus(ATTENDED)),
                         matchesEventParticipantQueryOption(queryOption))
                 .orderBy(orderSpecifiers)
                 .fetch();
@@ -111,7 +116,8 @@ public class EventParticipationCustomRepositoryImpl
     private QAfterPartyApplicantCountDto getEventParticipationCounts() {
         return new QAfterPartyApplicantCountDto(
                 Expressions.cases()
-                        .when(eqAfterPartyApplicationStatus(APPLIED).or(eqAfterPartyAttendanceStatus(ATTENDED)))
+                        .when(eqAfterPartyApplicationStatus(AfterPartyApplicationStatus.APPLIED)
+                                .or(eqAfterPartyAttendanceStatus(ATTENDED)))
                         .then(eventParticipation.id)
                         .otherwise((Long) null)
                         .count(),
@@ -187,5 +193,23 @@ public class EventParticipationCustomRepositoryImpl
             }
         }
         return orders.toArray(OrderSpecifier[]::new);
+    }
+
+    @Override
+    public long countMainEventApplicantsByEvent(Event event) {
+        return Objects.requireNonNull(jpaQueryFactory
+                .select(eventParticipation.count())
+                .from(eventParticipation)
+                .where(eqEventId(event.getId()), eqMainEventApplicationStatus(MainEventApplicationStatus.APPLIED))
+                .fetchOne());
+    }
+
+    @Override
+    public long countAfterPartyApplicantsByEvent(Event event) {
+        return Objects.requireNonNull(jpaQueryFactory
+                .select(eventParticipation.count())
+                .from(eventParticipation)
+                .where(eqEventId(event.getId()), eqAfterPartyApplicationStatus(AfterPartyApplicationStatus.APPLIED))
+                .fetchOne());
     }
 }

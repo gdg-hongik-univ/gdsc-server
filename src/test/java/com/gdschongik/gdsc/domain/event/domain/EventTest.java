@@ -32,6 +32,7 @@ public class EventTest {
                             prePaymentStatus,
                             postPaymentStatus,
                             RSVP_QUESTION_STATUS,
+                            NOTICE_CONFIRM_QUESTION_STATUS,
                             MAIN_EVENT_MAX_APPLICATION_COUNT,
                             AFTER_PARTY_MAX_APPLICATION_COUNT))
                     .isInstanceOf(CustomException.class)
@@ -57,6 +58,7 @@ public class EventTest {
                             prePaymentStatus,
                             postPaymentStatus,
                             RSVP_QUESTION_STATUS,
+                            NOTICE_CONFIRM_QUESTION_STATUS,
                             MAIN_EVENT_MAX_APPLICATION_COUNT,
                             AFTER_PARTY_MAX_APPLICATION_COUNT))
                     .isInstanceOf(CustomException.class)

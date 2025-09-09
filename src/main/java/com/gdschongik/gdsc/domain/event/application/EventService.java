@@ -5,6 +5,7 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
+import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateRequest;
@@ -26,6 +27,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventParticipationRepository eventParticipationRepository;
+    private final EventDomainService eventDomainService;
 
     @Transactional(readOnly = true)
     public Page<EventResponse> getEvents(Pageable pageable) {
@@ -51,6 +53,7 @@ public class EventService {
                 request.prePaymentStatus(),
                 request.postPaymentStatus(),
                 request.rsvpQuestionStatus(),
+                request.noticeConfirmQuestionStatus(),
                 request.mainEventMaxApplicantCount(),
                 request.afterPartyMaxApplicantCount());
         eventRepository.save(event);
@@ -67,15 +70,20 @@ public class EventService {
     @Transactional
     public void updateEvent(Long eventId, EventUpdateRequest request) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        long currentMainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
+        long currentAfterPartyApplicantCount = eventParticipationRepository.countAfterPartyApplicantsByEvent(event);
 
-        event.update(
+        eventDomainService.update(
+                event,
                 request.name(),
                 request.venue(),
                 request.startAt(),
                 request.applicationDescription(),
                 request.applicationPeriod(),
                 request.mainEventMaxApplicantCount(),
-                request.afterPartyMaxApplicantCount());
+                request.afterPartyMaxApplicantCount(),
+                currentMainEventApplicantCount,
+                currentAfterPartyApplicantCount);
 
         eventRepository.save(event);
 

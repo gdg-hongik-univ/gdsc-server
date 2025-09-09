@@ -18,7 +18,6 @@ public class PaymentStatusTest {
                 UsageStatus.DISABLED,
                 UsageStatus.ENABLED, // 뒤풀이 활성화
                 UsageStatus.ENABLED, // 선입금 활성화
-                UsageStatus.DISABLED,
                 UsageStatus.DISABLED);
 
         // when
@@ -36,7 +35,6 @@ public class PaymentStatusTest {
                 UsageStatus.DISABLED,
                 UsageStatus.ENABLED, // 뒤풀이 활성화
                 UsageStatus.DISABLED, // 선입금 비활성화
-                UsageStatus.DISABLED,
                 UsageStatus.DISABLED);
 
         // when
@@ -54,8 +52,7 @@ public class PaymentStatusTest {
                 UsageStatus.DISABLED,
                 UsageStatus.ENABLED, // 뒤풀이 활성화
                 UsageStatus.DISABLED,
-                UsageStatus.ENABLED, // 후정산 활성화
-                UsageStatus.DISABLED);
+                UsageStatus.ENABLED); // 후정산 활성화
 
         // when
         PaymentStatus status = PaymentStatus.getInitialPostPaymentStatus(event);
@@ -72,8 +69,7 @@ public class PaymentStatusTest {
                 UsageStatus.DISABLED,
                 UsageStatus.ENABLED, // 뒤풀이 활성화
                 UsageStatus.DISABLED,
-                UsageStatus.DISABLED, // 후정산 비활성화
-                UsageStatus.DISABLED);
+                UsageStatus.DISABLED); // 후정산 비활성화
 
         // when
         PaymentStatus status = PaymentStatus.getInitialPostPaymentStatus(event);

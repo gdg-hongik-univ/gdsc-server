@@ -22,6 +22,7 @@ public class EventConstant {
     public static final UsageStatus PRE_PAYMENT_STATUS = UsageStatus.ENABLED;
     public static final UsageStatus POST_PAYMENT_STATUS = UsageStatus.DISABLED;
     public static final UsageStatus RSVP_QUESTION_STATUS = UsageStatus.DISABLED;
+    public static final UsageStatus NOTICE_CONFIRM_QUESTION_STATUS = UsageStatus.DISABLED;
     public static final int MAIN_EVENT_MAX_APPLICATION_COUNT = 100;
     public static final int AFTER_PARTY_MAX_APPLICATION_COUNT = 100;
 }

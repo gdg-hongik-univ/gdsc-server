@@ -5,6 +5,7 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.common.vo.Period;
+import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -77,6 +78,10 @@ public class Event extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UsageStatus rsvpQuestionStatus;
 
+    @Comment("[메타] 유의사항 확인 질문 활성화 상태")
+    @Enumerated(EnumType.STRING)
+    private UsageStatus noticeConfirmQuestionStatus;
+
     @Comment("본행사 최대 신청 가능 인원")
     private Integer mainEventMaxApplicantCount;
 
@@ -95,6 +100,7 @@ public class Event extends BaseEntity {
             UsageStatus prePaymentStatus,
             UsageStatus postPaymentStatus,
             UsageStatus rsvpQuestionStatus,
+            UsageStatus noticeConfirmQuestionStatus,
             Integer mainEventMaxApplicantCount,
             Integer afterPartyMaxApplicantCount) {
         this.name = name;
@@ -107,6 +113,7 @@ public class Event extends BaseEntity {
         this.prePaymentStatus = prePaymentStatus;
         this.postPaymentStatus = postPaymentStatus;
         this.rsvpQuestionStatus = rsvpQuestionStatus;
+        this.noticeConfirmQuestionStatus = noticeConfirmQuestionStatus;
         this.mainEventMaxApplicantCount = mainEventMaxApplicantCount;
         this.afterPartyMaxApplicantCount = afterPartyMaxApplicantCount;
     }
@@ -123,6 +130,7 @@ public class Event extends BaseEntity {
             UsageStatus prePaymentStatus,
             UsageStatus postPaymentStatus,
             UsageStatus rsvpQuestionStatus,
+            UsageStatus noticeConfirmQuestionStatus,
             Integer mainEventMaxApplicantCount,
             Integer afterPartyMaxApplicantCount) {
         validatePaymentDisabledWhenAfterPartyDisabled(afterPartyStatus, prePaymentStatus, postPaymentStatus);
@@ -139,6 +147,7 @@ public class Event extends BaseEntity {
                 .prePaymentStatus(prePaymentStatus)
                 .postPaymentStatus(postPaymentStatus)
                 .rsvpQuestionStatus(rsvpQuestionStatus)
+                .noticeConfirmQuestionStatus(noticeConfirmQuestionStatus)
                 .mainEventMaxApplicantCount(mainEventMaxApplicantCount)
                 .afterPartyMaxApplicantCount(afterPartyMaxApplicantCount)
                 .build();
@@ -166,6 +175,11 @@ public class Event extends BaseEntity {
 
     // 수정 메서드
 
+    /**
+     * 이벤트 정보를 수정합니다.
+     * 도메인 서비스를 통해서만 호출되어야 합니다.
+     * @see EventDomainService
+     */
     public void update(
             String name,
             String venue,

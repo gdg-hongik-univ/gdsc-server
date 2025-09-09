@@ -18,5 +18,6 @@ public record EventCreateRequest(
         @NotNull UsageStatus prePaymentStatus,
         @NotNull UsageStatus postPaymentStatus,
         @NotNull UsageStatus rsvpQuestionStatus,
+        @NotNull UsageStatus noticeConfirmQuestionStatus,
         @Positive Integer mainEventMaxApplicantCount,
         @Positive Integer afterPartyMaxApplicantCount) {}
