@@ -13,6 +13,7 @@ import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredManualApplyRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUnregisteredApplyRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
@@ -21,6 +22,8 @@ import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
+import com.gdschongik.gdsc.global.util.MemberUtil;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class EventParticipationService {
 
+    private final MemberUtil memberUtil;
     private final EventRepository eventRepository;
     private final EventParticipationDomainService eventParticipationDomainService;
     private final EventParticipationRepository eventParticipationRepository;
@@ -135,7 +139,7 @@ public class EventParticipationService {
     }
 
     @Transactional
-    public void applyManualForRegistered(EventRegisteredApplyRequest request) {
+    public void applyManualForRegistered(EventRegisteredManualApplyRequest request) {
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         Member member = memberRepository
@@ -192,5 +196,22 @@ public class EventParticipationService {
         if (requestIds.size() != participations.size()) {
             throw new CustomException(PARTICIPATION_NOT_DELETABLE_INVALID_IDS);
         }
+    }
+
+    @Transactional
+    public void submitEventParticipationForRegistered(EventRegisteredApplyRequest request) {
+        Member currentMember = memberUtil.getCurrentMember();
+        Event event =
+                eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
+        EventParticipation eventParticipation = eventParticipationDomainService.applyEventForRegistered(
+                currentMember, request.afterPartyApplicationStatus(), event, LocalDateTime.now());
+
+        eventParticipationRepository.save(eventParticipation);
+
+        log.info(
+                "[EventParticipationService] 이벤트 참여 신청 (회원): eventId={}, memberId={}",
+                event.getId(),
+                currentMember.getId());
     }
 }
