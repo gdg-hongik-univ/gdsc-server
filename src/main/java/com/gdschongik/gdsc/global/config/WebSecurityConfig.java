@@ -132,6 +132,8 @@ public class WebSecurityConfig {
                 .permitAll()
                 .requestMatchers("/test/**")
                 .permitAll()
+                .requestMatchers("/unregistered/**")
+                .permitAll()
                 .requestMatchers("/onboarding/**")
                 .authenticated()
                 .requestMatchers("/admin/**", "/v2/admin/**")
