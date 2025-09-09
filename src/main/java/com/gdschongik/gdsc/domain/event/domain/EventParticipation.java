@@ -28,7 +28,7 @@ import org.hibernate.annotations.Comment;
 @Entity
 @Table(
         name = "event_participation",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"event_id", "member_id"})})
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"event_id", "student_id"})})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EventParticipation extends BaseEntity {
 
