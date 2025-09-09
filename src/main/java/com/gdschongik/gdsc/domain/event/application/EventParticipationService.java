@@ -198,6 +198,7 @@ public class EventParticipationService {
                 .noneMatch(participation -> participation.getMemberId().equals(member.getId()));
     }
 
+    @Deprecated(forRemoval = true)
     @Transactional
     public void applyManualForRegistered(EventRegisteredManualApplyRequest request) {
         Event event =
@@ -215,6 +216,7 @@ public class EventParticipationService {
                 request.memberId());
     }
 
+    @Deprecated(forRemoval = true)
     @Transactional
     public void applyManualForUnregistered(EventUnregisteredManualApplyRequest request) {
         Event event =
