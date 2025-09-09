@@ -479,8 +479,8 @@ class EventParticipationServiceTest extends IntegrationTest {
         @Test
         void 서로_다른_이벤트의_참여정보들에_대한_뒤풀이_참석_시도시_예외가_발생한다() {
             // given
-            Event event1 = createEvent();
-            Event event2 = createEvent();
+            Event event1 = createEvent("2025-2 개강총회");
+            Event event2 = createEvent("2025-1 새싹 세미나");
             Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
             Member member2 = createAssociateMemberForEvent("C000002", "이홍익");
             EventParticipation eventParticipation1 = createConfirmedAfterPartyEventParticipation(event1, member1);
@@ -1069,6 +1069,24 @@ class EventParticipationServiceTest extends IntegrationTest {
                 DISABLED,
                 DISABLED,
                 DISABLED,
+                RSVP_QUESTION_STATUS,
+                NOTICE_CONFIRM_QUESTION_STATUS,
+                MAIN_EVENT_MAX_APPLICATION_COUNT,
+                AFTER_PARTY_MAX_APPLICATION_COUNT);
+        return eventRepository.save(event);
+    }
+
+    private Event createEvent(String name) {
+        Event event = Event.create(
+                name,
+                VENUE,
+                EVENT_START_AT,
+                APPLICATION_DESCRIPTION,
+                EVENT_APPLICATION_PERIOD,
+                REGULAR_ROLE_ONLY_STATUS,
+                AFTER_PARTY_STATUS,
+                PRE_PAYMENT_STATUS,
+                POST_PAYMENT_STATUS,
                 RSVP_QUESTION_STATUS,
                 NOTICE_CONFIRM_QUESTION_STATUS,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,
