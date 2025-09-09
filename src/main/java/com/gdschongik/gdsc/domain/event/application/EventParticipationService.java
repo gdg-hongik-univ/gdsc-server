@@ -16,6 +16,7 @@ import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateReques
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusesUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateTarget;
 import com.gdschongik.gdsc.domain.event.dto.request.EventApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventManualApplyRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredManualApplyRequest;
@@ -233,6 +234,25 @@ public class EventParticipationService {
                 "[EventParticipationService] 행사 수동 신청 (비회원): eventId={}, participant={}",
                 request.eventId(),
                 request.participant());
+    }
+
+    @Transactional
+    public void applyManual(EventManualApplyRequest request) {
+        Event event =
+                eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
+        Participant participant = request.participant();
+        Member optMemberByParticipant =
+                memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
+
+        EventParticipation participation =
+                eventParticipationDomainService.applyManual(participant, optMemberByParticipant, event);
+        eventParticipationRepository.save(participation);
+
+        log.info(
+                "[EventParticipationService] 행사 수동 신청: eventId={}, studentId={}",
+                request.eventId(),
+                participant.getStudentId());
     }
 
     private void validateEventEnabledForAfterParty(Event event) {
