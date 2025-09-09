@@ -18,6 +18,7 @@ public class EventParticipationDomainServiceTest {
     EventParticipationDomainService domainService = new EventParticipationDomainService();
     FixtureHelper fixtureHelper = new FixtureHelper();
 
+    @Deprecated
     @Nested
     class 회원이_온라인으로_신청하는_경우 {
 
@@ -95,6 +96,7 @@ public class EventParticipationDomainServiceTest {
         }
     }
 
+    @Deprecated
     @Nested
     class 비회원이_온라인으로_신청하는_경우 {
 
@@ -172,6 +174,7 @@ public class EventParticipationDomainServiceTest {
         }
     }
 
+    @Deprecated
     @Nested
     class 회원이_뒤풀이_현장등록으로_신청하는_경우 {
 
@@ -193,6 +196,7 @@ public class EventParticipationDomainServiceTest {
         }
     }
 
+    @Deprecated
     @Nested
     class 비회원이_뒤풀이_현장등록으로_신청하는_경우 {
 
@@ -214,6 +218,7 @@ public class EventParticipationDomainServiceTest {
         }
     }
 
+    @Deprecated
     @Nested
     class 회원이_수동등록으로_신청하는_경우 {
 
@@ -286,6 +291,7 @@ public class EventParticipationDomainServiceTest {
         }
     }
 
+    @Deprecated
     @Nested
     class 비회원이_수동등록으로_신청하는_경우 {
 
