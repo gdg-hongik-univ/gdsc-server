@@ -53,6 +53,7 @@ public class EventService {
                 request.prePaymentStatus(),
                 request.postPaymentStatus(),
                 request.rsvpQuestionStatus(),
+                request.noticeConfirmQuestionStatus(),
                 request.mainEventMaxApplicantCount(),
                 request.afterPartyMaxApplicantCount());
         eventRepository.save(event);

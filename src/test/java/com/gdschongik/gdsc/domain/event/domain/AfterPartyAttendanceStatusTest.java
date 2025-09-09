@@ -18,7 +18,6 @@ public class AfterPartyAttendanceStatusTest {
                 UsageStatus.DISABLED,
                 UsageStatus.DISABLED, // 뒤풀이 비활성화
                 UsageStatus.DISABLED,
-                UsageStatus.DISABLED,
                 UsageStatus.DISABLED);
 
         // when
@@ -35,7 +34,6 @@ public class AfterPartyAttendanceStatusTest {
                 1L,
                 UsageStatus.DISABLED,
                 UsageStatus.ENABLED, // 뒤풀이 활성화
-                UsageStatus.DISABLED,
                 UsageStatus.DISABLED,
                 UsageStatus.DISABLED);
 
