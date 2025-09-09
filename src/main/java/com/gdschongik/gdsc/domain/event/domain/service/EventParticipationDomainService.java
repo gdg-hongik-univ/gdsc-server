@@ -8,6 +8,7 @@ import com.gdschongik.gdsc.domain.event.domain.*;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.annotation.DomainService;
 import com.gdschongik.gdsc.global.exception.CustomException;
+import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
 
 @DomainService
@@ -138,6 +139,67 @@ public class EventParticipationDomainService {
         return EventParticipation.createOnsiteForUnregistered(participant, prePaymentStatus, postPaymentStatus, event);
     }
 
+    /**
+     * 온라인을 통해 이벤트에 참여 신청하는 메서드입니다.
+     * 정회원 전용 이벤트 여부는 본 신청방식에서만 검증하며, 그 외 방식에서는 검증하지 않습니다.
+     */
+    public EventParticipation applyOnline(
+            Participant participant,
+            @Nullable Member member,
+            AfterPartyApplicationStatus afterPartyApplicationStatus,
+            Event event,
+            LocalDateTime now) {
+        validateEventApplicationPeriod(event, now);
+        validateMemberWhenOnlyRegularRoleAllowedIfExists(event, member); // applyOnline에서만 수행
+        validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
+
+        AfterPartyAttendanceStatus afterPartyAttendanceStatus = AfterPartyAttendanceStatus.getInitialStatus(event);
+        PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
+        PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
+
+        return EventParticipation.createOnline(
+                participant,
+                member,
+                afterPartyApplicationStatus,
+                afterPartyAttendanceStatus,
+                prePaymentStatus,
+                postPaymentStatus,
+                event);
+    }
+
+    /**
+     * 어드민 수동등록을 통해 참여하는 메서드입니다.
+     * 주로 본행사 현장등록 상황에서 뒤풀이 신청을 위해 사용됩니다. (뒤풀이 신청상태 APPLIED)
+     * 뒤풀이가 없는 행사인 경우에도 히스토리를 남기기 위해 사용됩니다. (뒤풀이 신청상태 NONE)
+     */
+    public EventParticipation applyManual(Participant participant, @Nullable Member member, Event event) {
+        // 뒤풀이가 존재하는 경우에만 항상 신청 처리
+        AfterPartyApplicationStatus afterPartyApplicationStatus = event.afterPartyExists() ? APPLIED : NONE;
+
+        AfterPartyAttendanceStatus afterPartyAttendanceStatus = AfterPartyAttendanceStatus.getInitialStatus(event);
+        PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
+        PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
+
+        return EventParticipation.createManual(
+                participant,
+                member,
+                afterPartyApplicationStatus,
+                afterPartyAttendanceStatus,
+                prePaymentStatus,
+                postPaymentStatus,
+                event);
+    }
+
+    /**
+     * 뒤풀이 현장등록을 통해 뒤풀이에 확정 참여하는 메서드입니다.
+     */
+    public EventParticipation joinOnsite(Participant participant, @Nullable Member member, Event event) {
+        PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
+        PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
+
+        return EventParticipation.createOnsite(participant, member, prePaymentStatus, postPaymentStatus, event);
+    }
+
     // 검증 로직
 
     /**
@@ -210,6 +272,19 @@ public class EventParticipationDomainService {
     private void validateMemberInfoForUnregistered(boolean infoStatusSatisfiedMemberExists) {
         if (infoStatusSatisfiedMemberExists) {
             throw new CustomException(EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED);
+        }
+    }
+
+    /**
+     * 정회원만 허용되는 이벤트이며 멤버정보가 존재하는 경우, 해당 회원의 정회원 여부를 검증합니다.
+     */
+    private void validateMemberWhenOnlyRegularRoleAllowedIfExists(Event event, @Nullable Member member) {
+        if (!event.getRegularRoleOnlyStatus().isEnabled() || member == null) {
+            return;
+        }
+
+        if (!member.isRegular()) {
+            throw new CustomException(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE);
         }
     }
 }
