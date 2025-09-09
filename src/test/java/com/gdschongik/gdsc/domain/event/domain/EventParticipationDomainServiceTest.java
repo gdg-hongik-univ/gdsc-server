@@ -316,6 +316,7 @@ public class EventParticipationDomainServiceTest {
         void 뒤풀이가_있는_행사의_경우_뒤풀이_신청_상태가_APPLIED로_설정된다() {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
+            // TODO: createAfterPartyDisabledEvent 사용하도록 개선
             Event eventWithAfterParty = fixtureHelper.createEvent(
                     1L,
                     REGULAR_ROLE_ONLY_STATUS,
