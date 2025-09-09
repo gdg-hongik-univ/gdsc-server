@@ -268,7 +268,7 @@ public class EventParticipationService {
     private void confirmAfterPartyStatusByAfterPartyUpdateTarget(
             EventParticipation participation, AfterPartyUpdateTarget afterPartyUpdateTarget) {
         switch (afterPartyUpdateTarget) {
-            case ATTENDANCE -> participation.confirmAttendance();
+            case ATTENDANCE -> participation.attendAfterParty();
             case PRE_PAYMENT -> participation.confirmPrePayment();
             case POST_PAYMENT -> participation.confirmPostPayment();
         }

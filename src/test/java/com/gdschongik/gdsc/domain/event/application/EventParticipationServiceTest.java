@@ -816,7 +816,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() ->
                             eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE.getMessage());
+                    .hasMessage(AFTER_PARTY_NOT_ATTENDABLE_DISABLED.getMessage());
         }
 
         @Test
@@ -833,7 +833,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() ->
                             eventParticipationService.confirmAfterPartyStatus(eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
+                    .hasMessage(AFTER_PARTY_NOT_ATTENDABLE_ALREADY_ATTENDED.getMessage());
         }
 
         @Test
@@ -919,7 +919,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
                             eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE.getMessage());
+                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_REVOKABLE_DISABLED.getMessage());
         }
 
         @Test
@@ -936,7 +936,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> eventParticipationService.revokeAfterPartyStatusConfirm(
                             eventParticipation.getId(), request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
+                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_REVOKABLE_ALREADY_REVOKED.getMessage());
         }
 
         @Test

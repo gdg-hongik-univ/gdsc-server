@@ -216,12 +216,12 @@ public enum ErrorCode {
     PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_ID_MISMATCH(INTERNAL_SERVER_ERROR, "이벤트 참여정보의 멤버 ID와 인자의 멤버 ID가 일치하지 않습니다."),
     AFTER_PARTY_NOT_ATTENDABLE_DISABLED(CONFLICT, "뒤풀이가 비활성화 된 경우, 뒤풀이에 참석할 수 없습니다."),
     AFTER_PARTY_NOT_ATTENDABLE_ALREADY_ATTENDED(CONFLICT, "이미 뒤풀이에 참석하였습니다."),
+    AFTER_PARTY_ATTENDANCE_STATUS_NOT_REVOKABLE_DISABLED(CONFLICT, "뒤풀이가 비활성화 된 경우, 뒤풀이 참석을 취소할 수 없습니다."),
+    AFTER_PARTY_ATTENDANCE_STATUS_NOT_REVOKABLE_ALREADY_REVOKED(CONFLICT, "이미 뒤풀이 참석을 취소 처리하였습니다."),
     AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_NONE(CONFLICT, "결제 상태가 None 일 때는 뒤풀이 선입금 상태를 수정할 수 없습니다."),
     AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED(CONFLICT, "뒤풀이 선입금 상태가 이미 요청 상태로 수정되어있습니다."),
     AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_NONE(CONFLICT, "결제 상태가 None 일 때는 뒤풀이 정산 상태를 수정할 수 없습니다."),
     AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED(CONFLICT, "뒤풀이 정산 상태가 이미 요청 상태로 수정되어있습니다."),
-    AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE(CONFLICT, "뒤풀이 참석 상태가 None 일 때는 수정할 수 없습니다."),
-    AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_ALREADY_UPDATED(CONFLICT, "뒤풀이 참석 상태가 이미 요청 상태로 수정되어있습니다."),
     ;
 
     private final HttpStatus status;
