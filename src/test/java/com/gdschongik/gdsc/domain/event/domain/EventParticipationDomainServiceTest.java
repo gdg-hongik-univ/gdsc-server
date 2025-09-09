@@ -402,8 +402,7 @@ public class EventParticipationDomainServiceTest {
         void 모두_참석_가능한_행사에_게스트_회원이_신청하면_성공한다() {
             // given
             Member guestMember = fixtureHelper.createGuestMember(1L);
-            Participant participant =
-                    Participant.of(guestMember.getName(), guestMember.getStudentId(), guestMember.getPhone());
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
             Event event = fixtureHelper.createEvent(
                     1L,
@@ -448,8 +447,7 @@ public class EventParticipationDomainServiceTest {
         void 정회원만_참석_가능한_행사에_게스트_회원이_신청하면_실패한다() {
             // given
             Member guestMember = fixtureHelper.createGuestMember(1L);
-            Participant participant =
-                    Participant.of(guestMember.getName(), guestMember.getStudentId(), guestMember.getPhone());
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
             Event event = fixtureHelper.createEvent(
                     1L,
