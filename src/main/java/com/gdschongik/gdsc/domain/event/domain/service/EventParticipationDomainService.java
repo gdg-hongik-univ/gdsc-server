@@ -276,14 +276,14 @@ public class EventParticipationDomainService {
     }
 
     /**
-     * 정회원만 허용되는 이벤트이며 멤버정보가 존재하는 경우, 해당 회원의 정회원 여부를 검증합니다.
+     * 정회원만 허용되는 이벤트인 경우, 신청정보에 해당하는 멤버정보 존재 여부 및 정회원 여부를 검증합니다.
      */
     private void validateMemberWhenOnlyRegularRoleAllowedIfExists(Event event, @Nullable Member member) {
-        if (!event.getRegularRoleOnlyStatus().isEnabled() || member == null) {
+        if (!event.getRegularRoleOnlyStatus().isEnabled()) {
             return;
         }
 
-        if (!member.isRegular()) {
+        if (member == null || !member.isRegular()) {
             throw new CustomException(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE);
         }
     }
