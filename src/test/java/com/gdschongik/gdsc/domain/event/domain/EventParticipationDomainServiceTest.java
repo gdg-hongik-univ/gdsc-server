@@ -368,4 +368,240 @@ public class EventParticipationDomainServiceTest {
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED.getMessage());
         }
     }
+
+    @Nested
+    class 온라인으로_신청하는_경우 {
+
+        @Test
+        void 모두_참석_가능한_행사에_정회원이_신청하면_성공한다() {
+            // given
+            Member regularMember = fixtureHelper.createRegularMember(1L);
+            Participant participant =
+                    Participant.of(regularMember.getName(), regularMember.getStudentId(), regularMember.getPhone());
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    UsageStatus.DISABLED, // 모두 참석 가능 (정회원 전용 비활성화)
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS);
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
+
+            // when
+            EventParticipation participation =
+                    domainService.applyOnline(participant, regularMember, status, event, now);
+
+            // then
+            assertThat(participation.getMemberId()).isEqualTo(regularMember.getId());
+            assertThat(participation.getParticipant()).isEqualTo(participant);
+            assertThat(participation.getMainEventApplicationStatus()).isEqualTo(MainEventApplicationStatus.APPLIED);
+        }
+
+        @Test
+        void 모두_참석_가능한_행사에_게스트_회원이_신청하면_성공한다() {
+            // given
+            Member guestMember = fixtureHelper.createGuestMember(1L);
+            Participant participant =
+                    Participant.of(guestMember.getName(), guestMember.getStudentId(), guestMember.getPhone());
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    UsageStatus.DISABLED, // 모두 참석 가능 (정회원 전용 비활성화)
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS);
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
+
+            // when
+            EventParticipation participation = domainService.applyOnline(participant, guestMember, status, event, now);
+
+            // then
+            assertThat(participation.getMemberId()).isEqualTo(guestMember.getId());
+            assertThat(participation.getParticipant()).isEqualTo(participant);
+            assertThat(participation.getMainEventApplicationStatus()).isEqualTo(MainEventApplicationStatus.APPLIED);
+        }
+
+        @Test
+        void 모두_참석_가능한_행사에_비회원이_신청하면_성공한다() {
+            // given
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    UsageStatus.DISABLED, // 모두 참석 가능 (정회원 전용 비활성화)
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS);
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
+
+            // when
+            EventParticipation participation = domainService.applyOnline(participant, null, status, event, now);
+
+            // then
+            assertThat(participation.getMemberId()).isNull();
+            assertThat(participation.getParticipant()).isEqualTo(participant);
+            assertThat(participation.getMainEventApplicationStatus()).isEqualTo(MainEventApplicationStatus.APPLIED);
+        }
+
+        @Test
+        void 정회원만_참석_가능한_행사에_게스트_회원이_신청하면_실패한다() {
+            // given
+            Member guestMember = fixtureHelper.createGuestMember(1L);
+            Participant participant =
+                    Participant.of(guestMember.getName(), guestMember.getStudentId(), guestMember.getPhone());
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    UsageStatus.ENABLED, // 정회원 전용
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS);
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
+
+            // when & then
+            assertThatThrownBy(() -> domainService.applyOnline(participant, guestMember, status, event, now))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
+        }
+
+        @Test
+        void 정회원만_참석_가능한_행사에_비회원이_신청하면_실패한다() {
+            // given
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    UsageStatus.ENABLED, // 정회원 전용
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS);
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
+
+            // when & then
+            assertThatThrownBy(() -> domainService.applyOnline(participant, null, status, event, now))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
+        }
+
+        @Test
+        void 신청_기간이_아닌경우_실패한다() {
+            // given
+            Member regularMember = fixtureHelper.createRegularMember(1L);
+            Participant participant =
+                    Participant.of(regularMember.getName(), regularMember.getStudentId(), regularMember.getPhone());
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
+            Event event = fixtureHelper.createEvent(
+                    1L, REGULAR_ROLE_ONLY_STATUS, AFTER_PARTY_STATUS, PRE_PAYMENT_STATUS, POST_PAYMENT_STATUS);
+            LocalDateTime invalidDate = LocalDateTime.of(2025, 4, 1, 0, 0);
+
+            // when & then
+            assertThatThrownBy(() -> domainService.applyOnline(participant, regularMember, status, event, invalidDate))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_APPLICATION_PERIOD_INVALID.getMessage());
+        }
+
+        @Test
+        void 뒤풀이가_있는_행사에_뒤풀이_신청여부가_NONE이면_실패한다() {
+            // given
+            Member regularMember = fixtureHelper.createRegularMember(1L);
+            Participant participant =
+                    Participant.of(regularMember.getName(), regularMember.getStudentId(), regularMember.getPhone());
+            AfterPartyApplicationStatus noneStatus = AfterPartyApplicationStatus.NONE;
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    REGULAR_ROLE_ONLY_STATUS,
+                    UsageStatus.ENABLED, // 뒤풀이 활성화
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS);
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
+
+            // when & then
+            assertThatThrownBy(() -> domainService.applyOnline(participant, regularMember, noneStatus, event, now))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_NONE.getMessage());
+        }
+
+        @Test
+        void 뒤풀이가_없는_행사에_뒤풀이_신청을_하면_실패한다() {
+            // given
+            Member regularMember = fixtureHelper.createRegularMember(1L);
+            Participant participant =
+                    Participant.of(regularMember.getName(), regularMember.getStudentId(), regularMember.getPhone());
+            AfterPartyApplicationStatus appliedStatus = AfterPartyApplicationStatus.APPLIED;
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    REGULAR_ROLE_ONLY_STATUS,
+                    UsageStatus.DISABLED, // 뒤풀이 비활성화
+                    UsageStatus.DISABLED,
+                    UsageStatus.DISABLED);
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
+
+            // when & then
+            assertThatThrownBy(() -> domainService.applyOnline(participant, regularMember, appliedStatus, event, now))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
+        }
+    }
+
+    @Nested
+    class 수동등록으로_신청하는_경우 {
+
+        @Test
+        void 성공한다() {
+            // given
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
+            Event event = fixtureHelper.createEvent(
+                    1L, REGULAR_ROLE_ONLY_STATUS, AFTER_PARTY_STATUS, PRE_PAYMENT_STATUS, POST_PAYMENT_STATUS);
+
+            // when
+            EventParticipation participation = domainService.applyManual(participant, null, event);
+
+            // then
+            assertThat(participation.getMemberId()).isNull();
+            assertThat(participation.getParticipant()).isEqualTo(participant);
+            assertThat(participation.getMainEventApplicationStatus()).isEqualTo(MainEventApplicationStatus.NOT_APPLIED);
+            assertThat(participation.getAfterPartyApplicationStatus()).isEqualTo(AfterPartyApplicationStatus.APPLIED);
+        }
+
+        @Test
+        void 뒤풀이가_없는_행사의_경우_뒤풀이_신청_상태가_NONE으로_설정된다() {
+            // given
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
+            Event event = fixtureHelper.createEvent(
+                    1L,
+                    REGULAR_ROLE_ONLY_STATUS,
+                    UsageStatus.DISABLED, // 뒤풀이 비활성화
+                    UsageStatus.DISABLED,
+                    UsageStatus.DISABLED);
+
+            // when
+            EventParticipation participation = domainService.applyManual(participant, null, event);
+
+            // then
+            assertThat(participation.getAfterPartyApplicationStatus()).isEqualTo(AfterPartyApplicationStatus.NONE);
+        }
+    }
+
+    @Nested
+    class 뒤풀이_현장등록으로_신청하는_경우 {
+
+        @Test
+        void 성공한다() {
+            // given
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
+            Event event = fixtureHelper.createEvent(
+                    1L, REGULAR_ROLE_ONLY_STATUS, AFTER_PARTY_STATUS, PRE_PAYMENT_STATUS, POST_PAYMENT_STATUS);
+
+            // when
+            EventParticipation participation = domainService.joinOnsite(participant, null, event);
+
+            // then
+            assertThat(participation.getMemberId()).isNull();
+            assertThat(participation.getParticipant()).isEqualTo(participant);
+            assertThat(participation.getMainEventApplicationStatus()).isEqualTo(MainEventApplicationStatus.NOT_APPLIED);
+            assertThat(participation.getAfterPartyApplicationStatus())
+                    .isEqualTo(AfterPartyApplicationStatus.NOT_APPLIED);
+            assertThat(participation.getAfterPartyAttendanceStatus()).isEqualTo(AfterPartyAttendanceStatus.ATTENDED);
+        }
+    }
 }
