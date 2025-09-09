@@ -485,7 +485,8 @@ class EventParticipationServiceTest extends IntegrationTest {
             Member member2 = createAssociateMemberForEvent("C000002", "이홍익");
             EventParticipation eventParticipation1 = createConfirmedAfterPartyEventParticipation(event1, member1);
             EventParticipation eventParticipation2 = createConfirmedAfterPartyEventParticipation(event2, member2);
-            AfterPartyAttendRequest request = new AfterPartyAttendRequest(List.of(eventParticipation1.getId(), eventParticipation2.getId()));
+            AfterPartyAttendRequest request =
+                    new AfterPartyAttendRequest(List.of(eventParticipation1.getId(), eventParticipation2.getId()));
 
             // when & then
             assertThatThrownBy(() -> eventParticipationService.attendAfterParty(request))
