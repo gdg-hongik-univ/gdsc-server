@@ -195,7 +195,24 @@ public class EventParticipation extends BaseEntity {
 
     // 뒤풀이 참석 처리
     public void attendAfterParty() {
+        if (this.afterPartyAttendanceStatus.isNone()) {
+            throw new CustomException(AFTER_PARTY_NOT_ATTENDABLE_DISABLED);
+        }
+        if (this.afterPartyAttendanceStatus.isAttended()) {
+            throw new CustomException(AFTER_PARTY_NOT_ATTENDABLE_ALREADY_ATTENDED);
+        }
         this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.ATTENDED;
+    }
+
+    // 뒤풀이 참석 취소 처리
+    public void revokeAttendance() {
+        if (this.afterPartyAttendanceStatus.isNone()) {
+            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_REVOKABLE_DISABLED);
+        }
+        if (this.afterPartyAttendanceStatus.isNotAttended()) {
+            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_REVOKABLE_ALREADY_REVOKED);
+        }
+        this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.NOT_ATTENDED;
     }
 
     // 뒤풀이 선입금 처리
@@ -240,27 +257,5 @@ public class EventParticipation extends BaseEntity {
             throw new CustomException(AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED);
         }
         this.postPaymentStatus = PaymentStatus.UNPAID;
-    }
-
-    // 뒤풀이 참석 처리
-    public void confirmAttendance() {
-        if (this.afterPartyAttendanceStatus.isNone()) {
-            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE);
-        }
-        if (this.afterPartyAttendanceStatus.isAttended()) {
-            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_ALREADY_UPDATED);
-        }
-        this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.ATTENDED;
-    }
-
-    // 뒤풀이 참석 취소 처리
-    public void revokeAttendance() {
-        if (this.afterPartyAttendanceStatus.isNone()) {
-            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_NONE);
-        }
-        if (this.afterPartyAttendanceStatus.isNotAttended()) {
-            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_UPDATABLE_ALREADY_UPDATED);
-        }
-        this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.NOT_ATTENDED;
     }
 }

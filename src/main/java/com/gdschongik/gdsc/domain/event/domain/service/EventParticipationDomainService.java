@@ -181,15 +181,6 @@ public class EventParticipationDomainService {
     }
 
     /**
-     * 뒤풀이가 활성화된 이벤트인지 검증하는 메서드입니다.
-     */
-    public void validateAfterPartyEnabled(Event event) {
-        if (!event.afterPartyExists()) {
-            throw new CustomException(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED);
-        }
-    }
-
-    /**
      * 회원의 기본 정보가 작성되었는지 검증하는 메서드입니다.
      * 회원 신청 시 기본 정보 작성이 완료되어야 합니다.
      * ForRegistered 메서드들에서 사용됩니다.

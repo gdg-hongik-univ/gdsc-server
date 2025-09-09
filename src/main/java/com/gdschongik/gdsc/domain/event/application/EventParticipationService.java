@@ -82,9 +82,8 @@ public class EventParticipationService {
     public void attendAfterParty(AfterPartyAttendRequest request) {
         List<Long> eventParticipationIds = request.eventParticipationIds();
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllById(eventParticipationIds);
-        Event event = eventParticipations.get(0).getEvent();
 
-        eventParticipationDomainService.validateAfterPartyEnabled(event);
+        validateRequestParticipationsSameEvent(eventParticipations);
 
         eventParticipations.forEach(EventParticipation::attendAfterParty);
 
@@ -259,10 +258,21 @@ public class EventParticipationService {
         }
     }
 
+    // 요청 ID에 해당하는 참여정보가 모두 같은 이벤트에 대한 참여 정보인지 검증
+    private void validateRequestParticipationsSameEvent(List<EventParticipation> participations) {
+        Event event = participations.get(0).getEvent();
+        boolean hasDifferentEvent = participations.stream()
+                .anyMatch(participation -> !participation.getEvent().equals(event));
+
+        if (hasDifferentEvent) {
+            throw new CustomException(PARTICIPATION_NOT_UPDATABLE_DIFFERENT_EVENT);
+        }
+    }
+
     private void confirmAfterPartyStatusByAfterPartyUpdateTarget(
             EventParticipation participation, AfterPartyUpdateTarget afterPartyUpdateTarget) {
         switch (afterPartyUpdateTarget) {
-            case ATTENDANCE -> participation.confirmAttendance();
+            case ATTENDANCE -> participation.attendAfterParty();
             case PRE_PAYMENT -> participation.confirmPrePayment();
             case POST_PAYMENT -> participation.confirmPostPayment();
         }
