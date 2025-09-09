@@ -459,7 +459,7 @@ class EventParticipationServiceTest extends IntegrationTest {
             // when & then
             assertThatThrownBy(() -> eventParticipationService.attendAfterParty(request))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(AFTER_PARTY_NOT_ATTENDABLE_NONE.getMessage());
+                    .hasMessage(AFTER_PARTY_NOT_ATTENDABLE_DISABLED.getMessage());
         }
 
         @Test
