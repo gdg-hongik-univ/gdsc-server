@@ -281,6 +281,7 @@ public class EventParticipationService {
     public void applyEventParticipation(EventApplyRequest request) {
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
         Participant participant = request.participant();
         Optional<Member> optionalMember = memberRepository.findByStudentId(participant.getStudentId());
 
