@@ -7,6 +7,7 @@ import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipation;
 import com.gdschongik.gdsc.domain.event.domain.EventParticipationDomainService;
+import com.gdschongik.gdsc.domain.event.domain.Participant;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
@@ -221,13 +222,14 @@ public class EventParticipationService {
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
+        Participant participant = request.participant();
         boolean infoStatusSatisfiedMemberExists = memberRepository
-                .findByStudentId(request.participant().getStudentId())
+                .findByStudentId(participant.getStudentId())
                 .map(member -> member.getAssociateRequirement().isInfoSatisfied())
                 .orElse(false);
 
         EventParticipation eventParticipation = eventParticipationDomainService.applyEventForUnregistered(
-                request.participant(),
+                participant,
                 request.afterPartyApplicationStatus(),
                 event,
                 LocalDateTime.now(),
@@ -238,6 +240,6 @@ public class EventParticipationService {
         log.info(
                 "[EventParticipationService] 이벤트 참여 신청 (비회원): eventId={}, memberStudentId={}",
                 event.getId(),
-                request.participant().getStudentId());
+                participant.getStudentId());
     }
 }
