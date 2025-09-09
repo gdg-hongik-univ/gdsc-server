@@ -29,7 +29,6 @@ import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -315,17 +314,11 @@ public class EventParticipationService {
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         Participant participant = request.participant();
-        Optional<Member> optionalMember = memberRepository.findByStudentId(participant.getStudentId());
+        Member memberByParticipant =
+                memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
 
-        EventParticipation eventParticipation;
-        if (optionalMember.isPresent()
-                && optionalMember.get().getAssociateRequirement().isInfoSatisfied()) {
-            eventParticipation = eventParticipationDomainService.applyEventForRegistered(
-                    optionalMember.get(), request.afterPartyApplicationStatus(), event, now());
-        } else {
-            eventParticipation = eventParticipationDomainService.applyEventForUnregistered(
-                    participant, request.afterPartyApplicationStatus(), event, now());
-        }
+        EventParticipation eventParticipation = eventParticipationDomainService.applyOnline(
+                participant, memberByParticipant, request.afterPartyApplicationStatus(), event, now());
         eventParticipationRepository.save(eventParticipation);
 
         log.info(
