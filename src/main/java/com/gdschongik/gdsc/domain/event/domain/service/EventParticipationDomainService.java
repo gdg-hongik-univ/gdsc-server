@@ -16,6 +16,7 @@ public class EventParticipationDomainService {
     /**
      * 기본 정보 입력을 마친 회원이 온라인을 통해 이벤트에 참여 신청하는 메서드입니다.
      */
+    @Deprecated(forRemoval = true)
     public EventParticipation applyEventForRegistered(
             Member member, AfterPartyApplicationStatus afterPartyApplicationStatus, Event event, LocalDateTime now) {
         validateEventApplicationPeriod(event, now);
@@ -38,6 +39,7 @@ public class EventParticipationDomainService {
     /**
      * 기본 정보 입력을 마치지 않은 회원이나 비회원이 온라인을 통해 이벤트에 참여 신청하는 메서드입니다.
      */
+    @Deprecated(forRemoval = true)
     public EventParticipation applyEventForUnregistered(
             Participant participant,
             AfterPartyApplicationStatus afterPartyApplicationStatus,
@@ -65,6 +67,7 @@ public class EventParticipationDomainService {
      * 주로 본행사 현장등록 상황에서 뒤풀이 신청을 위해 사용됩니다. (뒤풀이 신청상태 APPLIED)
      * 뒤풀이가 없는 행사인 경우에도 히스토리를 남기기 위해 사용됩니다. (뒤풀이 신청상태 NONE)
      */
+    @Deprecated(forRemoval = true)
     public EventParticipation applyManualForRegistered(Member member, Event event) {
         validateMemberWhenOnlyRegularRoleAllowed(event, member);
         validateMemberBasicInfoSatisfied(member);
@@ -85,6 +88,7 @@ public class EventParticipationDomainService {
                 event);
     }
 
+    @Deprecated(forRemoval = true)
     public EventParticipation applyManualForUnregistered(
             Participant participant, Event event, boolean infoStatusSatisfiedMemberExists) {
         validateNotRegularRoleAllowed(event);
@@ -109,6 +113,7 @@ public class EventParticipationDomainService {
     /**
      * 회원이 뒤풀이 현장등록을 통해 뒤풀이에 확정 참여하는 메서드입니다.
      */
+    @Deprecated(forRemoval = true)
     public EventParticipation joinOnsiteForRegistered(Member member, Event event) {
         validateMemberWhenOnlyRegularRoleAllowed(event, member);
 
@@ -121,6 +126,7 @@ public class EventParticipationDomainService {
     /**
      * 비회원이 뒤풀이 현장등록을 통해 뒤풀이에 확정 참여하는 메서드입니다.
      */
+    @Deprecated(forRemoval = true)
     public EventParticipation joinOnsiteForUnregistered(
             Participant participant, Event event, boolean infoStatusSatisfiedMemberExists) {
         validateNotRegularRoleAllowed(event);
@@ -164,6 +170,7 @@ public class EventParticipationDomainService {
      * 정회원만 허용되는 이벤트일 경우, 회원의 역할을 검증하는 메서드입니다.
      * 회원 신청시에만 사용됩니다.
      */
+    @Deprecated(forRemoval = true)
     private void validateMemberWhenOnlyRegularRoleAllowed(Event event, Member member) {
         if (event.getRegularRoleOnlyStatus().isEnabled() && !member.isRegular()) {
             throw new CustomException(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE);
@@ -174,6 +181,7 @@ public class EventParticipationDomainService {
      * 비 정회원도 신청 가능한 이벤트인지 검증하는 메서드입니다.
      * 비회원 신청시에만 사용됩니다.
      */
+    @Deprecated(forRemoval = true)
     private void validateNotRegularRoleAllowed(Event event) {
         if (event.getRegularRoleOnlyStatus().isEnabled()) {
             throw new CustomException(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE);
@@ -185,6 +193,7 @@ public class EventParticipationDomainService {
      * 회원 신청 시 기본 정보 작성이 완료되어야 합니다.
      * ForRegistered 메서드들에서 사용됩니다.
      */
+    @Deprecated(forRemoval = true)
     private void validateMemberBasicInfoSatisfied(Member member) {
         if (!member.getAssociateRequirement().isInfoSatisfied()) {
             throw new CustomException(EVENT_NOT_APPLICABLE_MEMBER_INFO_NOT_SATISFIED);
@@ -197,6 +206,7 @@ public class EventParticipationDomainService {
      * 존재하더라도 기본 정보가 작성되지 않아야 합니다.
      * ForUnregistered 메서드들에서 사용됩니다.
      */
+    @Deprecated(forRemoval = true)
     private void validateMemberInfoForUnregistered(boolean infoStatusSatisfiedMemberExists) {
         if (infoStatusSatisfiedMemberExists) {
             throw new CustomException(EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED);
