@@ -9,6 +9,7 @@ import static com.gdschongik.gdsc.global.common.constant.StudyConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.TemporalConstant.*;
 import static org.mockito.Mockito.*;
 
+import com.gdschongik.gdsc.config.TestSyncExecutorConfig;
 import com.gdschongik.gdsc.domain.common.model.SemesterType;
 import com.gdschongik.gdsc.domain.common.vo.Money;
 import com.gdschongik.gdsc.domain.common.vo.Period;
@@ -59,11 +60,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
+@Import(TestSyncExecutorConfig.class)
 @SpringBootTest
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
