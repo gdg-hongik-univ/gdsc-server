@@ -12,7 +12,7 @@ jobs:
       issues: read
     steps:
       - name: Set PR Title and Body
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
