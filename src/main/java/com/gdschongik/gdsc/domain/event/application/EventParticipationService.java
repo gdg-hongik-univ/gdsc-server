@@ -16,6 +16,7 @@ import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateReques
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusesUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateTarget;
 import com.gdschongik.gdsc.domain.event.dto.request.EventApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventManualApplyRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredManualApplyRequest;
@@ -28,7 +29,6 @@ import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -198,6 +198,7 @@ public class EventParticipationService {
                 .noneMatch(participation -> participation.getMemberId().equals(member.getId()));
     }
 
+    @Deprecated(forRemoval = true)
     @Transactional
     public void applyManualForRegistered(EventRegisteredManualApplyRequest request) {
         Event event =
@@ -215,6 +216,7 @@ public class EventParticipationService {
                 request.memberId());
     }
 
+    @Deprecated(forRemoval = true)
     @Transactional
     public void applyManualForUnregistered(EventUnregisteredManualApplyRequest request) {
         Event event =
@@ -231,6 +233,25 @@ public class EventParticipationService {
                 "[EventParticipationService] 행사 수동 신청 (비회원): eventId={}, participant={}",
                 request.eventId(),
                 request.participant());
+    }
+
+    @Transactional
+    public void applyManual(EventManualApplyRequest request) {
+        Event event =
+                eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
+        Participant participant = request.participant();
+        Member memberByParticipant =
+                memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
+
+        EventParticipation participation =
+                eventParticipationDomainService.applyManual(participant, memberByParticipant, event);
+        eventParticipationRepository.save(participation);
+
+        log.info(
+                "[EventParticipationService] 행사 수동 신청: eventId={}, studentId={}",
+                request.eventId(),
+                participant.getStudentId());
     }
 
     private void validateEventEnabledForAfterParty(Event event) {
@@ -289,21 +310,16 @@ public class EventParticipationService {
 
     @Transactional
     public void applyEventParticipation(EventApplyRequest request) {
+        // TODO: 메서드 및 DTO applyOnline으로 이름 변경
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         Participant participant = request.participant();
-        Optional<Member> optionalMember = memberRepository.findByStudentId(participant.getStudentId());
+        Member memberByParticipant =
+                memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
 
-        EventParticipation eventParticipation;
-        if (optionalMember.isPresent()
-                && optionalMember.get().getAssociateRequirement().isInfoSatisfied()) {
-            eventParticipation = eventParticipationDomainService.applyEventForRegistered(
-                    optionalMember.get(), request.afterPartyApplicationStatus(), event, now());
-        } else {
-            eventParticipation = eventParticipationDomainService.applyEventForUnregistered(
-                    participant, request.afterPartyApplicationStatus(), event, now());
-        }
+        EventParticipation eventParticipation = eventParticipationDomainService.applyOnline(
+                participant, memberByParticipant, request.afterPartyApplicationStatus(), event, now());
         eventParticipationRepository.save(eventParticipation);
 
         log.info(

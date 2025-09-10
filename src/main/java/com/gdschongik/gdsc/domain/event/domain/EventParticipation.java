@@ -5,6 +5,7 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -88,6 +89,7 @@ public class EventParticipation extends BaseEntity {
 
     // 신청 폼을 통해 생성된 참여정보
 
+    @Deprecated(forRemoval = true)
     public static EventParticipation createOnlineForRegistered(
             Member member,
             AfterPartyApplicationStatus afterPartyApplicationStatus,
@@ -107,6 +109,7 @@ public class EventParticipation extends BaseEntity {
                 .build();
     }
 
+    @Deprecated(forRemoval = true)
     public static EventParticipation createOnlineForUnregistered(
             Participant participant,
             AfterPartyApplicationStatus afterPartyApplicationStatus,
@@ -125,8 +128,29 @@ public class EventParticipation extends BaseEntity {
                 .build();
     }
 
+    public static EventParticipation createOnline(
+            Participant participant,
+            @Nullable Member member,
+            AfterPartyApplicationStatus afterPartyApplicationStatus,
+            AfterPartyAttendanceStatus afterPartyAttendanceStatus,
+            PaymentStatus prePaymentStatus,
+            PaymentStatus postPaymentStatus,
+            Event event) {
+        return EventParticipation.builder()
+                .participant(participant)
+                .memberId(member != null ? member.getId() : null)
+                .mainEventApplicationStatus(MainEventApplicationStatus.APPLIED)
+                .afterPartyApplicationStatus(afterPartyApplicationStatus)
+                .afterPartyAttendanceStatus(afterPartyAttendanceStatus)
+                .prePaymentStatus(prePaymentStatus)
+                .postPaymentStatus(postPaymentStatus)
+                .event(event)
+                .build();
+    }
+
     // 어드민 수동등록을 통해 생성된 참여정보
 
+    @Deprecated(forRemoval = true)
     public static EventParticipation createManualForRegistered(
             Member member,
             AfterPartyApplicationStatus afterPartyApplicationStatus,
@@ -146,6 +170,7 @@ public class EventParticipation extends BaseEntity {
                 .build();
     }
 
+    @Deprecated(forRemoval = true)
     public static EventParticipation createManualForUnregistered(
             Participant participant,
             AfterPartyApplicationStatus afterPartyApplicationStatus,
@@ -164,8 +189,29 @@ public class EventParticipation extends BaseEntity {
                 .build();
     }
 
+    public static EventParticipation createManual(
+            Participant participant,
+            @Nullable Member member,
+            AfterPartyApplicationStatus afterPartyApplicationStatus,
+            AfterPartyAttendanceStatus afterPartyAttendanceStatus,
+            PaymentStatus prePaymentStatus,
+            PaymentStatus postPaymentStatus,
+            Event event) {
+        return EventParticipation.builder()
+                .participant(participant)
+                .memberId(member != null ? member.getId() : null)
+                .mainEventApplicationStatus(MainEventApplicationStatus.NOT_APPLIED)
+                .afterPartyApplicationStatus(afterPartyApplicationStatus)
+                .afterPartyAttendanceStatus(afterPartyAttendanceStatus)
+                .prePaymentStatus(prePaymentStatus)
+                .postPaymentStatus(postPaymentStatus)
+                .event(event)
+                .build();
+    }
+
     // 뒤풀이 현장등록을 통해 생성된 참여정보
 
+    @Deprecated(forRemoval = true)
     public static EventParticipation createOnsiteForRegistered(
             Member member, PaymentStatus prePaymentStatus, PaymentStatus postPaymentStatus, Event event) {
         return EventParticipation.builder()
@@ -180,10 +226,29 @@ public class EventParticipation extends BaseEntity {
                 .build();
     }
 
+    @Deprecated(forRemoval = true)
     public static EventParticipation createOnsiteForUnregistered(
             Participant participant, PaymentStatus prePaymentStatus, PaymentStatus postPaymentStatus, Event event) {
         return EventParticipation.builder()
                 .participant(participant)
+                .mainEventApplicationStatus(MainEventApplicationStatus.NOT_APPLIED)
+                .afterPartyApplicationStatus(AfterPartyApplicationStatus.NOT_APPLIED)
+                .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.ATTENDED)
+                .prePaymentStatus(prePaymentStatus)
+                .postPaymentStatus(postPaymentStatus)
+                .event(event)
+                .build();
+    }
+
+    public static EventParticipation createOnsite(
+            Participant participant,
+            @Nullable Member member,
+            PaymentStatus prePaymentStatus,
+            PaymentStatus postPaymentStatus,
+            Event event) {
+        return EventParticipation.builder()
+                .participant(participant)
+                .memberId(member != null ? member.getId() : null)
                 .mainEventApplicationStatus(MainEventApplicationStatus.NOT_APPLIED)
                 .afterPartyApplicationStatus(AfterPartyApplicationStatus.NOT_APPLIED)
                 .afterPartyAttendanceStatus(AfterPartyAttendanceStatus.ATTENDED)
