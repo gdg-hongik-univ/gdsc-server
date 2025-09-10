@@ -7,5 +7,5 @@ import jakarta.validation.constraints.Positive;
 
 public record EventApplyRequest(
         @NotNull @Positive Long eventId,
-        Participant participant,
+        @NotNull Participant participant,
         @NotNull AfterPartyApplicationStatus afterPartyApplicationStatus) {}
