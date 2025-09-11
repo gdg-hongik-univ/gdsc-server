@@ -37,7 +37,6 @@ public final class Participant {
 
     @JsonCreator
     public static Participant of(String name, String studentId, String phone) {
-        validateNotNull(name, studentId, phone);
         return Participant.builder()
                 .name(name)
                 .studentId(studentId)
