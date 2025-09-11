@@ -43,6 +43,7 @@ public enum ErrorCode {
     MEMBER_DISCORD_USERNAME_DUPLICATE(CONFLICT, "이미 등록된 디스코드 유저네임입니다."),
     MEMBER_NICKNAME_DUPLICATE(CONFLICT, "이미 사용중인 닉네임입니다."),
     MEMBER_NOT_APPLIED(CONFLICT, "가입신청서를 제출하지 않은 회원입니다."),
+    MEMBER_NOT_GUEST(CONFLICT, "게스트가 아닌 회원입니다."),
     MEMBER_NOT_ASSOCIATE(CONFLICT, "준회원이 아닌 회원입니다."),
 
     // Requirement
