@@ -38,31 +38,5 @@ public class EventTest {
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EVENT_NOT_CREATABLE_PAYMENT_ENABLED.getMessage());
         }
-
-        @Test
-        void 선입금과_후정산이_둘_다_활성화되면_실패한다() {
-            // given
-            UsageStatus afterPartyStatus = UsageStatus.ENABLED; // 뒤풀이 활성화
-            UsageStatus prePaymentStatus = UsageStatus.ENABLED; // 선입금 활성화
-            UsageStatus postPaymentStatus = UsageStatus.ENABLED; // 후정산 활성화
-
-            // when & then
-            assertThatThrownBy(() -> Event.create(
-                            EVENT_NAME,
-                            VENUE,
-                            EVENT_START_AT,
-                            APPLICATION_DESCRIPTION,
-                            EVENT_APPLICATION_PERIOD,
-                            REGULAR_ROLE_ONLY_STATUS,
-                            afterPartyStatus,
-                            prePaymentStatus,
-                            postPaymentStatus,
-                            RSVP_QUESTION_STATUS,
-                            NOTICE_CONFIRM_QUESTION_STATUS,
-                            MAIN_EVENT_MAX_APPLICATION_COUNT,
-                            AFTER_PARTY_MAX_APPLICATION_COUNT))
-                    .isInstanceOf(CustomException.class)
-                    .hasMessage(EVENT_NOT_CREATABLE_PAYMENTS_BOTH_ENABLED.getMessage());
-        }
     }
 }

@@ -134,7 +134,6 @@ public class Event extends BaseEntity {
             Integer mainEventMaxApplicantCount,
             Integer afterPartyMaxApplicantCount) {
         validatePaymentDisabledWhenAfterPartyDisabled(afterPartyStatus, prePaymentStatus, postPaymentStatus);
-        validatePrePaymentAndPostPayment(prePaymentStatus, postPaymentStatus);
 
         return Event.builder()
                 .name(name)
@@ -158,12 +157,6 @@ public class Event extends BaseEntity {
             UsageStatus afterPartyStatus, UsageStatus prePaymentStatus, UsageStatus postPaymentStatus) {
         if (afterPartyStatus == DISABLED && (prePaymentStatus == ENABLED || postPaymentStatus == ENABLED)) {
             throw new CustomException(EVENT_NOT_CREATABLE_PAYMENT_ENABLED);
-        }
-    }
-
-    private static void validatePrePaymentAndPostPayment(UsageStatus prePaymentStatus, UsageStatus postPaymentStatus) {
-        if (prePaymentStatus == ENABLED && postPaymentStatus == ENABLED) {
-            throw new CustomException(EVENT_NOT_CREATABLE_PAYMENTS_BOTH_ENABLED);
         }
     }
 
