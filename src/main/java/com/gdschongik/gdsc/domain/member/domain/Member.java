@@ -144,6 +144,10 @@ public class Member extends BaseEntity {
             throw new CustomException(MEMBER_ALREADY_ASSOCIATE);
         }
 
+        if (!isGuest()) {
+            throw new CustomException(MEMBER_NOT_GUEST);
+        }
+
         associateRequirement.validateAllSatisfied();
     }
 
@@ -219,6 +223,7 @@ public class Member extends BaseEntity {
      * 조건 1 : 기본 회원정보 작성
      * 조건 2 : 재학생 인증
      * 조건 3 : 디스코드 인증
+     * 조건 4 : 멤버가 게스트이어야 함
      */
     public void advanceToAssociate() {
         validateStatusUpdatable();
