@@ -3,6 +3,7 @@ package com.gdschongik.gdsc.domain.event.domain;
 import static com.gdschongik.gdsc.global.common.constant.RegexConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.Embeddable;
@@ -34,6 +35,7 @@ public final class Participant {
         this.phone = phone;
     }
 
+    @JsonCreator
     public static Participant of(String name, String studentId, String phone) {
         return Participant.builder()
                 .name(name)
