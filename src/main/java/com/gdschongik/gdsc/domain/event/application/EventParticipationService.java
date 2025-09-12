@@ -15,7 +15,7 @@ import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusesUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateTarget;
-import com.gdschongik.gdsc.domain.event.dto.request.EventApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventApplyOnlineRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventManualApplyRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
@@ -309,8 +309,7 @@ public class EventParticipationService {
     }
 
     @Transactional
-    public void applyEventParticipation(EventApplyRequest request) {
-        // TODO: 메서드 및 DTO applyOnline으로 이름 변경
+    public void applyOnline(EventApplyOnlineRequest request) {
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
