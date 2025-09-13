@@ -314,11 +314,11 @@ public class EventParticipationService {
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         Participant participant = request.participant();
-        Member member =
+        Member memberByParticipant =
                 memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
 
         EventParticipation eventParticipation = eventParticipationDomainService.applyOnline(
-                participant, member, request.afterPartyApplicationStatus(), event, now());
+                participant, memberByParticipant, request.afterPartyApplicationStatus(), event, now());
 
         eventParticipationRepository.save(eventParticipation);
 
