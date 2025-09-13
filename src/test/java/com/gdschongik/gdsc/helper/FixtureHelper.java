@@ -165,28 +165,32 @@ public class FixtureHelper {
         return study;
     }
 
-    public Event createEvent(
-            Long id,
-            UsageStatus regularRoleOnlyStatus,
-            UsageStatus afterPartyStatus,
-            UsageStatus prePaymentStatus,
-            UsageStatus postPaymentStatus) {
+    public Event createEventWithAfterParty(Long id, UsageStatus regularRoleOnlyStatus) {
         Event event = Event.create(
                 EVENT_NAME,
                 VENUE,
                 EVENT_START_AT,
-                APPLICATION_DESCRIPTION,
                 EVENT_APPLICATION_PERIOD,
                 regularRoleOnlyStatus,
-                afterPartyStatus,
-                prePaymentStatus,
-                postPaymentStatus,
-                RSVP_QUESTION_STATUS,
-                NOTICE_CONFIRM_QUESTION_STATUS,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,
                 AFTER_PARTY_MAX_APPLICATION_COUNT);
 
         setId(event, id);
+        return event;
+    }
+
+    public Event createEventWithoutAfterParty(Long id) {
+        Event event = Event.create(
+                EVENT_NAME,
+                VENUE,
+                EVENT_START_AT,
+                EVENT_APPLICATION_PERIOD,
+                REGULAR_ROLE_ONLY_STATUS,
+                MAIN_EVENT_MAX_APPLICATION_COUNT,
+                AFTER_PARTY_MAX_APPLICATION_COUNT);
+
+        setId(event, id);
+        ReflectionTestUtils.setField(event, "afterPartyStatus", UsageStatus.DISABLED);
         return event;
     }
 }
