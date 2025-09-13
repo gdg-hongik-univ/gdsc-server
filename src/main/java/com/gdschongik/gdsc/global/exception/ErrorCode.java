@@ -194,7 +194,6 @@ public enum ErrorCode {
 
     // Event
     EVENT_NOT_FOUND(NOT_FOUND, "존재하지 않는 이벤트입니다."),
-    EVENT_NOT_CREATABLE_PAYMENT_ENABLED(CONFLICT, "뒤풀이 상태가 비활성화된 경우, 선입금 및 후정산 상태도 비활성화 되어야 합니다."),
     EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE(CONFLICT, "정회원이 아닌 회원은 이벤트에 신청할 수 없습니다."),
     EVENT_NOT_APPLICABLE_APPLICATION_PERIOD_INVALID(CONFLICT, "이벤트 신청 기간이 아닙니다."),
     EVENT_NOT_APPLICABLE_AFTER_PARTY_NONE(CONFLICT, "뒤풀이가 활성화된 이벤트는 뒤풀이 신청 여부를 NONE으로 설정할 수 없습니다."),
