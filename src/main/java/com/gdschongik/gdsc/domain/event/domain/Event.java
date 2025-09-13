@@ -6,7 +6,6 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.common.vo.Period;
 import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
-import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -123,41 +122,26 @@ public class Event extends BaseEntity {
             String name,
             String venue,
             LocalDateTime startAt,
-            String applicationDescription,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
-            UsageStatus afterPartyStatus,
-            UsageStatus prePaymentStatus,
-            UsageStatus postPaymentStatus,
-            UsageStatus rsvpQuestionStatus,
-            UsageStatus noticeConfirmQuestionStatus,
             Integer mainEventMaxApplicantCount,
             Integer afterPartyMaxApplicantCount) {
-        validatePaymentDisabledWhenAfterPartyDisabled(afterPartyStatus, prePaymentStatus, postPaymentStatus);
 
         return Event.builder()
                 .name(name)
                 .venue(venue)
                 .startAt(startAt)
-                .applicationDescription(applicationDescription)
+                .applicationDescription(null)
                 .applicationPeriod(applicationPeriod)
                 .regularRoleOnlyStatus(regularRoleOnlyStatus)
-                .afterPartyStatus(afterPartyStatus)
-                .prePaymentStatus(prePaymentStatus)
-                .postPaymentStatus(postPaymentStatus)
-                .rsvpQuestionStatus(rsvpQuestionStatus)
-                .noticeConfirmQuestionStatus(noticeConfirmQuestionStatus)
+                .afterPartyStatus(ENABLED)
+                .prePaymentStatus(DISABLED)
+                .postPaymentStatus(DISABLED)
+                .rsvpQuestionStatus(DISABLED)
+                .noticeConfirmQuestionStatus(DISABLED)
                 .mainEventMaxApplicantCount(mainEventMaxApplicantCount)
                 .afterPartyMaxApplicantCount(afterPartyMaxApplicantCount)
                 .build();
-    }
-
-    // 검증 메서드
-    private static void validatePaymentDisabledWhenAfterPartyDisabled(
-            UsageStatus afterPartyStatus, UsageStatus prePaymentStatus, UsageStatus postPaymentStatus) {
-        if (afterPartyStatus == DISABLED && (prePaymentStatus == ENABLED || postPaymentStatus == ENABLED)) {
-            throw new CustomException(EVENT_NOT_CREATABLE_PAYMENT_ENABLED);
-        }
     }
 
     // 데이터 조회 메서드

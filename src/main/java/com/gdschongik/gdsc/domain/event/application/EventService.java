@@ -46,14 +46,8 @@ public class EventService {
                 request.name(),
                 request.venue(),
                 request.startAt(),
-                request.applicationDescription(),
                 request.applicationPeriod(),
                 request.regularRoleOnlyStatus(),
-                request.afterPartyStatus(),
-                request.prePaymentStatus(),
-                request.postPaymentStatus(),
-                request.rsvpQuestionStatus(),
-                request.noticeConfirmQuestionStatus(),
                 request.mainEventMaxApplicantCount(),
                 request.afterPartyMaxApplicantCount());
         eventRepository.save(event);
