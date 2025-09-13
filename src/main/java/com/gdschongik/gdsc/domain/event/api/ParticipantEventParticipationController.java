@@ -1,7 +1,7 @@
 package com.gdschongik.gdsc.domain.event.api;
 
 import com.gdschongik.gdsc.domain.event.application.EventParticipationService;
-import com.gdschongik.gdsc.domain.event.dto.request.EventApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventApplyOnlineRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -22,8 +22,8 @@ public class ParticipantEventParticipationController {
 
     @Operation(summary = "이벤트 참여 신청 폼 제출", description = "이벤트 참여 신청 폼을 제출합니다.")
     @PostMapping("/apply")
-    public ResponseEntity<Void> applyEventParticipation(@Valid @RequestBody EventApplyRequest request) {
-        eventParticipationService.applyEventParticipation(request);
+    public ResponseEntity<Void> applyEventParticipation(@Valid @RequestBody EventApplyOnlineRequest request) {
+        eventParticipationService.applyOnline(request);
         return ResponseEntity.ok().build();
     }
 }
