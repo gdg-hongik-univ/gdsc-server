@@ -28,8 +28,7 @@ public class EventParticipationDomainServiceTest {
             Member member = fixtureHelper.createRegularMember(1L);
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
             // 신청 기간 (25년 3월 1일 ~ 3월 14일)
-            Event event = fixtureHelper.createEvent(
-                    1L, REGULAR_ROLE_ONLY_STATUS, AFTER_PARTY_STATUS, PRE_PAYMENT_STATUS, POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
             LocalDateTime invalidDate = LocalDateTime.of(2025, 4, 1, 0, 0);
 
             // when & then
@@ -43,12 +42,7 @@ public class EventParticipationDomainServiceTest {
             // given
             Member guestMember = fixtureHelper.createGuestMember(1L);
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    UsageStatus.ENABLED, // 정회원 전용 신청 폼
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.ENABLED); // 정회원 전용 신청 폼
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
@@ -62,12 +56,7 @@ public class EventParticipationDomainServiceTest {
             // given
             Member member = fixtureHelper.createRegularMember(1L);
             AfterPartyApplicationStatus noneStatus = AfterPartyApplicationStatus.NONE;
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    UsageStatus.ENABLED, // 뒤풀이 활성화
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
@@ -81,12 +70,7 @@ public class EventParticipationDomainServiceTest {
             // given
             Member member = fixtureHelper.createRegularMember(1L);
             AfterPartyApplicationStatus appliedStatus = AfterPartyApplicationStatus.APPLIED;
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    UsageStatus.DISABLED, // 뒤풀이 비활성화
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED);
+            Event event = fixtureHelper.createEventWithoutAfterParty(1L);
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
@@ -106,8 +90,7 @@ public class EventParticipationDomainServiceTest {
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
             // 신청 기간 (25년 3월 1일 ~ 3월 14일)
-            Event event = fixtureHelper.createEvent(
-                    1L, REGULAR_ROLE_ONLY_STATUS, AFTER_PARTY_STATUS, PRE_PAYMENT_STATUS, POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
             LocalDateTime invalidDate = LocalDateTime.of(2025, 4, 1, 0, 0);
 
             // when & then
@@ -121,12 +104,7 @@ public class EventParticipationDomainServiceTest {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    UsageStatus.ENABLED, // 정회원 전용 신청 폼
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.ENABLED); // 정회원 전용 신청 폼
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
@@ -140,12 +118,7 @@ public class EventParticipationDomainServiceTest {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus noneStatus = AfterPartyApplicationStatus.NONE;
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    UsageStatus.ENABLED, // 뒤풀이 활성화
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
@@ -159,12 +132,7 @@ public class EventParticipationDomainServiceTest {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus appliedStatus = AfterPartyApplicationStatus.APPLIED;
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    UsageStatus.DISABLED, // 뒤풀이 비활성화
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED);
+            Event event = fixtureHelper.createEventWithoutAfterParty(1L);
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
@@ -182,12 +150,7 @@ public class EventParticipationDomainServiceTest {
         void 정회원만_참석_가능한_행사에_정회원이_아닌_유저가_신청하면_실패한다() {
             // given
             Member guestMember = fixtureHelper.createGuestMember(1L);
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    UsageStatus.ENABLED, // 정회원 전용 신청 폼
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.ENABLED); // 정회원 전용 신청 폼
 
             // when & then
             assertThatThrownBy(() -> domainService.joinOnsiteForRegistered(guestMember, event))
@@ -204,12 +167,7 @@ public class EventParticipationDomainServiceTest {
         void 정회원만_참석_가능한_행사에_신청하면_실패한다() {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    UsageStatus.ENABLED, // 정회원 전용 신청 폼
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.ENABLED); // 정회원 전용 신청 폼
 
             // when & then
             assertThatThrownBy(() -> domainService.joinOnsiteForUnregistered(participant, event, false))
@@ -226,12 +184,7 @@ public class EventParticipationDomainServiceTest {
         void 정회원만_참석_가능한_행사에_정회원이_아닌_유저가_신청하면_실패한다() {
             // given
             Member guestMember = fixtureHelper.createGuestMember(1L);
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    UsageStatus.ENABLED, // 정회원 전용 신청 폼
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.ENABLED); // 정회원 전용 신청 폼
 
             // when & then
             assertThatThrownBy(() -> domainService.applyManualForRegistered(guestMember, event))
@@ -243,12 +196,7 @@ public class EventParticipationDomainServiceTest {
         void 뒤풀이가_있는_행사의_경우_뒤풀이_신청_상태가_APPLIED로_설정된다() {
             // given
             Member member = fixtureHelper.createRegularMember(1L);
-            Event eventWithAfterParty = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    UsageStatus.ENABLED, // 뒤풀이 활성화
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event eventWithAfterParty = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
 
             // when
             EventParticipation participation = domainService.applyManualForRegistered(member, eventWithAfterParty);
@@ -262,12 +210,7 @@ public class EventParticipationDomainServiceTest {
         void 뒤풀이가_없는_행사의_경우_뒤풀이_신청_상태가_NONE으로_설정된다() {
             // given
             Member member = fixtureHelper.createRegularMember(1L);
-            Event eventWithoutAfterParty = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    UsageStatus.DISABLED, // 뒤풀이 비활성화
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED);
+            Event eventWithoutAfterParty = fixtureHelper.createEventWithoutAfterParty(1L);
 
             // when
             EventParticipation participation = domainService.applyManualForRegistered(member, eventWithoutAfterParty);
@@ -281,8 +224,7 @@ public class EventParticipationDomainServiceTest {
         void 기본_정보가_작성되지_않은_회원이_신청하면_실패한다() {
             // given
             Member guestMember = fixtureHelper.createGuestMember(1L); // 기본 정보 미작성
-            Event event = fixtureHelper.createEvent(
-                    1L, REGULAR_ROLE_ONLY_STATUS, AFTER_PARTY_STATUS, PRE_PAYMENT_STATUS, POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
 
             // when & then
             assertThatThrownBy(() -> domainService.applyManualForRegistered(guestMember, event))
@@ -299,12 +241,7 @@ public class EventParticipationDomainServiceTest {
         void 정회원만_참석_가능한_행사에_신청하면_실패한다() {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    UsageStatus.ENABLED, // 정회원 전용 신청 폼
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.ENABLED); // 정회원 전용 신청 폼
 
             // when & then
             assertThatThrownBy(() -> domainService.applyManualForUnregistered(participant, event, false))
@@ -317,12 +254,7 @@ public class EventParticipationDomainServiceTest {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             // TODO: createAfterPartyDisabledEvent 사용하도록 개선
-            Event eventWithAfterParty = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    UsageStatus.ENABLED, // 뒤풀이 활성화
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event eventWithAfterParty = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
 
             // when
             EventParticipation participation =
@@ -337,12 +269,7 @@ public class EventParticipationDomainServiceTest {
         void 뒤풀이가_없는_행사의_경우_뒤풀이_신청_상태가_NONE으로_설정된다() {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
-            Event eventWithoutAfterParty = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    UsageStatus.DISABLED, // 뒤풀이 비활성화
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED);
+            Event eventWithoutAfterParty = fixtureHelper.createEventWithoutAfterParty(1L);
 
             // when
             EventParticipation participation =
@@ -357,8 +284,7 @@ public class EventParticipationDomainServiceTest {
         void 기본_정보가_작성된_학번으로_신청하면_실패한다() {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
-            Event event = fixtureHelper.createEvent(
-                    1L, REGULAR_ROLE_ONLY_STATUS, AFTER_PARTY_STATUS, PRE_PAYMENT_STATUS, POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
 
             boolean infoStatusSatisfiedMemberExists = true; // 기본정보가 작성된 회원이 존재함
 
@@ -380,12 +306,7 @@ public class EventParticipationDomainServiceTest {
             Participant participant =
                     Participant.of(regularMember.getName(), regularMember.getStudentId(), regularMember.getPhone());
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    UsageStatus.DISABLED, // 모두 참석 가능 (정회원 전용 비활성화)
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED); // 모두 참석 가능 (정회원 전용 비활성화)
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when
@@ -404,12 +325,7 @@ public class EventParticipationDomainServiceTest {
             Member guestMember = fixtureHelper.createGuestMember(1L);
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    UsageStatus.DISABLED, // 모두 참석 가능 (정회원 전용 비활성화)
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED); // 모두 참석 가능 (정회원 전용 비활성화)
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when
@@ -426,12 +342,7 @@ public class EventParticipationDomainServiceTest {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    UsageStatus.DISABLED, // 모두 참석 가능 (정회원 전용 비활성화)
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED); // 모두 참석 가능 (정회원 전용 비활성화)
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when
@@ -449,12 +360,7 @@ public class EventParticipationDomainServiceTest {
             Member guestMember = fixtureHelper.createGuestMember(1L);
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    UsageStatus.ENABLED, // 정회원 전용
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.ENABLED); // 정회원 전용
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
@@ -468,12 +374,7 @@ public class EventParticipationDomainServiceTest {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    UsageStatus.ENABLED, // 정회원 전용
-                    AFTER_PARTY_STATUS,
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.ENABLED); // 정회원 전용
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
@@ -489,8 +390,7 @@ public class EventParticipationDomainServiceTest {
             Participant participant =
                     Participant.of(regularMember.getName(), regularMember.getStudentId(), regularMember.getPhone());
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
-            Event event = fixtureHelper.createEvent(
-                    1L, REGULAR_ROLE_ONLY_STATUS, AFTER_PARTY_STATUS, PRE_PAYMENT_STATUS, POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
             LocalDateTime invalidDate = LocalDateTime.of(2025, 4, 1, 0, 0);
 
             // when & then
@@ -506,12 +406,7 @@ public class EventParticipationDomainServiceTest {
             Participant participant =
                     Participant.of(regularMember.getName(), regularMember.getStudentId(), regularMember.getPhone());
             AfterPartyApplicationStatus noneStatus = AfterPartyApplicationStatus.NONE;
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    UsageStatus.ENABLED, // 뒤풀이 활성화
-                    PRE_PAYMENT_STATUS,
-                    POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
@@ -527,12 +422,7 @@ public class EventParticipationDomainServiceTest {
             Participant participant =
                     Participant.of(regularMember.getName(), regularMember.getStudentId(), regularMember.getPhone());
             AfterPartyApplicationStatus appliedStatus = AfterPartyApplicationStatus.APPLIED;
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    UsageStatus.DISABLED, // 뒤풀이 비활성화
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED);
+            Event event = fixtureHelper.createEventWithoutAfterParty(1L);
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
 
             // when & then
@@ -549,8 +439,7 @@ public class EventParticipationDomainServiceTest {
         void 성공한다() {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
-            Event event = fixtureHelper.createEvent(
-                    1L, REGULAR_ROLE_ONLY_STATUS, AFTER_PARTY_STATUS, PRE_PAYMENT_STATUS, POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
 
             // when
             EventParticipation participation = domainService.applyManual(participant, null, event);
@@ -566,12 +455,7 @@ public class EventParticipationDomainServiceTest {
         void 뒤풀이가_없는_행사의_경우_뒤풀이_신청_상태가_NONE으로_설정된다() {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
-            Event event = fixtureHelper.createEvent(
-                    1L,
-                    REGULAR_ROLE_ONLY_STATUS,
-                    UsageStatus.DISABLED, // 뒤풀이 비활성화
-                    UsageStatus.DISABLED,
-                    UsageStatus.DISABLED);
+            Event event = fixtureHelper.createEventWithoutAfterParty(1L);
 
             // when
             EventParticipation participation = domainService.applyManual(participant, null, event);
@@ -588,8 +472,7 @@ public class EventParticipationDomainServiceTest {
         void 성공한다() {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
-            Event event = fixtureHelper.createEvent(
-                    1L, REGULAR_ROLE_ONLY_STATUS, AFTER_PARTY_STATUS, PRE_PAYMENT_STATUS, POST_PAYMENT_STATUS);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
 
             // when
             EventParticipation participation = domainService.joinOnsite(participant, null, event);

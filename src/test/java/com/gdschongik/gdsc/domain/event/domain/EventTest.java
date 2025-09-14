@@ -4,7 +4,6 @@ import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
-import com.gdschongik.gdsc.global.exception.CustomException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -14,29 +13,30 @@ public class EventTest {
     class 행사_생성시 {
 
         @Test
-        void 뒤풀이가_없는_행사에_선입금_혹은_후정산이_활성화되면_실패한다() {
-            // given
-            UsageStatus afterPartyStatus = UsageStatus.DISABLED; // 뒤풀이 비활성화
-            UsageStatus prePaymentStatus = UsageStatus.ENABLED; // 선입금 활성화
-            UsageStatus postPaymentStatus = UsageStatus.ENABLED; // 후정산 활성화
+        void 뒤풀이활성상태가_ENABLED인_이벤트가_생성된다() {
+            // when
+            Event event = Event.create(
+                    EVENT_NAME,
+                    VENUE,
+                    EVENT_START_AT,
+                    EVENT_APPLICATION_PERIOD,
+                    REGULAR_ROLE_ONLY_STATUS,
+                    MAIN_EVENT_MAX_APPLICATION_COUNT,
+                    AFTER_PARTY_MAX_APPLICATION_COUNT);
 
-            // when & then
-            assertThatThrownBy(() -> Event.create(
-                            EVENT_NAME,
-                            VENUE,
-                            EVENT_START_AT,
-                            APPLICATION_DESCRIPTION,
-                            EVENT_APPLICATION_PERIOD,
-                            REGULAR_ROLE_ONLY_STATUS,
-                            afterPartyStatus,
-                            prePaymentStatus,
-                            postPaymentStatus,
-                            RSVP_QUESTION_STATUS,
-                            NOTICE_CONFIRM_QUESTION_STATUS,
-                            MAIN_EVENT_MAX_APPLICATION_COUNT,
-                            AFTER_PARTY_MAX_APPLICATION_COUNT))
-                    .isInstanceOf(CustomException.class)
-                    .hasMessage(EVENT_NOT_CREATABLE_PAYMENT_ENABLED.getMessage());
+            // then
+            assertThat(event.getName()).isEqualTo(EVENT_NAME);
+            assertThat(event.getVenue()).isEqualTo(VENUE);
+            assertThat(event.getStartAt()).isEqualTo(EVENT_START_AT);
+            assertThat(event.getApplicationPeriod()).isEqualTo(EVENT_APPLICATION_PERIOD);
+            assertThat(event.getRegularRoleOnlyStatus()).isEqualTo(REGULAR_ROLE_ONLY_STATUS);
+            assertThat(event.getAfterPartyStatus()).isEqualTo(UsageStatus.ENABLED);
+            assertThat(event.getPrePaymentStatus()).isEqualTo(UsageStatus.DISABLED);
+            assertThat(event.getPostPaymentStatus()).isEqualTo(UsageStatus.DISABLED);
+            assertThat(event.getRsvpQuestionStatus()).isEqualTo(UsageStatus.DISABLED);
+            assertThat(event.getNoticeConfirmQuestionStatus()).isEqualTo(UsageStatus.DISABLED);
+            assertThat(event.getMainEventMaxApplicantCount()).isEqualTo(MAIN_EVENT_MAX_APPLICATION_COUNT);
+            assertThat(event.getAfterPartyMaxApplicantCount()).isEqualTo(AFTER_PARTY_MAX_APPLICATION_COUNT);
         }
     }
 }
