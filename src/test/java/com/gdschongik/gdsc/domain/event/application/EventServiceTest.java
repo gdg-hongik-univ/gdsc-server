@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.helper.IntegrationTest;
 import org.junit.jupiter.api.Nested;
@@ -45,17 +45,17 @@ public class EventServiceTest extends IntegrationTest {
         void 존재하지_않는_이벤트일_경우_실패한다() {
             // given
             String updatedName = "수정된 행사 이름";
-            var request = new EventUpdateRequest(
+            var request = new EventUpdateBasicInfoRequest(
                     updatedName,
                     VENUE,
                     EVENT_START_AT,
-                    APPLICATION_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD,
+                    REGULAR_ROLE_ONLY_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
                     AFTER_PARTY_MAX_APPLICATION_COUNT);
 
             // when & then
-            assertThatThrownBy(() -> eventService.updateEvent(1L, request))
+            assertThatThrownBy(() -> eventService.updateEventBasicInfo(1L, request))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_FOUND.getMessage());
         }
@@ -67,17 +67,17 @@ public class EventServiceTest extends IntegrationTest {
             Long eventId = event.getId();
 
             String updatedName = "수정된 행사 이름";
-            var request = new EventUpdateRequest(
+            var request = new EventUpdateBasicInfoRequest(
                     updatedName,
                     VENUE,
                     EVENT_START_AT,
-                    APPLICATION_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD,
+                    REGULAR_ROLE_ONLY_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
                     AFTER_PARTY_MAX_APPLICATION_COUNT);
 
             // when
-            eventService.updateEvent(eventId, request);
+            eventService.updateEventBasicInfo(eventId, request);
 
             // then
             assertThat(eventRepository.findById(eventId).get().getName()).isEqualTo(updatedName);
