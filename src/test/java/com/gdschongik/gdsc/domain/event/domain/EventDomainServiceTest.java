@@ -16,7 +16,33 @@ public class EventDomainServiceTest {
     FixtureHelper fixtureHelper = new FixtureHelper();
 
     @Nested
-    class 이벤트를_수정할_때 {
+    class 이벤트_기본정보를_수정할_때 {
+
+        @Test
+        void 신청자가_존재하는데_정회원_전용_이벤트_여부를_변경하면_실패한다() {
+            // given
+            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED); // 정회원 전용 X
+
+            UsageStatus newRegularRoleOnlyStatus = UsageStatus.ENABLED; // 정회원 전용 O
+            long currentMainEventApplicants = 10; // 이미 신청한 인원
+            long currentAfterPartyApplicants = 10;
+
+            // when & then
+            assertThatThrownBy(() -> eventDomainService.updateBasicInfo(
+                            event,
+                            EVENT_NAME,
+                            VENUE,
+                            EVENT_START_AT,
+                            EVENT_APPLICATION_PERIOD,
+                            newRegularRoleOnlyStatus,
+                            null,
+                            null,
+                            currentMainEventApplicants,
+                            currentAfterPartyApplicants))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT.getMessage());
+        }
+
         @Test
         void 현재_신청인원보다_최대_신청인원을_많게_변경하는_경우_성공한다() {
             // given
@@ -28,13 +54,13 @@ public class EventDomainServiceTest {
             long currentAfterPartyApplicants = 10;
 
             // when
-            eventDomainService.update(
+            eventDomainService.updateBasicInfo(
                     event,
                     EVENT_NAME,
                     VENUE,
                     EVENT_START_AT,
-                    APPLICATION_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD,
+                    REGULAR_ROLE_ONLY_STATUS,
                     newMainEventMaxApplicantCount,
                     newAfterPartyMaxApplicantCount,
                     currentMainEventApplicants,
@@ -55,13 +81,13 @@ public class EventDomainServiceTest {
             long currentAfterPartyApplicants = 10;
 
             // when
-            eventDomainService.update(
+            eventDomainService.updateBasicInfo(
                     event,
                     EVENT_NAME,
                     VENUE,
                     EVENT_START_AT,
-                    APPLICATION_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD,
+                    REGULAR_ROLE_ONLY_STATUS,
                     newMainEventMaxApplicantCount,
                     newAfterPartyMaxApplicantCount,
                     currentMainEventApplicants,
@@ -82,13 +108,13 @@ public class EventDomainServiceTest {
             long currentAfterPartyApplicants = 10;
 
             // when & then
-            assertThatThrownBy(() -> eventDomainService.update(
+            assertThatThrownBy(() -> eventDomainService.updateBasicInfo(
                             event,
                             EVENT_NAME,
                             VENUE,
                             EVENT_START_AT,
-                            APPLICATION_DESCRIPTION,
                             EVENT_APPLICATION_PERIOD,
+                            REGULAR_ROLE_ONLY_STATUS,
                             newMainEventMaxApplicantCount,
                             newAfterPartyMaxApplicantCount,
                             currentMainEventApplicants,

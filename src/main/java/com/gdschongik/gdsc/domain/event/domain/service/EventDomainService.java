@@ -4,6 +4,7 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.common.vo.Period;
 import com.gdschongik.gdsc.domain.event.domain.Event;
+import com.gdschongik.gdsc.domain.event.domain.UsageStatus;
 import com.gdschongik.gdsc.global.annotation.DomainService;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.annotation.Nullable;
@@ -13,19 +14,20 @@ import java.time.LocalDateTime;
 public class EventDomainService {
 
     /**
-     * 이벤트를 변경합니다.
+     * 이벤트를 기본 정보를 변경합니다.
+     * @param regularRoleOnlyStatus 정회원 전용 이벤트 여부. 이미 신청자가 존재하는 경우 변경할 수 없습니다.
      * @param mainEventMaxApplicantCount 변경하려는 본 행사 최대 신청자 수. (인원 제한이 없는 경우 null)
      * @param afterPartyMaxApplicantCount 변경하려는 뒤풀이 최대 신청자 수. (인원 제한이 없는 경우 null)
      * @param currentMainEventApplicantCount 현재 본 행사 신청자 수. EventParticipationRepository 조회 데이터
      * @param currentAfterPartyApplicantCount 현재 뒤풀이 신청자 수. EventParticipationRepository 조회 데이터
      */
-    public void update(
+    public void updateBasicInfo(
             Event event,
             String name,
             String venue,
             LocalDateTime startAt,
-            String applicationDescription,
             Period applicationPeriod,
+            UsageStatus regularRoleOnlyStatus,
             @Nullable Integer mainEventMaxApplicantCount,
             @Nullable Integer afterPartyMaxApplicantCount,
             long currentMainEventApplicantCount,
@@ -33,14 +35,27 @@ public class EventDomainService {
         validateUpdateMaxApplicantCount(currentMainEventApplicantCount, mainEventMaxApplicantCount);
         validateUpdateMaxApplicantCount(currentAfterPartyApplicantCount, afterPartyMaxApplicantCount);
 
-        event.update(
+        if (event.getRegularRoleOnlyStatus() != regularRoleOnlyStatus) {
+            validateAlreadyExistsApplicant(currentMainEventApplicantCount);
+        }
+
+        event.updateBasicInfo(
                 name,
                 venue,
                 startAt,
-                applicationDescription,
                 applicationPeriod,
+                regularRoleOnlyStatus,
                 mainEventMaxApplicantCount,
                 afterPartyMaxApplicantCount);
+    }
+
+    /**
+     * 이미 신청자가 존재하는 경우 예외를 발생시킵니다.
+     */
+    private void validateAlreadyExistsApplicant(long currentMainEventApplicantCount) {
+        if (currentMainEventApplicantCount > 0) {
+            throw new CustomException(EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT);
+        }
     }
 
     /**
