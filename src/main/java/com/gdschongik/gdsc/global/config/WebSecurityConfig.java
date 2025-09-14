@@ -130,8 +130,6 @@ public class WebSecurityConfig {
                 .permitAll()
                 .requestMatchers("/onboarding/verify-email")
                 .permitAll()
-                .requestMatchers("/event-participations/apply")
-                .permitAll()
                 .requestMatchers("/participant/**")
                 .permitAll()
                 .requestMatchers("/test/**")
