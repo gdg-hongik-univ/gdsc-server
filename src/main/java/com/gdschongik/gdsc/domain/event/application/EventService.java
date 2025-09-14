@@ -8,7 +8,7 @@ import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import java.util.List;
@@ -62,18 +62,18 @@ public class EventService {
     }
 
     @Transactional
-    public void updateEvent(Long eventId, EventUpdateRequest request) {
+    public void updateEventBasicInfo(Long eventId, EventUpdateBasicInfoRequest request) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         long currentMainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
         long currentAfterPartyApplicantCount = eventParticipationRepository.countAfterPartyApplicantsByEvent(event);
 
-        eventDomainService.update(
+        eventDomainService.updateBasicInfo(
                 event,
                 request.name(),
                 request.venue(),
                 request.startAt(),
-                request.applicationDescription(),
                 request.applicationPeriod(),
+                request.regularRoleOnlyStatus(),
                 request.mainEventMaxApplicantCount(),
                 request.afterPartyMaxApplicantCount(),
                 currentMainEventApplicantCount,
@@ -81,6 +81,6 @@ public class EventService {
 
         eventRepository.save(event);
 
-        log.info("[EventService] 이벤트 수정 완료: eventId={}", event.getId());
+        log.info("[EventService] 이벤트 기본 정보 수정 완료: eventId={}", event.getId());
     }
 }
