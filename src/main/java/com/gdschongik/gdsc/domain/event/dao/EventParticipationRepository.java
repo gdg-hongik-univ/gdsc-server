@@ -12,4 +12,6 @@ public interface EventParticipationRepository
     List<EventParticipation> findAllByEvent(Event event);
 
     long countByEvent(Event event);
+
+    boolean existsByEvent(Event event);
 }

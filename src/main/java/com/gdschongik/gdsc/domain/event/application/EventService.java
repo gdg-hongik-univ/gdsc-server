@@ -88,7 +88,7 @@ public class EventService {
     @Transactional
     public void updateEventFormInfo(Long eventId, EventUpdateFormInfoRequest request) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
-        long currentMainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
+        boolean eventParticipationExists = eventParticipationRepository.existsByEvent(event);
 
         eventDomainService.updateFormInfo(
                 event,
@@ -98,7 +98,7 @@ public class EventService {
                 request.postPaymentStatus(),
                 request.rsvpQuestionStatus(),
                 request.noticeConfirmQuestionStatus(),
-                currentMainEventApplicantCount);
+                eventParticipationExists);
 
         eventRepository.save(event);
 
