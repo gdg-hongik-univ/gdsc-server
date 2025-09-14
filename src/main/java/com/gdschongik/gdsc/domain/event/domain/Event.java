@@ -153,23 +153,23 @@ public class Event extends BaseEntity {
     // 수정 메서드
 
     /**
-     * 이벤트 정보를 수정합니다.
+     * 이벤트 기본 정보를 수정합니다.
      * 도메인 서비스를 통해서만 호출되어야 합니다.
      * @see EventDomainService
      */
-    public void update(
+    public void updateBasicInfo(
             String name,
             String venue,
             LocalDateTime startAt,
-            String applicationDescription,
             Period applicationPeriod,
+            UsageStatus regularRoleOnlyStatus,
             Integer mainEventMaxApplicantCount,
             Integer afterPartyMaxApplicantCount) {
         this.name = name;
         this.venue = venue;
         this.startAt = startAt;
-        this.applicationDescription = applicationDescription;
         this.applicationPeriod = applicationPeriod;
+        this.regularRoleOnlyStatus = regularRoleOnlyStatus;
         this.mainEventMaxApplicantCount = mainEventMaxApplicantCount;
         this.afterPartyMaxApplicantCount = afterPartyMaxApplicantCount;
     }
