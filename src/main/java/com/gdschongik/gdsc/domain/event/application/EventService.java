@@ -9,6 +9,7 @@ import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import java.util.List;
@@ -82,6 +83,26 @@ public class EventService {
         eventRepository.save(event);
 
         log.info("[EventService] 이벤트 기본 정보 수정 완료: eventId={}", event.getId());
+    }
+
+    @Transactional
+    public void updateEventFormInfo(Long eventId, EventUpdateFormInfoRequest request) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        boolean eventParticipationExists = eventParticipationRepository.existsByEvent(event);
+
+        eventDomainService.updateFormInfo(
+                event,
+                request.applicationDescription(),
+                request.afterPartyStatus(),
+                request.prePaymentStatus(),
+                request.postPaymentStatus(),
+                request.rsvpQuestionStatus(),
+                request.noticeConfirmQuestionStatus(),
+                eventParticipationExists);
+
+        eventRepository.save(event);
+
+        log.info("[EventService] 이벤트 폼 정보 수정 완료: eventId={}", event.getId());
     }
 
     @Transactional(readOnly = true)

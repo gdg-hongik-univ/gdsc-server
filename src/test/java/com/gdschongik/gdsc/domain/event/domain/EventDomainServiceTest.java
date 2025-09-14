@@ -123,4 +123,28 @@ public class EventDomainServiceTest {
                     .hasMessage(EVENT_NOT_UPDATABLE_MAX_APPLICANT_COUNT_INVALID.getMessage());
         }
     }
+
+    @Nested
+    class 이벤트_폼_정보를_수정할_때 {
+
+        @Test
+        void 신청자가_존재하는데_수정을_시도하면_실패한다() {
+            // given
+            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED);
+            boolean eventParticipationExists = true; // 이미 신청자가 존재
+
+            // when & then
+            assertThatThrownBy(() -> eventDomainService.updateFormInfo(
+                            event,
+                            APPLICATION_DESCRIPTION,
+                            AFTER_PARTY_STATUS,
+                            PRE_PAYMENT_STATUS,
+                            POST_PAYMENT_STATUS,
+                            RSVP_QUESTION_STATUS,
+                            NOTICE_CONFIRM_QUESTION_STATUS,
+                            eventParticipationExists))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT.getMessage());
+        }
+    }
 }

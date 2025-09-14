@@ -202,6 +202,7 @@ public enum ErrorCode {
     EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED(CONFLICT, "기본 회원정보가 작성된 회원의 학번으로는 비회원 신청을 할 수 없습니다."),
     EVENT_NOT_UPDATABLE_MAX_APPLICANT_COUNT_INVALID(CONFLICT, "최대 신청자 수를 현재 신청자 수보다 적게 변경할 수 없습니다."),
     EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT(CONFLICT, "이미 신청자가 존재하는 이벤트는 폼 관련 항목을 수정할 수 없습니다."),
+    EVENT_NOT_UPDATABLE_PAYMENT_STATUS_INVALID(CONFLICT, "뒤풀이가 비활성화된 이벤트는 결제 관련 항목을 활성화할 수 없습니다."),
     PARTICIPATION_NOT_FOUND(NOT_FOUND, "존재하지 않는 이벤트 참여정보입니다."),
     PARTICIPATION_NOT_READABLE_AFTER_PARTY_DISABLED(BAD_REQUEST, "뒤풀이가 비활성화된 이벤트의 참여정보는 조회할 수 없습니다."),
     PARTICIPATION_NOT_DELETABLE_INVALID_IDS(BAD_REQUEST, "존재하지 않거나 중복된 참여 정보 ID가 포함되어 있습니다."),
