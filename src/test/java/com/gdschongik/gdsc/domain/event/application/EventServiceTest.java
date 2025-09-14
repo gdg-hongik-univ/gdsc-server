@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.*;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.helper.IntegrationTest;
 import org.junit.jupiter.api.Nested;
@@ -39,14 +40,14 @@ public class EventServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 이벤트_수정시 {
+    class 이벤트_기본_정보_수정시 {
 
         @Test
         void 존재하지_않는_이벤트일_경우_실패한다() {
             // given
-            String updatedName = "수정된 행사 이름";
+            Long invalidId = 999L;
             var request = new EventUpdateBasicInfoRequest(
-                    updatedName,
+                    EVENT_NAME,
                     VENUE,
                     EVENT_START_AT,
                     EVENT_APPLICATION_PERIOD,
@@ -55,7 +56,7 @@ public class EventServiceTest extends IntegrationTest {
                     AFTER_PARTY_MAX_APPLICATION_COUNT);
 
             // when & then
-            assertThatThrownBy(() -> eventService.updateEventBasicInfo(1L, request))
+            assertThatThrownBy(() -> eventService.updateEventBasicInfo(invalidId, request))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_FOUND.getMessage());
         }
@@ -81,6 +82,51 @@ public class EventServiceTest extends IntegrationTest {
 
             // then
             assertThat(eventRepository.findById(eventId).get().getName()).isEqualTo(updatedName);
+        }
+    }
+
+    @Nested
+    class 이벤트_폼_정보_수정시 {
+
+        @Test
+        void 존재하지_않는_이벤트일_경우_실패한다() {
+            // given
+            Long invalidId = 999L;
+            var request = new EventUpdateFormInfoRequest(
+                    APPLICATION_DESCRIPTION,
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS,
+                    RSVP_QUESTION_STATUS,
+                    NOTICE_CONFIRM_QUESTION_STATUS);
+
+            // when & then
+            assertThatThrownBy(() -> eventService.updateEventFormInfo(invalidId, request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_FOUND.getMessage());
+        }
+
+        @Test
+        void 성공한다() {
+            // given
+            Event event = createEvent();
+            Long eventId = event.getId();
+
+            String updatedApplicationDescription = "수정된 행사 설명";
+            var request = new EventUpdateFormInfoRequest(
+                    updatedApplicationDescription,
+                    AFTER_PARTY_STATUS,
+                    PRE_PAYMENT_STATUS,
+                    POST_PAYMENT_STATUS,
+                    RSVP_QUESTION_STATUS,
+                    NOTICE_CONFIRM_QUESTION_STATUS);
+
+            // when
+            eventService.updateEventFormInfo(eventId, request);
+
+            // then
+            assertThat(eventRepository.findById(eventId).get().getApplicationDescription())
+                    .isEqualTo(updatedApplicationDescription);
         }
     }
 }
