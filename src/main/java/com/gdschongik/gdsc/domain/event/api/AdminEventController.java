@@ -3,7 +3,7 @@ package com.gdschongik.gdsc.domain.event.api;
 import com.gdschongik.gdsc.domain.event.application.EventService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,11 +45,11 @@ public class AdminEventController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "이벤트 수정", description = "이벤트 기본 정보를 수정합니다.")
-    @PutMapping("/{eventId}")
-    public ResponseEntity<Void> updateEvent(
-            @PathVariable Long eventId, @Valid @RequestBody EventUpdateRequest request) {
-        eventService.updateEvent(eventId, request);
+    @Operation(summary = "이벤트 기본 정보 수정", description = "이벤트 기본 정보를 수정합니다.")
+    @PutMapping("/{eventId}/basic-info")
+    public ResponseEntity<Void> updateEventBasicInfo(
+            @PathVariable Long eventId, @Valid @RequestBody EventUpdateBasicInfoRequest request) {
+        eventService.updateEventBasicInfo(eventId, request);
         return ResponseEntity.ok().build();
     }
 }
