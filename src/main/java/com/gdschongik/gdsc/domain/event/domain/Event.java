@@ -6,6 +6,7 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.common.vo.Period;
 import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
+import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -172,5 +173,39 @@ public class Event extends BaseEntity {
         this.regularRoleOnlyStatus = regularRoleOnlyStatus;
         this.mainEventMaxApplicantCount = mainEventMaxApplicantCount;
         this.afterPartyMaxApplicantCount = afterPartyMaxApplicantCount;
+    }
+
+    /**
+     * 이벤트 신청 폼 상태를 수정합니다.
+     * 도메인 서비스를 통해서만 호출되어야 합니다.
+     * @see EventDomainService
+     */
+    public void updateFormInfo(
+            String applicationDescription,
+            UsageStatus afterPartyStatus,
+            UsageStatus prePaymentStatus,
+            UsageStatus postPaymentStatus,
+            UsageStatus rsvpQuestionStatus,
+            UsageStatus noticeConfirmQuestionStatus) {
+        validatePaymentStatus(afterPartyStatus, prePaymentStatus, postPaymentStatus);
+
+        this.applicationDescription = applicationDescription;
+        this.afterPartyStatus = afterPartyStatus;
+        this.prePaymentStatus = prePaymentStatus;
+        this.postPaymentStatus = postPaymentStatus;
+        this.rsvpQuestionStatus = rsvpQuestionStatus;
+        this.noticeConfirmQuestionStatus = noticeConfirmQuestionStatus;
+
+        // 뒤풀이가 비활성화되는 경우, 뒤풀이 최대 신청자 수 제한을 초기화합니다.
+        this.afterPartyMaxApplicantCount = (afterPartyStatus.isDisabled() ? null : this.afterPartyMaxApplicantCount);
+    }
+
+    // 검증 메서드
+
+    private void validatePaymentStatus(
+            UsageStatus afterPartyStatus, UsageStatus prePaymentStatus, UsageStatus postPaymentStatus) {
+        if (afterPartyStatus.isDisabled() && (prePaymentStatus.isEnabled() || postPaymentStatus.isEnabled())) {
+            throw new CustomException(EVENT_NOT_UPDATABLE_PAYMENT_STATUS_INVALID);
+        }
     }
 }

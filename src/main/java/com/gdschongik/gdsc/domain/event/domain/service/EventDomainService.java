@@ -70,4 +70,29 @@ public class EventDomainService {
             throw new CustomException(EVENT_NOT_UPDATABLE_MAX_APPLICANT_COUNT_INVALID);
         }
     }
+
+    /**
+     * 이벤트 신청 폼 정보를 변경합니다.
+     * 이미 신청자가 존재하는 경우 수정할 수 없습니다.
+     * @param currentMainEventApplicantCount 현재 본 행사 신청자 수. EventParticipationRepository 조회 데이터
+     */
+    public void updateFormInfo(
+            Event event,
+            String applicationDescription,
+            UsageStatus afterPartyStatus,
+            UsageStatus prePaymentStatus,
+            UsageStatus postPaymentStatus,
+            UsageStatus rsvpQuestionStatus,
+            UsageStatus noticeConfirmQuestionStatus,
+            long currentMainEventApplicantCount) {
+        validateAlreadyExistsApplicant(currentMainEventApplicantCount);
+
+        event.updateFormInfo(
+                applicationDescription,
+                afterPartyStatus,
+                prePaymentStatus,
+                postPaymentStatus,
+                rsvpQuestionStatus,
+                noticeConfirmQuestionStatus);
+    }
 }
