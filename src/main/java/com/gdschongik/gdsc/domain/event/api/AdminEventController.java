@@ -4,6 +4,7 @@ import com.gdschongik.gdsc.domain.event.application.EventService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -50,6 +51,14 @@ public class AdminEventController {
     public ResponseEntity<Void> updateEventBasicInfo(
             @PathVariable Long eventId, @Valid @RequestBody EventUpdateBasicInfoRequest request) {
         eventService.updateEventBasicInfo(eventId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "이벤트 폼 정보 수정", description = "이벤트 신청 폼 관련 정보를 수정합니다.")
+    @PutMapping("/{eventId}/form-info")
+    public ResponseEntity<Void> updateEventFormInfo(
+            @PathVariable Long eventId, @Valid @RequestBody EventUpdateFormInfoRequest request) {
+        eventService.updateEventFormInfo(eventId, request);
         return ResponseEntity.ok().build();
     }
 }
