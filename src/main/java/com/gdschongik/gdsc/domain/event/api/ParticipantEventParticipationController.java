@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Event Participation - Participant", description = "참가자용 이벤트 참여 정보 관리 API입니다.")
 @RestController
-@RequestMapping("/event-participations")
+@RequestMapping("/participant/event-participations")
 @RequiredArgsConstructor
 public class ParticipantEventParticipationController {
 

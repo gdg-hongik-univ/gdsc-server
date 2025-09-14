@@ -83,4 +83,11 @@ public class EventService {
 
         log.info("[EventService] 이벤트 기본 정보 수정 완료: eventId={}", event.getId());
     }
+
+    @Transactional(readOnly = true)
+    public EventDto getEvent(Long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
+        return EventDto.from(event);
+    }
 }
