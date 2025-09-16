@@ -110,22 +110,13 @@ class ParticipantRoleTest {
     }
 
     private EventParticipation createEventParticipation(Member member) {
-        if (member != null) {
-            return EventParticipation.createOnlineForRegistered(
-                    member,
-                    AfterPartyApplicationStatus.NOT_APPLIED,
-                    AfterPartyAttendanceStatus.NOT_ATTENDED,
-                    PaymentStatus.UNPAID,
-                    PaymentStatus.UNPAID,
-                    null);
-        } else {
-            return EventParticipation.createOnlineForUnregistered(
-                    Participant.of(NAME, STUDENT_ID, PHONE_NUMBER),
-                    AfterPartyApplicationStatus.NOT_APPLIED,
-                    AfterPartyAttendanceStatus.NOT_ATTENDED,
-                    PaymentStatus.UNPAID,
-                    PaymentStatus.UNPAID,
-                    null);
-        }
+        return EventParticipation.createOnline(
+                Participant.of(NAME, STUDENT_ID, PHONE_NUMBER),
+                member,
+                AfterPartyApplicationStatus.NOT_APPLIED,
+                AfterPartyAttendanceStatus.NOT_ATTENDED,
+                PaymentStatus.UNPAID,
+                PaymentStatus.UNPAID,
+                null);
     }
 }
