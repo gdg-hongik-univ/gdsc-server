@@ -123,7 +123,7 @@ class AssignmentHistoryTest {
             // when, then
             assertThatThrownBy(() -> assignmentHistory.fail(SubmissionFailureType.NOT_SUBMITTED))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(ASSIGNMENT_INVALID_FAILURE_TYPE.getMessage());
+                    .hasMessageContaining(ASSIGNMENT_FAILURE_TYPE_INVALID.getMessage());
         }
 
         @Test
@@ -138,7 +138,7 @@ class AssignmentHistoryTest {
             // when, then
             assertThatThrownBy(() -> assignmentHistory.fail(SubmissionFailureType.NONE))
                     .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(ASSIGNMENT_INVALID_FAILURE_TYPE.getMessage());
+                    .hasMessageContaining(ASSIGNMENT_FAILURE_TYPE_INVALID.getMessage());
         }
 
         @Test

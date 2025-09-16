@@ -34,7 +34,7 @@ public class MemberValidatorTest {
             // when & then
             assertThatThrownBy(() -> memberValidator.validateMemberDemote(recruitmentRounds, now))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(RECRUITMENT_ROUND_STARTDATE_ALREADY_PASSED.getMessage());
+                    .hasMessage(RECRUITMENT_ROUND_START_DATE_ALREADY_PASSED.getMessage());
         }
 
         @Test

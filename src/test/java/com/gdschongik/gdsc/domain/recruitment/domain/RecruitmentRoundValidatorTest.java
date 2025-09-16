@@ -217,7 +217,7 @@ public class RecruitmentRoundValidatorTest {
             assertThatThrownBy(() -> recruitmentRoundValidator.validateRecruitmentRoundUpdate(
                             START_DATE, END_DATE, LocalDateTime.now(), ROUND_TYPE, recruitmentRound, List.of()))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(RECRUITMENT_ROUND_STARTDATE_ALREADY_PASSED.getMessage());
+                    .hasMessage(RECRUITMENT_ROUND_START_DATE_ALREADY_PASSED.getMessage());
         }
     }
 }

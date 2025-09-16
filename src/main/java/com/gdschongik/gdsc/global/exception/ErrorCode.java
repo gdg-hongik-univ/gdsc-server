@@ -10,8 +10,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode {
     INTERNAL_ERROR(INTERNAL_SERVER_ERROR, "내부 서버 에러가 발생했습니다. 관리자에게 문의 바랍니다."),
-    METHOD_ARGUMENT_NULL(BAD_REQUEST, "인자는 null이 될 수 없습니다."),
-    METHOD_ARGUMENT_NOT_VALID(BAD_REQUEST, "인자가 유효하지 않습니다."),
+    METHOD_ARGUMENT_NOT_NULL(BAD_REQUEST, "인자는 null이 될 수 없습니다."),
+    METHOD_ARGUMENT_INVALID(BAD_REQUEST, "인자가 유효하지 않습니다."),
     REGEX_VIOLATION(BAD_REQUEST, "정규표현식을 위반했습니다."),
     FORBIDDEN_ACCESS(FORBIDDEN, "접근 권한이 없습니다."),
     SORT_NOT_SUPPORTED(BAD_REQUEST, "지원되지 않는 정렬 기준입니다."),
@@ -68,7 +68,7 @@ public enum ErrorCode {
     DISCORD_CODE_MISMATCH(CONFLICT, "디스코드 인증코드가 일치하지 않습니다."),
     DISCORD_ROLE_NOT_FOUND(NOT_FOUND, "디스코드 역할을 찾을 수 없습니다."),
     DISCORD_NOT_SIGNUP(INTERNAL_SERVER_ERROR, "아직 가입신청서를 작성하지 않은 회원입니다."),
-    DISCORD_NICKNAME_NOTNULL(INTERNAL_SERVER_ERROR, "닉네임은 빈 값이 될 수 없습니다."),
+    DISCORD_NICKNAME_NOT_NULL(INTERNAL_SERVER_ERROR, "닉네임은 빈 값이 될 수 없습니다."),
     DISCORD_MEMBER_NOT_FOUND(NOT_FOUND, "디스코드 멤버를 찾을 수 없습니다."),
     DISCORD_CHANNEL_NOT_FOUND(NOT_FOUND, "디스코드 채널을 찾을 수 없습니다."),
 
@@ -90,7 +90,7 @@ public enum ErrorCode {
     // RecruitmentRound
     RECRUITMENT_ROUND_NOT_FOUND(NOT_FOUND, "모집회차가 존재하지 않습니다."),
     RECRUITMENT_ROUND_TYPE_OVERLAP(BAD_REQUEST, "모집 차수가 중복됩니다."),
-    RECRUITMENT_ROUND_STARTDATE_ALREADY_PASSED(BAD_REQUEST, "이미 모집 시작일이 지난 모집회차입니다."),
+    RECRUITMENT_ROUND_START_DATE_ALREADY_PASSED(BAD_REQUEST, "이미 모집 시작일이 지난 모집회차입니다."),
     ROUND_ONE_DOES_NOT_EXIST(CONFLICT, "1차 모집이 존재하지 않습니다."),
 
     // Coupon
@@ -171,7 +171,7 @@ public enum ErrorCode {
     ORDER_FINAL_PAYMENT_AMOUNT_MISMATCH(CONFLICT, "주문 최종결제금액은 주문총액에서 할인금액을 뺀 값이어야 합니다."),
 
     // Assignment
-    ASSIGNMENT_INVALID_FAILURE_TYPE(CONFLICT, "유효하지 않은 제출 실패사유입니다."),
+    ASSIGNMENT_FAILURE_TYPE_INVALID(CONFLICT, "유효하지 않은 제출 실패사유입니다."),
     ASSIGNMENT_DEADLINE_INVALID(CONFLICT, "과제 마감 기한이 현재보다 빠릅니다."),
     ASSIGNMENT_STUDY_NOT_APPLIED(CONFLICT, "해당 스터디에 대한 수강신청 기록이 존재하지 않습니다."),
     ASSIGNMENT_SUBMIT_NOT_STARTED(CONFLICT, "아직 과제가 시작되지 않았습니다."),
