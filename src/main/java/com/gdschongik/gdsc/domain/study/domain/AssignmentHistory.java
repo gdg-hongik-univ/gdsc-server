@@ -103,7 +103,7 @@ public class AssignmentHistory extends BaseEntity {
 
     public void fail(SubmissionFailureType submissionFailureType) {
         if (submissionFailureType == NOT_SUBMITTED || submissionFailureType == NONE) {
-            throw new CustomException(ASSIGNMENT_INVALID_FAILURE_TYPE);
+            throw new CustomException(ASSIGNMENT_FAILURE_TYPE_INVALID);
         }
 
         this.submissionLink = null;

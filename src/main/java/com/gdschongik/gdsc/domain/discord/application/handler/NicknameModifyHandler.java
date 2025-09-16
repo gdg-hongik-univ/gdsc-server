@@ -34,7 +34,7 @@ public class NicknameModifyHandler implements DiscordEventHandler {
         }
 
         if (newNickname == null) {
-            throw new CustomException(ErrorCode.DISCORD_NICKNAME_NOTNULL);
+            throw new CustomException(ErrorCode.DISCORD_NICKNAME_NOT_NULL);
         }
 
         if (newNickname.equals(originalNickname)) {

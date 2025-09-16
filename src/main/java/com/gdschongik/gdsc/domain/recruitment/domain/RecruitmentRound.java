@@ -76,7 +76,7 @@ public class RecruitmentRound extends BaseEntity {
 
     public void validatePeriodNotStarted(LocalDateTime now) {
         if (now.isAfter(period.getStartDate())) {
-            throw new CustomException(RECRUITMENT_ROUND_STARTDATE_ALREADY_PASSED);
+            throw new CustomException(RECRUITMENT_ROUND_START_DATE_ALREADY_PASSED);
         }
     }
 
