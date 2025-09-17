@@ -223,6 +223,9 @@ public enum ErrorCode {
     AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED(CONFLICT, "뒤풀이 선입금 상태가 이미 요청 상태로 수정되어있습니다."),
     AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_NONE(CONFLICT, "결제 상태가 None 일 때는 뒤풀이 정산 상태를 수정할 수 없습니다."),
     AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED(CONFLICT, "뒤풀이 정산 상태가 이미 요청 상태로 수정되어있습니다."),
+
+    // Lock
+    LOCK_ACQUIRE_FAILED(INTERNAL_SERVER_ERROR, "락 획득에 실패했습니다. 다시 시도해주세요."),
     ;
 
     private final HttpStatus status;
