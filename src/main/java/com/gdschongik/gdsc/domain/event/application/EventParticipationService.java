@@ -236,6 +236,7 @@ public class EventParticipationService {
                 request.participant());
     }
 
+    // TODO: 현재 본행사, 뒤풀이 신청 제한 인원 이하인지 검증 추가
     @DistributedLock(key = "'event:' + #request.eventId()")
     @Transactional
     public void applyManual(EventManualApplyRequest request) {
@@ -310,6 +311,7 @@ public class EventParticipationService {
         }
     }
 
+    // TODO: 현재 본행사, 뒤풀이 신청 제한 인원 이하인지 검증 추가
     @DistributedLock(key = "'event:' + #request.eventId()")
     @Transactional
     public void applyOnline(EventApplyOnlineRequest request) {
