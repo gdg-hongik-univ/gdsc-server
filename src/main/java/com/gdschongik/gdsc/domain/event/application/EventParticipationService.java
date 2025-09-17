@@ -28,6 +28,7 @@ import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
+import com.gdschongik.gdsc.global.lock.DistributedLock;
 import java.util.List;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -235,6 +236,7 @@ public class EventParticipationService {
                 request.participant());
     }
 
+    @DistributedLock(key = "'event:' + #request.eventId()")
     @Transactional
     public void applyManual(EventManualApplyRequest request) {
         Event event =
@@ -308,6 +310,7 @@ public class EventParticipationService {
         }
     }
 
+    @DistributedLock(key = "'event:' + #request.eventId()")
     @Transactional
     public void applyOnline(EventApplyOnlineRequest request) {
         Event event =
