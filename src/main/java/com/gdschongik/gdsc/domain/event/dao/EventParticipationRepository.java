@@ -14,4 +14,6 @@ public interface EventParticipationRepository
     long countByEvent(Event event);
 
     boolean existsByEvent(Event event);
+
+    boolean existsByEventAndParticipantStudentId(Event event, String studentId);
 }

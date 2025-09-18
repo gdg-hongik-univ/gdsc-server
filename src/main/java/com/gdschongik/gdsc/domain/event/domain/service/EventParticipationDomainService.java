@@ -148,7 +148,9 @@ public class EventParticipationDomainService {
             @Nullable Member member,
             AfterPartyApplicationStatus afterPartyApplicationStatus,
             Event event,
-            LocalDateTime now) {
+            LocalDateTime now,
+            boolean isEventParticipationDuplicate) {
+        validateEventParticipationDuplicate(isEventParticipationDuplicate);
         validateEventApplicationPeriod(event, now);
         validateMemberWhenOnlyRegularRoleAllowedIfExists(event, member); // applyOnline에서만 수행
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
@@ -285,6 +287,15 @@ public class EventParticipationDomainService {
 
         if (member == null || !member.isRegular()) {
             throw new CustomException(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE);
+        }
+    }
+
+    /**
+     * 이벤트 중복 신청 여부를 검증합니다.
+     */
+    private void validateEventParticipationDuplicate(boolean isEventParticipationDuplicate) {
+        if (isEventParticipationDuplicate) {
+            throw new CustomException(PARTICIPATION_DUPLICATE);
         }
     }
 }
