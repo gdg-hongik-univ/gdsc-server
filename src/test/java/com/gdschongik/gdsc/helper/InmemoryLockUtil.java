@@ -3,6 +3,8 @@ package com.gdschongik.gdsc.helper;
 import com.gdschongik.gdsc.global.lock.LockUtil;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -11,38 +13,49 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InmemoryLockUtil implements LockUtil {
 
-    private final Map<String, Boolean> locks = new ConcurrentHashMap<>();
+    private final Map<String, ReentrantLock> locks = new ConcurrentHashMap<>();
 
     /**
      * 인메모리 락을 획득합니다.
-     * @param ignored 락 획득 대기 시간(초), 인메모리 구현에서는 사용하지 않음.
      */
-    public boolean acquireLock(String key, long ignored) {
-        Boolean previous = locks.putIfAbsent(key, true);
-        boolean acquired = previous == null;
+    public boolean acquireLock(String key, long timeoutSec) {
+        ReentrantLock lock = locks.computeIfAbsent(key, k -> new ReentrantLock());
 
-        if (acquired) {
-            log.info("[InMemoryLockUtil] 락 획득: {}", key);
-        } else {
-            log.info("[InMemoryLockUtil] 락 획득 실패: {}", key);
+        try {
+            boolean acquired = lock.tryLock(timeoutSec, TimeUnit.SECONDS);
+
+            if (acquired) {
+                log.info("[InMemoryLockUtil] 락 획득: {}", key);
+            } else {
+                log.info("[InMemoryLockUtil] 락 획득 실패: {}", key);
+            }
+
+            return acquired;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("[InMemoryLockUtil] 락 획득 중 인터럽트 발생: {}", key, e);
+            return false;
         }
-
-        return acquired;
     }
 
     /**
      * 인메모리 락을 해제합니다.
      */
     public boolean releaseLock(String lockName) {
-        Boolean removed = locks.remove(lockName);
-        boolean released = removed != null;
+        ReentrantLock lock = locks.get(lockName);
 
-        if (released) {
-            log.info("[InMemoryLockUtil] 락 해제: {}", lockName);
-        } else {
-            log.info("[InMemoryLockUtil] 락 해제 실패: {}", lockName);
+        if (lock == null) {
+            log.info("[InMemoryLockUtil] 락 해제 실패, 존재하지 않는 락: {}", lockName);
+            return false;
         }
 
-        return released;
+        try {
+            lock.unlock();
+            log.info("[InMemoryLockUtil] 락 해제: {}", lockName);
+            return true;
+        } catch (IllegalMonitorStateException e) {
+            log.error("[InMemoryLockUtil] 락 해제 실패, 현재 스레드가 락을 소유하고 있지 않음: {}", lockName, e);
+            return false;
+        }
     }
 }
