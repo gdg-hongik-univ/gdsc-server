@@ -240,12 +240,14 @@ public class EventParticipationService {
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
+        boolean isEventParticipationDuplicate = eventParticipationRepository.existsByEventAndParticipantStudentId(
+                event, request.participant().getStudentId());
         Participant participant = request.participant();
         Member memberByParticipant =
                 memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
 
-        EventParticipation participation =
-                eventParticipationDomainService.applyManual(participant, memberByParticipant, event);
+        EventParticipation participation = eventParticipationDomainService.applyManual(
+                participant, memberByParticipant, event, isEventParticipationDuplicate);
         eventParticipationRepository.save(participation);
 
         log.info(

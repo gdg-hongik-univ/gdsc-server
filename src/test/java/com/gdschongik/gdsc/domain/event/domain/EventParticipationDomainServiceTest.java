@@ -473,9 +473,11 @@ public class EventParticipationDomainServiceTest {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
+            boolean isEventParticipationDuplicate = false;
 
             // when
-            EventParticipation participation = domainService.applyManual(participant, null, event);
+            EventParticipation participation =
+                    domainService.applyManual(participant, null, event, isEventParticipationDuplicate);
 
             // then
             assertThat(participation.getMemberId()).isNull();
@@ -489,12 +491,27 @@ public class EventParticipationDomainServiceTest {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             Event event = fixtureHelper.createEventWithoutAfterParty(1L);
+            boolean isEventParticipationDuplicate = false;
 
             // when
-            EventParticipation participation = domainService.applyManual(participant, null, event);
+            EventParticipation participation =
+                    domainService.applyManual(participant, null, event, isEventParticipationDuplicate);
 
             // then
             assertThat(participation.getAfterPartyApplicationStatus()).isEqualTo(AfterPartyApplicationStatus.NONE);
+        }
+
+        @Test
+        void 이미_신청한_이벤트를_다시_신청하면_실패한다() {
+            // given
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
+            Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
+            boolean isEventParticipationDuplicate = true;
+
+            // when & then
+            assertThatThrownBy(() -> domainService.applyManual(participant, null, event, isEventParticipationDuplicate))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(PARTICIPATION_DUPLICATE.getMessage());
         }
     }
 
