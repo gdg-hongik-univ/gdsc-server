@@ -6,7 +6,6 @@ import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.validation.constraints.NotNull;
 import java.lang.reflect.Method;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,7 +18,6 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Order(1) // 트랜잭션 AOP보다 먼저 실행되어야 합니다.
 @Aspect
 @Component

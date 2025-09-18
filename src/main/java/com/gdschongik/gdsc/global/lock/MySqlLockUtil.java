@@ -29,9 +29,9 @@ public class MySqlLockUtil implements LockUtil {
         boolean acquired = result != null && result == 1; // GET_LOCK 결과: 1(성공), 0(타임아웃), null(에러)
 
         if (acquired) {
-            log.info("[DistributedLock] 락 획득 성공: {}", lockName);
+            log.info("[MySqlLockUtil] 락 획득 성공: {}", lockName);
         } else {
-            log.info("[DistributedLock] 락 획득 실패: {}", lockName);
+            log.info("[MySqlLockUtil] 락 획득 실패: {}", lockName);
         }
 
         return acquired;
@@ -47,9 +47,9 @@ public class MySqlLockUtil implements LockUtil {
         boolean released = result != null && result == 1; // RELEASE_LOCK 결과: 1(성공), 0(타임아웃), null(에러)
 
         if (released) {
-            log.info("[DistributedLock] 락 해제 성공: {}", lockName);
+            log.info("[MySqlLockUtil] 락 해제 성공: {}", lockName);
         } else {
-            log.info("[DistributedLock] 락 해제 실패: {}", lockName);
+            log.info("[MySqlLockUtil] 락 해제 실패: {}", lockName);
         }
 
         return released;
