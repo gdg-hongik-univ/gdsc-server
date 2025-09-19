@@ -197,7 +197,9 @@ public class EventParticipationDomainService {
     /**
      * 뒤풀이 현장등록을 통해 뒤풀이에 확정 참여하는 메서드입니다.
      */
-    public EventParticipation joinOnsite(Participant participant, @Nullable Member member, Event event) {
+    public EventParticipation joinOnsite(
+            Participant participant, @Nullable Member member, Event event, boolean isEventParticipationDuplicate) {
+        validateEventParticipationDuplicate(isEventParticipationDuplicate);
         PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
         PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
 
