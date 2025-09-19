@@ -148,7 +148,9 @@ public class EventParticipationDomainService {
             @Nullable Member member,
             AfterPartyApplicationStatus afterPartyApplicationStatus,
             Event event,
-            LocalDateTime now) {
+            LocalDateTime now,
+            boolean isEventParticipationDuplicate) {
+        validateEventParticipationDuplicate(isEventParticipationDuplicate);
         validateEventApplicationPeriod(event, now);
         validateMemberWhenOnlyRegularRoleAllowedIfExists(event, member); // applyOnline에서만 수행
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
@@ -172,7 +174,9 @@ public class EventParticipationDomainService {
      * 주로 본행사 현장등록 상황에서 뒤풀이 신청을 위해 사용됩니다. (뒤풀이 신청상태 APPLIED)
      * 뒤풀이가 없는 행사인 경우에도 히스토리를 남기기 위해 사용됩니다. (뒤풀이 신청상태 NONE)
      */
-    public EventParticipation applyManual(Participant participant, @Nullable Member member, Event event) {
+    public EventParticipation applyManual(
+            Participant participant, @Nullable Member member, Event event, boolean isEventParticipationDuplicate) {
+        validateEventParticipationDuplicate(isEventParticipationDuplicate);
         // 뒤풀이가 존재하는 경우에만 항상 신청 처리
         AfterPartyApplicationStatus afterPartyApplicationStatus = event.afterPartyExists() ? APPLIED : NONE;
 
@@ -285,6 +289,15 @@ public class EventParticipationDomainService {
 
         if (member == null || !member.isRegular()) {
             throw new CustomException(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE);
+        }
+    }
+
+    /**
+     * 이벤트 중복 신청 여부를 검증합니다.
+     */
+    private void validateEventParticipationDuplicate(boolean isEventParticipationDuplicate) {
+        if (isEventParticipationDuplicate) {
+            throw new CustomException(PARTICIPATION_DUPLICATE);
         }
     }
 }
