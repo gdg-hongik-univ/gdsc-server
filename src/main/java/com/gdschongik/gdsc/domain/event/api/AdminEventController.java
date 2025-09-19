@@ -1,7 +1,6 @@
 package com.gdschongik.gdsc.domain.event.api;
 
 import com.gdschongik.gdsc.domain.event.application.EventService;
-import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
@@ -9,7 +8,6 @@ import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -41,8 +39,9 @@ public class AdminEventController {
 
     @Operation(summary = "이벤트 검색", description = "이벤트를 검색합니다.")
     @GetMapping("/search")
-    public ResponseEntity<List<EventDto>> searchEvent(@RequestParam String name) {
-        var response = eventService.searchEvent(name);
+    public ResponseEntity<Page<EventResponse>> searchEvent(
+            @RequestParam String name, @ParameterObject Pageable pageable) {
+        var response = eventService.searchEvent(name, pageable);
         return ResponseEntity.ok(response);
     }
 
