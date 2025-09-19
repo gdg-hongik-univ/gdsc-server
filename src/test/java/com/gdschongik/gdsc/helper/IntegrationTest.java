@@ -9,6 +9,7 @@ import static com.gdschongik.gdsc.global.common.constant.StudyConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.TemporalConstant.*;
 import static org.mockito.Mockito.*;
 
+import com.gdschongik.gdsc.config.TestLockConfig;
 import com.gdschongik.gdsc.config.TestSyncExecutorConfig;
 import com.gdschongik.gdsc.domain.common.model.SemesterType;
 import com.gdschongik.gdsc.domain.common.vo.Money;
@@ -66,7 +67,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
-@Import(TestSyncExecutorConfig.class)
+@Import({TestSyncExecutorConfig.class, TestLockConfig.class})
 @SpringBootTest
 @ActiveProfiles("test")
 public abstract class IntegrationTest {

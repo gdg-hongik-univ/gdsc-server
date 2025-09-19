@@ -29,6 +29,7 @@ import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
+import com.gdschongik.gdsc.global.lock.DistributedLock;
 import java.util.List;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -236,6 +237,8 @@ public class EventParticipationService {
                 request.participant());
     }
 
+    // TODO: 현재 본행사, 뒤풀이 신청 제한 인원 이하인지 검증 추가
+    @DistributedLock(key = "'event:' + #request.eventId()")
     @Transactional
     public void applyManual(EventManualApplyRequest request) {
         Event event =
@@ -311,6 +314,8 @@ public class EventParticipationService {
         }
     }
 
+    // TODO: 현재 본행사, 뒤풀이 신청 제한 인원 이하인지 검증 추가
+    @DistributedLock(key = "'event:' + #request.eventId()")
     @Transactional
     public void applyOnline(EventApplyOnlineRequest request) {
         Event event =
