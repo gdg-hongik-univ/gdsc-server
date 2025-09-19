@@ -6,6 +6,7 @@ import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusesUpdateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventManualApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventOnsiteJoinRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredManualApplyRequest;
@@ -148,6 +149,15 @@ public class AdminEventParticipationController {
     @PostMapping("/apply/manual")
     public ResponseEntity<Void> applyManual(@Valid @RequestBody EventManualApplyRequest request) {
         eventParticipationService.applyManual(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(
+            summary = "뒤풀이 현장 신청",
+            description = "관리자가 참여자의 정보를 바탕으로 뒤풀이를 현장에서 수동으로 신청 처리합니다. 뒤풀이 신청 상태가 참석으로 처리됩니다.")
+    @PostMapping("/join/onsite")
+    public ResponseEntity<Void> joinOnsite(@Valid @RequestBody EventOnsiteJoinRequest request) {
+        eventParticipationService.joinOnsite(request);
         return ResponseEntity.ok().build();
     }
 }

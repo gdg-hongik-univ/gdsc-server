@@ -17,6 +17,7 @@ import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusesUpdateRequ
 import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateTarget;
 import com.gdschongik.gdsc.domain.event.dto.request.EventApplyOnlineRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventManualApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventOnsiteJoinRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
 import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredManualApplyRequest;
@@ -333,6 +334,28 @@ public class EventParticipationService {
 
         log.info(
                 "[EventParticipationService] 이벤트 참여 신청: eventId={}, memberStudentId={}",
+                event.getId(),
+                participant.getStudentId());
+    }
+
+    @Transactional
+    public void joinOnsite(EventOnsiteJoinRequest request) {
+        Event event =
+                eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
+        boolean isEventParticipationDuplicate = eventParticipationRepository.existsByEventAndParticipantStudentId(
+                event, request.participant().getStudentId());
+        Participant participant = request.participant();
+        Member memberByParticipant =
+                memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
+
+        EventParticipation eventParticipation = eventParticipationDomainService.joinOnsite(
+                participant, memberByParticipant, event, isEventParticipationDuplicate);
+
+        eventParticipationRepository.save(eventParticipation);
+
+        log.info(
+                "[EventParticipationService] 뒤풀이 현장등록: eventId={}, memberStudentId={}",
                 event.getId(),
                 participant.getStudentId());
     }
