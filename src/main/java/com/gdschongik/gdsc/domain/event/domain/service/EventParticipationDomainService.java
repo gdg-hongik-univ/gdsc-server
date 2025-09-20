@@ -149,9 +149,12 @@ public class EventParticipationDomainService {
             AfterPartyApplicationStatus afterPartyApplicationStatus,
             Event event,
             LocalDateTime now,
-            boolean isEventParticipationDuplicate) {
+            boolean isEventParticipationDuplicate,
+            long currentMainEventApplicantCount,
+            long currentAfterPartyApplicantCount) {
         validateEventParticipationDuplicate(isEventParticipationDuplicate);
         validateEventApplicationPeriod(event, now);
+        validateMaxApplicantCount(event, currentMainEventApplicantCount, currentAfterPartyApplicantCount);
         validateMemberWhenOnlyRegularRoleAllowedIfExists(event, member); // applyOnline에서만 수행
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
 
@@ -300,6 +303,23 @@ public class EventParticipationDomainService {
     private void validateEventParticipationDuplicate(boolean isEventParticipationDuplicate) {
         if (isEventParticipationDuplicate) {
             throw new CustomException(PARTICIPATION_DUPLICATE);
+        }
+    }
+
+    /**
+     * 최대 신청자 수 제한을 검증하는 메서드입니다.
+     * 온라인 신청에만 사용됩니다.
+     */
+    private void validateMaxApplicantCount(
+            Event event, long currentMainEventApplicantCount, long currentAfterPartyApplicantCount) {
+        Integer mainEventMaxApplicantCount = event.getMainEventMaxApplicantCount();
+        if (mainEventMaxApplicantCount != null && currentMainEventApplicantCount >= mainEventMaxApplicantCount) {
+            throw new CustomException(EVENT_NOT_APPLICABLE_MAIN_EVENT_MAX_APPLICANT_COUNT_EXCEEDED);
+        }
+
+        Integer afterPartyMaxApplicantCount = event.getAfterPartyMaxApplicantCount();
+        if (afterPartyMaxApplicantCount != null && currentAfterPartyApplicantCount >= afterPartyMaxApplicantCount) {
+            throw new CustomException(EVENT_NOT_APPLICABLE_AFTER_PARTY_MAX_APPLICANT_COUNT_EXCEEDED);
         }
     }
 }

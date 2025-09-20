@@ -200,6 +200,8 @@ public enum ErrorCode {
     EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED(CONFLICT, "뒤풀이가 비활성화된 이벤트에 뒤풀이 신청을 할 수 없습니다."),
     EVENT_NOT_APPLICABLE_MEMBER_INFO_NOT_SATISFIED(CONFLICT, "기본 회원정보 작성이 완료되지 않은 회원은 이벤트에 신청할 수 없습니다."),
     EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED(CONFLICT, "기본 회원정보가 작성된 회원의 학번으로는 비회원 신청을 할 수 없습니다."),
+    EVENT_NOT_APPLICABLE_MAIN_EVENT_MAX_APPLICANT_COUNT_EXCEEDED(CONFLICT, "본 행사 최대 신청자 수를 초과했습니다."),
+    EVENT_NOT_APPLICABLE_AFTER_PARTY_MAX_APPLICANT_COUNT_EXCEEDED(CONFLICT, "뒤풀이 최대 신청자 수를 초과했습니다."),
     EVENT_NOT_UPDATABLE_MAX_APPLICANT_COUNT_INVALID(CONFLICT, "최대 신청자 수를 현재 신청자 수보다 적게 변경할 수 없습니다."),
     EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT(CONFLICT, "이미 신청자가 존재하는 이벤트는 폼 관련 항목을 수정할 수 없습니다."),
     EVENT_NOT_UPDATABLE_PAYMENT_STATUS_INVALID(CONFLICT, "뒤풀이가 비활성화된 이벤트는 결제 관련 항목을 활성화할 수 없습니다."),
