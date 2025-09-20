@@ -237,8 +237,6 @@ public class EventParticipationService {
                 request.participant());
     }
 
-    // TODO: 현재 본행사, 뒤풀이 신청 제한 인원 이하인지 검증 추가
-    @DistributedLock(key = "'event:' + #request.eventId()")
     @Transactional
     public void applyManual(EventManualApplyRequest request) {
         Event event =
@@ -314,7 +312,6 @@ public class EventParticipationService {
         }
     }
 
-    // TODO: 현재 본행사, 뒤풀이 신청 제한 인원 이하인지 검증 추가
     @DistributedLock(key = "'event:' + #request.eventId()")
     @Transactional
     public void applyOnline(EventApplyOnlineRequest request) {
@@ -326,6 +323,8 @@ public class EventParticipationService {
         Participant participant = request.participant();
         Member memberByParticipant =
                 memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
+        long mainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
+        long afterPartyApplicantCount = eventParticipationRepository.countAfterPartyApplicantsByEvent(event);
 
         EventParticipation eventParticipation = eventParticipationDomainService.applyOnline(
                 participant,
@@ -333,7 +332,9 @@ public class EventParticipationService {
                 request.afterPartyApplicationStatus(),
                 event,
                 now(),
-                isEventParticipationDuplicate);
+                isEventParticipationDuplicate,
+                mainEventApplicantCount,
+                afterPartyApplicantCount);
 
         eventParticipationRepository.save(eventParticipation);
 
