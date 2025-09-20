@@ -309,10 +309,19 @@ public class EventParticipationDomainServiceTest {
             Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED); // 모두 참석 가능 (정회원 전용 비활성화)
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
             boolean isEventParticipationDuplicate = false;
+            long mainEventMaxApplicantCount = 0;
+            long currentMainEventApplicantCount = 0;
 
             // when
             EventParticipation participation = domainService.applyOnline(
-                    participant, regularMember, status, event, now, isEventParticipationDuplicate);
+                    participant,
+                    regularMember,
+                    status,
+                    event,
+                    now,
+                    isEventParticipationDuplicate,
+                    mainEventMaxApplicantCount,
+                    currentMainEventApplicantCount);
 
             // then
             assertThat(participation.getMemberId()).isEqualTo(regularMember.getId());
@@ -329,10 +338,19 @@ public class EventParticipationDomainServiceTest {
             Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED); // 모두 참석 가능 (정회원 전용 비활성화)
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
             boolean isEventParticipationDuplicate = false;
+            long mainEventMaxApplicantCount = 0;
+            long currentMainEventApplicantCount = 0;
 
             // when
             EventParticipation participation = domainService.applyOnline(
-                    participant, guestMember, status, event, now, isEventParticipationDuplicate);
+                    participant,
+                    guestMember,
+                    status,
+                    event,
+                    now,
+                    isEventParticipationDuplicate,
+                    mainEventMaxApplicantCount,
+                    currentMainEventApplicantCount);
 
             // then
             assertThat(participation.getMemberId()).isEqualTo(guestMember.getId());
@@ -348,10 +366,19 @@ public class EventParticipationDomainServiceTest {
             Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED); // 모두 참석 가능 (정회원 전용 비활성화)
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
             boolean isEventParticipationDuplicate = false;
+            long mainEventMaxApplicantCount = 0;
+            long currentMainEventApplicantCount = 0;
 
             // when
-            EventParticipation participation =
-                    domainService.applyOnline(participant, null, status, event, now, isEventParticipationDuplicate);
+            EventParticipation participation = domainService.applyOnline(
+                    participant,
+                    null,
+                    status,
+                    event,
+                    now,
+                    isEventParticipationDuplicate,
+                    mainEventMaxApplicantCount,
+                    currentMainEventApplicantCount);
 
             // then
             assertThat(participation.getMemberId()).isNull();
@@ -368,10 +395,19 @@ public class EventParticipationDomainServiceTest {
             Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.ENABLED); // 정회원 전용
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
             boolean isEventParticipationDuplicate = false;
+            long mainEventMaxApplicantCount = 0;
+            long currentMainEventApplicantCount = 0;
 
             // when & then
             assertThatThrownBy(() -> domainService.applyOnline(
-                            participant, guestMember, status, event, now, isEventParticipationDuplicate))
+                            participant,
+                            guestMember,
+                            status,
+                            event,
+                            now,
+                            isEventParticipationDuplicate,
+                            mainEventMaxApplicantCount,
+                            currentMainEventApplicantCount))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
         }
@@ -384,10 +420,19 @@ public class EventParticipationDomainServiceTest {
             Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.ENABLED); // 정회원 전용
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
             boolean isEventParticipationDuplicate = false;
+            long mainEventMaxApplicantCount = 0;
+            long currentMainEventApplicantCount = 0;
 
             // when & then
             assertThatThrownBy(() -> domainService.applyOnline(
-                            participant, null, status, event, now, isEventParticipationDuplicate))
+                            participant,
+                            null,
+                            status,
+                            event,
+                            now,
+                            isEventParticipationDuplicate,
+                            mainEventMaxApplicantCount,
+                            currentMainEventApplicantCount))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE.getMessage());
         }
@@ -402,10 +447,19 @@ public class EventParticipationDomainServiceTest {
             Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
             LocalDateTime invalidDate = LocalDateTime.of(2025, 4, 1, 0, 0);
             boolean isEventParticipationDuplicate = false;
+            long mainEventMaxApplicantCount = 0;
+            long currentMainEventApplicantCount = 0;
 
             // when & then
             assertThatThrownBy(() -> domainService.applyOnline(
-                            participant, regularMember, status, event, invalidDate, isEventParticipationDuplicate))
+                            participant,
+                            regularMember,
+                            status,
+                            event,
+                            invalidDate,
+                            isEventParticipationDuplicate,
+                            mainEventMaxApplicantCount,
+                            currentMainEventApplicantCount))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_APPLICATION_PERIOD_INVALID.getMessage());
         }
@@ -420,10 +474,19 @@ public class EventParticipationDomainServiceTest {
             Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
             boolean isEventParticipationDuplicate = false;
+            long mainEventMaxApplicantCount = 0;
+            long currentMainEventApplicantCount = 0;
 
             // when & then
             assertThatThrownBy(() -> domainService.applyOnline(
-                            participant, regularMember, noneStatus, event, now, isEventParticipationDuplicate))
+                            participant,
+                            regularMember,
+                            noneStatus,
+                            event,
+                            now,
+                            isEventParticipationDuplicate,
+                            mainEventMaxApplicantCount,
+                            currentMainEventApplicantCount))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_NONE.getMessage());
         }
@@ -438,10 +501,19 @@ public class EventParticipationDomainServiceTest {
             Event event = fixtureHelper.createEventWithoutAfterParty(1L);
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
             boolean isEventParticipationDuplicate = false;
+            long mainEventMaxApplicantCount = 0;
+            long currentMainEventApplicantCount = 0;
 
             // when & then
             assertThatThrownBy(() -> domainService.applyOnline(
-                            participant, regularMember, appliedStatus, event, now, isEventParticipationDuplicate))
+                            participant,
+                            regularMember,
+                            appliedStatus,
+                            event,
+                            now,
+                            isEventParticipationDuplicate,
+                            mainEventMaxApplicantCount,
+                            currentMainEventApplicantCount))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED.getMessage());
         }
@@ -455,13 +527,72 @@ public class EventParticipationDomainServiceTest {
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
             Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED); // 모두 참석 가능 (정회원 전용 비활성화)
             LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
-            boolean isEventParticipationDuplicate = true;
+            boolean isEventParticipationDuplicate = true; // 이미 신청한 이벤트
+            long mainEventMaxApplicantCount = 0;
+            long currentMainEventApplicantCount = 0;
 
             // when & then
             assertThatThrownBy(() -> domainService.applyOnline(
-                            participant, regularMember, status, event, now, isEventParticipationDuplicate))
+                            participant,
+                            regularMember,
+                            status,
+                            event,
+                            now,
+                            isEventParticipationDuplicate,
+                            mainEventMaxApplicantCount,
+                            currentMainEventApplicantCount))
                     .isInstanceOf(CustomException.class)
                     .hasMessageContaining(PARTICIPATION_DUPLICATE.getMessage());
+        }
+
+        @Test
+        void 본_행사_최대_신청자_수를_초과한_경우_실패한다() {
+            // given
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
+            Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
+            boolean isEventParticipationDuplicate = false;
+            int mainEventMaxApplicantCount = MAIN_EVENT_MAX_APPLICATION_COUNT; // 이미 최대 신청자 수에 도달
+            int currentMainEventApplicantCount = 0;
+
+            // when & then
+            assertThatThrownBy(() -> domainService.applyOnline(
+                            participant,
+                            null,
+                            status,
+                            event,
+                            now,
+                            isEventParticipationDuplicate,
+                            mainEventMaxApplicantCount,
+                            currentMainEventApplicantCount))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_MAIN_EVENT_MAX_APPLICANT_COUNT_EXCEEDED.getMessage());
+        }
+
+        @Test
+        void 뒤풀이_최대_신청자_수를_초과한_경우_실패한다() {
+            // given
+            Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
+            AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
+            Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
+            LocalDateTime now = LocalDateTime.of(2025, 3, 1, 0, 0);
+            boolean isEventParticipationDuplicate = false;
+            int afterPartyMaxApplicantCount = 0;
+            int currentAfterPartyApplicantCount = AFTER_PARTY_MAX_APPLICATION_COUNT; // 이미 최대 신청자 수에 도달
+
+            // when & then
+            assertThatThrownBy(() -> domainService.applyOnline(
+                            participant,
+                            null,
+                            status,
+                            event,
+                            now,
+                            isEventParticipationDuplicate,
+                            afterPartyMaxApplicantCount,
+                            currentAfterPartyApplicantCount))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessageContaining(EVENT_NOT_APPLICABLE_AFTER_PARTY_MAX_APPLICANT_COUNT_EXCEEDED.getMessage());
         }
     }
 
