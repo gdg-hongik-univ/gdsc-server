@@ -149,9 +149,13 @@ public class EventParticipationDomainService {
             AfterPartyApplicationStatus afterPartyApplicationStatus,
             Event event,
             LocalDateTime now,
-            boolean isEventParticipationDuplicate) {
+            boolean isEventParticipationDuplicate,
+            long currentMainEventApplicantCount,
+            long currentAfterPartyApplicantCount) {
         validateEventParticipationDuplicate(isEventParticipationDuplicate);
         validateEventApplicationPeriod(event, now);
+        validateMaxApplicantCount(
+                event, afterPartyApplicationStatus, currentMainEventApplicantCount, currentAfterPartyApplicantCount);
         validateMemberWhenOnlyRegularRoleAllowedIfExists(event, member); // applyOnline에서만 수행
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
 
@@ -300,6 +304,30 @@ public class EventParticipationDomainService {
     private void validateEventParticipationDuplicate(boolean isEventParticipationDuplicate) {
         if (isEventParticipationDuplicate) {
             throw new CustomException(PARTICIPATION_DUPLICATE);
+        }
+    }
+
+    /**
+     * 최대 신청자 수 제한을 검증하는 메서드입니다.
+     * 온라인 신청에만 사용됩니다.
+     */
+    private void validateMaxApplicantCount(
+            Event event,
+            AfterPartyApplicationStatus afterPartyApplicationStatus,
+            long currentMainEventApplicantCount,
+            long currentAfterPartyApplicantCount) {
+        Integer mainEventMaxApplicantCount = event.getMainEventMaxApplicantCount();
+        boolean isMainEventApplicationCountExceeded =
+                mainEventMaxApplicantCount != null && currentMainEventApplicantCount >= mainEventMaxApplicantCount;
+        if (isMainEventApplicationCountExceeded) {
+            throw new CustomException(EVENT_NOT_APPLICABLE_MAIN_EVENT_MAX_APPLICANT_COUNT_EXCEEDED);
+        }
+
+        Integer afterPartyMaxApplicantCount = event.getAfterPartyMaxApplicantCount();
+        boolean isAfterPartyApplicationCountExceeded =
+                afterPartyMaxApplicantCount != null && currentAfterPartyApplicantCount >= afterPartyMaxApplicantCount;
+        if (afterPartyApplicationStatus.isApplied() && isAfterPartyApplicationCountExceeded) {
+            throw new CustomException(EVENT_NOT_APPLICABLE_AFTER_PARTY_MAX_APPLICANT_COUNT_EXCEEDED);
         }
     }
 }
