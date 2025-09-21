@@ -571,7 +571,7 @@ public class EventParticipationDomainServiceTest {
         }
 
         @Test
-        void 뒤풀이_최대_신청자_수를_초과한_경우_실패한다() {
+        void 뒤풀이_신청_시_뒤풀이_최대_신청자_수를_초과한_경우_실패한다() {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             AfterPartyApplicationStatus status = AfterPartyApplicationStatus.APPLIED;
