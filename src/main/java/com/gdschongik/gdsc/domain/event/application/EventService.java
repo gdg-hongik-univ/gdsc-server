@@ -58,9 +58,14 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public List<EventDto> searchEvent(String name) {
-        List<Event> events = eventRepository.findAllByNameContains(name);
-        return events.stream().map(EventDto::from).toList();
+    public Page<EventResponse> searchEvent(String name, Pageable pageable) {
+        Page<Event> events = eventRepository.findAllByNameContains(name, pageable);
+
+        List<EventResponse> response = events.stream()
+                .map(event -> EventResponse.of(event, eventParticipationRepository.countByEvent(event)))
+                .toList();
+
+        return new PageImpl<>(response, pageable, events.getTotalElements());
     }
 
     @DistributedLock(key = "'event:' + #eventId")
