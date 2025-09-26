@@ -37,7 +37,7 @@ public class AdminEventController {
     @PostMapping
     public ResponseEntity<EventCreateResponse> createEvent(@Valid @RequestBody EventCreateRequest request) {
         var response = eventService.createEvent(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "이벤트 검색", description = "이벤트를 검색합니다.")
