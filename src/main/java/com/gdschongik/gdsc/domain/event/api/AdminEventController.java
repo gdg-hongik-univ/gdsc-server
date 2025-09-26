@@ -5,6 +5,7 @@ import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
+import com.gdschongik.gdsc.domain.event.dto.response.EventCreateResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,8 +35,8 @@ public class AdminEventController {
 
     @Operation(summary = "행사 생성", description = "행사를 생성합니다.")
     @PostMapping
-    public ResponseEntity<Void> createEvent(@Valid @RequestBody EventCreateRequest request) {
-        eventService.createEvent(request);
+    public ResponseEntity<EventCreateResponse> createEvent(@Valid @RequestBody EventCreateRequest request) {
+        var response = eventService.createEvent(request);
         return ResponseEntity.ok().build();
     }
 
