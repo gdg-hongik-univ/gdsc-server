@@ -10,6 +10,7 @@ import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
+import com.gdschongik.gdsc.domain.event.dto.response.EventCreateResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.lock.DistributedLock;
@@ -43,7 +44,7 @@ public class EventService {
     }
 
     @Transactional
-    public void createEvent(EventCreateRequest request) {
+    public EventCreateResponse createEvent(EventCreateRequest request) {
         Event event = Event.create(
                 request.name(),
                 request.venue(),
@@ -55,6 +56,7 @@ public class EventService {
         eventRepository.save(event);
 
         log.info("[EventService] 이벤트 생성: eventId={}", event.getId());
+        return EventCreateResponse.of(event.getId());
     }
 
     @Transactional(readOnly = true)
