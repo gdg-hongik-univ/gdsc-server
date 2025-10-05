@@ -14,6 +14,7 @@ import com.gdschongik.gdsc.domain.event.dto.response.EventCreateResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.lock.DistributedLock;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -117,6 +118,9 @@ public class EventService {
     @Transactional(readOnly = true)
     public EventDto getEvent(Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        long currentMainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
+
+        eventDomainService.validateParticipantViewable(event, LocalDateTime.now(), currentMainEventApplicantCount);
 
         return EventDto.from(event);
     }
