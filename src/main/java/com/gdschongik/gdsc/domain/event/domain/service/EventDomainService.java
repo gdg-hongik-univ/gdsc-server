@@ -36,7 +36,8 @@ public class EventDomainService {
         validateUpdateMaxApplicantCount(currentAfterPartyApplicantCount, afterPartyMaxApplicantCount);
 
         if (event.getRegularRoleOnlyStatus() != regularRoleOnlyStatus) {
-            validateAlreadyExistsApplicant(currentMainEventApplicantCount);
+            boolean eventParticipationExists = currentMainEventApplicantCount > 0;
+            validateAlreadyExistsEventParticipation(eventParticipationExists);
         }
 
         event.updateBasicInfo(
@@ -50,15 +51,6 @@ public class EventDomainService {
     }
 
     /**
-     * 이미 신청자가 존재하는 경우 예외를 발생시킵니다.
-     */
-    private void validateAlreadyExistsApplicant(long currentMainEventApplicantCount) {
-        if (currentMainEventApplicantCount > 0) {
-            throw new CustomException(EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT);
-        }
-    }
-
-    /**
      * 이벤트의 최대 신청자 수를 변경할 때, 현재 신청자 수보다 낮게 설정하는 경우 예외를 발생시킵니다.
      */
     private void validateUpdateMaxApplicantCount(long currentApplicantCount, @Nullable Integer newMaxApplicantCount) {
@@ -68,6 +60,15 @@ public class EventDomainService {
 
         if (currentApplicantCount > newMaxApplicantCount) {
             throw new CustomException(EVENT_NOT_UPDATABLE_MAX_APPLICANT_COUNT_INVALID);
+        }
+    }
+
+    /**
+     * 이미 신청자가 존재하는 경우 예외를 발생시킵니다.
+     */
+    private void validateAlreadyExistsEventParticipation(boolean eventParticipationExists) {
+        if (eventParticipationExists) {
+            throw new CustomException(EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT);
         }
     }
 
@@ -94,15 +95,6 @@ public class EventDomainService {
                 postPaymentStatus,
                 rsvpQuestionStatus,
                 noticeConfirmQuestionStatus);
-    }
-
-    /**
-     * 이미 신청자가 존재하는 경우 예외를 발생시킵니다.
-     */
-    private void validateAlreadyExistsEventParticipation(boolean eventParticipationExists) {
-        if (eventParticipationExists) {
-            throw new CustomException(EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT);
-        }
     }
 
     /**
