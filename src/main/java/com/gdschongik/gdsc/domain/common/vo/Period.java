@@ -63,6 +63,7 @@ public final class Period {
      * 현재 시간이 기간 내에 있는지 확인합니다.
      * 시작일시는 포함하고 종료일시는 포함하지 않습니다.
      */
+    @JsonIgnore
     public boolean isWithin(LocalDateTime now) {
         return now.isAfter(startDate) && now.isBefore(endDate) || now.isEqual(startDate);
     }
