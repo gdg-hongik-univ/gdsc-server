@@ -4,6 +4,7 @@ import static com.gdschongik.gdsc.domain.member.domain.Department.*;
 import static com.gdschongik.gdsc.domain.member.domain.MemberManageRole.ADMIN;
 import static com.gdschongik.gdsc.domain.member.domain.MemberStudyRole.MENTOR;
 import static com.gdschongik.gdsc.global.common.constant.CouponConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.MemberConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.RecruitmentConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.StudyConstant.*;
@@ -17,6 +18,8 @@ import com.gdschongik.gdsc.domain.common.vo.Semester;
 import com.gdschongik.gdsc.domain.coupon.domain.Coupon;
 import com.gdschongik.gdsc.domain.coupon.domain.CouponType;
 import com.gdschongik.gdsc.domain.coupon.domain.IssuedCoupon;
+import com.gdschongik.gdsc.domain.event.domain.Event;
+import com.gdschongik.gdsc.domain.event.domain.UsageStatus;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.membership.domain.Membership;
 import com.gdschongik.gdsc.domain.recruitment.domain.Recruitment;
@@ -160,5 +163,34 @@ public class FixtureHelper {
         study.getStudySessions().forEach(session -> setId(session, currentStudySessionId.getAndIncrement()));
 
         return study;
+    }
+
+    public Event createEventWithAfterParty(Long id, UsageStatus regularRoleOnlyStatus) {
+        Event event = Event.create(
+                EVENT_NAME,
+                VENUE,
+                EVENT_START_AT,
+                EVENT_APPLICATION_PERIOD,
+                regularRoleOnlyStatus,
+                MAIN_EVENT_MAX_APPLICATION_COUNT,
+                AFTER_PARTY_MAX_APPLICATION_COUNT);
+
+        setId(event, id);
+        return event;
+    }
+
+    public Event createEventWithoutAfterParty(Long id) {
+        Event event = Event.create(
+                EVENT_NAME,
+                VENUE,
+                EVENT_START_AT,
+                EVENT_APPLICATION_PERIOD,
+                REGULAR_ROLE_ONLY_STATUS,
+                MAIN_EVENT_MAX_APPLICATION_COUNT,
+                AFTER_PARTY_MAX_APPLICATION_COUNT);
+
+        setId(event, id);
+        ReflectionTestUtils.setField(event, "afterPartyStatus", UsageStatus.DISABLED);
+        return event;
     }
 }

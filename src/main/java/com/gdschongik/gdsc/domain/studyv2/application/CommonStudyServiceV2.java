@@ -10,6 +10,7 @@ import com.gdschongik.gdsc.domain.studyv2.dto.dto.StudyCommonDto;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,16 +26,12 @@ public class CommonStudyServiceV2 {
         return StudyCommonDto.from(study);
     }
 
-    /**
-     * 이벤트 핸들러에서 사용되므로, `@Transactional` 을 사용하지 않습니다.
-     */
+    @Transactional
     public void deleteAttendance(Long studyId, Long memberId) {
         attendanceV2Repository.deleteByStudyIdAndMemberId(studyId, memberId);
     }
 
-    /**
-     * 이벤트 핸들러에서 사용되므로, `@Transactional` 을 사용하지 않습니다.
-     */
+    @Transactional
     public void deleteAssignmentHistory(Long studyId, Long memberId) {
         assignmentHistoryV2Repository.deleteByStudyIdAndMemberId(studyId, memberId);
     }

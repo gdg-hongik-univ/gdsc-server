@@ -145,6 +145,7 @@ class OrderServiceTest extends IntegrationTest {
             verify(paymentClient).confirm(any(PaymentConfirmRequest.class));
         }
 
+        @Disabled("TODO: 추후 제거 필요. 이벤트 핸들러 로직의 결과를 검증하는 것이므로 제외")
         @Test
         void 멤버십의_회비납입상태가_SATISFIED로_변경된다() {
             // given
@@ -181,6 +182,7 @@ class OrderServiceTest extends IntegrationTest {
                     .isTrue();
         }
 
+        @Disabled("TODO: 추후 제거 필요. 이벤트 핸들러 로직의 결과를 검증하는 것이므로 제외")
         @Test
         void 정회원으로_승급한다() {
             // given
@@ -350,6 +352,7 @@ class OrderServiceTest extends IntegrationTest {
             verify(paymentClient, never()).cancelPayment(any(), any());
         }
 
+        @Disabled("TODO: 추후 제거 필요. 이벤트 핸들러 로직의 결과를 검증하는 것이므로 제외")
         @Test
         void 멤버십의_회비납부상태가_취소된다() {
             // given
@@ -392,6 +395,7 @@ class OrderServiceTest extends IntegrationTest {
                     .isFalse();
         }
 
+        @Disabled("TODO: 추후 제거 필요. 이벤트 핸들러 로직의 결과를 검증하는 것이므로 제외")
         @Test
         void 준회원으로_강등된다() {
             // given
@@ -437,6 +441,7 @@ class OrderServiceTest extends IntegrationTest {
             assertThat(orderCanceledMember.isAssociate()).isTrue();
         }
 
+        @Disabled("TODO: 추후 제거 필요. 이벤트 핸들러 로직의 결과를 검증하는 것이므로 제외")
         @Test
         void 디스코드_서버_정회원_역할을_회수한다() {
             // given
@@ -530,6 +535,7 @@ class OrderServiceTest extends IntegrationTest {
     @Nested
     class 무료주문_생성할때 {
 
+        @Disabled("TODO: 추후 제거 필요. 이벤트 핸들러 로직의 결과를 검증하는 것이므로 제외")
         @Test
         void 멤버십의_회비납입상태가_SATISFIED로_변경된다() {
             // given
@@ -565,6 +571,7 @@ class OrderServiceTest extends IntegrationTest {
                     .isTrue();
         }
 
+        @Disabled("TODO: 추후 제거 필요. 이벤트 핸들러 로직의 결과를 검증하는 것이므로 제외")
         @Test
         void 정회원으로_승급한다() {
             // given

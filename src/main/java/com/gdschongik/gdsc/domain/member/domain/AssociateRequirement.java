@@ -69,7 +69,7 @@ public class AssociateRequirement {
         return discordStatus == SATISFIED;
     }
 
-    private boolean isInfoSatisfied() {
+    public boolean isInfoSatisfied() {
         return infoStatus == SATISFIED;
     }
 

@@ -266,7 +266,7 @@ public class StudyV2 extends BaseEntity {
             Period currentLessonPeriod = session.getLessonPeriod();
 
             // lessonPeriod가 null인 경우 검증 제외
-            if (currentLessonPeriod == null || currentLessonPeriod.isEmpty()) {
+            if (currentLessonPeriod == null) {
                 continue;
             }
 

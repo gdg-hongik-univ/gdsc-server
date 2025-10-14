@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @Component
@@ -20,7 +18,7 @@ public class StudyEventHandlerV2 {
     private final CommonDiscordService commonDiscordService;
     private final CommonStudyServiceV2 commonStudyServiceV2;
 
-    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    @ApplicationModuleListener
     public void handleStudyApplyCompletedEvent(StudyApplyCompletedEvent event) {
         log.info(
                 "[StudyEventHandlerV2] 수강신청 이벤트 수신: memberDiscordId={}, studyDiscordRoleId={}",
@@ -30,7 +28,7 @@ public class StudyEventHandlerV2 {
         commonDiscordService.addStudyRoleToMember(event.studyDiscordRoleId(), event.memberDiscordId());
     }
 
-    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    @ApplicationModuleListener
     public void handleStudyApplyCanceledEvent(StudyApplyCanceledEvent event) {
         log.info(
                 "[StudyEventHandlerV2] 수강신청 취소 이벤트 수신: memberDiscordId={}, studyDiscordRoleId={}",

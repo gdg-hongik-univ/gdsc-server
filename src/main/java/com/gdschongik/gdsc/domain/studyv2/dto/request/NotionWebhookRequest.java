@@ -22,7 +22,7 @@ public record NotionWebhookRequest(Source source, Data data) {
         switch (rawSemesterType) {
             case "1" -> semesterType = SemesterType.FIRST;
             case "2" -> semesterType = SemesterType.SECOND;
-            default -> throw new CustomException(ErrorCode.METHOD_ARGUMENT_NOT_VALID);
+            default -> throw new CustomException(ErrorCode.METHOD_ARGUMENT_INVALID);
         }
 
         return Semester.of(academicYear, semesterType);

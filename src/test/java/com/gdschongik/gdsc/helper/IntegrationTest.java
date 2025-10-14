@@ -2,12 +2,15 @@ package com.gdschongik.gdsc.helper;
 
 import static com.gdschongik.gdsc.domain.member.domain.Department.*;
 import static com.gdschongik.gdsc.global.common.constant.CouponConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.MemberConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.RecruitmentConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.StudyConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.TemporalConstant.*;
 import static org.mockito.Mockito.*;
 
+import com.gdschongik.gdsc.config.TestLockConfig;
+import com.gdschongik.gdsc.config.TestSyncExecutorConfig;
 import com.gdschongik.gdsc.domain.common.model.SemesterType;
 import com.gdschongik.gdsc.domain.common.vo.Money;
 import com.gdschongik.gdsc.domain.common.vo.Period;
@@ -20,6 +23,8 @@ import com.gdschongik.gdsc.domain.coupon.domain.IssuedCoupon;
 import com.gdschongik.gdsc.domain.discord.application.handler.DelegateMemberDiscordEventHandler;
 import com.gdschongik.gdsc.domain.discord.application.handler.MemberDiscordRoleRevokeHandler;
 import com.gdschongik.gdsc.domain.discord.application.handler.SpringEventHandler;
+import com.gdschongik.gdsc.domain.event.dao.EventRepository;
+import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.member.domain.MemberManageRole;
@@ -56,11 +61,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
+@Import({TestSyncExecutorConfig.class, TestLockConfig.class})
 @SpringBootTest
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
@@ -109,6 +116,9 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected StudyHistoryV2Repository studyHistoryV2Repository;
+
+    @Autowired
+    protected EventRepository eventRepository;
 
     @MockBean
     protected OnboardingRecruitmentService onboardingRecruitmentService;
@@ -330,5 +340,18 @@ public abstract class IntegrationTest {
     protected StudyHistoryV2 createStudyHistory(Member member, StudyV2 study) {
         StudyHistoryV2 studyHistory = StudyHistoryV2.create(member, study);
         return studyHistoryV2Repository.save(studyHistory);
+    }
+
+    protected Event createEvent() {
+        Event event = Event.create(
+                EVENT_NAME,
+                VENUE,
+                EVENT_START_AT,
+                EVENT_APPLICATION_PERIOD,
+                REGULAR_ROLE_ONLY_STATUS,
+                MAIN_EVENT_MAX_APPLICATION_COUNT,
+                AFTER_PARTY_MAX_APPLICATION_COUNT);
+
+        return eventRepository.save(event);
     }
 }

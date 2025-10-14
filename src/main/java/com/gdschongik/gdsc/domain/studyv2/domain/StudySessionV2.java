@@ -116,7 +116,7 @@ public class StudySessionV2 extends BaseEntity {
     // 데이터 전달 로직
 
     public void validateAssignmentSubmittable(LocalDateTime now) {
-        if (assignmentPeriod == null || assignmentPeriod.isEmpty()) {
+        if (assignmentPeriod == null) {
             throw new CustomException(ASSIGNMENT_SUBMIT_NOT_PUBLISHED);
         }
 
@@ -130,7 +130,7 @@ public class StudySessionV2 extends BaseEntity {
     }
 
     public boolean isAssignmentSubmittable(LocalDateTime now) {
-        if (assignmentPeriod == null || assignmentPeriod.isEmpty()) {
+        if (assignmentPeriod == null) {
             return false;
         }
 
@@ -138,7 +138,7 @@ public class StudySessionV2 extends BaseEntity {
     }
 
     public boolean isAttendable(LocalDateTime now) {
-        if (lessonPeriod == null || lessonPeriod.isEmpty()) {
+        if (lessonPeriod == null) {
             return false;
         }
 

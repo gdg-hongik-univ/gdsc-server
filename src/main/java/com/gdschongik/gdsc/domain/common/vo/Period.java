@@ -2,6 +2,7 @@ package com.gdschongik.gdsc.domain.common.vo;
 
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.Embeddable;
@@ -28,12 +29,17 @@ public final class Period {
         this.endDate = endDate;
     }
 
+    @JsonCreator // TODO: 레코드로 변경 후 제거
     public static Period of(LocalDateTime startDate, LocalDateTime endDate) {
         validatePeriod(startDate, endDate);
         return Period.builder().startDate(startDate).endDate(endDate).build();
     }
 
     private static void validatePeriod(LocalDateTime startDate, LocalDateTime endDate) {
+        if (startDate == null || endDate == null) {
+            throw new CustomException(PERIOD_DATE_NOT_NULL);
+        }
+
         if (startDate.isAfter(endDate) || startDate.isEqual(endDate)) {
             throw new CustomException(DATE_PRECEDENCE_INVALID);
         }
@@ -59,14 +65,5 @@ public final class Period {
      */
     public boolean isWithin(LocalDateTime now) {
         return now.isAfter(startDate) && now.isBefore(endDate) || now.isEqual(startDate);
-    }
-
-    /**
-     * Period 객체가 비어있는지 확인합니다.
-     * 시작/종료일자가 하나라도 없으면 비어있다고 간주합니다.
-     */
-    @JsonIgnore
-    public boolean isEmpty() {
-        return startDate == null || endDate == null;
     }
 }

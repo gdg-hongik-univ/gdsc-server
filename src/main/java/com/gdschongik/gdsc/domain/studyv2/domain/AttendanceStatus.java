@@ -25,7 +25,7 @@ public enum AttendanceStatus {
 
         Period lessonPeriod = studySession.getLessonPeriod();
 
-        if (lessonPeriod.isEmpty() || lessonPeriod.getStartDate().isAfter(now)) {
+        if (lessonPeriod == null || lessonPeriod.getStartDate().isAfter(now)) {
             return BEFORE_ATTENDANCE;
         }
 

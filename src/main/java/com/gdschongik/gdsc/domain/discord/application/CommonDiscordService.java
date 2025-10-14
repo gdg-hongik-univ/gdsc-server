@@ -82,16 +82,12 @@ public class CommonDiscordService {
         log.info("[CommonDiscordService] 스터디 디스코드 역할 부여 완료: studyId = {}", study.getId());
     }
 
-    /**
-     * 이벤트 핸들러에서 사용되므로, `@Transactional` 을 사용하지 않습니다.
-     */
+    @Transactional
     public void addStudyRoleToMember(String studyDiscordRoleId, String memberDiscordId) {
         discordUtil.addRoleToMemberById(studyDiscordRoleId, memberDiscordId);
     }
 
-    /**
-     * 이벤트 핸들러에서 사용되므로, `@Transactional` 을 사용하지 않습니다.
-     */
+    @Transactional
     public void removeStudyRoleFromMember(String studyDiscordRoleId, String memberDiscordId) {
         discordUtil.removeRoleFromMemberById(studyDiscordRoleId, memberDiscordId);
     }

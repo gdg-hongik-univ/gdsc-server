@@ -10,10 +10,11 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode {
     INTERNAL_ERROR(INTERNAL_SERVER_ERROR, "내부 서버 에러가 발생했습니다. 관리자에게 문의 바랍니다."),
-    METHOD_ARGUMENT_NULL(BAD_REQUEST, "인자는 null이 될 수 없습니다."),
-    METHOD_ARGUMENT_NOT_VALID(BAD_REQUEST, "인자가 유효하지 않습니다."),
+    METHOD_ARGUMENT_NOT_NULL(BAD_REQUEST, "인자는 null이 될 수 없습니다."),
+    METHOD_ARGUMENT_INVALID(BAD_REQUEST, "인자가 유효하지 않습니다."),
     REGEX_VIOLATION(BAD_REQUEST, "정규표현식을 위반했습니다."),
     FORBIDDEN_ACCESS(FORBIDDEN, "접근 권한이 없습니다."),
+    SORT_NOT_SUPPORTED(BAD_REQUEST, "지원되지 않는 정렬 기준입니다."),
 
     // Auth
     INVALID_JWT_TOKEN(UNAUTHORIZED, "유효하지 않은 JWT 토큰입니다."),
@@ -31,6 +32,7 @@ public enum ErrorCode {
 
     // Period
     PERIOD_OVERLAP(CONFLICT, "기간이 중복됩니다."),
+    PERIOD_DATE_NOT_NULL(BAD_REQUEST, "시작일, 종료일은 null이 될 수 없습니다."),
 
     // Member
     MEMBER_NOT_FOUND(NOT_FOUND, "존재하지 않는 커뮤니티 멤버입니다."),
@@ -41,6 +43,7 @@ public enum ErrorCode {
     MEMBER_DISCORD_USERNAME_DUPLICATE(CONFLICT, "이미 등록된 디스코드 유저네임입니다."),
     MEMBER_NICKNAME_DUPLICATE(CONFLICT, "이미 사용중인 닉네임입니다."),
     MEMBER_NOT_APPLIED(CONFLICT, "가입신청서를 제출하지 않은 회원입니다."),
+    MEMBER_NOT_GUEST(CONFLICT, "게스트가 아닌 회원입니다."),
     MEMBER_NOT_ASSOCIATE(CONFLICT, "준회원이 아닌 회원입니다."),
 
     // Requirement
@@ -65,7 +68,7 @@ public enum ErrorCode {
     DISCORD_CODE_MISMATCH(CONFLICT, "디스코드 인증코드가 일치하지 않습니다."),
     DISCORD_ROLE_NOT_FOUND(NOT_FOUND, "디스코드 역할을 찾을 수 없습니다."),
     DISCORD_NOT_SIGNUP(INTERNAL_SERVER_ERROR, "아직 가입신청서를 작성하지 않은 회원입니다."),
-    DISCORD_NICKNAME_NOTNULL(INTERNAL_SERVER_ERROR, "닉네임은 빈 값이 될 수 없습니다."),
+    DISCORD_NICKNAME_NOT_NULL(INTERNAL_SERVER_ERROR, "닉네임은 빈 값이 될 수 없습니다."),
     DISCORD_MEMBER_NOT_FOUND(NOT_FOUND, "디스코드 멤버를 찾을 수 없습니다."),
     DISCORD_CHANNEL_NOT_FOUND(NOT_FOUND, "디스코드 채널을 찾을 수 없습니다."),
 
@@ -87,7 +90,7 @@ public enum ErrorCode {
     // RecruitmentRound
     RECRUITMENT_ROUND_NOT_FOUND(NOT_FOUND, "모집회차가 존재하지 않습니다."),
     RECRUITMENT_ROUND_TYPE_OVERLAP(BAD_REQUEST, "모집 차수가 중복됩니다."),
-    RECRUITMENT_ROUND_STARTDATE_ALREADY_PASSED(BAD_REQUEST, "이미 모집 시작일이 지난 모집회차입니다."),
+    RECRUITMENT_ROUND_START_DATE_ALREADY_PASSED(BAD_REQUEST, "이미 모집 시작일이 지난 모집회차입니다."),
     ROUND_ONE_DOES_NOT_EXIST(CONFLICT, "1차 모집이 존재하지 않습니다."),
 
     // Coupon
@@ -168,7 +171,7 @@ public enum ErrorCode {
     ORDER_FINAL_PAYMENT_AMOUNT_MISMATCH(CONFLICT, "주문 최종결제금액은 주문총액에서 할인금액을 뺀 값이어야 합니다."),
 
     // Assignment
-    ASSIGNMENT_INVALID_FAILURE_TYPE(CONFLICT, "유효하지 않은 제출 실패사유입니다."),
+    ASSIGNMENT_FAILURE_TYPE_INVALID(CONFLICT, "유효하지 않은 제출 실패사유입니다."),
     ASSIGNMENT_DEADLINE_INVALID(CONFLICT, "과제 마감 기한이 현재보다 빠릅니다."),
     ASSIGNMENT_STUDY_NOT_APPLIED(CONFLICT, "해당 스터디에 대한 수강신청 기록이 존재하지 않습니다."),
     ASSIGNMENT_SUBMIT_NOT_STARTED(CONFLICT, "아직 과제가 시작되지 않았습니다."),
@@ -188,7 +191,48 @@ public enum ErrorCode {
 
     // Excel
     EXCEL_WORKSHEET_WRITE_FAILED(INTERNAL_SERVER_ERROR, "엑셀 워크시트 작성에 실패했습니다."),
+
+    // Event
+    EVENT_NOT_FOUND(NOT_FOUND, "존재하지 않는 이벤트입니다."),
+    EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE(CONFLICT, "정회원이 아닌 회원은 이벤트에 신청할 수 없습니다."),
+    EVENT_NOT_APPLICABLE_APPLICATION_PERIOD_INVALID(CONFLICT, "이벤트 신청 기간이 아닙니다."),
+    EVENT_NOT_APPLICABLE_AFTER_PARTY_NONE(CONFLICT, "뒤풀이가 활성화된 이벤트는 뒤풀이 신청 여부를 NONE으로 설정할 수 없습니다."),
+    EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED(CONFLICT, "뒤풀이가 비활성화된 이벤트에 뒤풀이 신청을 할 수 없습니다."),
+    EVENT_NOT_APPLICABLE_MEMBER_INFO_NOT_SATISFIED(CONFLICT, "기본 회원정보 작성이 완료되지 않은 회원은 이벤트에 신청할 수 없습니다."),
+    EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED(CONFLICT, "기본 회원정보가 작성된 회원의 학번으로는 비회원 신청을 할 수 없습니다."),
+    EVENT_NOT_APPLICABLE_MAIN_EVENT_MAX_APPLICANT_COUNT_EXCEEDED(CONFLICT, "본 행사 최대 신청자 수를 초과했습니다."),
+    EVENT_NOT_APPLICABLE_AFTER_PARTY_MAX_APPLICANT_COUNT_EXCEEDED(CONFLICT, "뒤풀이 최대 신청자 수를 초과했습니다."),
+    EVENT_NOT_VIEWABLE_OUTSIDE_APPLICATION_PERIOD(CONFLICT, "이벤트 신청 기간이 아닙니다."),
+    EVENT_NOT_VIEWABLE_MAX_APPLICANT_COUNT_EXCEEDED(CONFLICT, "최대 신청자 수를 초과했습니다."),
+    EVENT_NOT_UPDATABLE_MAX_APPLICANT_COUNT_INVALID(CONFLICT, "최대 신청자 수를 현재 신청자 수보다 적게 변경할 수 없습니다."),
+    EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT(CONFLICT, "이미 신청자가 존재하는 이벤트는 폼 관련 항목을 수정할 수 없습니다."),
+    EVENT_NOT_UPDATABLE_PAYMENT_STATUS_INVALID(CONFLICT, "뒤풀이가 비활성화된 이벤트는 결제 관련 항목을 활성화할 수 없습니다."),
+    PARTICIPATION_NOT_FOUND(NOT_FOUND, "존재하지 않는 이벤트 참여정보입니다."),
+    PARTICIPATION_NOT_READABLE_AFTER_PARTY_DISABLED(BAD_REQUEST, "뒤풀이가 비활성화된 이벤트의 참여정보는 조회할 수 없습니다."),
+    PARTICIPATION_NOT_DELETABLE_INVALID_IDS(BAD_REQUEST, "존재하지 않거나 중복된 참여 정보 ID가 포함되어 있습니다."),
+    PARTICIPATION_NOT_UPDATABLE_DIFFERENT_EVENT(CONFLICT, "서로 다른 이벤트에 대한 참여 정보들을 한번에 수정할 수 없습니다."),
+    PARTICIPANT_NOT_CREATABLE_INFO_NOT_SATISFIED(
+            INTERNAL_SERVER_ERROR, "기본 정보를 입력하지 않은 멤버로 참여자 정보 생성을 시도했습니다. 관리자에게 문의 바랍니다."),
+    PARTICIPANT_NOT_CREATABLE_FIELD_NOT_NULL(BAD_REQUEST, "참여자 정보의 이름, 학번, 전화번호는 null이 될 수 없습니다."),
+    PARTICIPANT_NOT_CREATABLE_STUDENT_ID_INVALID(BAD_REQUEST, "참여자 정보의 학번 형식이 올바르지 않습니다."),
+    PARTICIPANT_NOT_CREATABLE_PHONE_INVALID(BAD_REQUEST, "참여자 정보의 전화번호 형식이 올바르지 않습니다."),
+    PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_EXISTENCE_MISMATCH(
+            INTERNAL_SERVER_ERROR, "이벤트 참여정보의 멤버 ID와 멤버 인자는 둘 다 null이거나 not null이어야 합니다."),
+    PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_ID_MISMATCH(INTERNAL_SERVER_ERROR, "이벤트 참여정보의 멤버 ID와 인자의 멤버 ID가 일치하지 않습니다."),
+    PARTICIPATION_DUPLICATE(CONFLICT, "이미 해당 이벤트를 신청했습니다."),
+    AFTER_PARTY_NOT_ATTENDABLE_DISABLED(CONFLICT, "뒤풀이가 비활성화 된 경우, 뒤풀이에 참석할 수 없습니다."),
+    AFTER_PARTY_NOT_ATTENDABLE_ALREADY_ATTENDED(CONFLICT, "이미 뒤풀이에 참석하였습니다."),
+    AFTER_PARTY_ATTENDANCE_STATUS_NOT_REVOKABLE_DISABLED(CONFLICT, "뒤풀이가 비활성화 된 경우, 뒤풀이 참석을 취소할 수 없습니다."),
+    AFTER_PARTY_ATTENDANCE_STATUS_NOT_REVOKABLE_ALREADY_REVOKED(CONFLICT, "이미 뒤풀이 참석을 취소 처리하였습니다."),
+    AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_NONE(CONFLICT, "결제 상태가 None 일 때는 뒤풀이 선입금 상태를 수정할 수 없습니다."),
+    AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED(CONFLICT, "뒤풀이 선입금 상태가 이미 요청 상태로 수정되어있습니다."),
+    AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_NONE(CONFLICT, "결제 상태가 None 일 때는 뒤풀이 정산 상태를 수정할 수 없습니다."),
+    AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED(CONFLICT, "뒤풀이 정산 상태가 이미 요청 상태로 수정되어있습니다."),
+
+    // Lock
+    LOCK_ACQUIRE_FAILED(INTERNAL_SERVER_ERROR, "락 획득에 실패했습니다. 다시 시도해주세요."),
     ;
+
     private final HttpStatus status;
     private final String message;
 }
