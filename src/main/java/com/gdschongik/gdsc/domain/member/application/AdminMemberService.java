@@ -52,7 +52,7 @@ public class AdminMemberService {
     @Transactional
     public void updateMember(Long memberId, MemberUpdateRequest request) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        member.updateMemberInfo(
+        member.updateInfo(
                 request.studentId(),
                 request.name(),
                 request.phone(),

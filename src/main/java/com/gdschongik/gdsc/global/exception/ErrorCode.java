@@ -50,7 +50,7 @@ public enum ErrorCode {
     UNIV_NOT_SATISFIED(CONFLICT, "재학생 인증이 완료되지 않았습니다."),
     DISCORD_NOT_SATISFIED(CONFLICT, "디스코드 인증이 완료되지 않았습니다."),
     EMAIL_ALREADY_SATISFIED(CONFLICT, "이미 이메일 인증된 회원입니다."),
-    BASIC_INFO_NOT_SATISFIED(CONFLICT, "기본 회원정보 작성이 완료되지 않았습니다."),
+    INFO_NOT_SATISFIED(CONFLICT, "기본 회원정보 작성이 완료되지 않았습니다."),
 
     // Univ Email Verification
     UNIV_EMAIL_ALREADY_SATISFIED(CONFLICT, "이미 가입된 재학생 메일입니다."),

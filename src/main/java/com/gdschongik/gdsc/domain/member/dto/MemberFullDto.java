@@ -15,7 +15,7 @@ public record MemberFullDto(
         @Schema(description = "멤버 역할", implementation = MemberRole.class) MemberRole role,
         @Schema(description = "멤버 관리자 역할", implementation = MemberManageRole.class) MemberManageRole manageRole,
         @Schema(description = "멤버 스터디 역할", implementation = MemberStudyRole.class) MemberStudyRole studyRole,
-        @Schema(description = "회원정보", implementation = MemberBasicInfoDto.class) MemberBasicInfoDto basicInfo,
+        @Schema(description = "회원정보", implementation = MemberInfoDto.class) MemberInfoDto info,
         @Schema(description = "인증상태정보", implementation = MemberAssociateRequirementDto.class)
                 MemberAssociateRequirementDto associateRequirement) {
     public static MemberFullDto of(Member member, UnivVerificationStatus univVerificationStatus) {
@@ -24,11 +24,11 @@ public record MemberFullDto(
                 member.getRole(),
                 member.getManageRole(),
                 member.getStudyRole(),
-                MemberBasicInfoDto.from(member),
+                MemberInfoDto.from(member),
                 MemberAssociateRequirementDto.of(member, univVerificationStatus));
     }
 
-    record MemberBasicInfoDto(
+    record MemberInfoDto(
             String name,
             String studentId,
             String email,
@@ -36,8 +36,8 @@ public record MemberFullDto(
             String phone,
             String discordUsername,
             String nickname) {
-        public static MemberBasicInfoDto from(Member member) {
-            return new MemberBasicInfoDto(
+        public static MemberInfoDto from(Member member) {
+            return new MemberInfoDto(
                     member.getName(),
                     member.getStudentId(),
                     member.getEmail(),
