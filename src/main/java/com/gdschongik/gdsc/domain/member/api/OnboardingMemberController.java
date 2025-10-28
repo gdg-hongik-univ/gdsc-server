@@ -1,8 +1,8 @@
 package com.gdschongik.gdsc.domain.member.api;
 
 import com.gdschongik.gdsc.domain.member.application.OnboardingMemberService;
-import com.gdschongik.gdsc.domain.member.dto.request.BasicMemberInfoRequest;
-import com.gdschongik.gdsc.domain.member.dto.response.MemberBasicInfoResponse;
+import com.gdschongik.gdsc.domain.member.dto.request.MemberInfoRequest;
+import com.gdschongik.gdsc.domain.member.dto.response.MemberInfoResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberDashboardResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberUnivStatusResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,16 +39,16 @@ public class OnboardingMemberController {
     }
 
     @Operation(summary = "기본 회원정보 작성", description = "기본 회원정보를 작성합니다.")
-    @PostMapping("/me/basic-info")
-    public ResponseEntity<Void> updateBasicMemberInfo(@Valid @RequestBody BasicMemberInfoRequest request) {
-        onboardingMemberService.updateBasicMemberInfo(request);
+    @PostMapping("/me/info")
+    public ResponseEntity<Void> updateMemberInfo(@Valid @RequestBody MemberInfoRequest request) {
+        onboardingMemberService.updateMemberInfo(request);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "기본 회원정보 조회", description = "기본 회원정보를 조회합니다.")
-    @GetMapping("/me/basic-info")
-    public ResponseEntity<MemberBasicInfoResponse> getMemberBasicInfo() {
-        MemberBasicInfoResponse response = onboardingMemberService.getMemberBasicInfo();
+    @GetMapping("/me/info")
+    public ResponseEntity<MemberInfoResponse> getMemberInfo() {
+        MemberInfoResponse response = onboardingMemberService.getMemberInfo();
         return ResponseEntity.ok().body(response);
     }
 }

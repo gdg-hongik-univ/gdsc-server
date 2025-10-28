@@ -1,11 +1,10 @@
-package com.gdschongik.gdsc.domain.member.dto.response;
+package com.gdschongik.gdsc.domain.member.dto;
 
 import com.gdschongik.gdsc.domain.member.domain.Department;
 import com.gdschongik.gdsc.domain.member.domain.Member;
-import com.gdschongik.gdsc.global.util.formatter.PhoneFormatter;
 import java.util.Optional;
 
-public record MemberBasicInfoResponse(
+public record MemberInfoDto(
         Long memberId,
         String studentId,
         String name,
@@ -14,12 +13,12 @@ public record MemberBasicInfoResponse(
         String email,
         String discordUsername,
         String nickname) {
-    public static MemberBasicInfoResponse from(Member member) {
-        return new MemberBasicInfoResponse(
+    public static MemberInfoDto from(Member member) {
+        return new MemberInfoDto(
                 member.getId(),
                 member.getStudentId(),
                 member.getName(),
-                PhoneFormatter.format(member.getPhone()),
+                member.getPhone(),
                 Optional.ofNullable(member.getDepartment())
                         .map(Department::getDepartmentName)
                         .orElse(null),

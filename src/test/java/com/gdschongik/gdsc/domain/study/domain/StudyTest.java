@@ -21,7 +21,7 @@ public class StudyTest {
 
     private Member createAssociateMember(Long id) {
         Member member = createGuest(OAUTH_ID);
-        member.updateBasicMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+        member.updateMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
         member.completeUnivEmailVerification(UNIV_EMAIL);
         member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
         member.advanceToAssociate();
