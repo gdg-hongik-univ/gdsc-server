@@ -199,8 +199,7 @@ class MemberTest {
             // given
             Member member = Member.createGuest(OAUTH_ID);
 
-            member.updateInfo(
-                    MODIFIED_STUDENT_ID, NAME, PHONE_NUMBER, D022, UNIV_EMAIL, DISCORD_USERNAME, NICKNAME);
+            member.updateInfo(MODIFIED_STUDENT_ID, NAME, PHONE_NUMBER, D022, UNIV_EMAIL, DISCORD_USERNAME, NICKNAME);
 
             // then
             assertThat(member.getStudentId()).isEqualTo(MODIFIED_STUDENT_ID);
