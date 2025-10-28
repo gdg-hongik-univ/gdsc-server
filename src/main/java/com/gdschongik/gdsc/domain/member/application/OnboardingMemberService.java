@@ -45,7 +45,7 @@ public class OnboardingMemberService {
     @Transactional
     public void updateMemberInfo(MemberInfoRequest request) {
         Member currentMember = memberUtil.getCurrentMember();
-        currentMember.updateMemberInfo(
+        currentMember.updateInfo(
                 request.studentId(), request.name(), request.phone(), request.department(), request.email());
         memberRepository.save(currentMember);
     }

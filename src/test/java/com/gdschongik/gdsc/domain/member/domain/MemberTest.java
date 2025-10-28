@@ -65,7 +65,7 @@ class MemberTest {
             Member member = Member.createGuest(OAUTH_ID);
 
             // when
-            member.updateMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+            member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
 
             // then
             AssociateRequirement requirement = member.getAssociateRequirement();
@@ -121,7 +121,7 @@ class MemberTest {
             // given
             Member member = Member.createGuest(OAUTH_ID);
 
-            member.updateMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+            member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
             member.completeUnivEmailVerification(UNIV_EMAIL);
 
             // when & then
@@ -135,7 +135,7 @@ class MemberTest {
             // given
             Member member = Member.createGuest(OAUTH_ID);
 
-            member.updateMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+            member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
             member.completeUnivEmailVerification(UNIV_EMAIL);
             member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
             member.advanceToAssociate();
@@ -151,7 +151,7 @@ class MemberTest {
             // given
             Member member = Member.createGuest(OAUTH_ID);
 
-            member.updateMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+            member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
             member.completeUnivEmailVerification(UNIV_EMAIL);
             member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
 
@@ -199,7 +199,7 @@ class MemberTest {
             // given
             Member member = Member.createGuest(OAUTH_ID);
 
-            member.updateMemberInfo(
+            member.updateInfo(
                     MODIFIED_STUDENT_ID, NAME, PHONE_NUMBER, D022, UNIV_EMAIL, DISCORD_USERNAME, NICKNAME);
 
             // then
@@ -215,7 +215,7 @@ class MemberTest {
 
             // when & then
             assertThatThrownBy(() -> {
-                        member.updateMemberInfo(
+                        member.updateInfo(
                                 MODIFIED_STUDENT_ID, NAME, PHONE_NUMBER, D022, UNIV_EMAIL, DISCORD_USERNAME, NICKNAME);
                     })
                     .isInstanceOf(CustomException.class)
@@ -245,7 +245,7 @@ class MemberTest {
             // given
             Member member = Member.createGuest(OAUTH_ID);
 
-            member.updateMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+            member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
             member.completeUnivEmailVerification(UNIV_EMAIL);
             member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
             member.advanceToAssociate();
@@ -273,7 +273,7 @@ class MemberTest {
             // given
             Member member = Member.createGuest(OAUTH_ID);
 
-            member.updateMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+            member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
             member.completeUnivEmailVerification(UNIV_EMAIL);
             member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
             member.advanceToAssociate();
@@ -294,7 +294,7 @@ class MemberTest {
             // given
             Member member = Member.createGuest(OAUTH_ID);
 
-            member.updateMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+            member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
             member.completeUnivEmailVerification(UNIV_EMAIL);
             member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
             member.advanceToAssociate();

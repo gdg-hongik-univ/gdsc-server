@@ -1086,7 +1086,7 @@ class EventParticipationServiceTest extends IntegrationTest {
 
     private Member createGuestMemberForEvent(String studentId, String name) {
         Member member = createGuestMember();
-        member.updateMemberInfo(studentId, name, PHONE_NUMBER, D022, EMAIL);
+        member.updateInfo(studentId, name, PHONE_NUMBER, D022, EMAIL);
         return memberRepository.save(member);
     }
 

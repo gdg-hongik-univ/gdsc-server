@@ -177,7 +177,7 @@ public abstract class IntegrationTest {
         memberRepository.save(member);
 
         member.completeUnivEmailVerification(UNIV_EMAIL);
-        member.updateMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+        member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
         member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
         member.updateDiscordId(DISCORD_ID);
 
@@ -192,7 +192,7 @@ public abstract class IntegrationTest {
     protected Member createAssociateMember() {
         Member member = createGuestMember();
 
-        member.updateMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+        member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
         member.completeUnivEmailVerification(UNIV_EMAIL);
         member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
         member.advanceToAssociate();

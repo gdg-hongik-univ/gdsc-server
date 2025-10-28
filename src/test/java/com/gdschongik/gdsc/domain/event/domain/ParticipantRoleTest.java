@@ -48,7 +48,7 @@ class ParticipantRoleTest {
         void 기본회원정보를_작성한_게스트는_GUEST를_반환한다() {
             // given
             Member guestMember = fixtureHelper.createGuestMember(1L);
-            guestMember.updateMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+            guestMember.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
 
             EventParticipation eventParticipation = createEventParticipation(guestMember);
 
