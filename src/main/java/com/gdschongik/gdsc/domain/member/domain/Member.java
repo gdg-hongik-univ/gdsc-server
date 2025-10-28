@@ -170,8 +170,7 @@ public class Member extends BaseEntity {
      * 기본 회원 정보를 작성합니다.
      * 기본정보 인증상태를 인증 처리합니다.
      */
-    public void updateMemberInfo(
-            String studentId, String name, String phone, Department department, String email) {
+    public void updateMemberInfo(String studentId, String name, String phone, Department department, String email) {
         validateStatusUpdatable();
 
         this.studentId = studentId;
