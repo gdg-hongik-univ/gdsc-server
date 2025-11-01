@@ -11,6 +11,7 @@ import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventCreateResponse;
+import com.gdschongik.gdsc.domain.event.dto.response.EventParticipableResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.lock.DistributedLock;
@@ -119,5 +120,19 @@ public class EventService {
     public EventDto getEvent(Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         return EventDto.from(event);
+    }
+
+    @Transactional(readOnly = true)
+    public EventParticipableResponse isEventParticipable(Long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        long currentMainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
+
+        try {
+            eventDomainService.validateParticipantViewable(event, LocalDateTime.now(), currentMainEventApplicantCount);
+            return EventParticipableResponse.success();
+        } catch (CustomException e) {
+            log.info("[EventService] 이벤트 참가 폼 조회 불가: eventId={}, failureReason={}", eventId, e.getErrorCode());
+            return EventParticipableResponse.failure(e.getErrorCode().getMessage());
+        }
     }
 }
