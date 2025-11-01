@@ -118,10 +118,6 @@ public class EventService {
     @Transactional(readOnly = true)
     public EventDto getEvent(Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
-        long currentMainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
-
-        eventDomainService.validateParticipantViewable(event, LocalDateTime.now(), currentMainEventApplicantCount);
-
         return EventDto.from(event);
     }
 }
