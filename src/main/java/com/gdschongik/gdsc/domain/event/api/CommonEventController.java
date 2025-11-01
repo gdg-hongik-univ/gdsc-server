@@ -2,6 +2,7 @@ package com.gdschongik.gdsc.domain.event.api;
 
 import com.gdschongik.gdsc.domain.event.application.EventService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
+import com.gdschongik.gdsc.domain.event.dto.response.EventParticipableResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,13 @@ public class CommonEventController {
     @GetMapping("/{eventId}")
     public ResponseEntity<EventDto> getEvent(@PathVariable Long eventId) {
         var response = eventService.getEvent(eventId);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "행사 신청 가능 여부 확인", description = "행사 신청 가능 여부를 확인합니다.")
+    @GetMapping("/{eventId}/is-participable")
+    public ResponseEntity<EventParticipableResponse> isEventParticipable(@PathVariable Long eventId) {
+        var response = eventService.isEventParticipable(eventId);
         return ResponseEntity.ok(response);
     }
 }
