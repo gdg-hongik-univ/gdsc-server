@@ -132,7 +132,7 @@ public class EventService {
             return EventParticipableResponse.success();
         } catch (CustomException e) {
             log.info("[EventService] 이벤트 참가 폼 조회 불가: eventId={}, failureReason={}", eventId, e.getErrorCode());
-            return EventParticipableResponse.failure(e.getErrorCode().getMessage());
+            return EventParticipableResponse.failure(e.getErrorCode());
         }
     }
 }
