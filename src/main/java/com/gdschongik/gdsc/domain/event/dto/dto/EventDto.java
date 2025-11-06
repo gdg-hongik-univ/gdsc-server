@@ -27,7 +27,7 @@ public record EventDto(
                 event.getName(),
                 event.getVenue(),
                 event.getStartAt(),
-                event.getApplicationDescription(),
+                event.getDescription(),
                 event.getApplicationPeriod(),
                 event.getRegularRoleOnlyStatus(),
                 event.getAfterPartyStatus(),
