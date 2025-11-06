@@ -39,9 +39,9 @@ public class Event extends BaseEntity {
     @Column(name = "start_at")
     private LocalDateTime startAt;
 
-    @Comment("[메타] 행사 신청 폼 설명")
+    @Comment("[메타] 행사 설명")
     @Column(columnDefinition = "TEXT")
-    private String applicationDescription;
+    private String description;
 
     @Comment("행사 신청 기간")
     @Embedded
@@ -93,7 +93,7 @@ public class Event extends BaseEntity {
             String name,
             String venue,
             LocalDateTime startAt,
-            String applicationDescription,
+            String description,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
             UsageStatus afterPartyStatus,
@@ -106,7 +106,7 @@ public class Event extends BaseEntity {
         this.name = name;
         this.venue = venue;
         this.startAt = startAt;
-        this.applicationDescription = applicationDescription;
+        this.description = description;
         this.applicationPeriod = applicationPeriod;
         this.regularRoleOnlyStatus = regularRoleOnlyStatus;
         this.afterPartyStatus = afterPartyStatus;
