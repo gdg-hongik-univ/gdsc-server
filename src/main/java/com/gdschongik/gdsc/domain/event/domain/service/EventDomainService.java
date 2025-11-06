@@ -26,6 +26,7 @@ public class EventDomainService {
             String name,
             String venue,
             LocalDateTime startAt,
+            String description,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
             @Nullable Integer mainEventMaxApplicantCount,
@@ -44,6 +45,7 @@ public class EventDomainService {
                 name,
                 venue,
                 startAt,
+                description,
                 applicationPeriod,
                 regularRoleOnlyStatus,
                 mainEventMaxApplicantCount,
@@ -79,7 +81,6 @@ public class EventDomainService {
      */
     public void updateFormInfo(
             Event event,
-            String applicationDescription,
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus,
             UsageStatus postPaymentStatus,
@@ -89,12 +90,7 @@ public class EventDomainService {
         validateAlreadyExistsEventParticipation(eventParticipationExists);
 
         event.updateFormInfo(
-                applicationDescription,
-                afterPartyStatus,
-                prePaymentStatus,
-                postPaymentStatus,
-                rsvpQuestionStatus,
-                noticeConfirmQuestionStatus);
+                afterPartyStatus, prePaymentStatus, postPaymentStatus, rsvpQuestionStatus, noticeConfirmQuestionStatus);
     }
 
     /**
