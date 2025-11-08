@@ -210,6 +210,23 @@ public class EventParticipationDomainService {
         return EventParticipation.createOnsite(participant, member, prePaymentStatus, postPaymentStatus, event);
     }
 
+    /**
+     * 현재 행사 신청이 가능한 지 검증하는 메서드입니다.
+     * 중복 신청이 아니고, 신청 기간 내에 있어야 하며, 최대 신청자 수를 초과하지 않아야 합니다.
+     * 뒤풀이 신청 상태는 고려하지 않습니다.
+     */
+    public void validateEventApplicable(
+            @Nullable Member member,
+            Event event,
+            LocalDateTime now,
+            boolean isEventParticipationDuplicate,
+            long currentMainEventApplicantCount) {
+        validateEventParticipationDuplicate(isEventParticipationDuplicate);
+        validateEventApplicationPeriod(event, now);
+        validateMaxApplicantCount(event, NONE, currentMainEventApplicantCount, 0);
+        validateMemberWhenOnlyRegularRoleAllowedIfExists(event, member);
+    }
+
     // 검증 로직
 
     /**
