@@ -5,14 +5,19 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
+import com.gdschongik.gdsc.domain.event.domain.Participant;
 import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
+import com.gdschongik.gdsc.domain.event.domain.service.EventParticipationDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventValidateApplicableRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventCreateResponse;
-import com.gdschongik.gdsc.domain.event.dto.response.EventParticipableResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
+import com.gdschongik.gdsc.domain.event.dto.response.EventValidateApplicableResponse;
+import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
+import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.lock.DistributedLock;
 import java.time.LocalDateTime;
@@ -32,7 +37,9 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventParticipationRepository eventParticipationRepository;
+    private final MemberRepository memberRepository;
     private final EventDomainService eventDomainService;
+    private final EventParticipationDomainService eventParticipationDomainService;
 
     @Transactional(readOnly = true)
     public Page<EventResponse> getEvents(Pageable pageable) {
@@ -123,16 +130,28 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public EventParticipableResponse isEventParticipable(Long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
-        long currentMainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
+    public EventValidateApplicableResponse validateEventApplicable(EventValidateApplicableRequest request) {
+        Event event =
+                eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        boolean isEventParticipationDuplicate = eventParticipationRepository.existsByEventAndParticipantStudentId(
+                event, request.participant().getStudentId());
+        Participant participant = request.participant();
+        Member memberByParticipant =
+                memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
+        long mainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
 
         try {
-            eventDomainService.validateParticipantViewable(event, LocalDateTime.now(), currentMainEventApplicantCount);
-            return EventParticipableResponse.success();
+            eventParticipationDomainService.validateEventApplicable(
+                    memberByParticipant,
+                    event,
+                    LocalDateTime.now(),
+                    isEventParticipationDuplicate,
+                    mainEventApplicantCount);
+            return EventValidateApplicableResponse.success();
         } catch (CustomException e) {
-            log.info("[EventService] 이벤트 참가 폼 조회 불가: eventId={}, failureReason={}", eventId, e.getErrorCode());
-            return EventParticipableResponse.failure(e.getErrorCode());
+            log.info(
+                    "[EventService] 이벤트 참가 폼 조회 불가: eventId={}, failureReason={}", request.eventId(), e.getErrorCode());
+            return EventValidateApplicableResponse.failure(e.getErrorCode());
         }
     }
 }
