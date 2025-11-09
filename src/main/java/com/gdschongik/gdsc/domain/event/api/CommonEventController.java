@@ -27,7 +27,7 @@ public class CommonEventController {
     }
 
     @Operation(summary = "행사 신청 가능 여부 확인", description = "행사 신청 가능 여부를 확인합니다.")
-    @PostMapping("/{eventId}/validate-applicable")
+    @PostMapping("/validate-applicable")
     public ResponseEntity<EventValidateApplicableResponse> validateEventApplicable(
             @Valid @RequestBody EventValidateApplicableRequest request) {
         var response = eventService.validateEventApplicable(request);
