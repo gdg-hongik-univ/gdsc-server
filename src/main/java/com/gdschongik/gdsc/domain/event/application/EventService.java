@@ -53,6 +53,7 @@ public class EventService {
                 request.name(),
                 request.venue(),
                 request.startAt(),
+                request.description(),
                 request.applicationPeriod(),
                 request.regularRoleOnlyStatus(),
                 request.mainEventMaxApplicantCount(),
@@ -86,6 +87,7 @@ public class EventService {
                 request.name(),
                 request.venue(),
                 request.startAt(),
+                request.description(),
                 request.applicationPeriod(),
                 request.regularRoleOnlyStatus(),
                 request.mainEventMaxApplicantCount(),
@@ -105,7 +107,6 @@ public class EventService {
 
         eventDomainService.updateFormInfo(
                 event,
-                request.applicationDescription(),
                 request.afterPartyStatus(),
                 request.prePaymentStatus(),
                 request.postPaymentStatus(),

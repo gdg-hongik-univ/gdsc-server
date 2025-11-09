@@ -12,6 +12,7 @@ public record EventCreateRequest(
         @NotBlank String name,
         String venue,
         @NotNull LocalDateTime startAt,
+        String description,
         @NotNull Period applicationPeriod,
         @NotNull UsageStatus regularRoleOnlyStatus,
         @Positive @Schema(description = "본 행사 최대 신청 가능 인원. 제한 없음은 null을 입력합니다.") Integer mainEventMaxApplicantCount,

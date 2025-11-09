@@ -11,6 +11,7 @@ public record EventUpdateBasicInfoRequest(
         @NotBlank String name,
         String venue,
         @NotNull LocalDateTime startAt,
+        String description,
         @NotNull Period applicationPeriod,
         @NotNull UsageStatus regularRoleOnlyStatus,
         @Positive Integer mainEventMaxApplicantCount,
