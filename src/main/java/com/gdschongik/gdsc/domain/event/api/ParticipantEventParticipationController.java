@@ -2,6 +2,8 @@ package com.gdschongik.gdsc.domain.event.api;
 
 import com.gdschongik.gdsc.domain.event.application.EventParticipationService;
 import com.gdschongik.gdsc.domain.event.dto.request.EventApplyOnlineRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.EventValidateApplicableRequest;
+import com.gdschongik.gdsc.domain.event.dto.response.EventValidateApplicableResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -19,6 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ParticipantEventParticipationController {
 
     private final EventParticipationService eventParticipationService;
+
+    @Operation(summary = "행사 신청 가능 여부 확인", description = "행사 신청 가능 여부를 확인합니다.")
+    @PostMapping("/validate-applicable")
+    public ResponseEntity<EventValidateApplicableResponse> validateEventApplicable(
+            @Valid @RequestBody EventValidateApplicableRequest request) {
+        var response = eventParticipationService.validateEventApplicable(request);
+        return ResponseEntity.ok(response);
+    }
 
     @Operation(summary = "이벤트 참여 신청 폼 제출", description = "이벤트 참여 신청 폼을 제출합니다.")
     @PostMapping("/apply")
