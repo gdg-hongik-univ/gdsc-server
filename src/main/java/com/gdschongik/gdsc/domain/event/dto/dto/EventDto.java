@@ -10,7 +10,7 @@ public record EventDto(
         String name,
         String venue,
         LocalDateTime startAt,
-        String applicationDescription,
+        String description,
         Period applicationPeriod,
         UsageStatus regularRoleOnlyStatus,
         UsageStatus afterPartyStatus,
