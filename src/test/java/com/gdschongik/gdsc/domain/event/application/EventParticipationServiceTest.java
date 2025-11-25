@@ -548,7 +548,7 @@ class EventParticipationServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 뒤풀이_참석_및_정산_상태를_수정할_때 {
+    class 뒤풀이_참석_및_정산_상태_수정시 {
 
         @Test
         void 뒤풀이_참석_상태를_확인_처리한다() {
@@ -903,7 +903,6 @@ class EventParticipationServiceTest extends IntegrationTest {
                     .isInstanceOf(CustomException.class)
                     .hasMessage(AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED.getMessage());
         }
-        //
 
         @Test
         void 뒤풀이가_비활성화된_이벤트_참석정보라면_뒤풀이_첨석_취소_처리에_실패한다() {
@@ -1008,6 +1007,125 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         // TODO : 뒤출이 참석 / 선입금 / 정산 전체 확인 / 취소 처리 실패 테스트 작성
+        @Test
+        void 뒤풀이가_비활성화된_이벤트_참석정보라면_뒤풀이_전체_참석_처리에_실패한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익");
+            createAfterPartyDisabledEventParticipation(event, member1);
+            createAfterPartyDisabledEventParticipation(event, member2);
+            createAfterPartyDisabledEventParticipation(event, member3);
+
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(event.getId(), AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.confirmAllAfterPartyStatus(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_NOT_ATTENDABLE_DISABLED.getMessage());
+        }
+
+        @Test
+        void 뒤풀이가_비활성화된_이벤트_참석정보라면_선입금_전체_확인_처리에_실패한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익");
+            createAfterPartyDisabledEventParticipation(event, member1);
+            createAfterPartyDisabledEventParticipation(event, member2);
+            createAfterPartyDisabledEventParticipation(event, member3);
+
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(event.getId(), AfterPartyUpdateTarget.PRE_PAYMENT);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.confirmAllAfterPartyStatus(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
+        }
+
+        @Test
+        void 뒤풀이가_비활성화된_이벤트_참석정보라면_정산_전체_확인_처리에_실패한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익");
+            createAfterPartyDisabledEventParticipation(event, member1);
+            createAfterPartyDisabledEventParticipation(event, member2);
+            createAfterPartyDisabledEventParticipation(event, member3);
+
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(event.getId(), AfterPartyUpdateTarget.POST_PAYMENT);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.confirmAllAfterPartyStatus(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
+        }
+
+        @Test
+        void 뒤풀이가_비활성화된_이벤트_참석정보라면_뒤풀이_전체_참석_취소_처리에_실패한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익");
+            createAfterPartyDisabledEventParticipation(event, member1);
+            createAfterPartyDisabledEventParticipation(event, member2);
+            createAfterPartyDisabledEventParticipation(event, member3);
+
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(event.getId(), AfterPartyUpdateTarget.ATTENDANCE);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.revokeAllAfterPartyStatusConfirm(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_ATTENDANCE_STATUS_NOT_REVOKABLE_DISABLED.getMessage());
+        }
+
+        @Test
+        void 뒤풀이가_비활성화된_이벤트_참석정보라면_선입금_전체_확인_취소_처리에_실패한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익");
+            createAfterPartyDisabledEventParticipation(event, member1);
+            createAfterPartyDisabledEventParticipation(event, member2);
+            createAfterPartyDisabledEventParticipation(event, member3);
+
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(event.getId(), AfterPartyUpdateTarget.PRE_PAYMENT);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.revokeAllAfterPartyStatusConfirm(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
+        }
+
+        @Test
+        void 뒤풀이가_비활성화된_이벤트_참석정보라면_정산_전체_확인_취소_처리에_실패한다() {
+            // given
+            Event event = createAfterPartyDisabledEvent();
+            Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
+            Member member2 = createAssociateMemberForEvent("C000002", "김홍익");
+            Member member3 = createAssociateMemberForEvent("C000003", "김홍익");
+            createAfterPartyDisabledEventParticipation(event, member1);
+            createAfterPartyDisabledEventParticipation(event, member2);
+            createAfterPartyDisabledEventParticipation(event, member3);
+
+            AfterPartyStatusesUpdateRequest request =
+                    new AfterPartyStatusesUpdateRequest(event.getId(), AfterPartyUpdateTarget.POST_PAYMENT);
+
+            // when & then
+            assertThatThrownBy(() -> eventParticipationService.revokeAllAfterPartyStatusConfirm(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_NONE.getMessage());
+        }
 
         @Test
         void 존재하지_않는_참여정보라면_확인_처리에_실패한다() {
