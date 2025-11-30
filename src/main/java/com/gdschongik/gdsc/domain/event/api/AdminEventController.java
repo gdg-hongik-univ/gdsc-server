@@ -1,6 +1,7 @@
 package com.gdschongik.gdsc.domain.event.api;
 
 import com.gdschongik.gdsc.domain.event.application.EventService;
+import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
@@ -23,6 +24,13 @@ import org.springframework.web.bind.annotation.*;
 public class AdminEventController {
 
     private final EventService eventService;
+
+    @Operation(summary = "행사 조회", description = "행사를 조회합니다.")
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventDto> getEvent(@PathVariable Long eventId) {
+        var response = eventService.getEvent(eventId);
+        return ResponseEntity.ok(response);
+    }
 
     @Operation(summary = "행사 목록 조회", description = "행사 목록을 조회합니다.")
     @GetMapping
