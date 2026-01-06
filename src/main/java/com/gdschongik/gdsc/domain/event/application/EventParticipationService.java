@@ -143,8 +143,11 @@ public class EventParticipationService {
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
-        eventParticipations.forEach(eventParticipation ->
-                confirmAfterPartyStatusByAfterPartyUpdateTarget(eventParticipation, request.afterPartyUpdateTarget()));
+        eventParticipations.stream()
+                .filter(eventParticipation -> isAfterPartyUpdateTargetStatusNotConfirmed(
+                        eventParticipation, request.afterPartyUpdateTarget()))
+                .forEach(eventParticipation -> confirmAfterPartyStatusByAfterPartyUpdateTarget(
+                        eventParticipation, request.afterPartyUpdateTarget()));
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석/정산 전체 확인 처리: eventId={}, afterPartyUpdateTarget={}",
@@ -285,6 +288,15 @@ public class EventParticipationService {
         if (hasDifferentEvent) {
             throw new CustomException(PARTICIPATION_NOT_UPDATABLE_DIFFERENT_EVENT);
         }
+    }
+
+    private boolean isAfterPartyUpdateTargetStatusNotConfirmed(
+            EventParticipation participation, AfterPartyUpdateTarget afterPartyUpdateTarget) {
+        return switch (afterPartyUpdateTarget) {
+            case ATTENDANCE -> !participation.getAfterPartyAttendanceStatus().isAttended();
+            case PRE_PAYMENT -> !participation.getPrePaymentStatus().isPaid();
+            case POST_PAYMENT -> !participation.getPostPaymentStatus().isPaid();
+        };
     }
 
     private void confirmAfterPartyStatusByAfterPartyUpdateTarget(
