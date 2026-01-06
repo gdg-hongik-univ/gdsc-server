@@ -175,8 +175,11 @@ public class EventParticipationService {
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
-        eventParticipations.forEach(eventParticipation ->
-                revokeAfterPartyStatusByAfterPartyUpdateTarget(eventParticipation, request.afterPartyUpdateTarget()));
+        eventParticipations.stream()
+                .filter(eventParticipation ->
+                        isAfterPartyUpdateTargetStatusNotRevoked(eventParticipation, request.afterPartyUpdateTarget()))
+                .forEach(eventParticipation -> revokeAfterPartyStatusByAfterPartyUpdateTarget(
+                        eventParticipation, request.afterPartyUpdateTarget()));
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석 / 정산 현황 전체 확인 취소 처리: eventId={}, afterPartyUpdateTarget={}",
@@ -306,6 +309,15 @@ public class EventParticipationService {
             case PRE_PAYMENT -> participation.confirmPrePayment();
             case POST_PAYMENT -> participation.confirmPostPayment();
         }
+    }
+
+    private boolean isAfterPartyUpdateTargetStatusNotRevoked(
+            EventParticipation participation, AfterPartyUpdateTarget afterPartyUpdateTarget) {
+        return switch (afterPartyUpdateTarget) {
+            case ATTENDANCE -> !participation.getAfterPartyAttendanceStatus().isNotAttended();
+            case PRE_PAYMENT -> !participation.getPrePaymentStatus().isUnpaid();
+            case POST_PAYMENT -> !participation.getPostPaymentStatus().isUnpaid();
+        };
     }
 
     private void revokeAfterPartyStatusByAfterPartyUpdateTarget(
