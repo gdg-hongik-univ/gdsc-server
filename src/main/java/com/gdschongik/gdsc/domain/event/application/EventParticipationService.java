@@ -11,23 +11,17 @@ import com.gdschongik.gdsc.domain.event.domain.Participant;
 import com.gdschongik.gdsc.domain.event.domain.service.EventParticipationDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipableMemberDto;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventParticipationDto;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyAttendRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusUpdateRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyStatusesUpdateRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.AfterPartyUpdateTarget;
-import com.gdschongik.gdsc.domain.event.dto.request.EventApplyOnlineRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventManualApplyRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventParticipantQueryOption;
-import com.gdschongik.gdsc.domain.event.dto.request.EventParticipationDeleteRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventRegisteredManualApplyRequest;
-import com.gdschongik.gdsc.domain.event.dto.request.EventUnregisteredManualApplyRequest;
+import com.gdschongik.gdsc.domain.event.dto.request.*;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyApplicantResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.AfterPartyAttendanceResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventApplicantResponse;
+import com.gdschongik.gdsc.domain.event.dto.response.EventValidateApplicableResponse;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
+import com.gdschongik.gdsc.global.lock.DistributedLock;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -95,7 +89,8 @@ public class EventParticipationService {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         validateEventEnabledForAfterParty(event);
 
-        List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
+        List<EventParticipation> eventParticipations =
+                eventParticipationRepository.findAllByEventOrderByParticipantName(event);
 
         long attendedAfterApplyingCount = eventParticipations.stream()
                 .filter(eventParticipation -> eventParticipation
@@ -240,12 +235,14 @@ public class EventParticipationService {
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
+        boolean isEventParticipationDuplicate = eventParticipationRepository.existsByEventAndParticipantStudentId(
+                event, request.participant().getStudentId());
         Participant participant = request.participant();
         Member memberByParticipant =
                 memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
 
-        EventParticipation participation =
-                eventParticipationDomainService.applyManual(participant, memberByParticipant, event);
+        EventParticipation participation = eventParticipationDomainService.applyManual(
+                participant, memberByParticipant, event, isEventParticipationDuplicate);
         eventParticipationRepository.save(participation);
 
         log.info(
@@ -308,17 +305,29 @@ public class EventParticipationService {
         }
     }
 
+    @DistributedLock(key = "'event:' + #request.eventId()")
     @Transactional
     public void applyOnline(EventApplyOnlineRequest request) {
         Event event =
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
+        boolean isEventParticipationDuplicate = eventParticipationRepository.existsByEventAndParticipantStudentId(
+                event, request.participant().getStudentId());
         Participant participant = request.participant();
         Member memberByParticipant =
                 memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
+        long mainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
+        long afterPartyApplicantCount = eventParticipationRepository.countAfterPartyApplicantsByEvent(event);
 
         EventParticipation eventParticipation = eventParticipationDomainService.applyOnline(
-                participant, memberByParticipant, request.afterPartyApplicationStatus(), event, now());
+                participant,
+                memberByParticipant,
+                request.afterPartyApplicationStatus(),
+                event,
+                now(),
+                isEventParticipationDuplicate,
+                mainEventApplicantCount,
+                afterPartyApplicantCount);
 
         eventParticipationRepository.save(eventParticipation);
 
@@ -326,5 +335,52 @@ public class EventParticipationService {
                 "[EventParticipationService] 이벤트 참여 신청: eventId={}, memberStudentId={}",
                 event.getId(),
                 participant.getStudentId());
+    }
+
+    @Transactional
+    public void joinOnsite(EventOnsiteJoinRequest request) {
+        Event event =
+                eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
+        boolean isEventParticipationDuplicate = eventParticipationRepository.existsByEventAndParticipantStudentId(
+                event, request.participant().getStudentId());
+        Participant participant = request.participant();
+        Member memberByParticipant =
+                memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
+
+        EventParticipation eventParticipation = eventParticipationDomainService.joinOnsite(
+                participant, memberByParticipant, event, isEventParticipationDuplicate);
+
+        eventParticipationRepository.save(eventParticipation);
+
+        log.info(
+                "[EventParticipationService] 뒤풀이 현장등록: eventId={}, memberStudentId={}",
+                event.getId(),
+                participant.getStudentId());
+    }
+
+    @Transactional(readOnly = true)
+    public EventValidateApplicableResponse validateEventApplicable(EventValidateApplicableRequest request) {
+        Event event =
+                eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        boolean isEventParticipationDuplicate = eventParticipationRepository.existsByEventAndParticipantStudentId(
+                event, request.participant().getStudentId());
+        Participant participant = request.participant();
+        Member memberByParticipant =
+                memberRepository.findByStudentId(participant.getStudentId()).orElse(null);
+        long mainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
+
+        try {
+            eventParticipationDomainService.validateEventApplicable(
+                    memberByParticipant,
+                    event,
+                    LocalDateTime.now(),
+                    isEventParticipationDuplicate,
+                    mainEventApplicantCount);
+            return EventValidateApplicableResponse.success();
+        } catch (CustomException e) {
+            log.info("[EventService] 이벤트 참여 불가: eventId={}, failureReason={}", request.eventId(), e.getErrorCode());
+            return EventValidateApplicableResponse.failure(e.getErrorCode());
+        }
     }
 }

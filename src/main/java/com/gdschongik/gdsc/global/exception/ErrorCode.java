@@ -50,7 +50,7 @@ public enum ErrorCode {
     UNIV_NOT_SATISFIED(CONFLICT, "재학생 인증이 완료되지 않았습니다."),
     DISCORD_NOT_SATISFIED(CONFLICT, "디스코드 인증이 완료되지 않았습니다."),
     EMAIL_ALREADY_SATISFIED(CONFLICT, "이미 이메일 인증된 회원입니다."),
-    BASIC_INFO_NOT_SATISFIED(CONFLICT, "기본 회원정보 작성이 완료되지 않았습니다."),
+    INFO_NOT_SATISFIED(CONFLICT, "기본 회원정보 작성이 완료되지 않았습니다."),
 
     // Univ Email Verification
     UNIV_EMAIL_ALREADY_SATISFIED(CONFLICT, "이미 가입된 재학생 메일입니다."),
@@ -200,6 +200,10 @@ public enum ErrorCode {
     EVENT_NOT_APPLICABLE_AFTER_PARTY_DISABLED(CONFLICT, "뒤풀이가 비활성화된 이벤트에 뒤풀이 신청을 할 수 없습니다."),
     EVENT_NOT_APPLICABLE_MEMBER_INFO_NOT_SATISFIED(CONFLICT, "기본 회원정보 작성이 완료되지 않은 회원은 이벤트에 신청할 수 없습니다."),
     EVENT_NOT_APPLICABLE_MEMBER_INFO_SATISFIED(CONFLICT, "기본 회원정보가 작성된 회원의 학번으로는 비회원 신청을 할 수 없습니다."),
+    EVENT_NOT_APPLICABLE_MAIN_EVENT_MAX_APPLICANT_COUNT_EXCEEDED(CONFLICT, "본 행사 최대 신청자 수를 초과했습니다."),
+    EVENT_NOT_APPLICABLE_AFTER_PARTY_MAX_APPLICANT_COUNT_EXCEEDED(CONFLICT, "뒤풀이 최대 신청자 수를 초과했습니다."),
+    EVENT_NOT_VIEWABLE_OUTSIDE_APPLICATION_PERIOD(CONFLICT, "이벤트 신청 기간이 아닙니다."),
+    EVENT_NOT_VIEWABLE_MAX_APPLICANT_COUNT_EXCEEDED(CONFLICT, "최대 신청자 수를 초과했습니다."),
     EVENT_NOT_UPDATABLE_MAX_APPLICANT_COUNT_INVALID(CONFLICT, "최대 신청자 수를 현재 신청자 수보다 적게 변경할 수 없습니다."),
     EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT(CONFLICT, "이미 신청자가 존재하는 이벤트는 폼 관련 항목을 수정할 수 없습니다."),
     EVENT_NOT_UPDATABLE_PAYMENT_STATUS_INVALID(CONFLICT, "뒤풀이가 비활성화된 이벤트는 결제 관련 항목을 활성화할 수 없습니다."),
@@ -215,6 +219,7 @@ public enum ErrorCode {
     PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_EXISTENCE_MISMATCH(
             INTERNAL_SERVER_ERROR, "이벤트 참여정보의 멤버 ID와 멤버 인자는 둘 다 null이거나 not null이어야 합니다."),
     PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_ID_MISMATCH(INTERNAL_SERVER_ERROR, "이벤트 참여정보의 멤버 ID와 인자의 멤버 ID가 일치하지 않습니다."),
+    PARTICIPATION_DUPLICATE(CONFLICT, "이미 해당 이벤트를 신청했습니다."),
     AFTER_PARTY_NOT_ATTENDABLE_DISABLED(CONFLICT, "뒤풀이가 비활성화 된 경우, 뒤풀이에 참석할 수 없습니다."),
     AFTER_PARTY_NOT_ATTENDABLE_ALREADY_ATTENDED(CONFLICT, "이미 뒤풀이에 참석하였습니다."),
     AFTER_PARTY_ATTENDANCE_STATUS_NOT_REVOKABLE_DISABLED(CONFLICT, "뒤풀이가 비활성화 된 경우, 뒤풀이 참석을 취소할 수 없습니다."),
@@ -223,6 +228,9 @@ public enum ErrorCode {
     AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED(CONFLICT, "뒤풀이 선입금 상태가 이미 요청 상태로 수정되어있습니다."),
     AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_NONE(CONFLICT, "결제 상태가 None 일 때는 뒤풀이 정산 상태를 수정할 수 없습니다."),
     AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED(CONFLICT, "뒤풀이 정산 상태가 이미 요청 상태로 수정되어있습니다."),
+
+    // Lock
+    LOCK_ACQUIRE_FAILED(INTERNAL_SERVER_ERROR, "락 획득에 실패했습니다. 다시 시도해주세요."),
     ;
 
     private final HttpStatus status;

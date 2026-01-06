@@ -6,7 +6,7 @@ import static com.gdschongik.gdsc.global.common.constant.WorkbookConstant.*;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Department;
 import com.gdschongik.gdsc.domain.member.domain.MemberRole;
-import com.gdschongik.gdsc.domain.member.dto.MemberBasicInfoDto;
+import com.gdschongik.gdsc.domain.member.dto.MemberInfoDto;
 import com.gdschongik.gdsc.domain.study.domain.AchievementType;
 import com.gdschongik.gdsc.domain.study.domain.Study;
 import com.gdschongik.gdsc.domain.study.dto.response.StudyStudentResponse;
@@ -120,7 +120,7 @@ public class ExcelUtil {
         Sheet sheet = setUpStudySheet(workbook, study.getTitle(), study.getTotalRound());
 
         content.forEach(student -> {
-            MemberBasicInfoDto member = student.member();
+            MemberInfoDto member = student.member();
             StudyHistoryDto studyHistory = student.studyHistory();
             List<StudyAchievementDto> studyAchievements = student.achievements();
             boolean isFirstRoundOutstandingStudent = studyAchievements.stream()

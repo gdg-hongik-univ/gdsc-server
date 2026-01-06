@@ -1181,6 +1181,7 @@ class EventParticipationServiceTest extends IntegrationTest {
                 EVENT_NAME,
                 VENUE,
                 EVENT_START_AT,
+                EVENT_DESCRIPTION,
                 EVENT_APPLICATION_PERIOD,
                 REGULAR_ROLE_ONLY_STATUS,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,
@@ -1195,6 +1196,7 @@ class EventParticipationServiceTest extends IntegrationTest {
                 name,
                 VENUE,
                 EVENT_START_AT,
+                EVENT_DESCRIPTION,
                 EVENT_APPLICATION_PERIOD,
                 REGULAR_ROLE_ONLY_STATUS,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,
@@ -1204,7 +1206,7 @@ class EventParticipationServiceTest extends IntegrationTest {
 
     private Member createGuestMemberForEvent(String studentId, String name) {
         Member member = createGuestMember();
-        member.updateBasicMemberInfo(studentId, name, PHONE_NUMBER, D022, EMAIL);
+        member.updateInfo(studentId, name, PHONE_NUMBER, D022, EMAIL);
         return memberRepository.save(member);
     }
 
@@ -1223,18 +1225,21 @@ class EventParticipationServiceTest extends IntegrationTest {
     }
 
     private EventParticipation createEventParticipation(Event event, Member member) {
-        EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
+        EventParticipation eventParticipation = EventParticipation.createOnline(
+                Participant.of(member.getName(), member.getStudentId(), member.getPhone()),
                 member,
                 AfterPartyApplicationStatus.NOT_APPLIED,
                 AfterPartyAttendanceStatus.NOT_ATTENDED,
                 PaymentStatus.NONE,
                 PaymentStatus.NONE,
                 event);
+
         return eventParticipationRepository.save(eventParticipation);
     }
 
     private EventParticipation createAfterPartyParticipation(Event event, Member member) {
-        EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
+        EventParticipation eventParticipation = EventParticipation.createOnline(
+                Participant.of(member.getName(), member.getStudentId(), member.getPhone()),
                 member,
                 AfterPartyApplicationStatus.APPLIED,
                 AfterPartyAttendanceStatus.NOT_ATTENDED,
@@ -1245,7 +1250,8 @@ class EventParticipationServiceTest extends IntegrationTest {
     }
 
     private EventParticipation createAfterPartyDisabledEventParticipation(Event event, Member member) {
-        EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
+        EventParticipation eventParticipation = EventParticipation.createOnline(
+                Participant.of(member.getName(), member.getStudentId(), member.getPhone()),
                 member,
                 AfterPartyApplicationStatus.NONE,
                 AfterPartyAttendanceStatus.NONE,
@@ -1256,7 +1262,8 @@ class EventParticipationServiceTest extends IntegrationTest {
     }
 
     private EventParticipation createUnconfirmedAfterPartyEventParticipation(Event event, Member member) {
-        EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
+        EventParticipation eventParticipation = EventParticipation.createOnline(
+                Participant.of(member.getName(), member.getStudentId(), member.getPhone()),
                 member,
                 AfterPartyApplicationStatus.APPLIED,
                 AfterPartyAttendanceStatus.NOT_ATTENDED,
@@ -1267,7 +1274,8 @@ class EventParticipationServiceTest extends IntegrationTest {
     }
 
     private EventParticipation createConfirmedAfterPartyEventParticipation(Event event, Member member) {
-        EventParticipation eventParticipation = EventParticipation.createOnlineForRegistered(
+        EventParticipation eventParticipation = EventParticipation.createOnline(
+                Participant.of(member.getName(), member.getStudentId(), member.getPhone()),
                 member,
                 AfterPartyApplicationStatus.APPLIED,
                 AfterPartyAttendanceStatus.ATTENDED,
@@ -1278,8 +1286,9 @@ class EventParticipationServiceTest extends IntegrationTest {
     }
 
     private EventParticipation createUnregisteredEventParticipation(Event event, Participant participant) {
-        EventParticipation eventParticipation = EventParticipation.createOnlineForUnregistered(
+        EventParticipation eventParticipation = EventParticipation.createOnline(
                 participant,
+                null,
                 AfterPartyApplicationStatus.NOT_APPLIED,
                 AfterPartyAttendanceStatus.NOT_ATTENDED,
                 PaymentStatus.NONE,

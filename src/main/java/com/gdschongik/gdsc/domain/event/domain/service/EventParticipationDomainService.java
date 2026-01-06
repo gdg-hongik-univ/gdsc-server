@@ -148,8 +148,14 @@ public class EventParticipationDomainService {
             @Nullable Member member,
             AfterPartyApplicationStatus afterPartyApplicationStatus,
             Event event,
-            LocalDateTime now) {
+            LocalDateTime now,
+            boolean isEventParticipationDuplicate,
+            long currentMainEventApplicantCount,
+            long currentAfterPartyApplicantCount) {
+        validateEventParticipationDuplicate(isEventParticipationDuplicate);
         validateEventApplicationPeriod(event, now);
+        validateMaxApplicantCount(
+                event, afterPartyApplicationStatus, currentMainEventApplicantCount, currentAfterPartyApplicantCount);
         validateMemberWhenOnlyRegularRoleAllowedIfExists(event, member); // applyOnline에서만 수행
         validateAfterPartyApplicationStatus(event, afterPartyApplicationStatus);
 
@@ -172,7 +178,9 @@ public class EventParticipationDomainService {
      * 주로 본행사 현장등록 상황에서 뒤풀이 신청을 위해 사용됩니다. (뒤풀이 신청상태 APPLIED)
      * 뒤풀이가 없는 행사인 경우에도 히스토리를 남기기 위해 사용됩니다. (뒤풀이 신청상태 NONE)
      */
-    public EventParticipation applyManual(Participant participant, @Nullable Member member, Event event) {
+    public EventParticipation applyManual(
+            Participant participant, @Nullable Member member, Event event, boolean isEventParticipationDuplicate) {
+        validateEventParticipationDuplicate(isEventParticipationDuplicate);
         // 뒤풀이가 존재하는 경우에만 항상 신청 처리
         AfterPartyApplicationStatus afterPartyApplicationStatus = event.afterPartyExists() ? APPLIED : NONE;
 
@@ -193,11 +201,30 @@ public class EventParticipationDomainService {
     /**
      * 뒤풀이 현장등록을 통해 뒤풀이에 확정 참여하는 메서드입니다.
      */
-    public EventParticipation joinOnsite(Participant participant, @Nullable Member member, Event event) {
+    public EventParticipation joinOnsite(
+            Participant participant, @Nullable Member member, Event event, boolean isEventParticipationDuplicate) {
+        validateEventParticipationDuplicate(isEventParticipationDuplicate);
         PaymentStatus prePaymentStatus = PaymentStatus.getInitialPrePaymentStatus(event);
         PaymentStatus postPaymentStatus = PaymentStatus.getInitialPostPaymentStatus(event);
 
         return EventParticipation.createOnsite(participant, member, prePaymentStatus, postPaymentStatus, event);
+    }
+
+    /**
+     * 현재 행사 신청이 가능한 지 검증하는 메서드입니다.
+     * 중복 신청이 아니고, 신청 기간 내에 있어야 하며, 최대 신청자 수를 초과하지 않아야 합니다.
+     * 뒤풀이 신청 상태는 고려하지 않습니다.
+     */
+    public void validateEventApplicable(
+            @Nullable Member member,
+            Event event,
+            LocalDateTime now,
+            boolean isEventParticipationDuplicate,
+            long currentMainEventApplicantCount) {
+        validateEventParticipationDuplicate(isEventParticipationDuplicate);
+        validateEventApplicationPeriod(event, now);
+        validateMaxApplicantCount(event, NONE, currentMainEventApplicantCount, 0);
+        validateMemberWhenOnlyRegularRoleAllowedIfExists(event, member);
     }
 
     // 검증 로직
@@ -285,6 +312,39 @@ public class EventParticipationDomainService {
 
         if (member == null || !member.isRegular()) {
             throw new CustomException(EVENT_NOT_APPLICABLE_NOT_REGULAR_ROLE);
+        }
+    }
+
+    /**
+     * 이벤트 중복 신청 여부를 검증합니다.
+     */
+    private void validateEventParticipationDuplicate(boolean isEventParticipationDuplicate) {
+        if (isEventParticipationDuplicate) {
+            throw new CustomException(PARTICIPATION_DUPLICATE);
+        }
+    }
+
+    /**
+     * 최대 신청자 수 제한을 검증하는 메서드입니다.
+     * 온라인 신청에만 사용됩니다.
+     */
+    private void validateMaxApplicantCount(
+            Event event,
+            AfterPartyApplicationStatus afterPartyApplicationStatus,
+            long currentMainEventApplicantCount,
+            long currentAfterPartyApplicantCount) {
+        Integer mainEventMaxApplicantCount = event.getMainEventMaxApplicantCount();
+        boolean isMainEventApplicationCountExceeded =
+                mainEventMaxApplicantCount != null && currentMainEventApplicantCount >= mainEventMaxApplicantCount;
+        if (isMainEventApplicationCountExceeded) {
+            throw new CustomException(EVENT_NOT_APPLICABLE_MAIN_EVENT_MAX_APPLICANT_COUNT_EXCEEDED);
+        }
+
+        Integer afterPartyMaxApplicantCount = event.getAfterPartyMaxApplicantCount();
+        boolean isAfterPartyApplicationCountExceeded =
+                afterPartyMaxApplicantCount != null && currentAfterPartyApplicantCount >= afterPartyMaxApplicantCount;
+        if (afterPartyApplicationStatus.isApplied() && isAfterPartyApplicationCountExceeded) {
+            throw new CustomException(EVENT_NOT_APPLICABLE_AFTER_PARTY_MAX_APPLICANT_COUNT_EXCEEDED);
         }
     }
 }

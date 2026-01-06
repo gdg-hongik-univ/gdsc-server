@@ -7,8 +7,3 @@ spring:
     url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
-  jpa:
-    properties:
-      hibernate:
-        create_empty_composites:
-          enabled: true

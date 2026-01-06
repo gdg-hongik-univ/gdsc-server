@@ -39,9 +39,9 @@ public class Event extends BaseEntity {
     @Column(name = "start_at")
     private LocalDateTime startAt;
 
-    @Comment("[메타] 행사 신청 폼 설명")
+    @Comment("[메타] 행사 설명")
     @Column(columnDefinition = "TEXT")
-    private String applicationDescription;
+    private String description;
 
     @Comment("행사 신청 기간")
     @Embedded
@@ -93,7 +93,7 @@ public class Event extends BaseEntity {
             String name,
             String venue,
             LocalDateTime startAt,
-            String applicationDescription,
+            String description,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
             UsageStatus afterPartyStatus,
@@ -106,7 +106,7 @@ public class Event extends BaseEntity {
         this.name = name;
         this.venue = venue;
         this.startAt = startAt;
-        this.applicationDescription = applicationDescription;
+        this.description = description;
         this.applicationPeriod = applicationPeriod;
         this.regularRoleOnlyStatus = regularRoleOnlyStatus;
         this.afterPartyStatus = afterPartyStatus;
@@ -123,6 +123,7 @@ public class Event extends BaseEntity {
             String name,
             String venue,
             LocalDateTime startAt,
+            String description,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
             Integer mainEventMaxApplicantCount,
@@ -132,7 +133,7 @@ public class Event extends BaseEntity {
                 .name(name)
                 .venue(venue)
                 .startAt(startAt)
-                .applicationDescription(null)
+                .description(description)
                 .applicationPeriod(applicationPeriod)
                 .regularRoleOnlyStatus(regularRoleOnlyStatus)
                 .afterPartyStatus(ENABLED)
@@ -162,6 +163,7 @@ public class Event extends BaseEntity {
             String name,
             String venue,
             LocalDateTime startAt,
+            String description,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
             Integer mainEventMaxApplicantCount,
@@ -169,6 +171,7 @@ public class Event extends BaseEntity {
         this.name = name;
         this.venue = venue;
         this.startAt = startAt;
+        this.description = description;
         this.applicationPeriod = applicationPeriod;
         this.regularRoleOnlyStatus = regularRoleOnlyStatus;
         this.mainEventMaxApplicantCount = mainEventMaxApplicantCount;
@@ -181,7 +184,6 @@ public class Event extends BaseEntity {
      * @see EventDomainService
      */
     public void updateFormInfo(
-            String applicationDescription,
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus,
             UsageStatus postPaymentStatus,
@@ -189,7 +191,6 @@ public class Event extends BaseEntity {
             UsageStatus noticeConfirmQuestionStatus) {
         validatePaymentStatus(afterPartyStatus, prePaymentStatus, postPaymentStatus);
 
-        this.applicationDescription = applicationDescription;
         this.afterPartyStatus = afterPartyStatus;
         this.prePaymentStatus = prePaymentStatus;
         this.postPaymentStatus = postPaymentStatus;

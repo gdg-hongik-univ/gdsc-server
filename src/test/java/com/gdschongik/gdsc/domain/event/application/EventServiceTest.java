@@ -5,6 +5,7 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
 import com.gdschongik.gdsc.domain.event.domain.Event;
+import com.gdschongik.gdsc.domain.event.domain.UsageStatus;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
@@ -29,6 +30,7 @@ public class EventServiceTest extends IntegrationTest {
                     EVENT_NAME,
                     VENUE,
                     EVENT_START_AT,
+                    EVENT_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD,
                     REGULAR_ROLE_ONLY_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
@@ -50,6 +52,7 @@ public class EventServiceTest extends IntegrationTest {
                     EVENT_NAME,
                     VENUE,
                     EVENT_START_AT,
+                    EVENT_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD,
                     REGULAR_ROLE_ONLY_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
@@ -72,6 +75,7 @@ public class EventServiceTest extends IntegrationTest {
                     updatedName,
                     VENUE,
                     EVENT_START_AT,
+                    EVENT_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD,
                     REGULAR_ROLE_ONLY_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
@@ -93,7 +97,6 @@ public class EventServiceTest extends IntegrationTest {
             // given
             Long invalidId = 999L;
             var request = new EventUpdateFormInfoRequest(
-                    APPLICATION_DESCRIPTION,
                     AFTER_PARTY_STATUS,
                     PRE_PAYMENT_STATUS,
                     POST_PAYMENT_STATUS,
@@ -112,21 +115,20 @@ public class EventServiceTest extends IntegrationTest {
             Event event = createEvent();
             Long eventId = event.getId();
 
-            String updatedApplicationDescription = "수정된 행사 설명";
+            UsageStatus updatedRsvpQuestionStatus = UsageStatus.ENABLED;
             var request = new EventUpdateFormInfoRequest(
-                    updatedApplicationDescription,
                     AFTER_PARTY_STATUS,
                     PRE_PAYMENT_STATUS,
                     POST_PAYMENT_STATUS,
-                    RSVP_QUESTION_STATUS,
+                    updatedRsvpQuestionStatus,
                     NOTICE_CONFIRM_QUESTION_STATUS);
 
             // when
             eventService.updateEventFormInfo(eventId, request);
 
             // then
-            assertThat(eventRepository.findById(eventId).get().getApplicationDescription())
-                    .isEqualTo(updatedApplicationDescription);
+            assertThat(eventRepository.findById(eventId).get().getRsvpQuestionStatus())
+                    .isEqualTo(updatedRsvpQuestionStatus);
         }
     }
 }

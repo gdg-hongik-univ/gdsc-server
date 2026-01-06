@@ -59,7 +59,7 @@ class OnboardingMemberServiceTest extends IntegrationTest {
             MemberDashboardResponse response = onboardingMemberService.getDashboard();
 
             // then - 전체 필드가 null인지 확인
-            assertThat(response.member().basicInfo()).hasAllNullFieldsOrProperties();
+            assertThat(response.member().info()).hasAllNullFieldsOrProperties();
         }
     }
 }

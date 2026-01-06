@@ -25,6 +25,7 @@ public class EventTest {
                     EVENT_NAME,
                     VENUE,
                     EVENT_START_AT,
+                    EVENT_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD,
                     REGULAR_ROLE_ONLY_STATUS,
                     MAIN_EVENT_MAX_APPLICATION_COUNT,
@@ -56,7 +57,6 @@ public class EventTest {
 
             // when & then
             assertThatThrownBy(() -> event.updateFormInfo(
-                            APPLICATION_DESCRIPTION,
                             DISABLED, // 뒤풀이 비활성화
                             ENABLED, // 사전 결제 활성화
                             ENABLED,
@@ -74,7 +74,6 @@ public class EventTest {
 
             // when
             event.updateFormInfo(
-                    APPLICATION_DESCRIPTION,
                     DISABLED, // 뒤풀이 비활성화
                     DISABLED,
                     DISABLED,

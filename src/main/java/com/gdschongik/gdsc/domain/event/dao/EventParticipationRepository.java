@@ -11,7 +11,11 @@ public interface EventParticipationRepository
 
     List<EventParticipation> findAllByEvent(Event event);
 
+    List<EventParticipation> findAllByEventOrderByParticipantName(Event event);
+
     long countByEvent(Event event);
 
     boolean existsByEvent(Event event);
+
+    boolean existsByEventAndParticipantStudentId(Event event, String studentId);
 }

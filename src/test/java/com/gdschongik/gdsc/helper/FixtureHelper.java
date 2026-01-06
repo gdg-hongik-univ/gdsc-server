@@ -50,7 +50,7 @@ public class FixtureHelper {
 
     public Member createAssociateMember(Long id) {
         Member member = createGuestMember(id);
-        member.updateBasicMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+        member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
         member.completeUnivEmailVerification(UNIV_EMAIL);
         member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
         member.advanceToAssociate();
@@ -170,6 +170,7 @@ public class FixtureHelper {
                 EVENT_NAME,
                 VENUE,
                 EVENT_START_AT,
+                EVENT_DESCRIPTION,
                 EVENT_APPLICATION_PERIOD,
                 regularRoleOnlyStatus,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,
@@ -184,6 +185,7 @@ public class FixtureHelper {
                 EVENT_NAME,
                 VENUE,
                 EVENT_START_AT,
+                EVENT_DESCRIPTION,
                 EVENT_APPLICATION_PERIOD,
                 REGULAR_ROLE_ONLY_STATUS,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,

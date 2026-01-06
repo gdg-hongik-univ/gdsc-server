@@ -26,6 +26,7 @@ public class EventDomainService {
             String name,
             String venue,
             LocalDateTime startAt,
+            String description,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
             @Nullable Integer mainEventMaxApplicantCount,
@@ -36,26 +37,19 @@ public class EventDomainService {
         validateUpdateMaxApplicantCount(currentAfterPartyApplicantCount, afterPartyMaxApplicantCount);
 
         if (event.getRegularRoleOnlyStatus() != regularRoleOnlyStatus) {
-            validateAlreadyExistsApplicant(currentMainEventApplicantCount);
+            boolean eventParticipationExists = currentMainEventApplicantCount > 0;
+            validateAlreadyExistsEventParticipation(eventParticipationExists);
         }
 
         event.updateBasicInfo(
                 name,
                 venue,
                 startAt,
+                description,
                 applicationPeriod,
                 regularRoleOnlyStatus,
                 mainEventMaxApplicantCount,
                 afterPartyMaxApplicantCount);
-    }
-
-    /**
-     * 이미 신청자가 존재하는 경우 예외를 발생시킵니다.
-     */
-    private void validateAlreadyExistsApplicant(long currentMainEventApplicantCount) {
-        if (currentMainEventApplicantCount > 0) {
-            throw new CustomException(EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT);
-        }
     }
 
     /**
@@ -72,13 +66,21 @@ public class EventDomainService {
     }
 
     /**
+     * 이미 신청자가 존재하는 경우 예외를 발생시킵니다.
+     */
+    private void validateAlreadyExistsEventParticipation(boolean eventParticipationExists) {
+        if (eventParticipationExists) {
+            throw new CustomException(EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT);
+        }
+    }
+
+    /**
      * 이벤트 신청 폼 정보를 변경합니다.
      * 이미 신청자가 존재하는 경우 수정할 수 없습니다.
      * @param eventParticipationExists 현재 본 행사 신청 정보가 존재하는지 유무. EventParticipationRepository 조회 데이터
      */
     public void updateFormInfo(
             Event event,
-            String applicationDescription,
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus,
             UsageStatus postPaymentStatus,
@@ -88,20 +90,6 @@ public class EventDomainService {
         validateAlreadyExistsEventParticipation(eventParticipationExists);
 
         event.updateFormInfo(
-                applicationDescription,
-                afterPartyStatus,
-                prePaymentStatus,
-                postPaymentStatus,
-                rsvpQuestionStatus,
-                noticeConfirmQuestionStatus);
-    }
-
-    /**
-     * 이미 신청자가 존재하는 경우 예외를 발생시킵니다.
-     */
-    private void validateAlreadyExistsEventParticipation(boolean eventParticipationExists) {
-        if (eventParticipationExists) {
-            throw new CustomException(EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT);
-        }
+                afterPartyStatus, prePaymentStatus, postPaymentStatus, rsvpQuestionStatus, noticeConfirmQuestionStatus);
     }
 }

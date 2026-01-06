@@ -48,7 +48,7 @@ class ParticipantRoleTest {
         void 기본회원정보를_작성한_게스트는_GUEST를_반환한다() {
             // given
             Member guestMember = fixtureHelper.createGuestMember(1L);
-            guestMember.updateBasicMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+            guestMember.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
 
             EventParticipation eventParticipation = createEventParticipation(guestMember);
 
@@ -110,22 +110,13 @@ class ParticipantRoleTest {
     }
 
     private EventParticipation createEventParticipation(Member member) {
-        if (member != null) {
-            return EventParticipation.createOnlineForRegistered(
-                    member,
-                    AfterPartyApplicationStatus.NOT_APPLIED,
-                    AfterPartyAttendanceStatus.NOT_ATTENDED,
-                    PaymentStatus.UNPAID,
-                    PaymentStatus.UNPAID,
-                    null);
-        } else {
-            return EventParticipation.createOnlineForUnregistered(
-                    Participant.of(NAME, STUDENT_ID, PHONE_NUMBER),
-                    AfterPartyApplicationStatus.NOT_APPLIED,
-                    AfterPartyAttendanceStatus.NOT_ATTENDED,
-                    PaymentStatus.UNPAID,
-                    PaymentStatus.UNPAID,
-                    null);
-        }
+        return EventParticipation.createOnline(
+                Participant.of(NAME, STUDENT_ID, PHONE_NUMBER),
+                member,
+                AfterPartyApplicationStatus.NOT_APPLIED,
+                AfterPartyAttendanceStatus.NOT_ATTENDED,
+                PaymentStatus.UNPAID,
+                PaymentStatus.UNPAID,
+                null);
     }
 }

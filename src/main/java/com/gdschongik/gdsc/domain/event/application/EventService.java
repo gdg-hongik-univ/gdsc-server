@@ -6,12 +6,16 @@ import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
+import com.gdschongik.gdsc.domain.event.domain.service.EventParticipationDomainService;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
+import com.gdschongik.gdsc.domain.event.dto.response.EventCreateResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
+import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.global.exception.CustomException;
+import com.gdschongik.gdsc.global.lock.DistributedLock;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +32,9 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventParticipationRepository eventParticipationRepository;
+    private final MemberRepository memberRepository;
     private final EventDomainService eventDomainService;
+    private final EventParticipationDomainService eventParticipationDomainService;
 
     @Transactional(readOnly = true)
     public Page<EventResponse> getEvents(Pageable pageable) {
@@ -42,11 +48,12 @@ public class EventService {
     }
 
     @Transactional
-    public void createEvent(EventCreateRequest request) {
+    public EventCreateResponse createEvent(EventCreateRequest request) {
         Event event = Event.create(
                 request.name(),
                 request.venue(),
                 request.startAt(),
+                request.description(),
                 request.applicationPeriod(),
                 request.regularRoleOnlyStatus(),
                 request.mainEventMaxApplicantCount(),
@@ -54,14 +61,21 @@ public class EventService {
         eventRepository.save(event);
 
         log.info("[EventService] 이벤트 생성: eventId={}", event.getId());
+        return EventCreateResponse.of(event.getId());
     }
 
     @Transactional(readOnly = true)
-    public List<EventDto> searchEvent(String name) {
-        List<Event> events = eventRepository.findAllByNameContains(name);
-        return events.stream().map(EventDto::from).toList();
+    public Page<EventResponse> searchEvent(String name, Pageable pageable) {
+        Page<Event> events = eventRepository.findAllByNameContains(name, pageable);
+
+        List<EventResponse> response = events.stream()
+                .map(event -> EventResponse.of(event, eventParticipationRepository.countByEvent(event)))
+                .toList();
+
+        return new PageImpl<>(response, pageable, events.getTotalElements());
     }
 
+    @DistributedLock(key = "'event:' + #eventId")
     @Transactional
     public void updateEventBasicInfo(Long eventId, EventUpdateBasicInfoRequest request) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
@@ -73,6 +87,7 @@ public class EventService {
                 request.name(),
                 request.venue(),
                 request.startAt(),
+                request.description(),
                 request.applicationPeriod(),
                 request.regularRoleOnlyStatus(),
                 request.mainEventMaxApplicantCount(),
@@ -92,7 +107,6 @@ public class EventService {
 
         eventDomainService.updateFormInfo(
                 event,
-                request.applicationDescription(),
                 request.afterPartyStatus(),
                 request.prePaymentStatus(),
                 request.postPaymentStatus(),
@@ -108,7 +122,6 @@ public class EventService {
     @Transactional(readOnly = true)
     public EventDto getEvent(Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
-
         return EventDto.from(event);
     }
 }

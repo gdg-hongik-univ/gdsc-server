@@ -10,7 +10,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public record BasicMemberInfoRequest(
+public record MemberInfoRequest(
         @NotBlank
                 @Pattern(regexp = STUDENT_ID, message = "학번은 " + STUDENT_ID + " 형식이어야 합니다.")
                 @Schema(description = "학번", pattern = STUDENT_ID)

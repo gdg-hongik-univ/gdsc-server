@@ -9,6 +9,7 @@ import static com.gdschongik.gdsc.global.common.constant.StudyConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.TemporalConstant.*;
 import static org.mockito.Mockito.*;
 
+import com.gdschongik.gdsc.config.TestLockConfig;
 import com.gdschongik.gdsc.config.TestSyncExecutorConfig;
 import com.gdschongik.gdsc.domain.common.model.SemesterType;
 import com.gdschongik.gdsc.domain.common.vo.Money;
@@ -66,7 +67,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
-@Import(TestSyncExecutorConfig.class)
+@Import({TestSyncExecutorConfig.class, TestLockConfig.class})
 @SpringBootTest
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
@@ -176,7 +177,7 @@ public abstract class IntegrationTest {
         memberRepository.save(member);
 
         member.completeUnivEmailVerification(UNIV_EMAIL);
-        member.updateBasicMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+        member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
         member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
         member.updateDiscordId(DISCORD_ID);
 
@@ -191,7 +192,7 @@ public abstract class IntegrationTest {
     protected Member createAssociateMember() {
         Member member = createGuestMember();
 
-        member.updateBasicMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+        member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
         member.completeUnivEmailVerification(UNIV_EMAIL);
         member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
         member.advanceToAssociate();
@@ -346,6 +347,7 @@ public abstract class IntegrationTest {
                 EVENT_NAME,
                 VENUE,
                 EVENT_START_AT,
+                EVENT_DESCRIPTION,
                 EVENT_APPLICATION_PERIOD,
                 REGULAR_ROLE_ONLY_STATUS,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,

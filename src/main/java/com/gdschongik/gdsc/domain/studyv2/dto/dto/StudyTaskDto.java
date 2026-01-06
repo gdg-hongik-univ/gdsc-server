@@ -29,7 +29,9 @@ public record StudyTaskDto(
                 studySession.getId(),
                 studySession.getPosition(),
                 ATTENDANCE,
-                studySession.getLessonPeriod().getEndDate(),
+                type == StudyType.ASSIGNMENT
+                        ? null
+                        : studySession.getLessonPeriod().getEndDate(),
                 AttendanceStatus.of(studySession, type, isAttended, now),
                 null,
                 null);

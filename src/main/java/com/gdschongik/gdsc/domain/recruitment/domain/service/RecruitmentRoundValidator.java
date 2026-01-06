@@ -64,8 +64,8 @@ public class RecruitmentRoundValidator {
 
     private void validatePeriodOverlap(
             List<RecruitmentRound> recruitmentRounds, LocalDateTime startDate, LocalDateTime endDate) {
-        // TODO: recruitmentRound.getPeriod().validatePeriodOverlap(startDate, endDate)로 변경
-        recruitmentRounds.forEach(recruitmentRound -> recruitmentRound.validatePeriodOverlap(startDate, endDate));
+        recruitmentRounds.forEach(
+                recruitmentRound -> recruitmentRound.getPeriod().validatePeriodOverlap(startDate, endDate));
     }
 
     // 학년도, 학기, 모집회차가 모두 같은 경우

@@ -5,11 +5,11 @@ import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
+import com.gdschongik.gdsc.domain.event.dto.response.EventCreateResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -25,6 +25,13 @@ public class AdminEventController {
 
     private final EventService eventService;
 
+    @Operation(summary = "행사 조회", description = "행사를 조회합니다.")
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventDto> getEvent(@PathVariable Long eventId) {
+        var response = eventService.getEvent(eventId);
+        return ResponseEntity.ok(response);
+    }
+
     @Operation(summary = "행사 목록 조회", description = "행사 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<Page<EventResponse>> getEvents(@ParameterObject Pageable pageable) {
@@ -34,15 +41,16 @@ public class AdminEventController {
 
     @Operation(summary = "행사 생성", description = "행사를 생성합니다.")
     @PostMapping
-    public ResponseEntity<Void> createEvent(@Valid @RequestBody EventCreateRequest request) {
-        eventService.createEvent(request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<EventCreateResponse> createEvent(@Valid @RequestBody EventCreateRequest request) {
+        var response = eventService.createEvent(request);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "이벤트 검색", description = "이벤트를 검색합니다.")
     @GetMapping("/search")
-    public ResponseEntity<List<EventDto>> searchEvent(@RequestParam String name) {
-        var response = eventService.searchEvent(name);
+    public ResponseEntity<Page<EventResponse>> searchEvent(
+            @RequestParam String name, @ParameterObject Pageable pageable) {
+        var response = eventService.searchEvent(name, pageable);
         return ResponseEntity.ok(response);
     }
 
