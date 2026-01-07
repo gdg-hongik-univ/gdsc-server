@@ -64,10 +64,6 @@ public class RecruitmentRound extends BaseEntity {
         return period.isOpen();
     }
 
-    public void validatePeriodOverlap(LocalDateTime startDate, LocalDateTime endDate) {
-        period.validatePeriodOverlap(startDate, endDate);
-    }
-
     public void updateRecruitmentRound(String name, Period period, RoundType roundType) {
         this.name = name;
         this.period = period;
