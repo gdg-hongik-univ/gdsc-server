@@ -67,7 +67,7 @@ fix/983-discord-exception-handler-ignored
 ### Commit Message
 
 - 커밋 제목만 작성하며, **절대** 커밋 본문을 작성하지 말 것
-- 의도와 변경내용이 드러나도록 명확하게 작성 
+- 의도와 변경내용이 드러나도록 명확하게 작성
 
 ```
 type: description-in-korean
@@ -84,7 +84,7 @@ fix: 과제 스터디에서 출석 마감 조회로 인한 NPE 수정
 
 ## Related Docs
 
-- **항상** 수행하려는 작업과 관련된 문서를 아래에서 확인하세요.  
+- **항상** 수행하려는 작업과 관련된 문서를 아래에서 확인하세요.
 
 ### Architecture & Dev Guide & Convention
 

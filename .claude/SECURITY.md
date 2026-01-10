@@ -324,4 +324,3 @@ UserDetails user = User.withUsername(basicAuthProperty.getUsername())
 | Swagger UI | `swaggerFilterChain` | `/swagger-*/**`, `/v3/api-docs/**` | SWAGGER |
 | Webhook | `basicAuthFilterChain` | `/webhook/**` | WEBHOOK |
 | Prometheus | `prometheusFilterChain` | `/gdsc-actuator/prometheus` | (인증만 필요) |
-
