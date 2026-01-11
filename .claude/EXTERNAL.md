@@ -23,43 +23,7 @@ gdsc-server는 다음 외부 서비스와 연동합니다:
 
 **파일**: `infra/feign/global/config/FeignConfig.java`
 
-```java
-@Configuration
-@EnableFeignClients("com.gdschongik.gdsc.infra")
-public class FeignConfig {
-
-    @Bean
-    public Decoder feignDecoder() {
-        return new JacksonDecoder(customObjectMapper());
-    }
-
-    public ObjectMapper customObjectMapper() {
-        return new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL);
-    }
-
-    @Bean
-    Logger.Level feignLoggerLevel() {
-        return Logger.Level.FULL;
-    }
-
-    @Bean
-    public FeignFormatterRegistrar dateTimeFormatterRegistrar() {
-        return registry -> {
-            var registrar = new DateTimeFormatterRegistrar();
-            registrar.setUseIsoFormat(true);
-            registrar.registerFormatters(registry);
-        };
-    }
-
-    @Bean
-    public Capability sentryCapability() {
-        return new SentryCapability();
-    }
-}
-```
+Feign 클라이언트의 전역 설정을 담당합니다. Jackson 디코더, 로거 레벨, 날짜/시간 포맷터, Sentry 분산 추적 등을 구성합니다.
 
 ### 1.2 주요 설정
 
@@ -89,27 +53,9 @@ Feign 대신 kohsuke 라이브러리를 사용하는 이유:
 
 **파일**: `global/config/GithubConfig.java`
 
-```java
-@Configuration
-@RequiredArgsConstructor
-public class GithubConfig {
+`GithubProperty`에서 시크릿 키를 주입받아 `GitHubBuilder.withOAuthToken()`으로 인증된 `GitHub` 인스턴스를 생성합니다.
 
-    private final GithubProperty githubProperty;
-
-    @Bean
-    public GitHub github() throws IOException {
-        return new GitHubBuilder()
-                .withOAuthToken(githubProperty.getSecretKey())
-                .build();
-    }
-}
-```
-
-**설정 파일**: `application-github.yml`
-```yaml
-github:
-  secret-key: ${GITHUB_SECRET_KEY:}
-```
+**설정 파일**: `application-github.yml`에서 `GITHUB_SECRET_KEY` 환경 변수를 바인딩합니다.
 
 ### 2.3 GithubClient 기능
 
@@ -187,30 +133,16 @@ AssignmentSubmission submission = fetcher.fetch();  // 이 시점에 API 요청
 
 ### 2.6 과제 제출 조회 상세 로직
 
-```java
-private AssignmentSubmission getLatestAssignmentSubmission(String repo, int week) {
-    GHRepository ghRepository = getRepository(repo);
-    String assignmentPath = GITHUB_ASSIGNMENT_PATH.formatted(week);  // "week%d/wil.md"
+**파일**: `infra/github/client/GithubClient.java` - `getLatestAssignmentSubmission` 메서드
 
-    GHContent ghContent = getFileContent(ghRepository, assignmentPath);
-    String content = readFileContent(ghContent);
+**동작 순서**:
+1. 레포지토리 조회 (`getRepository`)
+2. 과제 파일 경로 생성 (`week%d/wil.md` 형식)
+3. 파일 내용 조회 및 읽기 (`getFileContent`, `readFileContent`)
+4. 최신 커밋 조회 (`queryCommits().path().list().withPageSize(1)`)
+5. `AssignmentSubmission` 객체 생성 및 반환
 
-    GHCommit ghLatestCommit = ghRepository
-            .queryCommits()
-            .path(assignmentPath)
-            .list()
-            .withPageSize(1)
-            .iterator()
-            .next();
-
-    LocalDateTime committedAt = getCommitDate(ghLatestCommit);
-
-    return new AssignmentSubmission(
-            ghContent.getHtmlUrl(), ghLatestCommit.getSHA1(), content.length(), committedAt);
-}
-```
-
-**참고**: `GHContent.getSize()`는 바이트 단위로 계산하므로, 한글 문자열 길이를 위해 직접 content를 읽어 `String.length()` 사용
+**참고**: `GHContent.getSize()`는 바이트 단위이므로, 한글 문자열 길이를 위해 직접 content를 읽어 `String.length()` 사용
 
 ### 2.7 에러 처리
 
@@ -300,25 +232,12 @@ public class PaymentClientConfig {}
 
 **파일**: `infra/feign/payment/error/PaymentErrorDecoder.java`
 
-```java
-public class PaymentErrorDecoder implements ErrorDecoder {
+Feign `ErrorDecoder`를 구현하여 토스페이먼츠 API 에러 응답을 `CustomPaymentException`으로 변환합니다.
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final ErrorDecoder defaultErrorDecoder = new Default();
-
-    @Override
-    public Exception decode(String methodKey, Response response) {
-        try {
-            var paymentErrorDto = objectMapper.readValue(
-                response.body().asInputStream(), PaymentErrorDto.class);
-            return new CustomPaymentException(
-                response.status(), paymentErrorDto.code(), paymentErrorDto.message());
-        } catch (IOException e) {
-            return defaultErrorDecoder.decode(methodKey, response);
-        }
-    }
-}
-```
+**동작**:
+1. 응답 본문을 `PaymentErrorDto`로 역직렬화
+2. HTTP 상태 코드, 에러 코드, 메시지로 `CustomPaymentException` 생성
+3. 역직렬화 실패 시 기본 `ErrorDecoder`로 위임
 
 **CustomPaymentException**:
 ```java
@@ -379,21 +298,9 @@ public interface MailSender {
 
 **파일**: `global/util/email/JavaEmailSender.java`
 
-```java
-@Component
-@RequiredArgsConstructor
-public class JavaEmailSender implements MailSender {
+`MailSender` 인터페이스를 구현하여 Spring의 `JavaMailSender`를 통해 이메일을 발송합니다.
 
-    private final JavaMailSender javaMailSender;
-
-    @Override
-    public void send(String recipient, String subject, String content) {
-        MimeMessage message = writeMimeMessage(recipient, subject, content);
-        javaMailSender.send(message);
-    }
-}
-```
-
+**특징**:
 - `MimeMessage`를 사용한 HTML 이메일 발송
 - `message.setText(content, "utf-8", "html")`: HTML 형식 지원
 - 발신자: `GDSC Hongik <gdsc.hongik@gmail.com>`
@@ -402,33 +309,7 @@ public class JavaEmailSender implements MailSender {
 
 **파일**: `global/config/JavaMailSenderConfig.java`
 
-**설정 파일**: `application-email.yml`
-```yaml
-email:
-  gmail:
-    login-email: ${GOOGLE_LOGIN_EMAIL}
-    password: ${GOOGLE_PASSWORD}
-
-  host: "smtp.gmail.com"
-  port: 465
-  encoding: "UTF-8"
-  protocol: "smtps"
-
-  java-mail-property:
-    smtp-auth:
-      key: "mail.smtp.auth"
-      value: true
-    socket-factory:
-      port:
-        key: "mail.smtp.socketFactory.port"
-        value: 465
-      fallback:
-        key: "mail.smtp.socketFactory.fallback"
-        value: false
-      class-info:
-        key: "mail.smtp.socketFactory.class"
-        value: "javax.net.ssl.SSLSocketFactory"
-```
+**설정 파일**: `application-email.yml`에서 Gmail SMTP 연결 정보를 구성합니다.
 
 | 항목 | 값 |
 |------|------|
@@ -441,21 +322,9 @@ email:
 
 **파일**: `global/property/EmailProperty.java`
 
-```java
-@Getter
-@AllArgsConstructor
-@ConfigurationProperties(prefix = "email")
-public class EmailProperty {
-    private final Gmail gmail;
-    private final String host;
-    private final int port;
-    private final String protocol;
-    private final String encoding;
-    private final Map<String, Object> javaMailProperty;
+`@ConfigurationProperties(prefix = "email")`로 `application-email.yml` 설정을 바인딩합니다.
 
-    public record Gmail(String loginEmail, String password) {}
-}
-```
+**필드**: `gmail` (로그인 정보), `host`, `port`, `protocol`, `encoding`, `javaMailProperty` (JavaMail 세부 설정)
 
 ### 4.5 이메일 인증 토큰
 
@@ -551,34 +420,11 @@ docker:
 
 **파일**: `infra/sentry/CustomBeforeSendTransactionCallback.java`
 
-```java
-@Component
-public class CustomBeforeSendTransactionCallback
-    implements SentryOptions.BeforeSendTransactionCallback {
+`SentryOptions.BeforeSendTransactionCallback`을 구현하여 특정 트랜잭션을 Sentry 전송에서 제외합니다.
 
-    @Override
-    public SentryTransaction execute(SentryTransaction transaction, Hint hint) {
-        String transactionEndpoint = transaction.getTransaction();
+**동작**: `KEYWORDS_TO_IGNORE`에 포함된 키워드가 트랜잭션 엔드포인트에 있으면 `null` 반환으로 전송 차단
 
-        if (transactionEndpoint == null) {
-            return transaction;
-        }
-
-        if (KEYWORDS_TO_IGNORE.stream().anyMatch(transactionEndpoint::contains)) {
-            return null;  // 트랜잭션 무시
-        }
-
-        return transaction;
-    }
-}
-```
-
-**필터링 키워드**: `infra/common/constant/SentryConstant.java`
-```java
-public static final String ACTUATOR_KEYWORD = "actuator";
-public static final List<String> KEYWORDS_TO_IGNORE = List.of(ACTUATOR_KEYWORD);
-```
-
+**필터링 키워드** (`SentryConstant.java`): `actuator`
 - `/gdsc-actuator/health`, `/gdsc-actuator/prometheus` 등 Actuator 엔드포인트 트랜잭션 제외
 - Prometheus 스크래핑으로 인한 노이즈 방지
 

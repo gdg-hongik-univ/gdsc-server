@@ -220,39 +220,13 @@ public class OrderEventHandler {
 
 ### EventRetryManager
 
-Spring Modulith의 `IncompleteEventPublications`를 활용하여 미처리 이벤트를 재시도합니다:
+**파일**: `src/main/java/com/gdschongik/gdsc/global/modulith/EventRetryManager.java`
 
-```java
-@Component
-@RequiredArgsConstructor
-public class EventRetryManager {
+Spring Modulith의 `IncompleteEventPublications`를 활용하여 미처리 이벤트를 재시도합니다.
 
-    public static final int RETRY_INTERVAL_SECOND = 5;
-    public static final int DLQ_INTERVAL_MINUTE = 60;
-    public static final int MIN_RETRY_AGE_SECOND = 10;
-    public static final int MAX_RETRY_AGE_SECOND = 30;
-
-    private final IncompleteEventPublications incompletePublications;
-
-    @Scheduled(fixedRate = RETRY_INTERVAL_SECOND, timeUnit = TimeUnit.SECONDS)
-    public void retryIncompleteEvents() {
-        Instant now = Instant.now();
-        Instant retryRangeStart = now.minusSeconds(MAX_RETRY_AGE_SECOND);
-        Instant retryRangeEnd = now.minusSeconds(MIN_RETRY_AGE_SECOND);
-
-        incompletePublications.resubmitIncompletePublications(
-            publication -> isWithinRetryRange(publication, retryRangeStart, retryRangeEnd));
-    }
-
-    @Scheduled(fixedRate = DLQ_INTERVAL_MINUTE, timeUnit = TimeUnit.MINUTES)
-    public void logDeadLetterEvents() {
-        List<UUID> deadLetterIds = getDeadLetterIds();
-        if (!deadLetterIds.isEmpty()) {
-            log.warn("[EventRetryManager] 데드 레터 발생: ids={}", deadLetterIds);
-        }
-    }
-}
-```
+**동작 방식**:
+- `retryIncompleteEvents()`: 5초 간격으로 실행. 10~30초 경과된 미처리 이벤트를 재시도
+- `logDeadLetterEvents()`: 60분 간격으로 실행. 30초 초과 경과된 데드레터 이벤트를 로그 경고
 
 ### 재시도 설정
 

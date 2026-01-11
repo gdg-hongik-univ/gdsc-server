@@ -402,75 +402,21 @@ Discord 이벤트 처리 중 발생하는 예외는 AOP Aspect가 자동으로 �
 
 **JDA 이벤트용**: `DiscordEventHandlerAspect`
 
-```java
-@Aspect
-@Component
-@RequiredArgsConstructor
-public class DiscordEventHandlerAspect {
+**파일**: `src/main/java/com/gdschongik/gdsc/domain/discord/exception/DiscordEventHandlerAspect.java`
 
-    private final DiscordExceptionDispatcher discordExceptionDispatcher;
-
-    @Around("execution(* ...DiscordEventHandler.delegate(*)) && args(genericEvent)")
-    public Object doAround(ProceedingJoinPoint joinPoint, GenericEvent genericEvent) throws Throwable {
-        try {
-            return joinPoint.proceed();
-        } catch (Exception e) {
-            discordExceptionDispatcher.dispatch(e, genericEvent);
-            return null;
-        }
-    }
-}
-```
+`DiscordEventHandler.delegate()` 메서드를 감싸서 예외 발생 시 `DiscordExceptionDispatcher`로 위임합니다. Handler 내부에서 try-catch가 불필요한 이유입니다.
 
 **Spring 이벤트용**: `SpringEventHandlerAspect`
 
-```java
-@Aspect
-@Component
-@RequiredArgsConstructor
-public class SpringEventHandlerAspect {
+**파일**: `src/main/java/com/gdschongik/gdsc/domain/discord/exception/SpringEventHandlerAspect.java`
 
-    private final DiscordUtil discordUtil;
-
-    @Around("execution(* ...SpringEventHandler.delegate(*)) && args(ignoredContext)")
-    public Object doAround(ProceedingJoinPoint joinPoint, Object ignoredContext) throws Throwable {
-        try {
-            return joinPoint.proceed();
-        } catch (Exception e) {
-            log.error("[SpringEventHandlerAspect] Exception occurred", e);
-            sendErrorMessageToDiscord(e);
-            return null;
-        }
-    }
-
-    private void sendErrorMessageToDiscord(Exception e) {
-        TextChannel channel = discordUtil.getAdminChannel();
-        channel.sendMessage(e.getMessage()).queue();
-    }
-}
-```
+`SpringEventHandler.delegate()` 메서드를 감싸서 예외 발생 시 Admin 채널로 에러 메시지를 전송합니다. Spring 이벤트 기반 Discord 알림 처리 중 발생하는 예외를 개발팀에 알립니다.
 
 ### 7.2 예외 디스패처
 
 **파일**: `src/main/java/com/gdschongik/gdsc/domain/discord/exception/DiscordExceptionDispatcher.java`
 
-```java
-@Component
-public class DiscordExceptionDispatcher {
-
-    private static final Map<Class<? extends GenericEvent>, DiscordExceptionHandler> exceptionHandlerMap =
-            Map.of(SlashCommandInteractionEvent.class, new CommandExceptionHandler());
-
-    private static final DefaultExceptionHandler defaultExceptionHandler = new DefaultExceptionHandler();
-
-    public void dispatch(Exception exception, Object context) {
-        log.error("DiscordException: {}", exception.getMessage());
-        DiscordExceptionHandler exceptionHandler =
-                exceptionHandlerMap.getOrDefault(context.getClass(), defaultExceptionHandler);
-        exceptionHandler.handle(exception, context);
-    }
-}
-```
+JDA 이벤트 타입에 따라 적절한 `DiscordExceptionHandler` 구현체로 예외 처리를 위임합니다. `SlashCommandInteractionEvent`는 `CommandExceptionHandler`로, 그 외는 `DefaultExceptionHandler`로 처리합니다.
 
 ### 7.3 예외 핸들러
 
@@ -553,41 +499,14 @@ public class DiscordExceptionMessageGenerator {
 
 **파일**: `src/main/java/com/gdschongik/gdsc/domain/discord/domain/DiscordVerificationCode.java`
 
-```java
-@Getter
-@RedisHash("discordVerificationCode")
-public class DiscordVerificationCode {
-
-    public static final int MIN_CODE_RANGE = 1000;
-    public static final int MAX_CODE_RANGE = 9999;
-
-    @Id
-    private String discordUsername;
-
-    private Integer code;
-
-    @TimeToLive
-    private Long ttl;
-
-    public static DiscordVerificationCode create(String discordUsername, Integer code, Long ttl) {
-        return DiscordVerificationCode.builder()
-                .discordUsername(discordUsername)
-                .code(code)
-                .ttl(ttl)
-                .build();
-    }
-
-    public boolean matchesCode(Integer code) {
-        return this.code.equals(code);
-    }
-}
-```
+디스코드 연동을 위한 인증코드를 Redis에 저장하는 엔티티입니다.
 
 **특징**:
 - `@RedisHash`: Redis에 저장
 - `@TimeToLive`: TTL 자동 관리 (300초 = 5분)
 - 4자리 숫자 코드 (1000-9999)
 - `discordUsername`을 ID로 사용
+- `matchesCode()`: 코드 일치 검증
 
 ### 9.2 DiscordValidator
 
