@@ -132,7 +132,9 @@ public class MentorStudyHistoryServiceV2 {
 ### 위치 및 네이밍
 
 - **위치**: `domain/[도메인]/domain/event/` 패키지
-- **네이밍**: `[Entity][Action]Event` 형식
+- **네이밍**: `[Entity][PastTenseVerb]Event` 형식
+  - 도메인 이벤트는 "이미 발생한 사실"을 나타내므로 과거형 동사를 사용합니다
+  - 예시: `OrderCreatedEvent`, `MemberAdvancedToRegularEvent`, `PaymentCompletedEvent`
 
 ### 구조
 
