@@ -1,10 +1,11 @@
 package com.gdschongik.gdsc.domain.study.dao;
 
-import static com.gdschongik.gdsc.domain.study.domain.QAttendance.attendance;
-import static com.gdschongik.gdsc.domain.study.domain.QStudyDetail.studyDetail;
+import static com.gdschongik.gdsc.domain.study.domain.QAttendance.*;
+import static com.gdschongik.gdsc.domain.study.domain.QStudySession.*;
 
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.study.domain.Attendance;
+import com.gdschongik.gdsc.domain.study.domain.Study;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -16,12 +17,12 @@ public class AttendanceCustomRepositoryImpl implements AttendanceCustomRepositor
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Attendance> findByMemberAndStudyId(Member member, Long studyId) {
+    public List<Attendance> findFetchByMemberAndStudy(Member member, Study study) {
         return queryFactory
                 .selectFrom(attendance)
-                .leftJoin(attendance.studyDetail, studyDetail)
+                .innerJoin(attendance.studySession)
                 .fetchJoin()
-                .where(eqMemberId(member.getId()), eqStudyId(studyId))
+                .where(eqMemberId(member.getId()), eqStudyId(study.getId()))
                 .fetch();
     }
 
@@ -29,10 +30,18 @@ public class AttendanceCustomRepositoryImpl implements AttendanceCustomRepositor
     public List<Attendance> findByStudyIdAndMemberIds(Long studyId, List<Long> memberIds) {
         return queryFactory
                 .selectFrom(attendance)
-                .innerJoin(attendance.studyDetail, studyDetail)
+                .innerJoin(attendance.studySession, studySession)
                 .fetchJoin()
                 .where(attendance.student.id.in(memberIds), eqStudyId(studyId))
                 .fetch();
+    }
+
+    @Override
+    public void deleteByStudyIdAndMemberId(Long studyId, Long memberId) {
+        queryFactory
+                .delete(attendance)
+                .where(eqStudyId(studyId), eqMemberId(memberId))
+                .execute();
     }
 
     private BooleanExpression eqMemberId(Long memberId) {
@@ -40,14 +49,6 @@ public class AttendanceCustomRepositoryImpl implements AttendanceCustomRepositor
     }
 
     private BooleanExpression eqStudyId(Long studyId) {
-        return studyId != null ? attendance.studyDetail.study.id.eq(studyId) : null;
-    }
-
-    @Override
-    public void deleteByStudyIdAndMemberId(Long studyId, Long memberId) {
-        queryFactory
-                .delete(attendance)
-                .where(eqMemberId(memberId), eqStudyId(studyId))
-                .execute();
+        return studyId != null ? attendance.studySession.study.id.eq(studyId) : null;
     }
 }

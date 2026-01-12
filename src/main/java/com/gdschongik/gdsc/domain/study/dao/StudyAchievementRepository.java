@@ -7,6 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StudyAchievementRepository
         extends JpaRepository<StudyAchievement, Long>, StudyAchievementCustomRepository {
-
     List<StudyAchievement> findAllByStudent(Member student);
 }
