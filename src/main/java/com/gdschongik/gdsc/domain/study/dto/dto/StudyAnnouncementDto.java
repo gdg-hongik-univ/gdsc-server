@@ -1,6 +1,6 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.dto;
+package com.gdschongik.gdsc.domain.study.dto.dto;
 
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyAnnouncementV2;
+import com.gdschongik.gdsc.domain.study.domain.StudyAnnouncement;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 
@@ -10,7 +10,7 @@ public record StudyAnnouncementDto(
         @Schema(description = "링크") String link,
         @Schema(description = "생성 일자") LocalDate createdDate) {
 
-    public static StudyAnnouncementDto from(StudyAnnouncementV2 studyAnnouncement) {
+    public static StudyAnnouncementDto from(StudyAnnouncement studyAnnouncement) {
         return new StudyAnnouncementDto(
                 studyAnnouncement.getId(),
                 studyAnnouncement.getTitle(),

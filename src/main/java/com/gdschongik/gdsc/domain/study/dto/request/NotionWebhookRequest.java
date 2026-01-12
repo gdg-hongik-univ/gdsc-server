@@ -1,4 +1,4 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.request;
+package com.gdschongik.gdsc.domain.study.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gdschongik.gdsc.domain.common.model.SemesterType;

@@ -1,27 +1,29 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.dto;
+package com.gdschongik.gdsc.domain.study.dto.dto;
 
 import com.gdschongik.gdsc.domain.common.vo.Period;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudySessionV2;
+import com.gdschongik.gdsc.domain.study.domain.StudySession;
 
 /**
- * 스터디 회차 학생 DTO입니다. 출결번호가 포함되어 있지 않습니다.
+ * 스터디 회차 관리자 DTO입니다. 출결번호가 포함되어 있습니다.
  */
-public record StudySessionStudentDto(
+public record StudySessionManagerDto(
         Long studySessionId,
         Integer position,
         String lessonTitle,
         String description,
+        String lessonAttendanceNumber,
         Period lessonPeriod,
         String assignmentTitle,
         String assignmentDescriptionLink,
         Period assignmentPeriod,
         Long studyId) {
-    public static StudySessionStudentDto of(StudySessionV2 studySession) {
-        return new StudySessionStudentDto(
+    public static StudySessionManagerDto from(StudySession studySession) {
+        return new StudySessionManagerDto(
                 studySession.getId(),
                 studySession.getPosition(),
                 studySession.getLessonTitle(),
                 studySession.getDescription(),
+                studySession.getLessonAttendanceNumber(),
                 studySession.getLessonPeriod(),
                 studySession.getAssignmentTitle(),
                 studySession.getAssignmentDescriptionLink(),

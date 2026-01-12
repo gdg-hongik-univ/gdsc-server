@@ -1,4 +1,4 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.request;
+package com.gdschongik.gdsc.domain.study.dto.request;
 
 import static com.gdschongik.gdsc.global.common.constant.RegexConstant.ATTENDANCE_NUMBER;
 

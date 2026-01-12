@@ -1,17 +1,17 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.response;
+package com.gdschongik.gdsc.domain.study.dto.response;
 
-import com.gdschongik.gdsc.domain.studyv2.domain.*;
-import com.gdschongik.gdsc.domain.studyv2.dto.dto.StudyHistoryDto;
-import com.gdschongik.gdsc.domain.studyv2.dto.dto.StudySessionMyDto;
+import com.gdschongik.gdsc.domain.study.domain.*;
+import com.gdschongik.gdsc.domain.study.dto.dto.StudyHistoryDto;
+import com.gdschongik.gdsc.domain.study.dto.dto.StudySessionMyDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public record StudyDashboardResponse(StudyHistoryDto studyHistory, List<StudySessionMyDto> sessions) {
     public static StudyDashboardResponse of(
-            StudyV2 study,
-            StudyHistoryV2 studyHistory,
-            List<AttendanceV2> attendances,
-            List<AssignmentHistoryV2> assignmentHistories,
+            Study study,
+            StudyHistory studyHistory,
+            List<Attendance> attendances,
+            List<AssignmentHistory> assignmentHistories,
             LocalDateTime now) {
         List<StudySessionMyDto> studySessions = study.getStudySessions().stream()
                 .map(studySession -> StudySessionMyDto.of(
@@ -25,13 +25,13 @@ public record StudyDashboardResponse(StudyHistoryDto studyHistory, List<StudySes
         return new StudyDashboardResponse(StudyHistoryDto.from(studyHistory), studySessions);
     }
 
-    private static boolean isAttended(StudySessionV2 studySession, List<AttendanceV2> attendances) {
+    private static boolean isAttended(StudySession studySession, List<Attendance> attendances) {
         return attendances.stream()
                 .anyMatch(attendance -> attendance.getStudySession().getId().equals(studySession.getId()));
     }
 
-    private static AssignmentHistoryV2 getAssignmentHistory(
-            StudySessionV2 studySession, List<AssignmentHistoryV2> assignmentHistories) {
+    private static AssignmentHistory getAssignmentHistory(
+            StudySession studySession, List<AssignmentHistory> assignmentHistories) {
         return assignmentHistories.stream()
                 .filter(assignmentHistory -> isEquals(studySession, assignmentHistory))
                 .filter(assignmentHistory ->
@@ -40,7 +40,7 @@ public record StudyDashboardResponse(StudyHistoryDto studyHistory, List<StudySes
                 .orElse(null);
     }
 
-    private static boolean isEquals(StudySessionV2 studySession, AssignmentHistoryV2 assignmentHistory) {
+    private static boolean isEquals(StudySession studySession, AssignmentHistory assignmentHistory) {
         return assignmentHistory.getStudySession().getId().equals(studySession.getId());
     }
 
@@ -51,7 +51,7 @@ public record StudyDashboardResponse(StudyHistoryDto studyHistory, List<StudySes
      * @see AssignmentHistoryStatus
      */
     private static boolean isCommittedAtWithinAssignmentPeriodIfExist(
-            AssignmentHistoryV2 assignmentHistory, StudySessionV2 studySession) {
+            AssignmentHistory assignmentHistory, StudySession studySession) {
         if (assignmentHistory == null) {
             return true;
         }

@@ -1,10 +1,10 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.dto;
+package com.gdschongik.gdsc.domain.study.dto.dto;
 
 import com.gdschongik.gdsc.domain.study.domain.AchievementType;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyAchievementV2;
+import com.gdschongik.gdsc.domain.study.domain.StudyAchievement;
 
 public record StudyAchievementDto(Long studyAchievementId, AchievementType type, Long studentId, Long studyId) {
-    public static StudyAchievementDto from(StudyAchievementV2 studyAchievement) {
+    public static StudyAchievementDto from(StudyAchievement studyAchievement) {
         return new StudyAchievementDto(
                 studyAchievement.getId(),
                 studyAchievement.getType(),

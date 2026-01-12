@@ -1,12 +1,12 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.dto;
+package com.gdschongik.gdsc.domain.study.dto.dto;
 
-import static com.gdschongik.gdsc.domain.studyv2.dto.dto.StudyTaskDto.StudyTaskType.*;
+import static com.gdschongik.gdsc.domain.study.dto.dto.StudyTaskDto.StudyTaskType.*;
 
+import com.gdschongik.gdsc.domain.study.domain.AssignmentHistory;
+import com.gdschongik.gdsc.domain.study.domain.AssignmentHistoryStatus;
+import com.gdschongik.gdsc.domain.study.domain.AttendanceStatus;
+import com.gdschongik.gdsc.domain.study.domain.StudySession;
 import com.gdschongik.gdsc.domain.study.domain.StudyType;
-import com.gdschongik.gdsc.domain.studyv2.domain.AssignmentHistoryStatus;
-import com.gdschongik.gdsc.domain.studyv2.domain.AssignmentHistoryV2;
-import com.gdschongik.gdsc.domain.studyv2.domain.AttendanceStatus;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudySessionV2;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -24,7 +24,7 @@ public record StudyTaskDto(
     /**
      * 출석 타입의 task를 위한 메서드입니다.
      */
-    public static StudyTaskDto of(StudySessionV2 studySession, StudyType type, boolean isAttended, LocalDateTime now) {
+    public static StudyTaskDto of(StudySession studySession, StudyType type, boolean isAttended, LocalDateTime now) {
         return new StudyTaskDto(
                 studySession.getId(),
                 studySession.getPosition(),
@@ -40,8 +40,7 @@ public record StudyTaskDto(
     /**
      * 과제 타입의 task를 위한 메서드입니다.
      */
-    public static StudyTaskDto of(
-            StudySessionV2 studySession, AssignmentHistoryV2 assignmentHistory, LocalDateTime now) {
+    public static StudyTaskDto of(StudySession studySession, AssignmentHistory assignmentHistory, LocalDateTime now) {
 
         return new StudyTaskDto(
                 studySession.getId(),

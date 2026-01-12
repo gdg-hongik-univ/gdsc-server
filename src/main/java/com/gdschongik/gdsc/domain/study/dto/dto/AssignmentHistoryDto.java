@@ -1,8 +1,8 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.dto;
+package com.gdschongik.gdsc.domain.study.dto.dto;
 
+import com.gdschongik.gdsc.domain.study.domain.AssignmentHistory;
 import com.gdschongik.gdsc.domain.study.domain.AssignmentSubmissionStatus;
 import com.gdschongik.gdsc.domain.study.domain.SubmissionFailureType;
-import com.gdschongik.gdsc.domain.studyv2.domain.AssignmentHistoryV2;
 import java.time.LocalDateTime;
 
 public record AssignmentHistoryDto(
@@ -15,7 +15,7 @@ public record AssignmentHistoryDto(
         LocalDateTime committedAt,
         Long studySessionId,
         Long memberId) {
-    public static AssignmentHistoryDto from(AssignmentHistoryV2 assignmentHistory) {
+    public static AssignmentHistoryDto from(AssignmentHistory assignmentHistory) {
         return new AssignmentHistoryDto(
                 assignmentHistory.getId(),
                 assignmentHistory.getSubmissionStatus(),

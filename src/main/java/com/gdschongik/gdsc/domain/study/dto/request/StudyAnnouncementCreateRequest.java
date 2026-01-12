@@ -1,4 +1,4 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.request;
+package com.gdschongik.gdsc.domain.study.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

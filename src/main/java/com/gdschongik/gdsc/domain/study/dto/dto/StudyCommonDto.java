@@ -1,9 +1,9 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.dto;
+package com.gdschongik.gdsc.domain.study.dto.dto;
 
 import com.gdschongik.gdsc.domain.common.vo.Period;
 import com.gdschongik.gdsc.domain.common.vo.Semester;
+import com.gdschongik.gdsc.domain.study.domain.Study;
 import com.gdschongik.gdsc.domain.study.domain.StudyType;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyV2;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -27,7 +27,7 @@ public record StudyCommonDto(
         Long mentorId,
         String mentorName,
         Integer minAssignmentLength) {
-    public static StudyCommonDto from(StudyV2 study) {
+    public static StudyCommonDto from(Study study) {
         return new StudyCommonDto(
                 study.getId(),
                 study.getType(),

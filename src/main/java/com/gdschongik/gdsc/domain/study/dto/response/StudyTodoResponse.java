@@ -1,12 +1,12 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.response;
+package com.gdschongik.gdsc.domain.study.dto.response;
 
-import static com.gdschongik.gdsc.domain.studyv2.dto.response.StudyTodoResponse.StudyTodoType.*;
+import static com.gdschongik.gdsc.domain.study.dto.response.StudyTodoResponse.StudyTodoType.*;
 
-import com.gdschongik.gdsc.domain.studyv2.domain.*;
-import com.gdschongik.gdsc.domain.studyv2.dto.dto.AssignmentHistoryDto;
-import com.gdschongik.gdsc.domain.studyv2.dto.dto.StudyHistorySimpleDto;
-import com.gdschongik.gdsc.domain.studyv2.dto.dto.StudySessionStudentDto;
-import com.gdschongik.gdsc.domain.studyv2.dto.dto.StudySimpleDto;
+import com.gdschongik.gdsc.domain.study.domain.*;
+import com.gdschongik.gdsc.domain.study.dto.dto.AssignmentHistoryDto;
+import com.gdschongik.gdsc.domain.study.dto.dto.StudyHistorySimpleDto;
+import com.gdschongik.gdsc.domain.study.dto.dto.StudySessionStudentDto;
+import com.gdschongik.gdsc.domain.study.dto.dto.StudySimpleDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +23,7 @@ public record StudyTodoResponse(
         @Schema(description = "과제 정보 (과제타입일 때만 사용)") AssignmentHistoryDto assignmentHistory,
         @Schema(description = "과제 제출 상태 (과제타입일 때만 사용)") AssignmentHistoryStatus assignmentHistoryStatus) {
     public static StudyTodoResponse attendanceType(
-            StudyV2 study, StudySessionV2 studySession, List<AttendanceV2> attendances, LocalDateTime now) {
+            Study study, StudySession studySession, List<Attendance> attendances, LocalDateTime now) {
         return new StudyTodoResponse(
                 StudySimpleDto.from(study),
                 null,
@@ -36,12 +36,12 @@ public record StudyTodoResponse(
     }
 
     public static StudyTodoResponse assignmentType(
-            StudyV2 study,
-            StudyHistoryV2 studyHistory,
-            StudySessionV2 studySession,
-            List<AssignmentHistoryV2> assignmentHistories,
+            Study study,
+            StudyHistory studyHistory,
+            StudySession studySession,
+            List<AssignmentHistory> assignmentHistories,
             LocalDateTime now) {
-        AssignmentHistoryV2 assignmentHistory = getSubmittedAssignment(assignmentHistories, studySession);
+        AssignmentHistory assignmentHistory = getSubmittedAssignment(assignmentHistories, studySession);
         return new StudyTodoResponse(
                 StudySimpleDto.from(study),
                 StudyHistorySimpleDto.from(studyHistory),
@@ -53,13 +53,13 @@ public record StudyTodoResponse(
                 AssignmentHistoryStatus.of(assignmentHistory, studySession, now));
     }
 
-    private static boolean isAttended(StudySessionV2 studySession, List<AttendanceV2> attendances) {
+    private static boolean isAttended(StudySession studySession, List<Attendance> attendances) {
         return attendances.stream()
                 .anyMatch(attendance -> attendance.getStudySession().getId().equals(studySession.getId()));
     }
 
-    private static AssignmentHistoryV2 getSubmittedAssignment(
-            List<AssignmentHistoryV2> assignmentHistories, StudySessionV2 studySession) {
+    private static AssignmentHistory getSubmittedAssignment(
+            List<AssignmentHistory> assignmentHistories, StudySession studySession) {
         return assignmentHistories.stream()
                 .filter(assignmentHistory ->
                         assignmentHistory.getStudySession().getId().equals(studySession.getId()))

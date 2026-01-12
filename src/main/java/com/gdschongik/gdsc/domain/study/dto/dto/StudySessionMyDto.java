@@ -1,10 +1,10 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.dto;
+package com.gdschongik.gdsc.domain.study.dto.dto;
 
+import com.gdschongik.gdsc.domain.study.domain.AssignmentHistory;
+import com.gdschongik.gdsc.domain.study.domain.AssignmentHistoryStatus;
+import com.gdschongik.gdsc.domain.study.domain.AttendanceStatus;
+import com.gdschongik.gdsc.domain.study.domain.StudySession;
 import com.gdschongik.gdsc.domain.study.domain.StudyType;
-import com.gdschongik.gdsc.domain.studyv2.domain.AssignmentHistoryStatus;
-import com.gdschongik.gdsc.domain.studyv2.domain.AssignmentHistoryV2;
-import com.gdschongik.gdsc.domain.studyv2.domain.AttendanceStatus;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudySessionV2;
 import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -15,8 +15,8 @@ public record StudySessionMyDto(
         AssignmentHistoryStatus assignmentHistoryStatus,
         AssignmentHistoryDto assignmentHistory) {
     public static StudySessionMyDto of(
-            StudySessionV2 studySession,
-            @Nullable AssignmentHistoryV2 assignmentHistory,
+            StudySession studySession,
+            @Nullable AssignmentHistory assignmentHistory,
             StudyType studyType,
             boolean isAttended,
             LocalDateTime now) {

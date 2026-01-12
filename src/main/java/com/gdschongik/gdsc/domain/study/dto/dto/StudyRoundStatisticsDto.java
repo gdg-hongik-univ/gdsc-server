@@ -1,4 +1,4 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.dto;
+package com.gdschongik.gdsc.domain.study.dto.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

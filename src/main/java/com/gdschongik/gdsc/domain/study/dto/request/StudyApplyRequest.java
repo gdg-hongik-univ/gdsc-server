@@ -1,4 +1,4 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.request;
+package com.gdschongik.gdsc.domain.study.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

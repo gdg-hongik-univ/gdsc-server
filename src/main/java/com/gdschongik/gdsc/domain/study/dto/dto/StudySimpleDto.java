@@ -1,12 +1,12 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.dto;
+package com.gdschongik.gdsc.domain.study.dto.dto;
 
 import com.gdschongik.gdsc.domain.common.vo.Semester;
+import com.gdschongik.gdsc.domain.study.domain.Study;
 import com.gdschongik.gdsc.domain.study.domain.StudyType;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyV2;
 
 public record StudySimpleDto(
         Long studyId, String studyName, StudyType studyType, Semester semester, Long mentorId, String mentorName) {
-    public static StudySimpleDto from(StudyV2 study) {
+    public static StudySimpleDto from(Study study) {
         return new StudySimpleDto(
                 study.getId(),
                 study.getTitle(),

@@ -1,15 +1,15 @@
-package com.gdschongik.gdsc.domain.studyv2.dto.response;
+package com.gdschongik.gdsc.domain.study.dto.response;
 
-import static com.gdschongik.gdsc.domain.studyv2.dto.dto.StudyTaskDto.StudyTaskType.*;
+import static com.gdschongik.gdsc.domain.study.dto.dto.StudyTaskDto.StudyTaskType.*;
 
 import com.gdschongik.gdsc.domain.member.dto.MemberInfoDto;
-import com.gdschongik.gdsc.domain.studyv2.domain.AssignmentHistoryStatus;
-import com.gdschongik.gdsc.domain.studyv2.domain.AttendanceStatus;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyAchievementV2;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyHistoryV2;
-import com.gdschongik.gdsc.domain.studyv2.dto.dto.StudyAchievementDto;
-import com.gdschongik.gdsc.domain.studyv2.dto.dto.StudyHistoryDto;
-import com.gdschongik.gdsc.domain.studyv2.dto.dto.StudyTaskDto;
+import com.gdschongik.gdsc.domain.study.domain.AssignmentHistoryStatus;
+import com.gdschongik.gdsc.domain.study.domain.AttendanceStatus;
+import com.gdschongik.gdsc.domain.study.domain.StudyAchievement;
+import com.gdschongik.gdsc.domain.study.domain.StudyHistory;
+import com.gdschongik.gdsc.domain.study.dto.dto.StudyAchievementDto;
+import com.gdschongik.gdsc.domain.study.dto.dto.StudyHistoryDto;
+import com.gdschongik.gdsc.domain.study.dto.dto.StudyTaskDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
@@ -22,7 +22,7 @@ public record MentorStudyStudentResponse(
         @Schema(description = "출석률") double attendanceRate) {
 
     public static MentorStudyStudentResponse of(
-            StudyHistoryV2 studyHistory, List<StudyAchievementV2> studyAchievements, List<StudyTaskDto> studyTasks) {
+            StudyHistory studyHistory, List<StudyAchievement> studyAchievements, List<StudyTaskDto> studyTasks) {
         List<StudyTaskDto> assignments = studyTasks.stream()
                 .filter(studyTaskDto -> studyTaskDto.taskType() == ASSIGNMENT)
                 .toList();
