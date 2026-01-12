@@ -38,21 +38,12 @@ import com.gdschongik.gdsc.domain.recruitment.dao.RecruitmentRoundRepository;
 import com.gdschongik.gdsc.domain.recruitment.domain.Recruitment;
 import com.gdschongik.gdsc.domain.recruitment.domain.RecruitmentRound;
 import com.gdschongik.gdsc.domain.recruitment.domain.RoundType;
-import com.gdschongik.gdsc.domain.study.dao.StudyAchievementRepository;
-import com.gdschongik.gdsc.domain.study.dao.StudyDetailRepository;
 import com.gdschongik.gdsc.domain.study.dao.StudyHistoryRepository;
 import com.gdschongik.gdsc.domain.study.dao.StudyRepository;
-import com.gdschongik.gdsc.domain.study.domain.AchievementType;
 import com.gdschongik.gdsc.domain.study.domain.Study;
-import com.gdschongik.gdsc.domain.study.domain.StudyAchievement;
-import com.gdschongik.gdsc.domain.study.domain.StudyDetail;
+import com.gdschongik.gdsc.domain.study.domain.StudyFactory;
 import com.gdschongik.gdsc.domain.study.domain.StudyHistory;
 import com.gdschongik.gdsc.domain.study.domain.StudyType;
-import com.gdschongik.gdsc.domain.studyv2.dao.StudyHistoryV2Repository;
-import com.gdschongik.gdsc.domain.studyv2.dao.StudyV2Repository;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyFactory;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyHistoryV2;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyV2;
 import com.gdschongik.gdsc.global.security.PrincipalDetails;
 import com.gdschongik.gdsc.infra.feign.payment.client.PaymentClient;
 import com.gdschongik.gdsc.infra.github.client.GithubClient;
@@ -103,19 +94,7 @@ public abstract class IntegrationTest {
     protected StudyRepository studyRepository;
 
     @Autowired
-    protected StudyDetailRepository studyDetailRepository;
-
-    @Autowired
     protected StudyHistoryRepository studyHistoryRepository;
-
-    @Autowired
-    protected StudyAchievementRepository studyAchievementRepository;
-
-    @Autowired
-    protected StudyV2Repository studyV2Repository;
-
-    @Autowired
-    protected StudyHistoryV2Repository studyHistoryV2Repository;
 
     @Autowired
     protected EventRepository eventRepository;
@@ -250,76 +229,15 @@ public abstract class IntegrationTest {
         return membershipRepository.save(membership);
     }
 
-    protected IssuedCoupon createAndIssue(Money money, Member member, CouponType couponType, StudyV2 study) {
+    protected IssuedCoupon createAndIssue(Money money, Member member, CouponType couponType, Study study) {
         Coupon coupon = Coupon.createAutomatic(COUPON_NAME, money, couponType, study);
         couponRepository.save(coupon);
         IssuedCoupon issuedCoupon = IssuedCoupon.create(coupon, member);
         return issuedCouponRepository.save(issuedCoupon);
     }
 
-    protected Study createStudy(Member mentor, Period period, Period applicationPeriod) {
-        Study study = Study.create(
-                ONLINE_STUDY,
-                STUDY_TITLE,
-                TOTAL_WEEK,
-                DAY_OF_WEEK,
-                STUDY_START_TIME,
-                STUDY_END_TIME,
-                period,
-                applicationPeriod,
-                mentor,
-                ACADEMIC_YEAR,
-                SEMESTER_TYPE);
-
-        return studyRepository.save(study);
-    }
-
-    protected Study createNewStudy(Member mentor, Long totalWeek, Period period, Period applicationPeriod) {
-        Study study = Study.create(
-                ONLINE_STUDY,
-                STUDY_TITLE,
-                totalWeek,
-                DAY_OF_WEEK,
-                STUDY_START_TIME,
-                STUDY_END_TIME,
-                period,
-                applicationPeriod,
-                mentor,
-                ACADEMIC_YEAR,
-                SEMESTER_TYPE);
-
-        return studyRepository.save(study);
-    }
-
-    protected StudyDetail createStudyDetail(Study study, LocalDateTime startDate, LocalDateTime endDate) {
-        StudyDetail studyDetail = StudyDetail.create(1L, ATTENDANCE_NUMBER, Period.of(startDate, endDate), study);
-        return studyDetailRepository.save(studyDetail);
-    }
-
-    protected StudyDetail createNewStudyDetail(Long week, Study study, LocalDateTime startDate, LocalDateTime endDate) {
-        StudyDetail studyDetail = StudyDetail.create(week, ATTENDANCE_NUMBER, Period.of(startDate, endDate), study);
-        return studyDetailRepository.save(studyDetail);
-    }
-
-    protected StudyHistory createStudyHistory(Member member, Study study) {
-        StudyHistory studyHistory = StudyHistory.create(member, study);
-        return studyHistoryRepository.save(studyHistory);
-    }
-
-    protected StudyAchievement createStudyAchievement(Member member, Study study, AchievementType achievementType) {
-        StudyAchievement studyAchievement = StudyAchievement.create(achievementType, member, study);
-        return studyAchievementRepository.save(studyAchievement);
-    }
-
-    protected StudyDetail publishAssignment(StudyDetail studyDetail) {
-        studyDetail.publishAssignment(ASSIGNMENT_TITLE, studyDetail.getPeriod().getEndDate(), DESCRIPTION_LINK);
-        return studyDetailRepository.save(studyDetail);
-    }
-
-    // StudyV2
-
-    protected StudyV2 createStudy(StudyType type, Member mentor) {
-        StudyV2 study = studyFactory.create(
+    protected Study createStudy(StudyType type, Member mentor) {
+        Study study = studyFactory.create(
                 type,
                 STUDY_TITLE,
                 STUDY_SEMESTER,
@@ -334,12 +252,12 @@ public abstract class IntegrationTest {
                 () -> "0000",
                 MIN_ASSIGNMENT_CONTENT_LENGTH);
 
-        return studyV2Repository.save(study);
+        return studyRepository.save(study);
     }
 
-    protected StudyHistoryV2 createStudyHistory(Member member, StudyV2 study) {
-        StudyHistoryV2 studyHistory = StudyHistoryV2.create(member, study);
-        return studyHistoryV2Repository.save(studyHistory);
+    protected StudyHistory createStudyHistory(Member member, Study study) {
+        StudyHistory studyHistory = StudyHistory.create(member, study);
+        return studyHistoryRepository.save(studyHistory);
     }
 
     protected Event createEvent() {

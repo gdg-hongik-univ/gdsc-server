@@ -10,16 +10,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StudyHistoryRepository extends JpaRepository<StudyHistory, Long>, StudyHistoryCustomRepository {
+    Optional<StudyHistory> findByStudentAndStudy(Member student, Study study);
 
-    List<StudyHistory> findAllByStudent(Member member);
+    boolean existsByStudentAndStudy(Member currentMember, Study study);
 
-    Optional<StudyHistory> findByStudentAndStudy(Member member, Study study);
+    List<StudyHistory> findAllByStudent(Member student);
 
-    boolean existsByStudentAndStudy(Member member, Study study);
-
-    Optional<StudyHistory> findByStudentAndStudyId(Member member, Long studyId);
+    List<StudyHistory> findAllByStudy(Study study);
 
     Page<StudyHistory> findByStudyId(Long studyId, Pageable pageable);
-
-    List<StudyHistory> findAllByStudyId(Long studyId);
 }

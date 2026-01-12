@@ -1,20 +1,20 @@
 package com.gdschongik.gdsc.domain.study.application;
 
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
-import com.gdschongik.gdsc.domain.study.dao.StudyDetailRepository;
 import com.gdschongik.gdsc.domain.study.dao.StudyRepository;
-import com.gdschongik.gdsc.domain.study.domain.Study;
-import com.gdschongik.gdsc.domain.study.domain.StudyDetail;
+import com.gdschongik.gdsc.domain.study.domain.*;
+import com.gdschongik.gdsc.domain.study.domain.AttendanceNumberGenerator;
+import com.gdschongik.gdsc.domain.study.domain.StudyFactory;
 import com.gdschongik.gdsc.domain.study.dto.request.StudyCreateRequest;
-import com.gdschongik.gdsc.domain.study.dto.response.StudyResponse;
-import com.gdschongik.gdsc.domain.study.factory.StudyDomainFactory;
+import com.gdschongik.gdsc.domain.study.dto.response.StudyManagerResponse;
 import com.gdschongik.gdsc.global.exception.CustomException;
-import com.gdschongik.gdsc.global.exception.ErrorCode;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,40 +25,51 @@ public class AdminStudyService {
 
     private final StudyRepository studyRepository;
     private final MemberRepository memberRepository;
-    private final StudyDetailRepository studyDetailRepository;
-    private final StudyDomainFactory studyDomainFactory;
+    private final StudyFactory studyFactory;
+    private final AttendanceNumberGenerator attendanceNumberGenerator;
 
     @Transactional
-    public void createStudyAndStudyDetail(StudyCreateRequest request) {
-        Member mentor = getMemberById(request.mentorId());
+    public void createStudy(StudyCreateRequest request) {
+        Member mentor =
+                memberRepository.findById(request.mentorId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
         mentor.assignToMentor();
+
+        Study study = studyFactory.create(
+                request.type(),
+                request.title(),
+                request.semester(),
+                request.totalRound(),
+                request.dayOfWeek(),
+                request.startTime(),
+                request.endTime(),
+                request.applicationPeriod(),
+                request.discordChannelId(),
+                request.discordRoleId(),
+                mentor,
+                attendanceNumberGenerator,
+                request.minAssignmentLength());
+
         memberRepository.save(mentor);
+        studyRepository.save(study);
 
-        Study study = studyDomainFactory.createNewStudy(request, mentor);
-        final Study savedStudy = studyRepository.save(study);
-
-        // TODO: 레포지토리 분리 (DDD 적용)
-        List<StudyDetail> studyDetails = createNoneStudyDetail(savedStudy);
-        studyDetailRepository.saveAll(studyDetails);
-
-        log.info("[AdminStudyService] 스터디 생성: studyId = {}", study.getId());
-    }
-
-    private List<StudyDetail> createNoneStudyDetail(Study study) {
-        List<StudyDetail> studyDetails = new ArrayList<>();
-
-        for (long i = 1; i <= study.getTotalWeek(); i++) {
-            studyDetails.add(studyDomainFactory.createNoneStudyDetail(study, i));
-        }
-        return studyDetails;
-    }
-
-    private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        log.info("[AdminStudyService] 스터디 생성 완료: studyId = {}", study.getId());
     }
 
     @Transactional(readOnly = true)
-    public List<StudyResponse> getAllStudies() {
-        return studyRepository.findAll().stream().map(StudyResponse::from).toList();
+    public List<StudyManagerResponse> getAllStudies() {
+        return studyRepository.findFetchAll().stream()
+                .map(StudyManagerResponse::from)
+                .toList();
+    }
+
+    public void deleteStudy(Long studyId) {
+        try {
+            studyRepository.deleteById(studyId);
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomException(STUDY_NOT_DELETABLE_FK_CONSTRAINT);
+        }
+
+        log.info("[AdminStudyService] 스터디 삭제 완료: studyId = {}", studyId);
     }
 }

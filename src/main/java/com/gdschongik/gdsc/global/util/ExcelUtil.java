@@ -9,13 +9,10 @@ import com.gdschongik.gdsc.domain.member.domain.MemberRole;
 import com.gdschongik.gdsc.domain.member.dto.MemberInfoDto;
 import com.gdschongik.gdsc.domain.study.domain.AchievementType;
 import com.gdschongik.gdsc.domain.study.domain.Study;
-import com.gdschongik.gdsc.domain.study.dto.response.StudyStudentResponse;
-import com.gdschongik.gdsc.domain.study.dto.response.StudyTaskResponse;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyV2;
-import com.gdschongik.gdsc.domain.studyv2.dto.dto.StudyAchievementDto;
-import com.gdschongik.gdsc.domain.studyv2.dto.dto.StudyHistoryDto;
-import com.gdschongik.gdsc.domain.studyv2.dto.dto.StudyTaskDto;
-import com.gdschongik.gdsc.domain.studyv2.dto.response.MentorStudyStudentResponse;
+import com.gdschongik.gdsc.domain.study.dto.dto.StudyAchievementDto;
+import com.gdschongik.gdsc.domain.study.dto.dto.StudyHistoryDto;
+import com.gdschongik.gdsc.domain.study.dto.dto.StudyTaskDto;
+import com.gdschongik.gdsc.domain.study.dto.response.MentorStudyStudentResponse;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
 import jakarta.annotation.Nullable;
@@ -46,13 +43,7 @@ public class ExcelUtil {
         return createByteArray(workbook);
     }
 
-    public byte[] createStudyExcel(Study study, List<StudyStudentResponse> content) {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        createStudySheet(workbook, study, content);
-        return createByteArray(workbook);
-    }
-
-    public byte[] createStudyExcel(StudyV2 study, List<MentorStudyStudentResponse> content) {
+    public byte[] createStudyExcel(Study study, List<MentorStudyStudentResponse> content) {
         HSSFWorkbook workbook = new HSSFWorkbook();
         createStudySheet(workbook, study, content);
         return createByteArray(workbook);
@@ -80,43 +71,7 @@ public class ExcelUtil {
         });
     }
 
-    private void createStudySheet(Workbook workbook, Study study, List<StudyStudentResponse> content) {
-        Sheet sheet = setUpStudySheet(workbook, study.getTitle(), study.getTotalWeek());
-
-        content.forEach(student -> {
-            Row studentRow = sheet.createRow(sheet.getLastRowNum() + 1);
-            AtomicInteger cellIndex = new AtomicInteger(0);
-
-            studentRow.createCell(cellIndex.getAndIncrement()).setCellValue(student.name());
-            studentRow.createCell(cellIndex.getAndIncrement()).setCellValue(student.studentId());
-            studentRow.createCell(cellIndex.getAndIncrement()).setCellValue(student.discordUsername());
-            studentRow.createCell(cellIndex.getAndIncrement()).setCellValue(student.nickname());
-            studentRow.createCell(cellIndex.getAndIncrement()).setCellValue(student.githubLink());
-            studentRow
-                    .createCell(cellIndex.getAndIncrement())
-                    .setCellValue(student.studyHistoryStatus().getValue());
-            studentRow
-                    .createCell(cellIndex.getAndIncrement())
-                    .setCellValue(student.isFirstRoundOutstandingStudent() ? "O" : "X");
-            studentRow
-                    .createCell(cellIndex.getAndIncrement())
-                    .setCellValue(student.isSecondRoundOutstandingStudent() ? "O" : "X");
-            studentRow.createCell(cellIndex.getAndIncrement()).setCellValue(student.attendanceRate());
-            studentRow.createCell(cellIndex.getAndIncrement()).setCellValue(student.assignmentRate());
-            student.studyTasks().stream()
-                    .filter(StudyTaskResponse::isAssignment)
-                    .forEach(task -> studentRow
-                            .createCell(cellIndex.getAndIncrement())
-                            .setCellValue(task.assignmentSubmissionStatus().getValue()));
-            student.studyTasks().stream()
-                    .filter(StudyTaskResponse::isAttendance)
-                    .forEach(task -> studentRow
-                            .createCell(cellIndex.getAndIncrement())
-                            .setCellValue(task.attendanceStatus().getValue()));
-        });
-    }
-
-    private void createStudySheet(Workbook workbook, StudyV2 study, List<MentorStudyStudentResponse> content) {
+    private void createStudySheet(Workbook workbook, Study study, List<MentorStudyStudentResponse> content) {
         Sheet sheet = setUpStudySheet(workbook, study.getTitle(), study.getTotalRound());
 
         content.forEach(student -> {

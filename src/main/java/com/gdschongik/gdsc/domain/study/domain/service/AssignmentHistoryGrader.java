@@ -16,12 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 @DomainService
 public class AssignmentHistoryGrader {
 
-    private static final int MINIMUM_ASSIGNMENT_CONTENT_LENGTH = 300;
-
-    public void judge(AssignmentSubmissionFetcher assignmentSubmissionFetcher, AssignmentHistory assignmentHistory) {
+    public void judge(
+            AssignmentSubmissionFetcher assignmentSubmissionFetcher,
+            AssignmentHistory assignmentHistory,
+            int minimumAssignmentContentLength) {
         try {
             AssignmentSubmission assignmentSubmission = assignmentSubmissionFetcher.fetch();
-            judgeAssignmentSubmission(assignmentSubmission, assignmentHistory);
+            judgeAssignmentSubmission(assignmentSubmission, assignmentHistory, minimumAssignmentContentLength);
         } catch (CustomException e) {
             SubmissionFailureType failureType = translateException(e);
             assignmentHistory.fail(failureType);
@@ -29,8 +30,10 @@ public class AssignmentHistoryGrader {
     }
 
     private void judgeAssignmentSubmission(
-            AssignmentSubmission assignmentSubmission, AssignmentHistory assignmentHistory) {
-        if (assignmentSubmission.contentLength() < MINIMUM_ASSIGNMENT_CONTENT_LENGTH) {
+            AssignmentSubmission assignmentSubmission,
+            AssignmentHistory assignmentHistory,
+            int minimumAssignmentContentLength) {
+        if (assignmentSubmission.contentLength() < minimumAssignmentContentLength) {
             assignmentHistory.fail(WORD_COUNT_INSUFFICIENT);
             return;
         }
