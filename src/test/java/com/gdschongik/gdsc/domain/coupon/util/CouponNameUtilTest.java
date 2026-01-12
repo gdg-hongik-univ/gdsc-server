@@ -3,7 +3,7 @@ package com.gdschongik.gdsc.domain.coupon.util;
 import static com.gdschongik.gdsc.global.common.constant.StudyConstant.*;
 import static org.assertj.core.api.Assertions.*;
 
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyV2;
+import com.gdschongik.gdsc.domain.study.domain.Study;
 import com.gdschongik.gdsc.helper.FixtureHelper;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,7 @@ class CouponNameUtilTest {
     @Test
     void 스터디_수료_쿠폰_이름이_생성된다() {
         // given
-        StudyV2 study = fixtureHelper.createStudy(ONLINE_STUDY, 1L, 1L, 1L);
+        Study study = fixtureHelper.createStudy(ONLINE_STUDY, 1L, 1L, 1L);
 
         // when
         String couponName = couponNameUtil.generateStudyCompletionCouponName(study);

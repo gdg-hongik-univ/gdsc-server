@@ -32,10 +32,19 @@ public class DatabaseCleaner implements InitializingBean {
 
     private static String getTableName(EntityType<?> entity) {
         // TODO: 임시로 Order 테이블만 orders로 변환하도록 처리함. 추후 다른 테이블도 처리해야 함.
-        if (entity.getName().equals("Order")) {
-            return "orders";
-        }
-        return convertCamelCaseToSnakeCase(entity.getName());
+        // TODO: Study 도메인 엔티티: DB 테이블명은 _v2 컨벤션 유지, 추후 마이그레이션
+        String entityName = entity.getName();
+        return switch (entityName) {
+            case "Order" -> "orders";
+            case "Study" -> "study_v2";
+            case "StudySession" -> "study_session_v2";
+            case "StudyHistory" -> "study_history_v2";
+            case "StudyAchievement" -> "study_achievement_v2";
+            case "StudyAnnouncement" -> "study_announcement_v2";
+            case "Attendance" -> "attendance_v2";
+            case "AssignmentHistory" -> "assignment_history_v2";
+            default -> convertCamelCaseToSnakeCase(entityName);
+        };
     }
 
     /**
