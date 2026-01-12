@@ -1,10 +1,10 @@
 package com.gdschongik.gdsc.domain.study.api;
 
 import com.gdschongik.gdsc.domain.study.application.MentorStudyService;
-import com.gdschongik.gdsc.domain.study.dto.request.StudyAnnouncementCreateUpdateRequest;
 import com.gdschongik.gdsc.domain.study.dto.request.StudyUpdateRequest;
-import com.gdschongik.gdsc.domain.study.dto.response.StudyResponse;
-import com.gdschongik.gdsc.domain.study.dto.response.StudyStudentResponse;
+import com.gdschongik.gdsc.domain.study.dto.response.MentorStudyStudentResponse;
+import com.gdschongik.gdsc.domain.study.dto.response.StudyManagerResponse;
+import com.gdschongik.gdsc.domain.study.dto.response.StudyStatisticsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -15,59 +15,49 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Deprecated
-@Tag(name = "Study V1 - Mentor", description = "멘토 스터디 API입니다.")
+@Tag(name = "Study - Mentor", description = "스터디 멘토 API입니다.")
 @RestController
-@RequestMapping("/mentor/studies")
+@RequestMapping("/v2/mentor/studies")
 @RequiredArgsConstructor
 public class MentorStudyController {
 
     private final MentorStudyService mentorStudyService;
 
-    @Operation(summary = "스터디 정보 작성", description = "스터디 기본 정보와 상세 정보를 작성합니다.")
-    @PatchMapping("/{studyId}")
-    public ResponseEntity<Void> updateStudy(@PathVariable Long studyId, @RequestBody StudyUpdateRequest request) {
+    @Operation(summary = "내 스터디 조회", description = "내가 멘토로 있는 스터디를 조회합니다.")
+    @GetMapping("/me")
+    public ResponseEntity<List<StudyManagerResponse>> getStudiesInCharge() {
+        var response = mentorStudyService.getStudiesInCharge();
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "스터디 정보 변경", description = "스터디 정보를 변경합니다.")
+    @PutMapping("/{studyId}")
+    public ResponseEntity<Void> updateStudy(
+            @PathVariable Long studyId, @RequestBody @Valid StudyUpdateRequest request) {
         mentorStudyService.updateStudy(studyId, request);
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "내 스터디 조회", description = "내가 멘토로 있는 스터디를 조회합니다.")
-    @GetMapping("/me")
-    public ResponseEntity<List<StudyResponse>> getStudiesInCharge() {
-        List<StudyResponse> response = mentorStudyService.getStudiesInCharge();
+    @Operation(summary = "스터디 통계 조회", description = "멘토가 자신의 스터디 출석률, 과제 제출률, 수료율에 대한 통계를 조회합니다.")
+    @GetMapping("/{studyId}/statistics")
+    public ResponseEntity<StudyStatisticsResponse> getStudyStatistics(@PathVariable Long studyId) {
+        var response = mentorStudyService.getStudyStatistics(studyId);
         return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "스터디 수강생 관리", description = "해당 스터디의 수강생을 관리합니다")
     @GetMapping("/{studyId}/students")
-    public ResponseEntity<Page<StudyStudentResponse>> getStudyStudents(@PathVariable Long studyId, Pageable pageable) {
-        Page<StudyStudentResponse> response = mentorStudyService.getStudyStudents(studyId, pageable);
+    public ResponseEntity<Page<MentorStudyStudentResponse>> getStudyStudents(
+            @PathVariable Long studyId, Pageable pageable) {
+        var response = mentorStudyService.getStudyStudents(studyId, pageable);
         return ResponseEntity.ok(response);
-    }
-
-    @Operation(summary = "스터디 공지 생성", description = "스터디의 공지사항을 생성합니다.")
-    @PostMapping("/{studyId}/announcements")
-    public ResponseEntity<Void> createStudyAnnouncement(
-            @PathVariable Long studyId, @Valid @RequestBody StudyAnnouncementCreateUpdateRequest request) {
-        mentorStudyService.createStudyAnnouncement(studyId, request);
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "스터디 공지 수정", description = "스터디의 공지사항을 수정합니다.")
-    @PutMapping("/announcements/{studyAnnouncementId}")
-    public ResponseEntity<Void> updateStudyAnnouncement(
-            @PathVariable Long studyAnnouncementId, @Valid @RequestBody StudyAnnouncementCreateUpdateRequest request) {
-        mentorStudyService.updateStudyAnnouncement(studyAnnouncementId, request);
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "스터디 공지 삭제", description = "스터디의 공지사항을 삭제합니다.")
-    @DeleteMapping("/announcements/{studyAnnouncementId}")
-    public ResponseEntity<Void> deleteStudyAnnouncement(@PathVariable Long studyAnnouncementId) {
-        mentorStudyService.deleteStudyAnnouncement(studyAnnouncementId);
-        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "수강생 정보 엑셀 다운로드", description = "수강생 정보를 엑셀로 다운로드합니다.")

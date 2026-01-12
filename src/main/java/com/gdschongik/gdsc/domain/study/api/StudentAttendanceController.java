@@ -1,7 +1,7 @@
-package com.gdschongik.gdsc.domain.studyv2.api;
+package com.gdschongik.gdsc.domain.study.api;
 
-import com.gdschongik.gdsc.domain.studyv2.application.StudentAttendanceServiceV2;
-import com.gdschongik.gdsc.domain.studyv2.dto.request.AttendanceCreateRequest;
+import com.gdschongik.gdsc.domain.study.application.StudentAttendanceService;
+import com.gdschongik.gdsc.domain.study.dto.request.AttendanceCreateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Study Attendance V2 - Student", description = "사용자 스터디 출석체크 V2 API입니다.")
+@Tag(name = "Study Attendance - Student", description = "사용자 스터디 출석체크 API입니다.")
 @RestController
 @RequestMapping("/v2/attendances")
 @RequiredArgsConstructor
-public class StudentAttendanceControllerV2 {
+public class StudentAttendanceController {
 
-    private final StudentAttendanceServiceV2 studentAttendanceService;
+    private final StudentAttendanceService studentAttendanceService;
 
     @Operation(summary = "스터디 출석체크", description = "스터디에 출석체크합니다.")
     @PostMapping("/attend")
