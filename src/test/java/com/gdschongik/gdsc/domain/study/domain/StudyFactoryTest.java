@@ -1,10 +1,9 @@
-package com.gdschongik.gdsc.domain.studyv2.domain;
+package com.gdschongik.gdsc.domain.study.domain;
 
 import static com.gdschongik.gdsc.global.common.constant.StudyConstant.*;
 import static org.assertj.core.api.Assertions.*;
 
 import com.gdschongik.gdsc.domain.member.domain.Member;
-import com.gdschongik.gdsc.domain.study.domain.StudyType;
 import com.gdschongik.gdsc.helper.FixtureHelper;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +27,7 @@ class StudyFactoryTest {
         int totalRound = 8;
 
         // when
-        StudyV2 study = studyFactory.create(
+        Study study = studyFactory.create(
                 StudyType.OFFLINE,
                 STUDY_TITLE,
                 STUDY_SEMESTER,
@@ -53,7 +52,7 @@ class StudyFactoryTest {
         Member mentor = fixtureHelper.createMentor(1L);
 
         // when
-        StudyV2 study = studyFactory.create(
+        Study study = studyFactory.create(
                 StudyType.ASSIGNMENT,
                 STUDY_TITLE,
                 STUDY_SEMESTER,
@@ -82,7 +81,7 @@ class StudyFactoryTest {
         int totalRound = 8;
 
         // when
-        StudyV2 study = studyFactory.create(
+        Study study = studyFactory.create(
                 StudyType.OFFLINE,
                 STUDY_TITLE,
                 STUDY_SEMESTER,
@@ -99,7 +98,7 @@ class StudyFactoryTest {
 
         // then
         assertThat(study.getStudySessions())
-                .extracting(StudySessionV2::getPosition)
+                .extracting(StudySession::getPosition)
                 .containsExactly(1, 2, 3, 4, 5, 6, 7, 8);
     }
 
@@ -110,7 +109,7 @@ class StudyFactoryTest {
         AttendanceNumberGenerator generator = new FixedAttendanceNumberGenerator();
 
         // when
-        StudyV2 study = studyFactory.create(
+        Study study = studyFactory.create(
                 StudyType.OFFLINE,
                 STUDY_TITLE,
                 STUDY_SEMESTER,
@@ -127,7 +126,7 @@ class StudyFactoryTest {
 
         // then
         assertThat(study.getStudySessions())
-                .extracting(StudySessionV2::getLessonAttendanceNumber)
+                .extracting(StudySession::getLessonAttendanceNumber)
                 .containsOnly("0000");
     }
 
@@ -137,7 +136,7 @@ class StudyFactoryTest {
         Member mentor = fixtureHelper.createMentor(1L);
 
         // when
-        StudyV2 study = studyFactory.create(
+        Study study = studyFactory.create(
                 StudyType.ASSIGNMENT,
                 STUDY_TITLE,
                 STUDY_SEMESTER,
@@ -154,7 +153,7 @@ class StudyFactoryTest {
 
         // then
         assertThat(study.getStudySessions())
-                .extracting(StudySessionV2::getLessonAttendanceNumber)
+                .extracting(StudySession::getLessonAttendanceNumber)
                 .containsOnly((String) null);
     }
 }
