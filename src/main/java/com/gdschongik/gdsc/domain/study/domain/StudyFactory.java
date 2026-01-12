@@ -1,9 +1,8 @@
-package com.gdschongik.gdsc.domain.studyv2.domain;
+package com.gdschongik.gdsc.domain.study.domain;
 
 import com.gdschongik.gdsc.domain.common.vo.Period;
 import com.gdschongik.gdsc.domain.common.vo.Semester;
 import com.gdschongik.gdsc.domain.member.domain.Member;
-import com.gdschongik.gdsc.domain.study.domain.StudyType;
 import com.gdschongik.gdsc.global.annotation.DomainFactory;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -16,7 +15,7 @@ public class StudyFactory {
      * 스터디 및 스터디회차를 생성합니다.
      * 스터디회차의 경우 총 회차 수만큼 생성되며, 생성 순서에 따라 position 값이 지정됩니다.
      */
-    public StudyV2 create(
+    public Study create(
             StudyType type,
             String title,
             Semester semester,
@@ -58,7 +57,7 @@ public class StudyFactory {
         }
     }
 
-    private StudyV2 createLive(
+    private Study createLive(
             StudyType type,
             String title,
             Semester semester,
@@ -72,7 +71,7 @@ public class StudyFactory {
             Member mentor,
             AttendanceNumberGenerator attendanceNumberGenerator,
             Integer minAssignmentLength) {
-        StudyV2 study = StudyV2.createLive(
+        Study study = Study.createLive(
                 type,
                 title,
                 semester,
@@ -87,13 +86,12 @@ public class StudyFactory {
                 minAssignmentLength);
 
         IntStream.rangeClosed(1, totalRound)
-                .forEach(
-                        round -> StudySessionV2.createEmptyForLive(round, attendanceNumberGenerator.generate(), study));
+                .forEach(round -> StudySession.createEmptyForLive(round, attendanceNumberGenerator.generate(), study));
 
         return study;
     }
 
-    private StudyV2 createAssignment(
+    private Study createAssignment(
             String title,
             Semester semester,
             Integer totalRound,
@@ -102,7 +100,7 @@ public class StudyFactory {
             String discordRoleId,
             Member mentor,
             Integer minAssignmentLength) {
-        StudyV2 study = StudyV2.createAssignment(
+        Study study = Study.createAssignment(
                 title,
                 semester,
                 totalRound,
@@ -112,7 +110,7 @@ public class StudyFactory {
                 mentor,
                 minAssignmentLength);
 
-        IntStream.rangeClosed(1, totalRound).forEach(round -> StudySessionV2.createEmptyForAssignment(round, study));
+        IntStream.rangeClosed(1, totalRound).forEach(round -> StudySession.createEmptyForAssignment(round, study));
 
         return study;
     }

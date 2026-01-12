@@ -9,6 +9,7 @@ import com.gdschongik.gdsc.global.exception.CustomException;
 
 @DomainService
 public class StudyValidator {
+
     public void validateStudyMentor(Member currentMember, Study study) {
         // 어드민인 경우 검증 통과
         if (currentMember.isAdmin()) {

@@ -1,7 +1,6 @@
-package com.gdschongik.gdsc.domain.studyv2.domain;
+package com.gdschongik.gdsc.domain.study.domain;
 
 import com.gdschongik.gdsc.domain.common.vo.Period;
-import com.gdschongik.gdsc.domain.study.domain.StudyType;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,7 @@ public enum AttendanceStatus {
     private final String value;
 
     public static AttendanceStatus of(
-            StudySessionV2 studySession, StudyType type, boolean isAttended, LocalDateTime now) {
+            StudySession studySession, StudyType type, boolean isAttended, LocalDateTime now) {
         if (!type.isLive()) {
             return NOT_LIVE;
         }

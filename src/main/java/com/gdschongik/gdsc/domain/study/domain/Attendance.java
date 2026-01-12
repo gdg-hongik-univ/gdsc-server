@@ -19,13 +19,15 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"member_id", "study_detail_id"})})
+@Table(
+        name = "attendance_v2",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"member_id", "study_session_v2_id"})})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Attendance extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "attendance_id")
+    @Column(name = "attendance_v2_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,16 +35,16 @@ public class Attendance extends BaseEntity {
     private Member student;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_detail_id")
-    private StudyDetail studyDetail;
+    @JoinColumn(name = "study_session_v2_id")
+    private StudySession studySession;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Attendance(Member student, StudyDetail studyDetail) {
+    private Attendance(Member student, StudySession studySession) {
         this.student = student;
-        this.studyDetail = studyDetail;
+        this.studySession = studySession;
     }
 
-    public static Attendance of(Member student, StudyDetail studyDetail) {
-        return Attendance.builder().student(student).studyDetail(studyDetail).build();
+    public static Attendance create(Member student, StudySession studySession) {
+        return Attendance.builder().student(student).studySession(studySession).build();
     }
 }

@@ -1,4 +1,4 @@
-package com.gdschongik.gdsc.domain.studyv2.domain;
+package com.gdschongik.gdsc.domain.study.domain;
 
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
@@ -27,7 +27,7 @@ import org.hibernate.annotations.Comment;
 @Entity
 @Table(name = "study_session_v2")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class StudySessionV2 extends BaseEntity {
+public class StudySession extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,7 +70,7 @@ public class StudySessionV2 extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_v2_id")
-    private StudyV2 study;
+    private Study study;
 
     /**
      * 모든 스터디회차는 인자로 전달되는 스터디 애그리거트 루트 엔티티에 종속됩니다.
@@ -79,7 +79,7 @@ public class StudySessionV2 extends BaseEntity {
      * 부모 클래스에서 위 로직을 수행하기 때문에, 생성 팩토리 메서드는 void 타입을 반환해야 합니다.
      */
     @Builder(access = AccessLevel.PRIVATE)
-    private StudySessionV2(
+    private StudySession(
             Integer position,
             String lessonTitle,
             String description,
@@ -88,7 +88,7 @@ public class StudySessionV2 extends BaseEntity {
             String assignmentTitle,
             String assignmentDescriptionLink,
             Period assignmentPeriod,
-            StudyV2 study) {
+            Study study) {
         this.position = position;
         this.lessonTitle = lessonTitle;
         this.description = description;
@@ -101,16 +101,16 @@ public class StudySessionV2 extends BaseEntity {
         study.getStudySessions().add(this);
     }
 
-    public static void createEmptyForLive(Integer position, String lessonAttendanceNumber, StudyV2 study) {
-        StudySessionV2.builder()
+    public static void createEmptyForLive(Integer position, String lessonAttendanceNumber, Study study) {
+        StudySession.builder()
                 .position(position)
                 .lessonAttendanceNumber(lessonAttendanceNumber)
                 .study(study)
                 .build();
     }
 
-    public static void createEmptyForAssignment(Integer position, StudyV2 study) {
-        StudySessionV2.builder().position(position).study(study).build();
+    public static void createEmptyForAssignment(Integer position, Study study) {
+        StudySession.builder().position(position).study(study).build();
     }
 
     // 데이터 전달 로직

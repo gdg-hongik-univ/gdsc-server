@@ -1,4 +1,4 @@
-package com.gdschongik.gdsc.domain.studyv2.domain;
+package com.gdschongik.gdsc.domain.study.domain;
 
 import java.security.SecureRandom;
 import lombok.SneakyThrows;

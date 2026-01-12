@@ -1,4 +1,4 @@
-package com.gdschongik.gdsc.domain.studyv2.domain;
+package com.gdschongik.gdsc.domain.study.domain;
 
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
@@ -27,7 +27,7 @@ public enum AssignmentHistoryStatus {
      * @throws CustomException 제출기한에 포함되지 않는 제출이력을 인자로 받았을 때
      */
     public static AssignmentHistoryStatus of(
-            @Nullable AssignmentHistoryV2 assignmentHistory, StudySessionV2 studySession, LocalDateTime now)
+            @Nullable AssignmentHistory assignmentHistory, StudySession studySession, LocalDateTime now)
             throws CustomException {
 
         // 제출기한이 설정되지 않았을 경우
@@ -53,7 +53,7 @@ public enum AssignmentHistoryStatus {
     }
 
     private static void validateCommittedAtWithinAssignmentPeriod(
-            @Nullable AssignmentHistoryV2 assignmentHistory, StudySessionV2 studySession) throws CustomException {
+            @Nullable AssignmentHistory assignmentHistory, StudySession studySession) throws CustomException {
         if (assignmentHistory == null) {
             return;
         }
