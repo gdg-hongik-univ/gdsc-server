@@ -1,14 +1,14 @@
-package com.gdschongik.gdsc.domain.studyv2.application;
+package com.gdschongik.gdsc.domain.study.application;
 
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.recruitment.dao.RecruitmentRepository;
 import com.gdschongik.gdsc.domain.recruitment.domain.Recruitment;
-import com.gdschongik.gdsc.domain.studyv2.dao.StudyAnnouncementV2Repository;
-import com.gdschongik.gdsc.domain.studyv2.dao.StudyHistoryV2Repository;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyAnnouncementV2;
-import com.gdschongik.gdsc.domain.studyv2.dto.response.StudyAnnouncementResponse;
+import com.gdschongik.gdsc.domain.study.dao.StudyAnnouncementRepository;
+import com.gdschongik.gdsc.domain.study.dao.StudyHistoryRepository;
+import com.gdschongik.gdsc.domain.study.domain.StudyAnnouncement;
+import com.gdschongik.gdsc.domain.study.dto.response.StudyAnnouncementResponse;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.util.MemberUtil;
 import jakarta.annotation.Nullable;
@@ -20,17 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class StudentStudyAnnouncementServiceV2 {
+public class StudentStudyAnnouncementService {
 
     private final MemberUtil memberUtil;
     private final RecruitmentRepository recruitmentRepository;
-    private final StudyAnnouncementV2Repository studyAnnouncementV2Repository;
-    private final StudyHistoryV2Repository studyHistoryV2Repository;
+    private final StudyAnnouncementRepository studyAnnouncementRepository;
+    private final StudyHistoryRepository studyHistoryRepository;
 
     @Transactional(readOnly = true)
     public List<StudyAnnouncementResponse> getStudyAnnouncements(@Nullable Long studyId) {
-        List<StudyAnnouncementV2> studyAnnouncements =
-                studyAnnouncementV2Repository.findAllByStudyIdOrderByCreatedAtDesc(studyId);
+        List<StudyAnnouncement> studyAnnouncements =
+                studyAnnouncementRepository.findAllByStudyIdOrderByCreatedAtDesc(studyId);
 
         return studyAnnouncements.stream().map(StudyAnnouncementResponse::from).toList();
     }
@@ -44,13 +44,13 @@ public class StudentStudyAnnouncementServiceV2 {
                 .findCurrentRecruitment(now)
                 .orElseThrow(() -> new CustomException(RECRUITMENT_NOT_FOUND));
 
-        List<Long> currentStudyIds = studyHistoryV2Repository.findAllByStudent(currentMember).stream()
+        List<Long> currentStudyIds = studyHistoryRepository.findAllByStudent(currentMember).stream()
                 .filter(studyHistory -> studyHistory.getStudy().getSemester().equals(recruitment.getSemester()))
-                .map(studyHistoryV2 -> studyHistoryV2.getStudy().getId())
+                .map(studyHistory -> studyHistory.getStudy().getId())
                 .toList();
 
-        List<StudyAnnouncementV2> studyAnnouncements =
-                studyAnnouncementV2Repository.findAllByStudyIdsOrderByCreatedAtDesc(currentStudyIds);
+        List<StudyAnnouncement> studyAnnouncements =
+                studyAnnouncementRepository.findAllByStudyIdsOrderByCreatedAtDesc(currentStudyIds);
 
         return studyAnnouncements.stream().map(StudyAnnouncementResponse::from).toList();
     }
