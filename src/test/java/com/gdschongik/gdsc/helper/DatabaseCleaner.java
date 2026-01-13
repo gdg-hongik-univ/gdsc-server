@@ -9,8 +9,10 @@ import java.sql.Statement;
 import java.util.List;
 import org.hibernate.Session;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+@Profile("test")
 @Component
 public class DatabaseCleaner implements InitializingBean {
 
