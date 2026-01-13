@@ -143,8 +143,8 @@ public class EventParticipationService {
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
-        eventParticipations.forEach(eventParticipation -> confirmAfterPartyStatusByAfterPartyUpdateTarget(
-                        eventParticipation, request.afterPartyUpdateTarget()));
+        eventParticipations.forEach(eventParticipation ->
+                confirmAfterPartyStatusByAfterPartyUpdateTarget(eventParticipation, request.afterPartyUpdateTarget()));
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석/정산 전체 확인 처리: eventId={}, afterPartyUpdateTarget={}",
@@ -172,8 +172,8 @@ public class EventParticipationService {
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
-        eventParticipations.forEach(eventParticipation -> revokeAfterPartyStatusByAfterPartyUpdateTarget(
-                        eventParticipation, request.afterPartyUpdateTarget()));
+        eventParticipations.forEach(eventParticipation ->
+                revokeAfterPartyStatusByAfterPartyUpdateTarget(eventParticipation, request.afterPartyUpdateTarget()));
 
         log.info(
                 "[EventParticipationService] 뒤풀이 참석 / 정산 현황 전체 확인 취소 처리: eventId={}, afterPartyUpdateTarget={}",
