@@ -6,6 +6,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.util.StringUtils;
 import redis.embedded.RedisServer;
 
@@ -28,6 +32,12 @@ public class TestRedisConfig {
         if (redisServer != null) {
             redisServer.stop();
         }
+    }
+
+    @Bean
+    @Primary
+    public RedisConnectionFactory testConnectionFactory() {
+        return new LettuceConnectionFactory("localhost", port);
     }
 
     /**
