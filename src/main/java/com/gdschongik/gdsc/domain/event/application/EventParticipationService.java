@@ -143,10 +143,7 @@ public class EventParticipationService {
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
-        eventParticipations.stream()
-                .filter(eventParticipation -> isAfterPartyUpdateTargetStatusNotConfirmed(
-                        eventParticipation, request.afterPartyUpdateTarget()))
-                .forEach(eventParticipation -> confirmAfterPartyStatusByAfterPartyUpdateTarget(
+        eventParticipations.forEach(eventParticipation -> confirmAfterPartyStatusByAfterPartyUpdateTarget(
                         eventParticipation, request.afterPartyUpdateTarget()));
 
         log.info(
@@ -175,10 +172,7 @@ public class EventParticipationService {
                 eventRepository.findById(request.eventId()).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
         List<EventParticipation> eventParticipations = eventParticipationRepository.findAllByEvent(event);
 
-        eventParticipations.stream()
-                .filter(eventParticipation ->
-                        isAfterPartyUpdateTargetStatusNotRevoked(eventParticipation, request.afterPartyUpdateTarget()))
-                .forEach(eventParticipation -> revokeAfterPartyStatusByAfterPartyUpdateTarget(
+        eventParticipations.forEach(eventParticipation -> revokeAfterPartyStatusByAfterPartyUpdateTarget(
                         eventParticipation, request.afterPartyUpdateTarget()));
 
         log.info(
