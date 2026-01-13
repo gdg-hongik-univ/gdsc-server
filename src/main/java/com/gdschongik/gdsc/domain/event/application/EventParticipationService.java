@@ -305,15 +305,6 @@ public class EventParticipationService {
         }
     }
 
-    private boolean isAfterPartyUpdateTargetStatusNotRevoked(
-            EventParticipation participation, AfterPartyUpdateTarget afterPartyUpdateTarget) {
-        return switch (afterPartyUpdateTarget) {
-            case ATTENDANCE -> !participation.getAfterPartyAttendanceStatus().isNotAttended();
-            case PRE_PAYMENT -> !participation.getPrePaymentStatus().isUnpaid();
-            case POST_PAYMENT -> !participation.getPostPaymentStatus().isUnpaid();
-        };
-    }
-
     private void revokeAfterPartyStatusByAfterPartyUpdateTarget(
             EventParticipation participation, AfterPartyUpdateTarget afterPartyUpdateTarget) {
         switch (afterPartyUpdateTarget) {
