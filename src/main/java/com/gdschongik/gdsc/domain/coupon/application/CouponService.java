@@ -18,10 +18,10 @@ import com.gdschongik.gdsc.domain.coupon.dto.response.IssuedCouponResponse;
 import com.gdschongik.gdsc.domain.coupon.util.CouponNameUtil;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
-import com.gdschongik.gdsc.domain.studyv2.dao.StudyHistoryV2Repository;
-import com.gdschongik.gdsc.domain.studyv2.dao.StudyV2Repository;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyHistoryV2;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyV2;
+import com.gdschongik.gdsc.domain.study.dao.StudyHistoryRepository;
+import com.gdschongik.gdsc.domain.study.dao.StudyRepository;
+import com.gdschongik.gdsc.domain.study.domain.Study;
+import com.gdschongik.gdsc.domain.study.domain.StudyHistory;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.util.MemberUtil;
 import java.util.Arrays;
@@ -42,15 +42,15 @@ public class CouponService {
 
     private final CouponNameUtil couponNameUtil;
     private final MemberUtil memberUtil;
-    private final StudyHistoryV2Repository studyHistoryRepository;
-    private final StudyV2Repository studyRepository;
+    private final StudyHistoryRepository studyHistoryRepository;
+    private final StudyRepository studyRepository;
     private final CouponRepository couponRepository;
     private final IssuedCouponRepository issuedCouponRepository;
     private final MemberRepository memberRepository;
 
     @Transactional
     public void createCoupon(CouponCreateRequest request) {
-        Optional<StudyV2> study = Optional.ofNullable(request.studyId()).flatMap(studyRepository::findById);
+        Optional<Study> study = Optional.ofNullable(request.studyId()).flatMap(studyRepository::findById);
         Coupon coupon = Coupon.createManual(
                 request.name(), Money.from(request.discountAmount()), request.couponType(), study.orElse(null));
         couponRepository.save(coupon);
@@ -105,12 +105,12 @@ public class CouponService {
 
     @Transactional
     public void createAndIssueCouponByStudyHistories(List<Long> studyHistoryIds) {
-        List<StudyHistoryV2> studyHistories = studyHistoryRepository.findAllById(studyHistoryIds);
+        List<StudyHistory> studyHistories = studyHistoryRepository.findAllById(studyHistoryIds);
         List<Long> studentIds = studyHistories.stream()
                 .map(studyHistory -> studyHistory.getStudent().getId())
                 .toList();
         List<Member> students = memberRepository.findAllById(studentIds);
-        StudyV2 study = studyHistories.get(0).getStudy();
+        Study study = studyHistories.get(0).getStudy();
 
         Coupon coupon = findOrCreate(STUDY_COMPLETION, study);
 
@@ -124,7 +124,7 @@ public class CouponService {
                 issuedCoupons.stream().map(IssuedCoupon::getId).toList());
     }
 
-    private Coupon findOrCreate(CouponType couponType, StudyV2 study) {
+    private Coupon findOrCreate(CouponType couponType, Study study) {
         return couponRepository.findByCouponTypeAndStudy(couponType, study).orElseGet(() -> {
             String couponName = couponNameUtil.generateStudyCompletionCouponName(study);
             Coupon coupon = Coupon.createAutomatic(couponName, Money.FIVE_THOUSAND, couponType, study);
@@ -134,7 +134,7 @@ public class CouponService {
 
     @Transactional
     public void revokeStudyCompletionCouponByStudyHistoryId(long studyHistoryId) {
-        StudyHistoryV2 studyHistory = studyHistoryRepository
+        StudyHistory studyHistory = studyHistoryRepository
                 .findById(studyHistoryId)
                 .orElseThrow(() -> new CustomException(STUDY_HISTORY_NOT_FOUND));
 

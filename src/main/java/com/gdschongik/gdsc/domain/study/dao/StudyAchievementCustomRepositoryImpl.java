@@ -19,7 +19,7 @@ public class StudyAchievementCustomRepositoryImpl implements StudyAchievementCus
     public List<StudyAchievement> findByStudyIdAndMemberIds(Long studyId, List<Long> memberIds) {
         return queryFactory
                 .selectFrom(studyAchievement)
-                .where(eqStudyId(studyId), studyAchievement.student.id.in(memberIds))
+                .where(eqStudyId(studyId), containsStudentId(memberIds))
                 .fetch();
     }
 
@@ -47,7 +47,7 @@ public class StudyAchievementCustomRepositoryImpl implements StudyAchievementCus
     }
 
     private BooleanExpression eqAchievementType(AchievementType achievementType) {
-        return achievementType != null ? studyAchievement.achievementType.eq(achievementType) : null;
+        return achievementType != null ? studyAchievement.type.eq(achievementType) : null;
     }
 
     private BooleanExpression containsStudentId(List<Long> memberIds) {

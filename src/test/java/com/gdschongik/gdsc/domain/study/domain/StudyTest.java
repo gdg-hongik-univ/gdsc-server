@@ -1,158 +1,208 @@
 package com.gdschongik.gdsc.domain.study.domain;
 
-import static com.gdschongik.gdsc.domain.member.domain.Department.D022;
-import static com.gdschongik.gdsc.domain.member.domain.Member.createGuest;
-import static com.gdschongik.gdsc.global.common.constant.MemberConstant.*;
-import static com.gdschongik.gdsc.global.common.constant.RecruitmentConstant.*;
-import static com.gdschongik.gdsc.global.common.constant.StudyConstant.*;
-import static com.gdschongik.gdsc.global.common.constant.TemporalConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.StudyConstant.MIN_ASSIGNMENT_CONTENT_LENGTH;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 import com.gdschongik.gdsc.domain.common.vo.Period;
-import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
-import java.time.LocalTime;
+import com.gdschongik.gdsc.helper.FixtureHelper;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
-public class StudyTest {
+class StudyTest {
 
-    private Member createAssociateMember(Long id) {
-        Member member = createGuest(OAUTH_ID);
-        member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
-        member.completeUnivEmailVerification(UNIV_EMAIL);
-        member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
-        member.advanceToAssociate();
-        ReflectionTestUtils.setField(member, "id", id);
-        return member;
+    FixtureHelper fixtureHelper = new FixtureHelper();
+
+    private Study createStudy(StudyType type, Long studyId, Long firstStudySessionId, Long mentorId) {
+        return fixtureHelper.createStudy(type, studyId, firstStudySessionId, mentorId);
     }
 
     @Nested
-    class 스터디_개설시 {
+    class 스터디_수정할때 {
 
         @Test
-        void 게스트인_회원을_멘토로_지정하면_실패한다() {
+        void 성공한다() {
             // given
-            Member guestMember = Member.createGuest(OAUTH_ID);
-            Period applicationPeriod = Period.of(START_DATE.minusDays(10), START_DATE.minusDays(5));
+            Study study = createStudy(StudyType.OFFLINE, 1L, 1L, 1L);
 
-            // when & then
-            assertThatThrownBy(() -> Study.create(
-                            ONLINE_STUDY,
-                            STUDY_TITLE,
-                            TOTAL_WEEK,
-                            DAY_OF_WEEK,
-                            STUDY_START_TIME,
-                            STUDY_END_TIME,
-                            START_TO_END_PERIOD,
-                            applicationPeriod,
-                            guestMember,
-                            ACADEMIC_YEAR,
-                            SEMESTER_TYPE))
-                    .isInstanceOf(CustomException.class)
-                    .hasMessage(STUDY_MENTOR_IS_UNAUTHORIZED.getMessage());
+            String updatedTitle = "수정된 제목";
+            String updatedFirstSessionTitle = "수정된 1회차 스터디 제목";
+
+            StudyUpdateCommand command = new StudyUpdateCommand(
+                    updatedTitle,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    MIN_ASSIGNMENT_CONTENT_LENGTH,
+                    List.of(new StudyUpdateCommand.Session(
+                            1L, updatedFirstSessionTitle, null, null, null, null, null)));
+
+            // when
+            study.update(command);
+
+            // then
+            assertThat(study.getTitle()).isEqualTo(updatedTitle);
+
+            StudySession firstSession = study.getStudySessions().get(0);
+            assertThat(firstSession).isNotNull();
+            assertThat(firstSession.getLessonTitle()).isEqualTo(updatedFirstSessionTitle);
         }
 
         @Test
-        void 신청기간_시작일이_스터디_시작일보다_늦으면_실패한다() {
+        void 과제_스터디_스터디회차의_수업기간이_null이_아니면_실패한다() {
             // given
-            Member member = createAssociateMember(1L);
-            Period period = Period.of(START_DATE, END_DATE);
-            Period applicationPeriod = Period.of(START_DATE.plusDays(1), START_DATE.plusDays(2));
+            Study study = createStudy(StudyType.ASSIGNMENT, 1L, 1L, 1L);
+
+            Period lessonPeriodToUpdate =
+                    Period.of(LocalDateTime.of(2025, 1, 1, 0, 0), LocalDateTime.of(2025, 1, 8, 0, 0));
+            StudyUpdateCommand command = new StudyUpdateCommand(
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    MIN_ASSIGNMENT_CONTENT_LENGTH,
+                    List.of(new StudyUpdateCommand.Session(1L, null, null, lessonPeriodToUpdate, null, null, null)));
 
             // when & then
-            assertThatThrownBy(() -> Study.create(
-                            ONLINE_STUDY,
-                            STUDY_TITLE,
-                            TOTAL_WEEK,
-                            DAY_OF_WEEK,
-                            STUDY_START_TIME,
-                            STUDY_END_TIME,
-                            period,
-                            applicationPeriod,
-                            member,
-                            ACADEMIC_YEAR,
-                            SEMESTER_TYPE))
+            assertThatThrownBy(() -> study.update(command))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(STUDY_APPLICATION_START_DATE_INVALID.getMessage());
+                    .hasMessage(STUDY_NOT_UPDATABLE_LESSON_FIELD_NOT_NULL.getMessage());
         }
 
         @Test
-        void 온오프라인_스터디에_스터디_시각이_없으면_실패한다() {
+        void 존재하지_않는_스터디회차_ID를_전달하면_실패한다() {
             // given
-            Member member = createAssociateMember(1L);
-            Period period = Period.of(START_DATE, END_DATE);
-            Period applicationPeriod = Period.of(START_DATE.minusDays(5), START_DATE.plusDays(3));
+            Study study = createStudy(StudyType.OFFLINE, 1L, 1L, 1L);
+
+            StudyUpdateCommand command = new StudyUpdateCommand(
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    MIN_ASSIGNMENT_CONTENT_LENGTH,
+                    List.of(new StudyUpdateCommand.Session(9999L, null, null, null, null, null, null)));
 
             // when & then
-            assertThatThrownBy(() -> Study.create(
-                            ONLINE_STUDY,
-                            STUDY_TITLE,
-                            TOTAL_WEEK,
-                            DAY_OF_WEEK,
-                            null,
-                            null,
-                            period,
-                            applicationPeriod,
-                            member,
-                            ACADEMIC_YEAR,
-                            SEMESTER_TYPE))
+            assertThatThrownBy(() -> study.update(command))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(ON_OFF_LINE_STUDY_TIME_IS_ESSENTIAL.getMessage());
+                    .hasMessage(STUDY_NOT_UPDATABLE_SESSION_NOT_FOUND.getMessage());
+        }
+    }
+
+    @Nested
+    class 스터디_수정시_스터디회차의_수업_시작일시_순차성을_검증할때 {
+
+        private StudyUpdateCommand.Session createSession(Long sessionId, LocalDate date) {
+            // 수업 시간을 null로 지정할 수 잇음
+            if (date == null) {
+                return new StudyUpdateCommand.Session(sessionId, null, null, null, null, null, null);
+            }
+
+            // 아니라면, 18:00 ~ 20:00 고정
+            LocalDateTime startDateTime = date.atTime(18, 0);
+            return new StudyUpdateCommand.Session(
+                    sessionId, null, null, Period.of(startDateTime, startDateTime.plusHours(2)), null, null, null);
+        }
+
+        private StudyUpdateCommand createCommand(LocalDate... dates) {
+            List<StudyUpdateCommand.Session> sessions = IntStream.range(0, dates.length)
+                    .mapToObj(i -> createSession((long) (i + 1), dates[i]))
+                    .toList();
+            return new StudyUpdateCommand(null, null, null, null, null, null, MIN_ASSIGNMENT_CONTENT_LENGTH, sessions);
         }
 
         @Test
-        void 온오프라인_스터디에_스터디_시작시각이_종료시각보다_늦으면_실패한다() {
+        void 역순인_경우_실패한다() {
             // given
-            Member member = createAssociateMember(1L);
-            Period period = Period.of(START_DATE, END_DATE);
-            Period applicationPeriod = Period.of(START_DATE.minusDays(5), START_DATE.plusDays(3));
-            LocalTime studyStartTime = STUDY_START_TIME;
-            LocalTime studyEndTime = STUDY_START_TIME.minusHours(2);
+            LocalDate date = LocalDate.of(2025, 1, 1);
+            Study study = createStudy(StudyType.OFFLINE, 1L, 1L, 1L);
+
+            // 1회차: 1/3, 2회차: 1/2
+            LocalDate firstLessonDate = date.plusDays(2);
+            LocalDate secondLessonDate = date.plusDays(1);
+
+            StudyUpdateCommand command = createCommand(firstLessonDate, secondLessonDate);
 
             // when & then
-            assertThatThrownBy(() -> Study.create(
-                            ONLINE_STUDY,
-                            STUDY_TITLE,
-                            TOTAL_WEEK,
-                            DAY_OF_WEEK,
-                            studyStartTime,
-                            studyEndTime,
-                            period,
-                            applicationPeriod,
-                            member,
-                            ACADEMIC_YEAR,
-                            SEMESTER_TYPE))
+            assertThatThrownBy(() -> study.update(command))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(STUDY_TIME_INVALID.getMessage());
+                    .hasMessage(STUDY_NOT_UPDATABLE_LESSON_PERIOD_NOT_SEQUENTIAL.getMessage());
         }
 
         @Test
-        void 과제_스터디에_스터디_시각이_있으면_실패한다() {
+        void 같은_시작_시간인_경우_실패한다() {
             // given
-            Member member = createAssociateMember(1L);
-            Period period = Period.of(START_DATE, END_DATE);
-            Period applicationPeriod = Period.of(START_DATE.minusDays(5), START_DATE.plusDays(3));
-            LocalTime studyStartTime = STUDY_START_TIME;
-            LocalTime studyEndTime = STUDY_END_TIME;
+            LocalDate date = LocalDate.of(2025, 1, 1);
+            Study study = createStudy(StudyType.OFFLINE, 1L, 1L, 1L);
+
+            // 1회차: 1/1, 2회차: 1/1
+            LocalDate firstLessonDate = date;
+            LocalDate secondLessonDate = date;
+
+            StudyUpdateCommand command = createCommand(firstLessonDate, secondLessonDate);
 
             // when & then
-            assertThatThrownBy(() -> Study.create(
-                            ASSIGNMENT_STUDY,
-                            STUDY_TITLE,
-                            TOTAL_WEEK,
-                            DAY_OF_WEEK,
-                            studyStartTime,
-                            studyEndTime,
-                            period,
-                            applicationPeriod,
-                            member,
-                            ACADEMIC_YEAR,
-                            SEMESTER_TYPE))
+            assertThatThrownBy(() -> study.update(command))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(ASSIGNMENT_STUDY_CAN_NOT_INPUT_STUDY_TIME.getMessage());
+                    .hasMessage(STUDY_NOT_UPDATABLE_LESSON_PERIOD_NOT_SEQUENTIAL.getMessage());
+        }
+
+        @Test
+        void 중간에_null이_있어도_성공한다() {
+            // given
+            LocalDate date = LocalDate.of(2025, 1, 1);
+            Study study = createStudy(StudyType.OFFLINE, 1L, 1L, 1L);
+
+            // 1회차: 1/2, 2회차: null, 3회차: 1/4
+            LocalDate firstLessonDate = date.plusDays(1);
+            LocalDate secondLessonDate = null;
+            LocalDate thirdLessonDate = date.plusDays(3);
+
+            StudyUpdateCommand command = createCommand(firstLessonDate, secondLessonDate, thirdLessonDate);
+
+            // when & then
+            assertThatNoException().isThrownBy(() -> study.update(command));
+        }
+
+        @Test
+        void 모두_null인_경우_성공한다() {
+            // given
+            Study study = createStudy(StudyType.OFFLINE, 1L, 1L, 1L);
+
+            LocalDate firstLessonDate = null;
+            LocalDate secondLessonDate = null;
+
+            StudyUpdateCommand command = createCommand(firstLessonDate, secondLessonDate);
+
+            // when & then
+            assertThatNoException().isThrownBy(() -> study.update(command));
+        }
+
+        @Test
+        void 정순인_경우_성공한다() {
+            // given
+            LocalDate date = LocalDate.of(2025, 1, 1);
+            Study study = createStudy(StudyType.OFFLINE, 1L, 1L, 1L);
+
+            // 1회차: 1/2, 2회차: 1/3
+            LocalDate firstLessonDate = date.plusDays(1);
+            LocalDate secondLessonDate = date.plusDays(2);
+
+            StudyUpdateCommand command = createCommand(firstLessonDate, secondLessonDate);
+
+            // when & then
+            assertThatNoException().isThrownBy(() -> study.update(command));
         }
     }
 }

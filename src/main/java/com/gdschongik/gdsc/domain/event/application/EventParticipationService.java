@@ -287,6 +287,15 @@ public class EventParticipationService {
         }
     }
 
+    private boolean isAfterPartyUpdateTargetStatusNotConfirmed(
+            EventParticipation participation, AfterPartyUpdateTarget afterPartyUpdateTarget) {
+        return switch (afterPartyUpdateTarget) {
+            case ATTENDANCE -> !participation.getAfterPartyAttendanceStatus().isAttended();
+            case PRE_PAYMENT -> !participation.getPrePaymentStatus().isPaid();
+            case POST_PAYMENT -> !participation.getPostPaymentStatus().isPaid();
+        };
+    }
+
     private void confirmAfterPartyStatusByAfterPartyUpdateTarget(
             EventParticipation participation, AfterPartyUpdateTarget afterPartyUpdateTarget) {
         switch (afterPartyUpdateTarget) {

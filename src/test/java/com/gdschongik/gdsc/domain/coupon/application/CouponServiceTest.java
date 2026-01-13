@@ -16,9 +16,9 @@ import com.gdschongik.gdsc.domain.coupon.dto.request.CouponCreateRequest;
 import com.gdschongik.gdsc.domain.coupon.dto.request.CouponIssueRequest;
 import com.gdschongik.gdsc.domain.coupon.dto.request.IssuedCouponQueryOption;
 import com.gdschongik.gdsc.domain.member.domain.Member;
+import com.gdschongik.gdsc.domain.study.domain.Study;
+import com.gdschongik.gdsc.domain.study.domain.StudyHistory;
 import com.gdschongik.gdsc.domain.study.domain.StudyType;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyHistoryV2;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyV2;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.util.DiscordUtil;
 import com.gdschongik.gdsc.helper.IntegrationTest;
@@ -219,9 +219,9 @@ class CouponServiceTest extends IntegrationTest {
             Member student = createRegularMember();
             Member mentor = createMentor();
             LocalDateTime now = LocalDateTime.now();
-            StudyV2 study = createStudy(StudyType.OFFLINE, mentor);
+            Study study = createStudy(StudyType.OFFLINE, mentor);
 
-            StudyHistoryV2 studyHistory = createStudyHistory(student, study);
+            StudyHistory studyHistory = createStudyHistory(student, study);
 
             // when
             couponService.createAndIssueCouponByStudyHistories(List.of(1L));
@@ -238,9 +238,9 @@ class CouponServiceTest extends IntegrationTest {
             Member student = createRegularMember();
             Member mentor = createMentor();
             LocalDateTime now = LocalDateTime.now();
-            StudyV2 study = createStudy(StudyType.OFFLINE, mentor);
+            Study study = createStudy(StudyType.OFFLINE, mentor);
 
-            StudyHistoryV2 studyHistory = createStudyHistory(student, study);
+            StudyHistory studyHistory = createStudyHistory(student, study);
 
             // when
             Coupon coupon = couponRepository.save(
@@ -259,9 +259,9 @@ class CouponServiceTest extends IntegrationTest {
             Member student = createRegularMember();
             Member mentor = createMentor();
             LocalDateTime now = LocalDateTime.now();
-            StudyV2 study = createStudy(StudyType.OFFLINE, mentor);
+            Study study = createStudy(StudyType.OFFLINE, mentor);
 
-            StudyHistoryV2 studyHistory = createStudyHistory(student, study);
+            StudyHistory studyHistory = createStudyHistory(student, study);
 
             // when
             couponService.createAndIssueCouponByStudyHistories(List.of(1L));
@@ -281,9 +281,9 @@ class CouponServiceTest extends IntegrationTest {
             Member student = createRegularMember();
             Member mentor = createMentor();
             LocalDateTime now = LocalDateTime.now();
-            StudyV2 study = createStudy(StudyType.OFFLINE, mentor);
+            Study study = createStudy(StudyType.OFFLINE, mentor);
 
-            StudyHistoryV2 studyHistory = createStudyHistory(student, study);
+            StudyHistory studyHistory = createStudyHistory(student, study);
 
             couponService.createAndIssueCouponByStudyHistories(List.of(1L));
 
