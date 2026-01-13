@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
-@Import({TestQuerydslConfig.class, DatabaseCleaner.class, RedisCleaner.class})
+@Import({TestQuerydslConfig.class, DatabaseCleaner.class})
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public abstract class RepositoryTest {
@@ -21,12 +21,8 @@ public abstract class RepositoryTest {
     @Autowired
     protected TestEntityManager testEntityManager;
 
-    @Autowired
-    protected RedisCleaner redisCleaner;
-
     @BeforeEach
     void setUp() {
         databaseCleaner.execute();
-        redisCleaner.execute();
     }
 }
