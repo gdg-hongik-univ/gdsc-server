@@ -20,14 +20,12 @@ import com.gdschongik.gdsc.domain.study.domain.Study;
 import com.gdschongik.gdsc.domain.study.domain.StudyHistory;
 import com.gdschongik.gdsc.domain.study.domain.StudyType;
 import com.gdschongik.gdsc.global.exception.CustomException;
-import com.gdschongik.gdsc.global.util.DiscordUtil;
 import com.gdschongik.gdsc.helper.IntegrationTest;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -41,9 +39,6 @@ class CouponServiceTest extends IntegrationTest {
 
     @Autowired
     IssuedCouponRepository issuedCouponRepository;
-
-    @MockBean
-    DiscordUtil discordUtil;
 
     @Nested
     class 쿠폰_생성할때 {

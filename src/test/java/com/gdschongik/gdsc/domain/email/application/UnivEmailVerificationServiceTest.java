@@ -8,12 +8,10 @@ import com.gdschongik.gdsc.domain.email.dto.request.UnivEmailVerificationRequest
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.util.email.EmailVerificationTokenUtil;
-import com.gdschongik.gdsc.global.util.email.MailSender;
 import com.gdschongik.gdsc.helper.IntegrationTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 public class UnivEmailVerificationServiceTest extends IntegrationTest {
 
@@ -25,9 +23,6 @@ public class UnivEmailVerificationServiceTest extends IntegrationTest {
 
     @Autowired
     private EmailVerificationTokenUtil emailVerificationTokenUtil;
-
-    @MockBean
-    private MailSender mailSender;
 
     @Nested
     class 재학생_메일_인증시 {

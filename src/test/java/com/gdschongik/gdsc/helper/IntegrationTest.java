@@ -46,6 +46,8 @@ import com.gdschongik.gdsc.domain.study.domain.StudyFactory;
 import com.gdschongik.gdsc.domain.study.domain.StudyHistory;
 import com.gdschongik.gdsc.domain.study.domain.StudyType;
 import com.gdschongik.gdsc.global.security.PrincipalDetails;
+import com.gdschongik.gdsc.global.util.DiscordUtil;
+import com.gdschongik.gdsc.global.util.email.MailSender;
 import com.gdschongik.gdsc.infra.feign.payment.client.PaymentClient;
 import com.gdschongik.gdsc.infra.github.client.GithubClient;
 import java.time.LocalDateTime;
@@ -114,6 +116,12 @@ public abstract class IntegrationTest {
 
     @MockBean
     protected MemberDiscordRoleRevokeHandler memberDiscordRoleRevokeHandler;
+
+    @MockBean
+    DiscordUtil discordUtil;
+
+    @MockBean
+    private MailSender mailSender;
 
     @BeforeEach
     void setUp() {
