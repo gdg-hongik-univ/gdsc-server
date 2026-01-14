@@ -136,9 +136,9 @@ public class WebSecurityConfig {
                 .permitAll()
                 .requestMatchers("/onboarding/**")
                 .authenticated()
-                .requestMatchers("/admin/**", "/v2/admin/**")
+                .requestMatchers("/admin/**")
                 .hasRole("ADMIN")
-                .requestMatchers("/mentor/**", "/v2/mentor/**")
+                .requestMatchers("/mentor/**")
                 .hasAnyRole("MENTOR", "ADMIN")
                 .anyRequest()
                 .authenticated());

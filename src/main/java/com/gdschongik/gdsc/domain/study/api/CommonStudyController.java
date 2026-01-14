@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Study - Common", description = "공통 스터디 API입니다.")
 @RestController
-@RequestMapping("/v2/common/studies")
+@RequestMapping("/common/studies")
 @RequiredArgsConstructor
 public class CommonStudyController {
 

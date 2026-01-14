@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Study History - Mentor", description = "멘토 스터디 수강 이력 API입니다.")
 @RestController
-@RequestMapping("/v2/mentor/study-histories")
+@RequestMapping("/mentor/study-histories")
 @RequiredArgsConstructor
 public class MentorStudyHistoryController {
 

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Study - Admin", description = "스터디 어드민 API입니다.")
 @RestController
-@RequestMapping("/v2/admin/studies")
+@RequestMapping("/admin/studies")
 @RequiredArgsConstructor
 public class AdminStudyController {
 
