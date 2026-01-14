@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Study Assignment History - Student", description = "학생 과제 제출이력 API입니다.")
 @RestController
-@RequestMapping("/v2/assignment-histories")
+@RequestMapping("/assignment-histories")
 @RequiredArgsConstructor
 public class StudentAssignmentHistoryController {
 

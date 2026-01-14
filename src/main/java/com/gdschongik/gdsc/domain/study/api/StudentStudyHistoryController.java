@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Study History - Student", description = "학생 스터디 수강이력 API입니다.")
 @RestController
-@RequestMapping("/v2/study-histories")
+@RequestMapping("/study-histories")
 @RequiredArgsConstructor
 public class StudentStudyHistoryController {
 

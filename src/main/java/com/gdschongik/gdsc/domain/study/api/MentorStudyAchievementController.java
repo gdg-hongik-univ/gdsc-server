@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Study Achievement - Mentor", description = "멘토 스터디 우수 스터디원 관리 API입니다.")
 @RestController
-@RequestMapping("/v2/mentor/study-achievements")
+@RequestMapping("/mentor/study-achievements")
 @RequiredArgsConstructor
 public class MentorStudyAchievementController {
 

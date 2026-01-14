@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Study - Mentor", description = "스터디 멘토 API입니다.")
 @RestController
-@RequestMapping("/v2/mentor/studies")
+@RequestMapping("/mentor/studies")
 @RequiredArgsConstructor
 public class MentorStudyController {
 
