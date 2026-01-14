@@ -5,7 +5,8 @@ services:
     image: ${IMAGE_FULL_URL}
     container_name: gdsc-server
     restart: always
-    network_mode: host
+    ports:
+      - "80:8080"
     env_file:
       - .env
     environment:
@@ -25,4 +26,3 @@ services:
       - "6379:6379"
     environment:
       - TZ=Asia/Seoul
-    network_mode: host
