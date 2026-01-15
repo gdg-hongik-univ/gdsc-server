@@ -36,10 +36,6 @@ jobs:
           java-version: ${{ matrix.java-version }}
           distribution: ${{ matrix.distribution }}
 
-      # Redis 컨테이너 실행
-      - name: Start containers
-        run: docker compose -f docker-compose-test.yaml up -d
-
       # Gradlew 실행 허용
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
