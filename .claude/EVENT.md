@@ -270,20 +270,6 @@ event_publication 테이블 저장
 
 ## 레거시 코드 참고사항
 
-### @TransactionalEventListener 사용 코드
-
-일부 레거시 코드에서 `@TransactionalEventListener(phase = BEFORE_COMMIT)`를 사용합니다:
-
-```java
-// CouponEventHandler.java - 레거시
-@TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-public void handleStudyHistoryCompletedEvent(StudyHistoriesCompletedEvent event) {
-    couponService.createAndIssueCouponByStudyHistories(event.studyHistoryIds());
-}
-```
-
-이 패턴은 `@ApplicationModuleListener`로 통일할 예정입니다.
-
 ### Study V1 이벤트
 
 `study/domain/event/` 패키지의 이벤트들은 레거시입니다. `studyv2` 마이그레이션 완료로 삭제 가능합니다.
