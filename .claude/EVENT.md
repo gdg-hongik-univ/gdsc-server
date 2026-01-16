@@ -72,7 +72,7 @@ public void demoteToAssociate() {
 엔티티 생성/삭제 시점에 이벤트를 발행해야 하는 경우 JPA 콜백을 사용합니다:
 
 ```java
-// StudyHistoryV2.java
+// StudyHistory.java
 @PostPersist
 private void postPersist() {
     registerEvent(new StudyApplyCompletedEvent(
@@ -95,23 +95,23 @@ private void preRemove() {
 여러 엔티티의 집계 이벤트나 서비스 레이어에서만 발행 가능한 이벤트는 `ApplicationEventPublisher`를 직접 사용합니다:
 
 ```java
-// MentorStudyHistoryServiceV2.java
+// MentorStudyHistoryService.java
 @Service
 @RequiredArgsConstructor
-public class MentorStudyHistoryServiceV2 {
+public class MentorStudyHistoryService {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public void completeStudy(StudyCompleteRequest request) {
-        List<StudyHistoryV2> studyHistories = // 여러 스터디 히스토리 조회
-        studyHistories.forEach(StudyHistoryV2::complete);
+        List<StudyHistory> studyHistories = // 여러 스터디 히스토리 조회
+        studyHistories.forEach(StudyHistory::complete);
 
         // 여러 ID를 모아서 단일 이벤트로 발행
         applicationEventPublisher.publishEvent(
             new StudyHistoriesCompletedEvent(
                 studyHistories.stream()
-                    .map(StudyHistoryV2::getId)
+                    .map(StudyHistory::getId)
                     .toList()));
     }
 }
@@ -163,9 +163,9 @@ public record StudyHistoriesCompletedEvent(@NonNull List<Long> studyHistoryIds) 
 | order | OrderCreatedEvent | 주문 생성 시 |
 | order | OrderCompletedEvent | 주문 완료 시 |
 | order | OrderCanceledEvent | 주문 취소 시 |
-| studyv2 | StudyApplyCompletedEvent | 스터디 수강신청 완료 시 (@PostPersist) |
-| studyv2 | StudyApplyCanceledEvent | 스터디 수강신청 취소 시 (@PreRemove) |
-| studyv2 | StudyAnnouncementCreatedEvent | 스터디 공지 생성 시 (@PostPersist) |
+| study | StudyApplyCompletedEvent | 스터디 수강신청 완료 시 (@PostPersist) |
+| study | StudyApplyCanceledEvent | 스터디 수강신청 취소 시 (@PreRemove) |
+| study | StudyAnnouncementCreatedEvent | 스터디 공지 생성 시 (@PostPersist) |
 | study | StudyHistoriesCompletedEvent | 스터디 일괄 수료 처리 시 |
 | study | StudyHistoryCompletionWithdrawnEvent | 스터디 수료 철회 시 |
 
@@ -265,28 +265,6 @@ event_publication 테이블 저장
 2. 트랜잭션 커밋 후 비동기로 이벤트 핸들러 실행
 3. 핸들러 실패 시에도 원본 트랜잭션은 이미 커밋된 상태
 4. `EventRetryManager`가 미처리 이벤트를 재시도하여 최종 정합성 보장
-
----
-
-## 레거시 코드 참고사항
-
-### @TransactionalEventListener 사용 코드
-
-일부 레거시 코드에서 `@TransactionalEventListener(phase = BEFORE_COMMIT)`를 사용합니다:
-
-```java
-// CouponEventHandler.java - 레거시
-@TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-public void handleStudyHistoryCompletedEvent(StudyHistoriesCompletedEvent event) {
-    couponService.createAndIssueCouponByStudyHistories(event.studyHistoryIds());
-}
-```
-
-이 패턴은 `@ApplicationModuleListener`로 통일할 예정입니다.
-
-### Study V1 이벤트
-
-`study/domain/event/` 패키지의 이벤트들은 레거시입니다. `studyv2` 마이그레이션 완료로 삭제 가능합니다.
 
 ---
 

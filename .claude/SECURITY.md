@@ -241,8 +241,8 @@ JWT 토큰을 검증하고 SecurityContext에 인증 정보를 설정합니다.
 
 | 패턴 | 필요 역할 | 설명 |
 |------|-----------|------|
-| `/admin/**`, `/v2/admin/**` | `ROLE_ADMIN` | 관리자 전용 |
-| `/mentor/**`, `/v2/mentor/**` | `ROLE_MENTOR` 또는 `ROLE_ADMIN` | 멘토 전용 (관리자 포함) |
+| `/admin/**` | `ROLE_ADMIN` | 관리자 전용 |
+| `/mentor/**` | `ROLE_MENTOR` 또는 `ROLE_ADMIN` | 멘토 전용 (관리자 포함) |
 | 그 외 모든 요청 | 인증된 사용자 | 역할 무관 |
 
 ---
