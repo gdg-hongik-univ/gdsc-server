@@ -5,7 +5,10 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.validation.constraints.NotNull;
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -16,8 +19,10 @@ import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.annotation.Order;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Order(1) // 트랜잭션 AOP보다 먼저 실행되어야 합니다.
 @Aspect
 @Component
@@ -27,6 +32,7 @@ public class LockAspect {
     private final LockUtil lockUtil;
     private final ExpressionParser parser = new SpelExpressionParser();
     private final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
+    private final DataSource dataSource;
 
     @Around("@annotation(com.gdschongik.gdsc.global.lock.DistributedLock)")
     public Object around(@NotNull ProceedingJoinPoint joinPoint) throws Throwable {
@@ -36,9 +42,10 @@ public class LockAspect {
 
         String key = parseLockKey(distributedLock, method, joinPoint.getArgs(), joinPoint.getTarget());
         boolean lockAcquired = false;
+        Connection connection = DataSourceUtils.getConnection(dataSource);
 
         try {
-            lockAcquired = lockUtil.acquireLock(key, distributedLock.timeoutSec());
+            lockAcquired = lockUtil.acquireLock(connection, key, distributedLock.timeoutSec());
 
             if (!lockAcquired) {
                 throw new CustomException(LOCK_ACQUIRE_FAILED);
@@ -47,8 +54,9 @@ public class LockAspect {
             return joinPoint.proceed();
         } finally {
             if (lockAcquired) {
-                lockUtil.releaseLock(key);
+                lockUtil.releaseLock(connection, key);
             }
+            DataSourceUtils.releaseConnection(connection, dataSource);
         }
     }
 
