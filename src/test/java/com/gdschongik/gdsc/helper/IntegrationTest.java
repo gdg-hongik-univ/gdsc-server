@@ -10,6 +10,7 @@ import static com.gdschongik.gdsc.global.common.constant.TemporalConstant.*;
 import static org.mockito.Mockito.*;
 
 import com.gdschongik.gdsc.config.TestLockConfig;
+import com.gdschongik.gdsc.config.TestRedisConfig;
 import com.gdschongik.gdsc.config.TestSyncExecutorConfig;
 import com.gdschongik.gdsc.domain.common.model.SemesterType;
 import com.gdschongik.gdsc.domain.common.vo.Money;
@@ -45,6 +46,8 @@ import com.gdschongik.gdsc.domain.study.domain.StudyFactory;
 import com.gdschongik.gdsc.domain.study.domain.StudyHistory;
 import com.gdschongik.gdsc.domain.study.domain.StudyType;
 import com.gdschongik.gdsc.global.security.PrincipalDetails;
+import com.gdschongik.gdsc.global.util.DiscordUtil;
+import com.gdschongik.gdsc.global.util.email.MailSender;
 import com.gdschongik.gdsc.infra.feign.payment.client.PaymentClient;
 import com.gdschongik.gdsc.infra.github.client.GithubClient;
 import java.time.LocalDateTime;
@@ -58,7 +61,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
-@Import({TestSyncExecutorConfig.class, TestLockConfig.class})
+@Import({TestSyncExecutorConfig.class, TestLockConfig.class, TestRedisConfig.class})
 @SpringBootTest
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
@@ -113,6 +116,12 @@ public abstract class IntegrationTest {
 
     @MockBean
     protected MemberDiscordRoleRevokeHandler memberDiscordRoleRevokeHandler;
+
+    @MockBean
+    DiscordUtil discordUtil;
+
+    @MockBean
+    private MailSender mailSender;
 
     @BeforeEach
     void setUp() {

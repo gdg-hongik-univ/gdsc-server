@@ -132,7 +132,6 @@
 |------|------|
 | 코드 체크아웃 | `actions/checkout@v4` |
 | JDK 설치 | JDK 17 (temurin) |
-| Redis 컨테이너 | `docker-compose-test.yaml`로 실행 |
 | Gradle 검증 | `./gradlew check --configuration-cache` |
 
 ### Gradle 캐시 전략
@@ -240,22 +239,6 @@ services:
 - 환경 변수: `.env` 파일에서 로드
 - 로깅: AWS CloudWatch Logs (awslogs 드라이버)
 - Redis: 동일 Compose에서 함께 실행
-
-### docker-compose-test.yaml (테스트용)
-
-위치: `/docker-compose-test.yaml`
-
-```yaml
-services:
-  redis:
-    image: "redis:alpine"
-    ports:
-      - "6379:6379"
-    environment:
-      - TZ=Asia/Seoul
-```
-
-PR 빌드 및 개발 빌드 시 테스트용 Redis 컨테이너 실행에 사용
 
 ---
 

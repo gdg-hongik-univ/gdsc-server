@@ -24,10 +24,6 @@ jobs:
       - name: gradlew 권한 부여
         run: chmod +x ./gradlew
 
-      # Redis 컨테이너 실행
-      - name: Start containers
-        run: docker compose -f docker-compose-test.yaml up -d
-
       - name: Setup Gradle
         id: gradle
         uses: gradle/actions/setup-gradle@v3
