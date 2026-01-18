@@ -2,6 +2,7 @@ package com.gdschongik.gdsc.global.lock;
 
 import java.sql.Connection;
 
+// TODO: Redis 기반 분산락으로 변경 후 Conenction 파라미터 제거
 public interface LockUtil {
 
     /**
