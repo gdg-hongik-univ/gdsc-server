@@ -1,6 +1,7 @@
 package com.gdschongik.gdsc.helper;
 
 import com.gdschongik.gdsc.global.lock.LockUtil;
+import java.sql.Connection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +19,7 @@ public class InmemoryLockUtil implements LockUtil {
     /**
      * 인메모리 락을 획득합니다.
      */
-    public boolean acquireLock(String key, long timeoutSec) {
+    public boolean acquireLock(Connection conn, String key, long timeoutSec) {
         ReentrantLock lock = locks.computeIfAbsent(key, k -> new ReentrantLock());
 
         try {
@@ -41,7 +42,7 @@ public class InmemoryLockUtil implements LockUtil {
     /**
      * 인메모리 락을 해제합니다.
      */
-    public boolean releaseLock(String lockName) {
+    public boolean releaseLock(Connection conn, String lockName) {
         ReentrantLock lock = locks.get(lockName);
 
         if (lock == null) {

@@ -1,5 +1,9 @@
 package com.gdschongik.gdsc.global.lock;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,40 +22,41 @@ public class MySqlLockUtil implements LockUtil {
     private static final String GET_LOCK_QUERY = "SELECT GET_LOCK(?, ?)";
     private static final String RELEASE_LOCK_QUERY = "SELECT RELEASE_LOCK(?)";
 
-    /**
-     * MySQL 네임드 락을 획득합니다.
-     * @param lockName 락 이름
-     * @param timeoutSec 최대 대기 시간(초)
-     * @return 락 획득 성공 여부
-     */
-    public boolean acquireLock(String lockName, long timeoutSec) {
-        Integer result = jdbcTemplate.queryForObject(GET_LOCK_QUERY, Integer.class, lockName, timeoutSec);
-        boolean acquired = result != null && result == 1; // GET_LOCK 결과: 1(성공), 0(타임아웃), null(에러)
+    @Override
+    public boolean acquireLock(Connection conn, String key, long timeout) {
+        try (PreparedStatement pstmt = conn.prepareStatement(GET_LOCK_QUERY)) {
+            pstmt.setString(1, key);
+            pstmt.setLong(2, timeout);
 
-        if (acquired) {
-            log.info("[MySqlLockUtil] 락 획득 성공: {}", lockName);
-        } else {
-            log.info("[MySqlLockUtil] 락 획득 실패: {}", lockName);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int result = rs.getInt(1);
+                    log.info("[MySqlLockUtil] 락 획득 성공: {}", key);
+                    return result == 1;
+                }
+            }
+        } catch (SQLException e) {
+            log.info("[MySqlLockUtil] 락 획득 실패: {}", key);
         }
 
-        return acquired;
+        return false;
     }
 
-    /**
-     * MySQL 네임드 락을 해제합니다.
-     * @param lockName 락 이름
-     * @return 락 해제 성공 여부
-     */
-    public boolean releaseLock(String lockName) {
-        Integer result = jdbcTemplate.queryForObject(RELEASE_LOCK_QUERY, Integer.class, lockName);
-        boolean released = result != null && result == 1; // RELEASE_LOCK 결과: 1(성공), 0(타임아웃), null(에러)
+    @Override
+    public boolean releaseLock(Connection conn, String key) {
+        try (PreparedStatement pstmt = conn.prepareStatement(RELEASE_LOCK_QUERY)) {
+            pstmt.setString(1, key);
 
-        if (released) {
-            log.info("[MySqlLockUtil] 락 해제 성공: {}", lockName);
-        } else {
-            log.info("[MySqlLockUtil] 락 해제 실패: {}", lockName);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int result = rs.getInt(1); // 1:성공, 0:권한없음, NULL:없음
+                    log.info("[MySqlLockUtil] 락 해제 성공: {}", key);
+                    return result == 1;
+                }
+            }
+        } catch (SQLException e) {
+            log.info("[MySqlLockUtil] 락 해제 실패: {}", key);
         }
-
-        return released;
+        return false;
     }
 }
