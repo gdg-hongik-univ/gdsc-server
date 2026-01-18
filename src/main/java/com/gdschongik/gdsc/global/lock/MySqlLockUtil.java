@@ -28,35 +28,45 @@ public class MySqlLockUtil implements LockUtil {
             pstmt.setString(1, key);
             pstmt.setLong(2, timeout);
 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    int result = rs.getInt(1);
-                    log.info("[MySqlLockUtil] 락 획득 성공: {}", key);
-                    return result == 1;
-                }
-            }
+            return executeAcquireLock(pstmt, key);
         } catch (SQLException e) {
             log.info("[MySqlLockUtil] 락 획득 실패: {}", key);
+            return false;
         }
+    }
 
-        return false;
+    private boolean executeAcquireLock(PreparedStatement pstmt, String key) throws SQLException {
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next() && rs.getInt(1) == 1) {
+                log.info("[MySqlLockUtil] 락 획득 성공: {}", key);
+                return true;
+            } else {
+                log.info("[MySqlLockUtil] 락 획득 실패: {}", key);
+                return false;
+            }
+        }
     }
 
     @Override
     public boolean releaseLock(Connection conn, String key) {
         try (PreparedStatement pstmt = conn.prepareStatement(RELEASE_LOCK_QUERY)) {
             pstmt.setString(1, key);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    int result = rs.getInt(1); // 1:성공, 0:권한없음, NULL:없음
-                    log.info("[MySqlLockUtil] 락 해제 성공: {}", key);
-                    return result == 1;
-                }
-            }
+            return executeReleaseLock(pstmt, key);
         } catch (SQLException e) {
             log.info("[MySqlLockUtil] 락 해제 실패: {}", key);
+            return false;
         }
-        return false;
+    }
+
+    private boolean executeReleaseLock(PreparedStatement pstmt, String key) throws SQLException {
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next() && rs.getInt(1) == 1) {
+                log.info("[MySqlLockUtil] 락 해제 성공: {}", key);
+                return true;
+            } else {
+                log.info("[MySqlLockUtil] 락 해제 실패: {}", key);
+                return false;
+            }
+        }
     }
 }
