@@ -11,7 +11,7 @@ spring:
         format_sql: ${FORMAT_SQL:true}
         highlight_sql: ${HIGHLIGHT_SQL:true}
     defer-datasource-initialization: true
-    open-in-view: false
+    open-in-view: true
 
 logging:
   level:
