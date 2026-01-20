@@ -7,7 +7,6 @@ import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
 import com.gdschongik.gdsc.domain.event.domain.service.EventParticipationDomainService;
-import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
@@ -39,9 +38,11 @@ public class EventService {
     @Transactional(readOnly = true)
     public Page<EventResponse> getEvents(Pageable pageable) {
         Page<Event> events = eventRepository.findAll(pageable);
-
         List<EventResponse> response = events.stream()
-                .map(event -> EventResponse.of(event, eventParticipationRepository.countByEvent(event)))
+                .map(event -> EventResponse.of(
+                        event,
+                        eventParticipationRepository.countMainEventApplicantsByEvent(event),
+                        eventParticipationRepository.countAfterPartyApplicantsByEvent(event)))
                 .toList();
 
         return new PageImpl<>(response, pageable, events.getTotalElements());
@@ -69,7 +70,10 @@ public class EventService {
         Page<Event> events = eventRepository.findAllByNameContains(name, pageable);
 
         List<EventResponse> response = events.stream()
-                .map(event -> EventResponse.of(event, eventParticipationRepository.countByEvent(event)))
+                .map(event -> EventResponse.of(
+                        event,
+                        eventParticipationRepository.countMainEventApplicantsByEvent(event),
+                        eventParticipationRepository.countAfterPartyApplicantsByEvent(event)))
                 .toList();
 
         return new PageImpl<>(response, pageable, events.getTotalElements());
@@ -120,8 +124,11 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public EventDto getEvent(Long eventId) {
+    public EventResponse getEvent(Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
-        return EventDto.from(event);
+        long mainEventCurrentApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
+        long afterPartyCurrentApplicantCount = eventParticipationRepository.countAfterPartyApplicantsByEvent(event);
+
+        return EventResponse.of(event, mainEventCurrentApplicantCount, afterPartyCurrentApplicantCount);
     }
 }
