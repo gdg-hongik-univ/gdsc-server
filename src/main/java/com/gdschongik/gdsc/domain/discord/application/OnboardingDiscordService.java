@@ -86,14 +86,32 @@ public class OnboardingDiscordService {
 
     @Transactional(readOnly = true)
     public DiscordCheckDuplicateResponse checkUsernameDuplicate(String discordUsername) {
+        if (isMyDiscordUsername(discordUsername)) {
+            return DiscordCheckDuplicateResponse.from(false);
+        }
         boolean isExist = memberRepository.existsByDiscordUsername(discordUsername);
         return DiscordCheckDuplicateResponse.from(isExist);
     }
 
+    private boolean isMyDiscordUsername(String discordUsername) {
+        Member currentMember = memberUtil.getCurrentMember();
+        String currentDiscordUsername = currentMember.getDiscordUsername();
+        return discordUsername.equals(currentDiscordUsername);
+    }
+
     @Transactional(readOnly = true)
     public DiscordCheckDuplicateResponse checkNicknameDuplicate(String nickname) {
+        if (isMyNickname(nickname)) {
+            return DiscordCheckDuplicateResponse.from(false);
+        }
         boolean isExist = memberRepository.existsByNickname(nickname);
         return DiscordCheckDuplicateResponse.from(isExist);
+    }
+
+    private boolean isMyNickname(String nickname) {
+        Member currentMember = memberUtil.getCurrentMember();
+        String currentNickname = currentMember.getNickname();
+        return nickname.equals(currentNickname);
     }
 
     public DiscordCheckJoinResponse checkServerJoined(String discordUsername) {
