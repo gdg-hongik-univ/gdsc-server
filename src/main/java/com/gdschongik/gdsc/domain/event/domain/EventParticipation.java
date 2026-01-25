@@ -263,9 +263,6 @@ public class EventParticipation extends BaseEntity {
         if (this.afterPartyAttendanceStatus.isNone()) {
             throw new CustomException(AFTER_PARTY_NOT_ATTENDABLE_DISABLED);
         }
-        if (this.afterPartyAttendanceStatus.isAttended()) {
-            throw new CustomException(AFTER_PARTY_NOT_ATTENDABLE_ALREADY_ATTENDED);
-        }
         this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.ATTENDED;
     }
 
@@ -273,9 +270,6 @@ public class EventParticipation extends BaseEntity {
     public void revokeAttendance() {
         if (this.afterPartyAttendanceStatus.isNone()) {
             throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_REVOKABLE_DISABLED);
-        }
-        if (this.afterPartyAttendanceStatus.isNotAttended()) {
-            throw new CustomException(AFTER_PARTY_ATTENDANCE_STATUS_NOT_REVOKABLE_ALREADY_REVOKED);
         }
         this.afterPartyAttendanceStatus = AfterPartyAttendanceStatus.NOT_ATTENDED;
     }
@@ -285,9 +279,6 @@ public class EventParticipation extends BaseEntity {
         if (this.prePaymentStatus.isNone()) {
             throw new CustomException(AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_NONE);
         }
-        if (this.prePaymentStatus.isPaid()) {
-            throw new CustomException(AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED);
-        }
         this.prePaymentStatus = PaymentStatus.PAID;
     }
 
@@ -295,9 +286,6 @@ public class EventParticipation extends BaseEntity {
     public void revokePrePayment() {
         if (this.prePaymentStatus.isNone()) {
             throw new CustomException(AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_NONE);
-        }
-        if (this.prePaymentStatus.isUnpaid()) {
-            throw new CustomException(AFTER_PARTY_PREPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED);
         }
         this.prePaymentStatus = PaymentStatus.UNPAID;
     }
@@ -307,9 +295,6 @@ public class EventParticipation extends BaseEntity {
         if (this.postPaymentStatus.isNone()) {
             throw new CustomException(AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_NONE);
         }
-        if (this.postPaymentStatus.isPaid()) {
-            throw new CustomException(AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED);
-        }
         this.postPaymentStatus = PaymentStatus.PAID;
     }
 
@@ -317,9 +302,6 @@ public class EventParticipation extends BaseEntity {
     public void revokePostPayment() {
         if (this.postPaymentStatus.isNone()) {
             throw new CustomException(AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_NONE);
-        }
-        if (this.postPaymentStatus.isUnpaid()) {
-            throw new CustomException(AFTER_PARTY_POSTPAYMENT_STATUS_NOT_UPDATABLE_ALREADY_UPDATED);
         }
         this.postPaymentStatus = PaymentStatus.UNPAID;
     }

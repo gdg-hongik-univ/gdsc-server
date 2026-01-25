@@ -5,12 +5,18 @@ import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
 import java.time.LocalDateTime;
 
-public record EventResponse(EventDto event, Long totalAttendeesCount, EventStatus eventStatus) {
+public record EventResponse(
+        EventDto event,
+        long mainEventCurrentApplicantCount,
+        long afterPartyCurrentApplicantCount,
+        EventStatus eventStatus) {
 
-    public static EventResponse of(Event event, Long totalAttendeesCount) {
+    public static EventResponse of(
+            Event event, long mainEventCurrentApplicantCount, long afterPartyCurrentApplicantCount) {
         EventDto eventDto = EventDto.from(event);
         EventStatus eventStatus = EventStatus.of(event.getApplicationPeriod(), event.getStartAt(), LocalDateTime.now());
-        return new EventResponse(eventDto, totalAttendeesCount, eventStatus);
+        return new EventResponse(
+                eventDto, mainEventCurrentApplicantCount, afterPartyCurrentApplicantCount, eventStatus);
     }
 
     public enum EventStatus {

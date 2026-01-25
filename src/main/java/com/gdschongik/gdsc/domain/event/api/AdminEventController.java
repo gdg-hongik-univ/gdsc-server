@@ -24,6 +24,13 @@ public class AdminEventController {
 
     private final EventService eventService;
 
+    @Operation(summary = "행사 조회", description = "행사를 조회합니다.")
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventResponse> getEvent(@PathVariable Long eventId) {
+        var response = eventService.getEvent(eventId);
+        return ResponseEntity.ok(response);
+    }
+
     @Operation(summary = "행사 목록 조회", description = "행사 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<Page<EventResponse>> getEvents(@ParameterObject Pageable pageable) {

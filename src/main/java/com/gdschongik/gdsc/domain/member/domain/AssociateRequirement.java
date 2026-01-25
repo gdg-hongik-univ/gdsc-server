@@ -85,7 +85,7 @@ public class AssociateRequirement {
         }
 
         if (!isInfoSatisfied()) {
-            throw new CustomException(BASIC_INFO_NOT_SATISFIED);
+            throw new CustomException(INFO_NOT_SATISFIED);
         }
     }
 

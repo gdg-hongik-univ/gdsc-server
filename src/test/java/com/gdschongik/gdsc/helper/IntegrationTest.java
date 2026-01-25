@@ -10,6 +10,7 @@ import static com.gdschongik.gdsc.global.common.constant.TemporalConstant.*;
 import static org.mockito.Mockito.*;
 
 import com.gdschongik.gdsc.config.TestLockConfig;
+import com.gdschongik.gdsc.config.TestRedisConfig;
 import com.gdschongik.gdsc.config.TestSyncExecutorConfig;
 import com.gdschongik.gdsc.domain.common.model.SemesterType;
 import com.gdschongik.gdsc.domain.common.vo.Money;
@@ -38,22 +39,15 @@ import com.gdschongik.gdsc.domain.recruitment.dao.RecruitmentRoundRepository;
 import com.gdschongik.gdsc.domain.recruitment.domain.Recruitment;
 import com.gdschongik.gdsc.domain.recruitment.domain.RecruitmentRound;
 import com.gdschongik.gdsc.domain.recruitment.domain.RoundType;
-import com.gdschongik.gdsc.domain.study.dao.StudyAchievementRepository;
-import com.gdschongik.gdsc.domain.study.dao.StudyDetailRepository;
 import com.gdschongik.gdsc.domain.study.dao.StudyHistoryRepository;
 import com.gdschongik.gdsc.domain.study.dao.StudyRepository;
-import com.gdschongik.gdsc.domain.study.domain.AchievementType;
 import com.gdschongik.gdsc.domain.study.domain.Study;
-import com.gdschongik.gdsc.domain.study.domain.StudyAchievement;
-import com.gdschongik.gdsc.domain.study.domain.StudyDetail;
+import com.gdschongik.gdsc.domain.study.domain.StudyFactory;
 import com.gdschongik.gdsc.domain.study.domain.StudyHistory;
 import com.gdschongik.gdsc.domain.study.domain.StudyType;
-import com.gdschongik.gdsc.domain.studyv2.dao.StudyHistoryV2Repository;
-import com.gdschongik.gdsc.domain.studyv2.dao.StudyV2Repository;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyFactory;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyHistoryV2;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyV2;
 import com.gdschongik.gdsc.global.security.PrincipalDetails;
+import com.gdschongik.gdsc.global.util.DiscordUtil;
+import com.gdschongik.gdsc.global.util.email.MailSender;
 import com.gdschongik.gdsc.infra.feign.payment.client.PaymentClient;
 import com.gdschongik.gdsc.infra.github.client.GithubClient;
 import java.time.LocalDateTime;
@@ -67,7 +61,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
-@Import({TestSyncExecutorConfig.class, TestLockConfig.class})
+@Import({TestSyncExecutorConfig.class, TestLockConfig.class, TestRedisConfig.class})
 @SpringBootTest
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
@@ -103,19 +97,7 @@ public abstract class IntegrationTest {
     protected StudyRepository studyRepository;
 
     @Autowired
-    protected StudyDetailRepository studyDetailRepository;
-
-    @Autowired
     protected StudyHistoryRepository studyHistoryRepository;
-
-    @Autowired
-    protected StudyAchievementRepository studyAchievementRepository;
-
-    @Autowired
-    protected StudyV2Repository studyV2Repository;
-
-    @Autowired
-    protected StudyHistoryV2Repository studyHistoryV2Repository;
 
     @Autowired
     protected EventRepository eventRepository;
@@ -134,6 +116,12 @@ public abstract class IntegrationTest {
 
     @MockBean
     protected MemberDiscordRoleRevokeHandler memberDiscordRoleRevokeHandler;
+
+    @MockBean
+    DiscordUtil discordUtil;
+
+    @MockBean
+    private MailSender mailSender;
 
     @BeforeEach
     void setUp() {
@@ -177,7 +165,7 @@ public abstract class IntegrationTest {
         memberRepository.save(member);
 
         member.completeUnivEmailVerification(UNIV_EMAIL);
-        member.updateBasicMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+        member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
         member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
         member.updateDiscordId(DISCORD_ID);
 
@@ -192,7 +180,7 @@ public abstract class IntegrationTest {
     protected Member createAssociateMember() {
         Member member = createGuestMember();
 
-        member.updateBasicMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+        member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
         member.completeUnivEmailVerification(UNIV_EMAIL);
         member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
         member.advanceToAssociate();
@@ -250,76 +238,15 @@ public abstract class IntegrationTest {
         return membershipRepository.save(membership);
     }
 
-    protected IssuedCoupon createAndIssue(Money money, Member member, CouponType couponType, StudyV2 study) {
+    protected IssuedCoupon createAndIssue(Money money, Member member, CouponType couponType, Study study) {
         Coupon coupon = Coupon.createAutomatic(COUPON_NAME, money, couponType, study);
         couponRepository.save(coupon);
         IssuedCoupon issuedCoupon = IssuedCoupon.create(coupon, member);
         return issuedCouponRepository.save(issuedCoupon);
     }
 
-    protected Study createStudy(Member mentor, Period period, Period applicationPeriod) {
-        Study study = Study.create(
-                ONLINE_STUDY,
-                STUDY_TITLE,
-                TOTAL_WEEK,
-                DAY_OF_WEEK,
-                STUDY_START_TIME,
-                STUDY_END_TIME,
-                period,
-                applicationPeriod,
-                mentor,
-                ACADEMIC_YEAR,
-                SEMESTER_TYPE);
-
-        return studyRepository.save(study);
-    }
-
-    protected Study createNewStudy(Member mentor, Long totalWeek, Period period, Period applicationPeriod) {
-        Study study = Study.create(
-                ONLINE_STUDY,
-                STUDY_TITLE,
-                totalWeek,
-                DAY_OF_WEEK,
-                STUDY_START_TIME,
-                STUDY_END_TIME,
-                period,
-                applicationPeriod,
-                mentor,
-                ACADEMIC_YEAR,
-                SEMESTER_TYPE);
-
-        return studyRepository.save(study);
-    }
-
-    protected StudyDetail createStudyDetail(Study study, LocalDateTime startDate, LocalDateTime endDate) {
-        StudyDetail studyDetail = StudyDetail.create(1L, ATTENDANCE_NUMBER, Period.of(startDate, endDate), study);
-        return studyDetailRepository.save(studyDetail);
-    }
-
-    protected StudyDetail createNewStudyDetail(Long week, Study study, LocalDateTime startDate, LocalDateTime endDate) {
-        StudyDetail studyDetail = StudyDetail.create(week, ATTENDANCE_NUMBER, Period.of(startDate, endDate), study);
-        return studyDetailRepository.save(studyDetail);
-    }
-
-    protected StudyHistory createStudyHistory(Member member, Study study) {
-        StudyHistory studyHistory = StudyHistory.create(member, study);
-        return studyHistoryRepository.save(studyHistory);
-    }
-
-    protected StudyAchievement createStudyAchievement(Member member, Study study, AchievementType achievementType) {
-        StudyAchievement studyAchievement = StudyAchievement.create(achievementType, member, study);
-        return studyAchievementRepository.save(studyAchievement);
-    }
-
-    protected StudyDetail publishAssignment(StudyDetail studyDetail) {
-        studyDetail.publishAssignment(ASSIGNMENT_TITLE, studyDetail.getPeriod().getEndDate(), DESCRIPTION_LINK);
-        return studyDetailRepository.save(studyDetail);
-    }
-
-    // StudyV2
-
-    protected StudyV2 createStudy(StudyType type, Member mentor) {
-        StudyV2 study = studyFactory.create(
+    protected Study createStudy(StudyType type, Member mentor) {
+        Study study = studyFactory.create(
                 type,
                 STUDY_TITLE,
                 STUDY_SEMESTER,
@@ -334,12 +261,12 @@ public abstract class IntegrationTest {
                 () -> "0000",
                 MIN_ASSIGNMENT_CONTENT_LENGTH);
 
-        return studyV2Repository.save(study);
+        return studyRepository.save(study);
     }
 
-    protected StudyHistoryV2 createStudyHistory(Member member, StudyV2 study) {
-        StudyHistoryV2 studyHistory = StudyHistoryV2.create(member, study);
-        return studyHistoryV2Repository.save(studyHistory);
+    protected StudyHistory createStudyHistory(Member member, Study study) {
+        StudyHistory studyHistory = StudyHistory.create(member, study);
+        return studyHistoryRepository.save(studyHistory);
     }
 
     protected Event createEvent() {
@@ -347,6 +274,7 @@ public abstract class IntegrationTest {
                 EVENT_NAME,
                 VENUE,
                 EVENT_START_AT,
+                EVENT_DESCRIPTION,
                 EVENT_APPLICATION_PERIOD,
                 REGULAR_ROLE_ONLY_STATUS,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,

@@ -4,7 +4,6 @@ import static com.gdschongik.gdsc.domain.study.domain.AssignmentSubmissionStatus
 import static com.gdschongik.gdsc.domain.study.domain.SubmissionFailureType.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
-import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.Column;
@@ -28,12 +27,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"study_detail_id", "member_id"})})
-public class AssignmentHistory extends BaseEntity {
+@Table(
+        name = "assignment_history_v2",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"study_session_v2_id", "member_id"})})
+public class AssignmentHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "assignment_history_id")
+    @Column(name = "assignment_history_v2_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -52,8 +53,8 @@ public class AssignmentHistory extends BaseEntity {
     private LocalDateTime committedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "study_detail_id")
-    private StudyDetail studyDetail;
+    @JoinColumn(name = "study_session_v2_id")
+    private StudySession studySession;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -63,19 +64,19 @@ public class AssignmentHistory extends BaseEntity {
     private AssignmentHistory(
             AssignmentSubmissionStatus submissionStatus,
             SubmissionFailureType submissionFailureType,
-            StudyDetail studyDetail,
+            StudySession studySession,
             Member member) {
         this.submissionStatus = submissionStatus;
         this.submissionFailureType = submissionFailureType;
-        this.studyDetail = studyDetail;
+        this.studySession = studySession;
         this.member = member;
     }
 
-    public static AssignmentHistory create(StudyDetail studyDetail, Member member) {
+    public static AssignmentHistory create(StudySession studySession, Member member) {
         return AssignmentHistory.builder()
                 .submissionStatus(FAILURE)
                 .submissionFailureType(NOT_SUBMITTED)
-                .studyDetail(studyDetail)
+                .studySession(studySession)
                 .member(member)
                 .build();
     }
@@ -86,7 +87,7 @@ public class AssignmentHistory extends BaseEntity {
         return submissionFailureType != NOT_SUBMITTED;
     }
 
-    public boolean isSuccess() {
+    public boolean isSucceeded() {
         return submissionStatus == SUCCESS;
     }
 
@@ -105,7 +106,6 @@ public class AssignmentHistory extends BaseEntity {
         if (submissionFailureType == NOT_SUBMITTED || submissionFailureType == NONE) {
             throw new CustomException(ASSIGNMENT_FAILURE_TYPE_INVALID);
         }
-
         this.submissionLink = null;
         this.commitHash = null;
         this.contentLength = null;

@@ -7,7 +7,7 @@ import com.gdschongik.gdsc.domain.coupon.domain.CouponType;
 import com.gdschongik.gdsc.domain.coupon.domain.IssuedCoupon;
 import com.gdschongik.gdsc.domain.coupon.dto.request.IssuedCouponQueryOption;
 import com.gdschongik.gdsc.domain.member.domain.Member;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyV2;
+import com.gdschongik.gdsc.domain.study.domain.Study;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -39,7 +39,7 @@ public class IssuedCouponCustomRepositoryImpl implements IssuedCouponCustomRepos
     }
 
     @Override
-    public Optional<IssuedCoupon> findUnrevokedIssuedStudyCoupon(CouponType couponType, Member member, StudyV2 study) {
+    public Optional<IssuedCoupon> findUnrevokedIssuedStudyCoupon(CouponType couponType, Member member, Study study) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(issuedCoupon)
                 .leftJoin(issuedCoupon.coupon, coupon)

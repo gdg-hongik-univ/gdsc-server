@@ -9,7 +9,7 @@ public class EventConstant {
     private EventConstant() {}
 
     public static final String EVENT_NAME = "2025년 1학기 새내기 배움터";
-    public static final String APPLICATION_DESCRIPTION =
+    public static final String EVENT_DESCRIPTION =
             "2025년 1학기 새내기 배움터 신청 폼입니다. 진행일시는 3월 15일, 신청 기간은 3월 1일부터 3월 14일까지입니다.";
     public static final String VENUE = "홍익대학교 제 4공학관(T동) 608호";
     public static final LocalDateTime EVENT_START_AT = LocalDateTime.of(2025, 3, 15, 0, 0);

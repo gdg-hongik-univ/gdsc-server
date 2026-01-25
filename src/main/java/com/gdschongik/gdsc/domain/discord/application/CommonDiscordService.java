@@ -8,12 +8,12 @@ import com.gdschongik.gdsc.domain.common.vo.Semester;
 import com.gdschongik.gdsc.domain.discord.domain.service.DiscordValidator;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
-import com.gdschongik.gdsc.domain.studyv2.dao.StudyAnnouncementV2Repository;
-import com.gdschongik.gdsc.domain.studyv2.dao.StudyHistoryV2Repository;
-import com.gdschongik.gdsc.domain.studyv2.dao.StudyV2Repository;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyAnnouncementV2;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyHistoryV2;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyV2;
+import com.gdschongik.gdsc.domain.study.dao.StudyAnnouncementRepository;
+import com.gdschongik.gdsc.domain.study.dao.StudyHistoryRepository;
+import com.gdschongik.gdsc.domain.study.dao.StudyRepository;
+import com.gdschongik.gdsc.domain.study.domain.Study;
+import com.gdschongik.gdsc.domain.study.domain.StudyAnnouncement;
+import com.gdschongik.gdsc.domain.study.domain.StudyHistory;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.util.DiscordUtil;
 import java.util.List;
@@ -28,9 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommonDiscordService {
 
     private final MemberRepository memberRepository;
-    private final StudyAnnouncementV2Repository studyAnnouncementV2Repository;
-    private final StudyV2Repository studyV2Repository;
-    private final StudyHistoryV2Repository studyHistoryV2Repository;
+    private final StudyAnnouncementRepository studyAnnouncementRepository;
+    private final StudyRepository studyRepository;
+    private final StudyHistoryRepository studyHistoryRepository;
     private final DiscordUtil discordUtil;
     private final DiscordValidator discordValidator;
 
@@ -71,13 +71,13 @@ public class CommonDiscordService {
 
         discordValidator.validateAdminPermission(currentMember);
 
-        StudyV2 study = studyV2Repository
+        Study study = studyRepository
                 .findByTitleAndSemester(studyTitle, Semester.of(academicYear, SemesterType.valueOf(semester)))
                 .orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
 
-        List<StudyHistoryV2> studyHistories = studyHistoryV2Repository.findAllByStudy(study);
-        studyHistories.forEach(studyHistoryV2 -> discordUtil.addRoleToMemberById(
-                study.getDiscordRoleId(), studyHistoryV2.getStudent().getDiscordId()));
+        List<StudyHistory> studyHistories = studyHistoryRepository.findAllByStudy(study);
+        studyHistories.forEach(studyHistory -> discordUtil.addRoleToMemberById(
+                study.getDiscordRoleId(), studyHistory.getStudent().getDiscordId()));
 
         log.info("[CommonDiscordService] 스터디 디스코드 역할 부여 완료: studyId = {}", study.getId());
     }
@@ -94,7 +94,7 @@ public class CommonDiscordService {
 
     @Transactional
     public void sendStudyAnnouncement(Long studyAnnouncementId) {
-        StudyAnnouncementV2 studyAnnouncement = studyAnnouncementV2Repository
+        StudyAnnouncement studyAnnouncement = studyAnnouncementRepository
                 .findById(studyAnnouncementId)
                 .orElseThrow(() -> new CustomException(STUDY_ANNOUNCEMENT_NOT_FOUND));
 

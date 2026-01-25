@@ -1,24 +1,21 @@
 package com.gdschongik.gdsc.domain.study.api;
 
 import com.gdschongik.gdsc.domain.study.application.StudentStudyService;
-import com.gdschongik.gdsc.domain.study.dto.request.StudyAttendCreateRequest;
-import com.gdschongik.gdsc.domain.study.dto.response.StudentMyCurrentStudyResponse;
+import com.gdschongik.gdsc.domain.study.dto.dto.StudySimpleDto;
 import com.gdschongik.gdsc.domain.study.dto.response.StudyApplicableResponse;
+import com.gdschongik.gdsc.domain.study.dto.response.StudyDashboardResponse;
+import com.gdschongik.gdsc.domain.study.dto.response.StudyTodoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Deprecated
-@Tag(name = "Study V1 - Student", description = "사용자 스터디 API입니다.")
+@Tag(name = "Study - Student", description = "학생 스터디 API입니다.")
 @RestController
 @RequestMapping("/studies")
 @RequiredArgsConstructor
@@ -26,39 +23,38 @@ public class StudentStudyController {
 
     private final StudentStudyService studentStudyService;
 
-    @Operation(summary = "신청 가능한 스터디 조회", description = "모집 기간 중에 있는 스터디를 조회합니다.")
-    @GetMapping("/apply")
-    public ResponseEntity<StudyApplicableResponse> getAllApplicableStudies() {
-        StudyApplicableResponse response = studentStudyService.getAllApplicableStudies();
+    @Operation(summary = "내 스터디 대시보드 조회", description = "나의 스터디 대시보드를 조회합니다.")
+    @GetMapping("/{studyId}/me/dashboard")
+    public ResponseEntity<StudyDashboardResponse> getMyStudyDashboard(@PathVariable Long studyId) {
+        var response = studentStudyService.getMyStudyDashboard(studyId);
         return ResponseEntity.ok().body(response);
     }
 
-    @Operation(summary = "스터디 수강신청", description = "스터디에 수강신청 합니다. 모집 기간 중이어야 하고, 이미 수강 중인 스터디가 없어야 합니다.")
-    @PostMapping("/apply/{studyId}")
-    public ResponseEntity<Void> applyStudy(@PathVariable Long studyId) {
-        studentStudyService.applyStudy(studyId);
-        return ResponseEntity.ok().build();
+    @Operation(summary = "나의 신청 가능한 스터디 조회", description = "현재 모집 중인 스터디와 내가 신청한 스터디를 조회합니다.")
+    @GetMapping("/applicable/me")
+    public ResponseEntity<StudyApplicableResponse> getAllApplicableStudies() {
+        var response = studentStudyService.getAllApplicableStudies();
+        return ResponseEntity.ok().body(response);
     }
 
-    @Operation(summary = "스터디 수강신청 취소", description = "수강신청을 취소합니다. 스터디 수강신청 기간 중에만 취소할 수 있습니다.")
-    @DeleteMapping("/apply/{studyId}")
-    public ResponseEntity<Void> cancelStudyApply(@PathVariable Long studyId) {
-        studentStudyService.cancelStudyApply(studyId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @Operation(summary = "스터디 출석체크", description = "스터디에 출석체크합니다. 현재 진행중인 스터디 회차에 출석체크해야 하며, 중복출석체크할 수 없습니다.")
-    @PostMapping("/study-details/{studyDetailId}/attend")
-    public ResponseEntity<Void> attend(
-            @PathVariable Long studyDetailId, @Valid @RequestBody StudyAttendCreateRequest request) {
-        studentStudyService.attend(studyDetailId, request);
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "내 수강중인 스터디 조회", description = "나의 수강 중인 스터디를 조회합니다.")
+    @Operation(summary = "내 수강 중인 스터디 조회", description = "나의 이번 학기 수강 중인 스터디를 조회합니다.")
     @GetMapping("/me/ongoing")
-    public ResponseEntity<StudentMyCurrentStudyResponse> getMyCurrentStudy() {
-        StudentMyCurrentStudyResponse response = studentStudyService.getMyCurrentStudy();
+    public ResponseEntity<List<StudySimpleDto>> getMyCurrentStudies() {
+        var response = studentStudyService.getMyCurrentStudies();
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "수강중인 특정 스터디의 할 일 리스트 조회", description = "나의 수강중인 특정 스터디의 할 일 리스트를 조회합니다.")
+    @GetMapping("/{studyId}/me/todos")
+    public ResponseEntity<List<StudyTodoResponse>> getStudyTodoList(@PathVariable Long studyId) {
+        var response = studentStudyService.getMyStudyTodos(studyId);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "수강중인 모든 스터디의 할 일 리스트 조회", description = "나의 수강중인 모든 스터디의 할 일 리스트를 조회합니다.")
+    @GetMapping("/me/todos")
+    public ResponseEntity<List<StudyTodoResponse>> getStudiesTodoList() {
+        var response = studentStudyService.getMyStudiesTodos();
+        return ResponseEntity.ok().body(response);
     }
 }

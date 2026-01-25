@@ -4,7 +4,7 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.common.vo.Money;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyV2;
+import com.gdschongik.gdsc.domain.study.domain.Study;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -48,10 +48,10 @@ public class Coupon extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_v2_id")
-    private StudyV2 study;
+    private Study study;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Coupon(String name, Money discountAmount, CouponType couponType, IssuanceType issuanceType, StudyV2 study) {
+    private Coupon(String name, Money discountAmount, CouponType couponType, IssuanceType issuanceType, Study study) {
         this.name = name;
         this.discountAmount = discountAmount;
         this.couponType = couponType;
@@ -59,7 +59,7 @@ public class Coupon extends BaseEntity {
         this.study = study;
     }
 
-    public static Coupon createAutomatic(String name, Money discountAmount, CouponType couponType, StudyV2 study) {
+    public static Coupon createAutomatic(String name, Money discountAmount, CouponType couponType, Study study) {
         validateDiscountAmountPositive(discountAmount);
         return Coupon.builder()
                 .name(name)
@@ -70,7 +70,7 @@ public class Coupon extends BaseEntity {
                 .build();
     }
 
-    public static Coupon createManual(String name, Money discountAmount, CouponType couponType, StudyV2 study) {
+    public static Coupon createManual(String name, Money discountAmount, CouponType couponType, Study study) {
         validateDiscountAmountPositive(discountAmount);
         return Coupon.builder()
                 .name(name)

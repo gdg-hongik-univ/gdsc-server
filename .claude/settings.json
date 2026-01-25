@@ -1,0 +1,6 @@
+{
+  "includeCoAuthoredBy": false,
+  "enabledPlugins": {
+    "jdtls-lsp@claude-plugins-official": true
+  }
+}

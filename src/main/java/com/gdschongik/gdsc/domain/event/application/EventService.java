@@ -6,15 +6,15 @@ import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
-import com.gdschongik.gdsc.domain.event.dto.dto.EventDto;
+import com.gdschongik.gdsc.domain.event.domain.service.EventParticipationDomainService;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventCreateResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
+import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.lock.DistributedLock;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,14 +31,18 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventParticipationRepository eventParticipationRepository;
+    private final MemberRepository memberRepository;
     private final EventDomainService eventDomainService;
+    private final EventParticipationDomainService eventParticipationDomainService;
 
     @Transactional(readOnly = true)
     public Page<EventResponse> getEvents(Pageable pageable) {
         Page<Event> events = eventRepository.findAll(pageable);
-
         List<EventResponse> response = events.stream()
-                .map(event -> EventResponse.of(event, eventParticipationRepository.countByEvent(event)))
+                .map(event -> EventResponse.of(
+                        event,
+                        eventParticipationRepository.countMainEventApplicantsByEvent(event),
+                        eventParticipationRepository.countAfterPartyApplicantsByEvent(event)))
                 .toList();
 
         return new PageImpl<>(response, pageable, events.getTotalElements());
@@ -50,6 +54,7 @@ public class EventService {
                 request.name(),
                 request.venue(),
                 request.startAt(),
+                request.description(),
                 request.applicationPeriod(),
                 request.regularRoleOnlyStatus(),
                 request.mainEventMaxApplicantCount(),
@@ -65,7 +70,10 @@ public class EventService {
         Page<Event> events = eventRepository.findAllByNameContains(name, pageable);
 
         List<EventResponse> response = events.stream()
-                .map(event -> EventResponse.of(event, eventParticipationRepository.countByEvent(event)))
+                .map(event -> EventResponse.of(
+                        event,
+                        eventParticipationRepository.countMainEventApplicantsByEvent(event),
+                        eventParticipationRepository.countAfterPartyApplicantsByEvent(event)))
                 .toList();
 
         return new PageImpl<>(response, pageable, events.getTotalElements());
@@ -83,6 +91,7 @@ public class EventService {
                 request.name(),
                 request.venue(),
                 request.startAt(),
+                request.description(),
                 request.applicationPeriod(),
                 request.regularRoleOnlyStatus(),
                 request.mainEventMaxApplicantCount(),
@@ -102,7 +111,6 @@ public class EventService {
 
         eventDomainService.updateFormInfo(
                 event,
-                request.applicationDescription(),
                 request.afterPartyStatus(),
                 request.prePaymentStatus(),
                 request.postPaymentStatus(),
@@ -116,12 +124,11 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public EventDto getEvent(Long eventId) {
+    public EventResponse getEvent(Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
-        long currentMainEventApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
+        long mainEventCurrentApplicantCount = eventParticipationRepository.countMainEventApplicantsByEvent(event);
+        long afterPartyCurrentApplicantCount = eventParticipationRepository.countAfterPartyApplicantsByEvent(event);
 
-        eventDomainService.validateParticipantViewable(event, LocalDateTime.now(), currentMainEventApplicantCount);
-
-        return EventDto.from(event);
+        return EventResponse.of(event, mainEventCurrentApplicantCount, afterPartyCurrentApplicantCount);
     }
 }

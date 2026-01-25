@@ -8,9 +8,9 @@ import com.gdschongik.gdsc.domain.email.domain.service.EmailVerificationStatusSe
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.member.dto.UnivVerificationStatus;
-import com.gdschongik.gdsc.domain.member.dto.request.BasicMemberInfoRequest;
-import com.gdschongik.gdsc.domain.member.dto.response.MemberBasicInfoResponse;
+import com.gdschongik.gdsc.domain.member.dto.request.MemberInfoRequest;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberDashboardResponse;
+import com.gdschongik.gdsc.domain.member.dto.response.MemberInfoResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberUnivStatusResponse;
 import com.gdschongik.gdsc.domain.membership.application.MembershipService;
 import com.gdschongik.gdsc.domain.membership.domain.Membership;
@@ -43,16 +43,16 @@ public class OnboardingMemberService {
     }
 
     @Transactional
-    public void updateBasicMemberInfo(BasicMemberInfoRequest request) {
+    public void updateMemberInfo(MemberInfoRequest request) {
         Member currentMember = memberUtil.getCurrentMember();
-        currentMember.updateBasicMemberInfo(
+        currentMember.updateInfo(
                 request.studentId(), request.name(), request.phone(), request.department(), request.email());
         memberRepository.save(currentMember);
     }
 
-    public MemberBasicInfoResponse getMemberBasicInfo() {
+    public MemberInfoResponse getMemberInfo() {
         Member currentMember = memberUtil.getCurrentMember();
-        return MemberBasicInfoResponse.from(currentMember);
+        return MemberInfoResponse.from(currentMember);
     }
 
     public MemberDashboardResponse getDashboard() {

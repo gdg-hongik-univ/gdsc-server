@@ -1,7 +1,5 @@
 package com.gdschongik.gdsc.domain.study.application;
 
-import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
-
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.study.dao.StudyHistoryRepository;
 import com.gdschongik.gdsc.domain.study.dao.StudyRepository;
@@ -12,6 +10,7 @@ import com.gdschongik.gdsc.domain.study.domain.service.StudyHistoryValidator;
 import com.gdschongik.gdsc.domain.study.domain.service.StudyValidator;
 import com.gdschongik.gdsc.domain.study.dto.request.StudyCompleteRequest;
 import com.gdschongik.gdsc.global.exception.CustomException;
+import com.gdschongik.gdsc.global.exception.ErrorCode;
 import com.gdschongik.gdsc.global.util.MemberUtil;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -35,12 +34,15 @@ public class MentorStudyHistoryService {
     @Transactional
     public void completeStudy(StudyCompleteRequest request) {
         Member currentMember = memberUtil.getCurrentMember();
-        Study study =
-                studyRepository.findById(request.studyId()).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
+        Study study = studyRepository
+                .findById(request.studyId())
+                .orElseThrow(() -> new CustomException(ErrorCode.STUDY_NOT_FOUND));
+
+        studyValidator.validateStudyMentor(currentMember, study);
+
         List<StudyHistory> studyHistories =
                 studyHistoryRepository.findAllByStudyIdAndStudentIds(request.studyId(), request.studentIds());
 
-        studyValidator.validateStudyMentor(currentMember, study);
         studyHistoryValidator.validateAppliedToStudy(
                 studyHistories.size(), request.studentIds().size());
 
@@ -58,12 +60,15 @@ public class MentorStudyHistoryService {
     @Transactional
     public void withdrawStudyCompletion(StudyCompleteRequest request) {
         Member currentMember = memberUtil.getCurrentMember();
-        Study study =
-                studyRepository.findById(request.studyId()).orElseThrow(() -> new CustomException(STUDY_NOT_FOUND));
+        Study study = studyRepository
+                .findById(request.studyId())
+                .orElseThrow(() -> new CustomException(ErrorCode.STUDY_NOT_FOUND));
+
+        studyValidator.validateStudyMentor(currentMember, study);
+
         List<StudyHistory> studyHistories =
                 studyHistoryRepository.findAllByStudyIdAndStudentIds(request.studyId(), request.studentIds());
 
-        studyValidator.validateStudyMentor(currentMember, study);
         studyHistoryValidator.validateAppliedToStudy(
                 studyHistories.size(), request.studentIds().size());
 

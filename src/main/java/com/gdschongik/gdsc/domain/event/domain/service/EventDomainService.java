@@ -26,6 +26,7 @@ public class EventDomainService {
             String name,
             String venue,
             LocalDateTime startAt,
+            String description,
             Period applicationPeriod,
             UsageStatus regularRoleOnlyStatus,
             @Nullable Integer mainEventMaxApplicantCount,
@@ -44,6 +45,7 @@ public class EventDomainService {
                 name,
                 venue,
                 startAt,
+                description,
                 applicationPeriod,
                 regularRoleOnlyStatus,
                 mainEventMaxApplicantCount,
@@ -79,7 +81,6 @@ public class EventDomainService {
      */
     public void updateFormInfo(
             Event event,
-            String applicationDescription,
             UsageStatus afterPartyStatus,
             UsageStatus prePaymentStatus,
             UsageStatus postPaymentStatus,
@@ -89,26 +90,6 @@ public class EventDomainService {
         validateAlreadyExistsEventParticipation(eventParticipationExists);
 
         event.updateFormInfo(
-                applicationDescription,
-                afterPartyStatus,
-                prePaymentStatus,
-                postPaymentStatus,
-                rsvpQuestionStatus,
-                noticeConfirmQuestionStatus);
-    }
-
-    /**
-     * 참가자가 행사를 조회할 수 있는지 검증합니다.
-     * @param currentMainEventApplicantCount 현재 본 행사 신청자 수. EventParticipationRepository 조회 데이터
-     */
-    public void validateParticipantViewable(Event event, LocalDateTime now, long currentMainEventApplicantCount) {
-        if (!event.getApplicationPeriod().isWithin(now)) {
-            throw new CustomException(EVENT_NOT_VIEWABLE_OUTSIDE_APPLICATION_PERIOD);
-        }
-
-        Integer mainEventMaxApplicantCount = event.getMainEventMaxApplicantCount();
-        if (mainEventMaxApplicantCount != null && currentMainEventApplicantCount >= mainEventMaxApplicantCount) {
-            throw new CustomException(EVENT_NOT_VIEWABLE_MAX_APPLICANT_COUNT_EXCEEDED);
-        }
+                afterPartyStatus, prePaymentStatus, postPaymentStatus, rsvpQuestionStatus, noticeConfirmQuestionStatus);
     }
 }

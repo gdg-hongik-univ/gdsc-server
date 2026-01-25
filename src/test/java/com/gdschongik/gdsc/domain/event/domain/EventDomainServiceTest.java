@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.*;
 import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.helper.FixtureHelper;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -34,6 +33,7 @@ public class EventDomainServiceTest {
                             EVENT_NAME,
                             VENUE,
                             EVENT_START_AT,
+                            EVENT_DESCRIPTION,
                             EVENT_APPLICATION_PERIOD,
                             newRegularRoleOnlyStatus,
                             null,
@@ -60,6 +60,7 @@ public class EventDomainServiceTest {
                     EVENT_NAME,
                     VENUE,
                     EVENT_START_AT,
+                    EVENT_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD,
                     REGULAR_ROLE_ONLY_STATUS,
                     newMainEventMaxApplicantCount,
@@ -87,6 +88,7 @@ public class EventDomainServiceTest {
                     EVENT_NAME,
                     VENUE,
                     EVENT_START_AT,
+                    EVENT_DESCRIPTION,
                     EVENT_APPLICATION_PERIOD,
                     REGULAR_ROLE_ONLY_STATUS,
                     newMainEventMaxApplicantCount,
@@ -114,6 +116,7 @@ public class EventDomainServiceTest {
                             EVENT_NAME,
                             VENUE,
                             EVENT_START_AT,
+                            EVENT_DESCRIPTION,
                             EVENT_APPLICATION_PERIOD,
                             REGULAR_ROLE_ONLY_STATUS,
                             newMainEventMaxApplicantCount,
@@ -137,7 +140,6 @@ public class EventDomainServiceTest {
             // when & then
             assertThatThrownBy(() -> eventDomainService.updateFormInfo(
                             event,
-                            APPLICATION_DESCRIPTION,
                             AFTER_PARTY_STATUS,
                             PRE_PAYMENT_STATUS,
                             POST_PAYMENT_STATUS,
@@ -146,39 +148,6 @@ public class EventDomainServiceTest {
                             eventParticipationExists))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EVENT_NOT_UPDATABLE_ALREADY_EXISTS_APPLICANT.getMessage());
-        }
-    }
-
-    @Nested
-    class 참가자가_이벤트_정보를_조회할때 {
-
-        @Test
-        void 신청기간이_아닌데_조회하면_실패한다() {
-            // given
-            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED);
-            long currentMainEventApplicantCount = 0;
-            // 신청 기간 밖의 시간
-            LocalDateTime now = EVENT_APPLICATION_PERIOD.getEndDate().plusDays(1);
-
-            // when & then
-            assertThatThrownBy(() ->
-                            eventDomainService.validateParticipantViewable(event, now, currentMainEventApplicantCount))
-                    .isInstanceOf(CustomException.class)
-                    .hasMessage(EVENT_NOT_VIEWABLE_OUTSIDE_APPLICATION_PERIOD.getMessage());
-        }
-
-        @Test
-        void 최대_신청인원을_초과했으면_실패한다() {
-            // given
-            Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED);
-            long currentMainEventApplicantCount = MAIN_EVENT_MAX_APPLICATION_COUNT + 1; // 최대 신청 인원 초과
-            LocalDateTime now = EVENT_APPLICATION_PERIOD.getStartDate();
-
-            // when & then
-            assertThatThrownBy(() ->
-                            eventDomainService.validateParticipantViewable(event, now, currentMainEventApplicantCount))
-                    .isInstanceOf(CustomException.class)
-                    .hasMessage(EVENT_NOT_VIEWABLE_MAX_APPLICANT_COUNT_EXCEEDED.getMessage());
         }
     }
 }

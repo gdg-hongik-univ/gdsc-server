@@ -26,10 +26,8 @@ import com.gdschongik.gdsc.domain.recruitment.domain.Recruitment;
 import com.gdschongik.gdsc.domain.recruitment.domain.RecruitmentRound;
 import com.gdschongik.gdsc.domain.recruitment.domain.RoundType;
 import com.gdschongik.gdsc.domain.study.domain.Study;
-import com.gdschongik.gdsc.domain.study.domain.StudyDetail;
+import com.gdschongik.gdsc.domain.study.domain.StudyFactory;
 import com.gdschongik.gdsc.domain.study.domain.StudyType;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyFactory;
-import com.gdschongik.gdsc.domain.studyv2.domain.StudyV2;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -50,7 +48,7 @@ public class FixtureHelper {
 
     public Member createAssociateMember(Long id) {
         Member member = createGuestMember(id);
-        member.updateBasicMemberInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
+        member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
         member.completeUnivEmailVerification(UNIV_EMAIL);
         member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
         member.advanceToAssociate();
@@ -96,53 +94,13 @@ public class FixtureHelper {
         return Membership.create(member, recruitmentRound);
     }
 
-    public IssuedCoupon createAndIssue(Money money, Member member, CouponType couponType, StudyV2 study) {
+    public IssuedCoupon createAndIssue(Money money, Member member, CouponType couponType, Study study) {
         Coupon coupon = Coupon.createAutomatic(COUPON_NAME, money, couponType, study);
         return IssuedCoupon.create(coupon, member);
     }
 
-    public Study createStudy(Member mentor, Period period, Period applicationPeriod) {
-        return Study.create(
-                ONLINE_STUDY,
-                STUDY_TITLE,
-                TOTAL_WEEK,
-                DAY_OF_WEEK,
-                STUDY_START_TIME,
-                STUDY_END_TIME,
-                period,
-                applicationPeriod,
-                mentor,
-                ACADEMIC_YEAR,
-                SEMESTER_TYPE);
-    }
-
-    public Study createStudyWithMentor(Long mentorId, Period period, Period applicationPeriod) {
-        Member mentor = createAssociateMember(mentorId);
-        return createStudy(mentor, period, applicationPeriod);
-    }
-
-    public StudyDetail createStudyDetail(Study study, LocalDateTime startDate, LocalDateTime endDate) {
-        return StudyDetail.create(1L, ATTENDANCE_NUMBER, Period.of(startDate, endDate), study);
-    }
-
-    public StudyDetail createNewStudyDetail(
-            Long id, Study study, Long week, LocalDateTime startDate, LocalDateTime endDate) {
-        StudyDetail studyDetail = StudyDetail.create(week, ATTENDANCE_NUMBER, Period.of(startDate, endDate), study);
-        ReflectionTestUtils.setField(studyDetail, "id", id);
-        return studyDetail;
-    }
-
-    public StudyDetail createStudyDetailWithAssignment(
-            Study study, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime deadline) {
-        StudyDetail studyDetail = createStudyDetail(study, startDate, endDate);
-        studyDetail.publishAssignment(ASSIGNMENT_TITLE, deadline, DESCRIPTION_LINK);
-        return studyDetail;
-    }
-
-    // StudyV2
-
-    public StudyV2 createStudy(StudyType type, Long studyId, Long firstStudySessionId, Long mentorId) {
-        StudyV2 study = studyFactory.create(
+    public Study createStudy(StudyType type, Long studyId, Long firstStudySessionId, Long mentorId) {
+        Study study = studyFactory.create(
                 type,
                 STUDY_TITLE,
                 STUDY_SEMESTER,
@@ -170,6 +128,7 @@ public class FixtureHelper {
                 EVENT_NAME,
                 VENUE,
                 EVENT_START_AT,
+                EVENT_DESCRIPTION,
                 EVENT_APPLICATION_PERIOD,
                 regularRoleOnlyStatus,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,
@@ -184,6 +143,7 @@ public class FixtureHelper {
                 EVENT_NAME,
                 VENUE,
                 EVENT_START_AT,
+                EVENT_DESCRIPTION,
                 EVENT_APPLICATION_PERIOD,
                 REGULAR_ROLE_ONLY_STATUS,
                 MAIN_EVENT_MAX_APPLICATION_COUNT,
