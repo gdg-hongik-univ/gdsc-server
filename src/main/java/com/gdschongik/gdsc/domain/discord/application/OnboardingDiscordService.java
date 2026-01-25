@@ -61,8 +61,8 @@ public class OnboardingDiscordService {
                 .findById(request.discordUsername())
                 .orElseThrow(() -> new CustomException(DISCORD_CODE_NOT_FOUND));
 
-        boolean isDiscordUsernameDuplicate = memberRepository.existsByDiscordUsername(request.discordUsername());
-        boolean isNicknameDuplicate = memberRepository.existsByNickname(request.nickname());
+        boolean isDiscordUsernameDuplicate = isDiscordUsernameDuplicate(request.discordUsername());
+        boolean isNicknameDuplicate = isNicknameDuplicate(request.nickname());
 
         discordValidator.validateVerifyDiscordCode(
                 request.code(), discordVerificationCode, isDiscordUsernameDuplicate, isNicknameDuplicate);
