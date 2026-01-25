@@ -86,11 +86,15 @@ public class OnboardingDiscordService {
 
     @Transactional(readOnly = true)
     public DiscordCheckDuplicateResponse checkUsernameDuplicate(String discordUsername) {
+        boolean isDuplicate = isDiscordUsernameDuplicate(discordUsername);
+        return DiscordCheckDuplicateResponse.from(isDuplicate);
+    }
+
+    private boolean isDiscordUsernameDuplicate(String discordUsername) {
         if (isMyDiscordUsername(discordUsername)) {
-            return DiscordCheckDuplicateResponse.from(false);
+            return false;
         }
-        boolean isExist = memberRepository.existsByDiscordUsername(discordUsername);
-        return DiscordCheckDuplicateResponse.from(isExist);
+        return memberRepository.existsByDiscordUsername(discordUsername);
     }
 
     private boolean isMyDiscordUsername(String discordUsername) {
@@ -101,11 +105,15 @@ public class OnboardingDiscordService {
 
     @Transactional(readOnly = true)
     public DiscordCheckDuplicateResponse checkNicknameDuplicate(String nickname) {
+        boolean isDuplicate = isNicknameDuplicate(nickname);
+        return DiscordCheckDuplicateResponse.from(isDuplicate);
+    }
+
+    private boolean isNicknameDuplicate(String nickname) {
         if (isMyNickname(nickname)) {
-            return DiscordCheckDuplicateResponse.from(false);
+            return false;
         }
-        boolean isExist = memberRepository.existsByNickname(nickname);
-        return DiscordCheckDuplicateResponse.from(isExist);
+        return memberRepository.existsByNickname(nickname);
     }
 
     private boolean isMyNickname(String nickname) {
