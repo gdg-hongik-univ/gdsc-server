@@ -9,6 +9,7 @@ import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.member.domain.event.MemberAdvancedToRegularEvent;
 import com.gdschongik.gdsc.domain.member.domain.event.MemberAssociateRequirementUpdatedEvent;
 import com.gdschongik.gdsc.domain.member.domain.event.MemberDemotedToAssociateEvent;
+import com.gdschongik.gdsc.domain.member.domain.event.MemberDiscordIdUpdatedEvent;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -296,7 +297,15 @@ public class Member extends BaseEntity {
         this.lastLoginAt = now;
     }
 
+    /**
+     * 디스코드 ID를 업데이트 합니다.
+     * 만약 기존 디스코드 ID가 있었다면, 해당 디스코드 ID의 정회원 역할을 제거합니다.
+     */
     public void updateDiscordId(String discordId) {
+        String previousDiscordId = this.discordId;
+        if (previousDiscordId != null && !previousDiscordId.equals(discordId)) {
+            registerEvent(new MemberDiscordIdUpdatedEvent(id, previousDiscordId, discordId));
+        }
         this.discordId = discordId;
     }
 
