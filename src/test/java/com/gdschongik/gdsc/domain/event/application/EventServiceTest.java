@@ -63,6 +63,20 @@ public class EventServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 검색어가_null일_때_모든_이벤트가_조회된다() {
+            // given
+            createEvent("2026-1 새싹 세미나");
+            createEvent("2026-1 프로젝트 트랙 결과 발표");
+            createEvent("2026-1 코어멤버 세미나");
+
+            // when
+            Page<EventResponse> result = eventService.searchEvent(null, PageRequest.of(0, 8));
+
+            // then
+            Assertions.assertThat(result).hasSize(3);
+        }
+
+        @Test
         void 검색어를_이름에_포함하는_모든_이벤트가_조회된다() {
             // given
             createEvent("2026-1 새싹 세미나");
