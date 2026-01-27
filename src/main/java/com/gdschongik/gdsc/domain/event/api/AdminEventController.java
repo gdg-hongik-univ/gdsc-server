@@ -49,7 +49,7 @@ public class AdminEventController {
     @Operation(summary = "이벤트 검색", description = "이벤트를 검색합니다.")
     @GetMapping("/search")
     public ResponseEntity<Page<EventResponse>> searchEvent(
-            @RequestParam String name, @ParameterObject Pageable pageable) {
+            @RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
         var response = eventService.searchEvent(name, pageable);
         return ResponseEntity.ok(response);
     }
