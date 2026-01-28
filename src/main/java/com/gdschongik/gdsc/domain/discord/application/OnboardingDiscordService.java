@@ -12,6 +12,7 @@ import com.gdschongik.gdsc.domain.discord.dto.response.DiscordCheckJoinResponse;
 import com.gdschongik.gdsc.domain.discord.dto.response.DiscordVerificationCodeResponse;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
+import com.gdschongik.gdsc.domain.member.domain.service.MemberDomainService;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.util.DiscordUtil;
 import com.gdschongik.gdsc.global.util.MemberUtil;
@@ -34,6 +35,7 @@ public class OnboardingDiscordService {
     private final DiscordUtil discordUtil;
     private final MemberRepository memberRepository;
     private final DiscordValidator discordValidator;
+    private final MemberDomainService memberDomainService;
 
     @Transactional
     public DiscordVerificationCodeResponse createVerificationCode(String discordUsername) {
@@ -93,10 +95,8 @@ public class OnboardingDiscordService {
     }
 
     private boolean isDiscordUsernameDuplicate(String discordUsername, Member currentMember) {
-        boolean isMyDiscordUsername =  discordUsername.equals(currentMember.getDiscordUsername());
-        boolean isAlreadyUsedDiscordUsername = memberRepository.existsByDiscordUsername(discordUsername);
-
-        return !isMyDiscordUsername && isAlreadyUsedDiscordUsername;
+        boolean alreadyExists = memberRepository.existsByDiscordUsername(discordUsername);
+        return memberDomainService.conflictsWithOtherDiscordUsername(currentMember, discordUsername, alreadyExists);
     }
 
     @Transactional(readOnly = true)
@@ -107,10 +107,8 @@ public class OnboardingDiscordService {
     }
 
     private boolean isNicknameDuplicate(String nickname, Member currentMember) {
-        boolean isMyNickname = nickname.equals(currentMember.getNickname());
-        boolean isAlreadyUsedNickname = memberRepository.existsByNickname(nickname);
-
-        return !isMyNickname && isAlreadyUsedNickname;
+        boolean alreadyExists = memberRepository.existsByNickname(nickname);
+        return memberDomainService.conflictsWithOtherNickname(currentMember, nickname, alreadyExists);
     }
 
     public DiscordCheckJoinResponse checkServerJoined(String discordUsername) {
