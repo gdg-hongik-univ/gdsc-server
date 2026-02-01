@@ -9,7 +9,7 @@ import com.gdschongik.gdsc.domain.common.model.BaseEntity;
 import com.gdschongik.gdsc.domain.member.domain.event.MemberAdvancedToRegularEvent;
 import com.gdschongik.gdsc.domain.member.domain.event.MemberAssociateRequirementUpdatedEvent;
 import com.gdschongik.gdsc.domain.member.domain.event.MemberDemotedToAssociateEvent;
-import com.gdschongik.gdsc.domain.member.domain.event.MemberDiscordIdUpdatedEvent;
+import com.gdschongik.gdsc.domain.member.domain.event.MemberDiscordIdRemovedEvent;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -212,6 +212,9 @@ public class Member extends BaseEntity {
         this.discordUsername = discordUsername;
         this.nickname = nickname;
 
+        // 재연동 플로우의 경우 이후의 최초 연동절차 필요 없음
+        if (associateRequirement.isDiscordSatisfied()) return;
+
         associateRequirement.verifyDiscord();
 
         registerEvent(new MemberAssociateRequirementUpdatedEvent(this.id));
@@ -299,14 +302,22 @@ public class Member extends BaseEntity {
 
     /**
      * 디스코드 ID를 업데이트 합니다.
-     * 만약 기존 디스코드 ID가 있었다면, 해당 디스코드 ID의 정회원 역할을 제거합니다.
+     * 만약 기존과 다른 디스코드 ID로의 변경이라면, 기존 디스코드 ID의 정회원 역할을 제거합니다.
      */
     public void updateDiscordId(String discordId) {
         String previousDiscordId = this.discordId;
-        if (previousDiscordId != null && !previousDiscordId.equals(discordId)) {
-            registerEvent(new MemberDiscordIdUpdatedEvent(id, previousDiscordId, discordId));
-        }
         this.discordId = discordId;
+
+        // 신규 연동일 경우 이전 디스코드 역할 회수 필요 없음
+        if (previousDiscordId == null) return;
+
+        // 동일 계정 재연동일 경우 이전 디스코드 역할 회수 필요 없음
+        if (previousDiscordId.equals(discordId)) return;
+
+        // 정회원이 아닌 경우 이전 디스코드 정회원 역할 회수 필요 없음
+        if (!isRegular()) return;
+
+        registerEvent(new MemberDiscordIdRemovedEvent(id, previousDiscordId));
     }
 
     /**
