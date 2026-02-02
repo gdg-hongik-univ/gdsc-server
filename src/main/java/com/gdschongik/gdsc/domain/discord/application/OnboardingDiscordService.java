@@ -63,7 +63,7 @@ public class OnboardingDiscordService {
                 .findById(request.discordUsername())
                 .orElseThrow(() -> new CustomException(DISCORD_CODE_NOT_FOUND));
 
-        final Member currentMember = memberUtil.getCurrentMember();
+        Member currentMember = memberUtil.getCurrentMember();
 
         boolean isDiscordUsernameDuplicate = isDiscordUsernameDuplicate(request.discordUsername(), currentMember);
         boolean isNicknameDuplicate = isNicknameDuplicate(request.nickname(), currentMember);
