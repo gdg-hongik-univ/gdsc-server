@@ -75,18 +75,18 @@ public class OnboardingDiscordService {
 
         discordVerificationCodeRepository.delete(discordVerificationCode);
 
-        currentMember.verifyDiscord(request.discordUsername(), request.nickname());
+        boolean isDiscordAlreadySatisfied = currentMember.getAssociateRequirement().isDiscordSatisfied();
+        String discordId = discordUtil.getMemberIdByUsername(request.discordUsername());
 
-        updateDiscordId(request.discordUsername(), currentMember);
+        if (isDiscordAlreadySatisfied) {
+            currentMember.changeDiscord(request.discordUsername(), request.nickname(), discordId);
+            log.info("[OnboardingDiscordService] 디스코드 재연동: memberId={}", currentMember.getId());
+        } else {
+            currentMember.verifyDiscord(request.discordUsername(), request.nickname(), discordId);
+            log.info("[OnboardingDiscordService] 디스코드 연동: memberId={}", currentMember.getId());
+        }
 
         memberRepository.save(currentMember);
-
-        log.info("[OnboardingDiscordService] 디스코드 연동: memberId={}", currentMember.getId());
-    }
-
-    private void updateDiscordId(String discordUsername, Member currentMember) {
-        String discordId = discordUtil.getMemberIdByUsername(discordUsername);
-        currentMember.updateDiscordId(discordId);
     }
 
     @Transactional(readOnly = true)
