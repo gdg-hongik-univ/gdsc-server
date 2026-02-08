@@ -316,17 +316,13 @@ public class Member extends BaseEntity {
 
     /**
      * 디스코드 ID를 업데이트 합니다.
-     * 만약 기존과 다른 디스코드 ID로의 변경이라면, 기존 디스코드 ID의 정회원 역할을 제거합니다.
      */
     public void updateDiscordId(String discordId) {
         String previousDiscordId = this.discordId;
         this.discordId = discordId;
 
-        // 정회원이 아닌 경우 이전 디스코드 정회원 역할 회수 필요 없음s
-        if (!isRegular()) return;
-
         if (previousDiscordId != null && !previousDiscordId.equals(discordId)) {
-            registerEvent(new MemberDiscordIdChangedEvent(id, previousDiscordId, discordId));
+            registerEvent(new MemberDiscordAccountChangedEvent(id, role, previousDiscordId, discordId));
         }
     }
 
