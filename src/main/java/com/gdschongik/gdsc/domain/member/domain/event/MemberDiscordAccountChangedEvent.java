@@ -2,5 +2,5 @@ package com.gdschongik.gdsc.domain.member.domain.event;
 
 import com.gdschongik.gdsc.domain.member.domain.MemberRole;
 
-public record MemberDiscordAccountChangedEvent(Long memberId, MemberRole memberRole, String previousDiscordId, String currentDiscordId) {
-}
+public record MemberDiscordAccountChangedEvent(
+        Long memberId, MemberRole memberRole, String previousDiscordId, String currentDiscordId) {}
