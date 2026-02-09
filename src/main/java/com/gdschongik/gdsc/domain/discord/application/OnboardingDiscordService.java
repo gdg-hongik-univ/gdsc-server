@@ -58,7 +58,7 @@ public class OnboardingDiscordService {
     }
 
     @Transactional
-    public void verifyDiscordCode(DiscordLinkRequest request) {
+    public void linkDiscord(DiscordLinkRequest request) {
         DiscordVerificationCode discordVerificationCode = discordVerificationCodeRepository
                 .findById(request.discordUsername())
                 .orElseThrow(() -> new CustomException(DISCORD_CODE_NOT_FOUND));
@@ -81,15 +81,25 @@ public class OnboardingDiscordService {
                 currentMember.getAssociateRequirement().isDiscordSatisfied();
         String discordId = discordUtil.getMemberIdByUsername(request.discordUsername());
 
+        verifyOrChangeDiscord(
+                currentMember, request.discordUsername(), request.nickname(), discordId, isDiscordAlreadySatisfied);
+    }
+
+    private void verifyOrChangeDiscord(
+            Member member,
+            String discordUsername,
+            String nickname,
+            String discordId,
+            boolean isDiscordAlreadySatisfied) {
         if (isDiscordAlreadySatisfied) {
-            currentMember.changeDiscord(request.discordUsername(), request.nickname(), discordId);
-            log.info("[OnboardingDiscordService] 디스코드 재연동: memberId={}", currentMember.getId());
+            member.changeDiscord(discordUsername, nickname, discordId);
+            log.info("[OnboardingDiscordService] 디스코드 재연동: memberId={}", member.getId());
         } else {
-            currentMember.verifyDiscord(request.discordUsername(), request.nickname(), discordId);
-            log.info("[OnboardingDiscordService] 디스코드 연동: memberId={}", currentMember.getId());
+            member.verifyDiscord(discordUsername, nickname, discordId);
+            log.info("[OnboardingDiscordService] 디스코드 연동: memberId={}", member.getId());
         }
 
-        memberRepository.save(currentMember);
+        memberRepository.save(member);
     }
 
     @Transactional(readOnly = true)

@@ -32,7 +32,7 @@ public class OnboardingDiscordController {
     @Operation(summary = "디스코드 연동하기", description = "디스코드 봇으로 발급받은 인증코드와 현재 사용자의 디스코드 계정을 연동합니다.")
     @PostMapping("/me/link-discord")
     public ResponseEntity<Void> linkDiscord(@Valid @RequestBody DiscordLinkRequest request) {
-        onboardingDiscordService.verifyDiscordCode(request);
+        onboardingDiscordService.linkDiscord(request);
         return ResponseEntity.ok().build();
     }
 
