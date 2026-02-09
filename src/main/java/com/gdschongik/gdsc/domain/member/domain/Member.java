@@ -221,9 +221,15 @@ public class Member extends BaseEntity {
     public void changeDiscord(String discordUsername, String nickname, String discordId) {
         validateStatusUpdatable();
 
+        String previousDiscordId = this.discordId;
+
         updateDiscordUsername(discordUsername);
         updateNickname(nickname);
         updateDiscordId(discordId);
+
+        if (previousDiscordId != null && !previousDiscordId.equals(discordId)) {
+            registerEvent(new MemberDiscordAccountChangedEvent(id, role, previousDiscordId, discordId));
+        }
     }
 
     /**
@@ -318,12 +324,7 @@ public class Member extends BaseEntity {
      * 디스코드 ID를 업데이트 합니다.
      */
     public void updateDiscordId(String discordId) {
-        String previousDiscordId = this.discordId;
         this.discordId = discordId;
-
-        if (previousDiscordId != null && !previousDiscordId.equals(discordId)) {
-            registerEvent(new MemberDiscordAccountChangedEvent(id, role, previousDiscordId, discordId));
-        }
     }
 
     /**
