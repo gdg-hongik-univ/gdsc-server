@@ -31,7 +31,9 @@ public class MemberDiscordRoleRevokeHandler implements SpringEventHandler {
     }
 
     private void revokeDiscordRoleWhenRegularRole(Long memberId, String discordId, MemberRole role) {
-        if (role == REGULAR) revokeDiscordRole(memberId, discordId);
+        if (role == REGULAR) {
+            revokeDiscordRole(memberId, discordId);
+        }
     }
 
     private void revokeDiscordRole(Long memberId, String discordId) {
