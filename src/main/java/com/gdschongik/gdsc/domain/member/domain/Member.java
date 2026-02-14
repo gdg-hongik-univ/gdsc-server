@@ -320,9 +320,6 @@ public class Member extends BaseEntity {
         this.nickname = nickname;
     }
 
-    /**
-     * 디스코드 ID를 업데이트 합니다.
-     */
     public void updateDiscordId(String discordId) {
         this.discordId = discordId;
     }
