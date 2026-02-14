@@ -5,7 +5,7 @@ import static com.gdschongik.gdsc.global.common.constant.DiscordConstant.*;
 
 import com.gdschongik.gdsc.domain.member.domain.MemberRole;
 import com.gdschongik.gdsc.domain.member.domain.event.MemberDemotedToAssociateEvent;
-import com.gdschongik.gdsc.domain.member.domain.event.MemberDiscordAccountChangedEvent;
+import com.gdschongik.gdsc.domain.member.domain.event.MemberDiscordChangedEvent;
 import com.gdschongik.gdsc.global.util.DiscordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class MemberDiscordRoleRevokeHandler implements SpringEventHandler {
     public void delegate(Object context) {
         if (context instanceof MemberDemotedToAssociateEvent event) {
             revokeDiscordRole(event.memberId(), event.discordId());
-        } else if (context instanceof MemberDiscordAccountChangedEvent event) {
+        } else if (context instanceof MemberDiscordChangedEvent event) {
             revokeDiscordRoleWhenRegularRole(event.memberId(), event.previousDiscordId(), event.memberRole());
         }
     }

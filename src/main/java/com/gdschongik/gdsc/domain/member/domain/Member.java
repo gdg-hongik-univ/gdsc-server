@@ -228,7 +228,7 @@ public class Member extends BaseEntity {
         updateDiscordId(discordId);
 
         if (previousDiscordId != null && !previousDiscordId.equals(discordId)) {
-            registerEvent(new MemberDiscordAccountChangedEvent(id, role, previousDiscordId, discordId));
+            registerEvent(new MemberDiscordChangedEvent(id, role, previousDiscordId, discordId));
         }
     }
 
