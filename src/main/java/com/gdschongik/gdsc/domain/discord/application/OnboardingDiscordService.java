@@ -67,9 +67,9 @@ public class OnboardingDiscordService {
         boolean discordUsernameAlreadyExists = memberRepository.existsByDiscordUsername(request.discordUsername());
         boolean nicknameAlreadyExists = memberRepository.existsByNickname(request.nickname());
 
-        boolean isDiscordUsernameDuplicate = memberDomainService.determineDiscordUsernameDuplicateWithOthers(
+        boolean isDiscordUsernameDuplicate = memberDomainService.determineDiscordUsernameDuplicate(
                 currentMember, request.discordUsername(), discordUsernameAlreadyExists);
-        boolean isNicknameDuplicate = memberDomainService.determineNicknameDuplicateWithOthers(
+        boolean isNicknameDuplicate = memberDomainService.determineNicknameDuplicate(
                 currentMember, request.nickname(), nicknameAlreadyExists);
 
         discordValidator.validateVerifyDiscordCode(
@@ -101,7 +101,7 @@ public class OnboardingDiscordService {
         Member currentMember = memberUtil.getCurrentMember();
         boolean discordUsernameAlreadyExists = memberRepository.existsByDiscordUsername(discordUsername);
 
-        boolean isDuplicate = memberDomainService.determineDiscordUsernameDuplicateWithOthers(
+        boolean isDuplicate = memberDomainService.determineDiscordUsernameDuplicate(
                 currentMember, discordUsername, discordUsernameAlreadyExists);
 
         return DiscordCheckDuplicateResponse.from(isDuplicate);
@@ -112,8 +112,8 @@ public class OnboardingDiscordService {
         Member currentMember = memberUtil.getCurrentMember();
         boolean nicknameAlreadyExists = memberRepository.existsByNickname(nickname);
 
-        boolean isDuplicate = memberDomainService.determineNicknameDuplicateWithOthers(
-                currentMember, nickname, nicknameAlreadyExists);
+        boolean isDuplicate =
+                memberDomainService.determineNicknameDuplicate(currentMember, nickname, nicknameAlreadyExists);
 
         return DiscordCheckDuplicateResponse.from(isDuplicate);
     }
