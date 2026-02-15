@@ -52,12 +52,18 @@ public class EmailVerificationService {
     private void updatePreviousMemberOauthId(Member previousMember, Member currentMember) {
         previousMember.updateOauthId(currentMember.getOauthId());
         memberRepository.save(previousMember);
-        log.info("[EmailVerificationService] 이메일 인증 완료: memberId={}, email={}", previousMember.getId(), previousMember.getEmail());
+        log.info(
+                "[EmailVerificationService] 이메일 인증 완료: memberId={}, email={}",
+                previousMember.getId(),
+                previousMember.getEmail());
     }
 
     private void deleteCurrentMember(Member currentMember) {
         currentMember.withdraw();
         memberRepository.save(currentMember);
-        log.info("[EmailVerificationService] 임시 회원 탈퇴 처리 완료: memberId={}, email={}", currentMember.getId(), currentMember.getEmail());
+        log.info(
+                "[EmailVerificationService] 임시 회원 탈퇴 처리 완료: memberId={}, email={}",
+                currentMember.getId(),
+                currentMember.getEmail());
     }
 }
