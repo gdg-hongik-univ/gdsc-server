@@ -27,6 +27,8 @@ public class EmailVerificationService {
     private final EmailVerificationRepository emailVerificationRepository;
     private final UnivEmailValidator univEmailValidator;
 
+    // TODO: 이메일 인증, oauthId 변경, 임시 멤버 삭제, 토큰 재발급 등 4가지 책임이 하나의 흐름에 결합되어 있음.
+    //  도메인 이벤트를 활용하여 책임을 분리하는 리팩토링 필요.
     @Transactional
     public MemberAuthInfo verifyMemberEmail(EmailVerificationRequest request) {
         Member currentMember = memberUtil.getCurrentMember();
