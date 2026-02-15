@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Email - Onboarding", description = "메일 본인인증 API입니다.")
+@Tag(name = "Email - Onboarding", description = "메일 본인 인증 API입니다.")
 @RestController
 @RequestMapping("/onboarding")
 @RequiredArgsConstructor
@@ -28,9 +28,9 @@ public class OnboardingEmailController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "학교 인증 메일 인증하기", description = "학교 인증 메일을 인증합니다.")
+    @Operation(summary = "본인 인증 메일 인증하기", description = "본인 인증 메일을 인증합니다.")
     @PatchMapping("/verify-email")
-    public ResponseEntity<Void> sendEmailVerificationLink(@RequestBody @Valid EmailVerificationRequest request) {
+    public ResponseEntity<Void> verifyEmail(@RequestBody @Valid EmailVerificationRequest request) {
         emailVerificationService.verifyMemberEmail(request);
         return ResponseEntity.ok().build();
     }
