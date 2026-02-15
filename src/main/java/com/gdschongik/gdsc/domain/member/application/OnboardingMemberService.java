@@ -2,6 +2,7 @@ package com.gdschongik.gdsc.domain.member.application;
 
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
+import com.gdschongik.gdsc.domain.discord.dto.response.DiscordGithubHandleResponse;
 import com.gdschongik.gdsc.domain.email.application.UnivEmailVerificationService;
 import com.gdschongik.gdsc.domain.email.domain.UnivEmailVerification;
 import com.gdschongik.gdsc.domain.email.domain.service.EmailVerificationStatusService;
@@ -18,6 +19,7 @@ import com.gdschongik.gdsc.domain.recruitment.application.OnboardingRecruitmentS
 import com.gdschongik.gdsc.domain.recruitment.domain.RecruitmentRound;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.util.MemberUtil;
+import com.gdschongik.gdsc.infra.github.client.GithubClient;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,7 @@ public class OnboardingMemberService {
     private final UnivEmailVerificationService univEmailVerificationService;
     private final MemberRepository memberRepository;
     private final EmailVerificationStatusService emailVerificationStatusService;
+    private final GithubClient githubClient;
 
     public MemberUnivStatusResponse checkUnivVerificationStatus() {
         Member currentMember = memberUtil.getCurrentMember();
@@ -67,6 +70,18 @@ public class OnboardingMemberService {
 
         return MemberDashboardResponse.of(
                 member, univVerificationStatus, currentRecruitmentRound.orElse(null), myMembership.orElse(null));
+    }
+
+    public DiscordGithubHandleResponse getGithubHandleByStudentId(String studentId) {
+        Member currentMember = memberUtil.getCurrentMember();
+        String currentGithubHandle = githubClient.getGithubHandle(currentMember.getOauthId());
+
+        String previousGithubHandle = memberRepository
+                .findByStudentId(studentId)
+                .map(member -> githubClient.getGithubHandle(member.getOauthId()))
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        return DiscordGithubHandleResponse.of(previousGithubHandle, currentGithubHandle);
     }
 
     @Transactional
