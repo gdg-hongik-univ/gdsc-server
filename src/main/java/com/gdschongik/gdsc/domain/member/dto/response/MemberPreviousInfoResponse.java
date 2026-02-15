@@ -1,11 +1,13 @@
 package com.gdschongik.gdsc.domain.member.dto.response;
 
-public record MemberPreviousInfoResponse(String previousGithubHandle, String previousEmail) {
+public record MemberPreviousInfoResponse(Long previousMemberId, String previousGithubHandle, String previousEmail) {
 
     private static final int VISIBLE_LENGTH = 4;
 
-    public static MemberPreviousInfoResponse of(String previousGithubHandle, String previousEmail) {
-        return new MemberPreviousInfoResponse(maskWithAsterisks(previousGithubHandle), maskEmail(previousEmail));
+    public static MemberPreviousInfoResponse of(
+            Long previousMemberId, String previousGithubHandle, String previousEmail) {
+        return new MemberPreviousInfoResponse(
+                previousMemberId, maskWithAsterisks(previousGithubHandle), maskEmail(previousEmail));
     }
 
     /**

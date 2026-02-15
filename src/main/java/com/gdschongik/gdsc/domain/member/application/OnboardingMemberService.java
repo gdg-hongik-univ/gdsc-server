@@ -80,7 +80,7 @@ public class OnboardingMemberService {
         String previousGithubHandle = githubClient.getGithubHandle(previousMember.getOauthId());
         String previousEmail = previousMember.getEmail();
 
-        return MemberPreviousInfoResponse.of(previousGithubHandle, previousEmail);
+        return MemberPreviousInfoResponse.of(previousMember.getId(), previousGithubHandle, previousEmail);
     }
 
     @Transactional
