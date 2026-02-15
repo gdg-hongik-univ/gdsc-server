@@ -12,6 +12,7 @@ import com.gdschongik.gdsc.domain.member.dto.UnivVerificationStatus;
 import com.gdschongik.gdsc.domain.member.dto.request.MemberInfoRequest;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberDashboardResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberInfoResponse;
+import com.gdschongik.gdsc.domain.member.dto.response.MemberStudentIdDuplicateResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberUnivStatusResponse;
 import com.gdschongik.gdsc.domain.membership.application.MembershipService;
 import com.gdschongik.gdsc.domain.membership.domain.Membership;
@@ -93,5 +94,10 @@ public class OnboardingMemberService {
         memberRepository.save(member);
 
         log.info("[OnboardingMemberService] 준회원 승급 완료: memberId={}", member.getId());
+    }
+
+    public MemberStudentIdDuplicateResponse checkStudentIdDuplicate(String studentId) {
+        boolean isStudentIdDuplicate = memberRepository.existsByStudentId(studentId);
+        return MemberStudentIdDuplicateResponse.from(isStudentIdDuplicate);
     }
 }

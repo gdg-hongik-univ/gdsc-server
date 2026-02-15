@@ -7,6 +7,7 @@ import com.gdschongik.gdsc.domain.member.application.OnboardingMemberService;
 import com.gdschongik.gdsc.domain.member.dto.request.MemberInfoRequest;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberDashboardResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberInfoResponse;
+import com.gdschongik.gdsc.domain.member.dto.response.MemberStudentIdDuplicateResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberUnivStatusResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -56,6 +57,14 @@ public class OnboardingMemberController {
     @GetMapping("/me/info")
     public ResponseEntity<MemberInfoResponse> getMemberInfo() {
         MemberInfoResponse response = onboardingMemberService.getMemberInfo();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "학번 중복 확인하기", description = "학번이 중복되는지 확인합니다.")
+    @GetMapping("/check-student-id")
+    public ResponseEntity<MemberStudentIdDuplicateResponse> checkStudentId(
+            @RequestParam("studentId") @NotBlank @Schema(description = "학번") String studentId) {
+        var response = onboardingMemberService.checkStudentIdDuplicate(studentId);
         return ResponseEntity.ok().body(response);
     }
 
