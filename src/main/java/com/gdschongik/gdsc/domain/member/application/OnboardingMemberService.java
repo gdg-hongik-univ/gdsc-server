@@ -2,7 +2,6 @@ package com.gdschongik.gdsc.domain.member.application;
 
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
-import com.gdschongik.gdsc.domain.discord.dto.response.DiscordGithubHandleResponse;
 import com.gdschongik.gdsc.domain.email.application.UnivEmailVerificationService;
 import com.gdschongik.gdsc.domain.email.domain.UnivEmailVerification;
 import com.gdschongik.gdsc.domain.email.domain.service.EmailVerificationStatusService;
@@ -12,6 +11,7 @@ import com.gdschongik.gdsc.domain.member.dto.UnivVerificationStatus;
 import com.gdschongik.gdsc.domain.member.dto.request.MemberInfoRequest;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberDashboardResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberInfoResponse;
+import com.gdschongik.gdsc.domain.member.dto.response.MemberPreviousInfoResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberStudentIdDuplicateResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberUnivStatusResponse;
 import com.gdschongik.gdsc.domain.membership.application.MembershipService;
@@ -73,16 +73,14 @@ public class OnboardingMemberService {
                 member, univVerificationStatus, currentRecruitmentRound.orElse(null), myMembership.orElse(null));
     }
 
-    public DiscordGithubHandleResponse getGithubHandleByStudentId(String studentId) {
-        Member currentMember = memberUtil.getCurrentMember();
-        String currentGithubHandle = githubClient.getGithubHandle(currentMember.getOauthId());
+    public MemberPreviousInfoResponse getPreviousInfoByStudentId(String studentId) {
+        Member previousMember =
+                memberRepository.findByStudentId(studentId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        String previousGithubHandle = memberRepository
-                .findByStudentId(studentId)
-                .map(member -> githubClient.getGithubHandle(member.getOauthId()))
-                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        String previousGithubHandle = githubClient.getGithubHandle(previousMember.getOauthId());
+        String previousEmail = previousMember.getEmail();
 
-        return DiscordGithubHandleResponse.of(previousGithubHandle, currentGithubHandle);
+        return MemberPreviousInfoResponse.of(previousGithubHandle, previousEmail);
     }
 
     @Transactional
