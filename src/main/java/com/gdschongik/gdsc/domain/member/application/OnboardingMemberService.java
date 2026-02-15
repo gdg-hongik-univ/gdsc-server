@@ -11,6 +11,7 @@ import com.gdschongik.gdsc.domain.member.dto.UnivVerificationStatus;
 import com.gdschongik.gdsc.domain.member.dto.request.MemberInfoRequest;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberDashboardResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberInfoResponse;
+import com.gdschongik.gdsc.domain.member.dto.response.MemberPreviousInfoResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberStudentIdDuplicateResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberUnivStatusResponse;
 import com.gdschongik.gdsc.domain.membership.application.MembershipService;
@@ -19,6 +20,7 @@ import com.gdschongik.gdsc.domain.recruitment.application.OnboardingRecruitmentS
 import com.gdschongik.gdsc.domain.recruitment.domain.RecruitmentRound;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.util.MemberUtil;
+import com.gdschongik.gdsc.infra.github.client.GithubClient;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,7 @@ public class OnboardingMemberService {
     private final UnivEmailVerificationService univEmailVerificationService;
     private final MemberRepository memberRepository;
     private final EmailVerificationStatusService emailVerificationStatusService;
+    private final GithubClient githubClient;
 
     public MemberUnivStatusResponse checkUnivVerificationStatus() {
         Member currentMember = memberUtil.getCurrentMember();
@@ -68,6 +71,16 @@ public class OnboardingMemberService {
 
         return MemberDashboardResponse.of(
                 member, univVerificationStatus, currentRecruitmentRound.orElse(null), myMembership.orElse(null));
+    }
+
+    public MemberPreviousInfoResponse getPreviousInfoByStudentId(String studentId) {
+        Member previousMember =
+                memberRepository.findByStudentId(studentId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        String previousGithubHandle = githubClient.getGithubHandle(previousMember.getOauthId());
+        String previousEmail = previousMember.getEmail();
+
+        return MemberPreviousInfoResponse.of(previousMember.getId(), previousGithubHandle, previousEmail);
     }
 
     @Transactional
