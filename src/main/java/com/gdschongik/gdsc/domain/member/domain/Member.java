@@ -300,6 +300,11 @@ public class Member extends BaseEntity {
         this.discordId = discordId;
     }
 
+    public void updateOauthId(String oauthId) {
+        validateStatusUpdatable();
+        this.oauthId = oauthId;
+    }
+
     /**
      * 해당 회원을 탈퇴 처리합니다.
      */
