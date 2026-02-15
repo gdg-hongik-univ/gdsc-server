@@ -1,5 +1,6 @@
 package com.gdschongik.gdsc.domain.email.application;
 
+import static com.gdschongik.gdsc.global.common.constant.EmailConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.EmailConstant.VERIFICATION_EMAIL_SUBJECT;
 
 import com.gdschongik.gdsc.domain.email.dao.UnivEmailVerificationRepository;
@@ -55,7 +56,7 @@ public class UnivEmailVerificationLinkSendService {
         univEmailValidator.validateSendUnivEmailVerificationLink(univEmail, isUnivEmailDuplicate);
 
         String verificationToken = generateVerificationToken(univEmail);
-        String verificationLink = verificationLinkUtil.createLink(verificationToken);
+        String verificationLink = verificationLinkUtil.createLink(VERIFY_UNIV_EMAIL_API_ENDPOINT, verificationToken);
         String mailContent = writeMailContentWithVerificationLink(verificationLink);
 
         mailSender.send(univEmail, VERIFICATION_EMAIL_SUBJECT, mailContent);

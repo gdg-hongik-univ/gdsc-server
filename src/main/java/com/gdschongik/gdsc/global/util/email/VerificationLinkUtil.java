@@ -1,6 +1,5 @@
 package com.gdschongik.gdsc.global.util.email;
 
-import static com.gdschongik.gdsc.global.common.constant.EmailConstant.VERIFY_EMAIL_API_ENDPOINT;
 import static com.gdschongik.gdsc.global.common.constant.EmailConstant.VERIFY_EMAIL_REQUEST_PARAMETER_KEY;
 import static com.gdschongik.gdsc.global.common.constant.EnvironmentConstant.Constants.DEV_ENV;
 import static com.gdschongik.gdsc.global.common.constant.EnvironmentConstant.Constants.PROD_ENV;
@@ -18,8 +17,8 @@ public class VerificationLinkUtil {
 
     private final EnvironmentUtil environmentUtil;
 
-    public String createLink(String verificationToken) {
-        String verifyEmailApiEndpoint = String.format(VERIFY_EMAIL_API_ENDPOINT, VERIFY_EMAIL_REQUEST_PARAMETER_KEY);
+    public String createLink(String apiEndpoint, String verificationToken) {
+        String verifyEmailApiEndpoint = String.format(apiEndpoint, VERIFY_EMAIL_REQUEST_PARAMETER_KEY);
         return getClientUrl() + verifyEmailApiEndpoint + verificationToken;
     }
 

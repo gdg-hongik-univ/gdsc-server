@@ -56,7 +56,7 @@ public class EmailVerificationLinkSendService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         String verificationToken = generateVerificationToken(previousMember.getEmail());
-        String verificationLink = verificationLinkUtil.createLink(verificationToken);
+        String verificationLink = verificationLinkUtil.createLink(VERIFY_EMAIL_API_ENDPOINT, verificationToken);
         String mailContent = writeMailContentWithVerificationLink(verificationLink);
 
         mailSender.send(previousMember.getEmail(), VERIFICATION_EMAIL_SUBJECT, mailContent);

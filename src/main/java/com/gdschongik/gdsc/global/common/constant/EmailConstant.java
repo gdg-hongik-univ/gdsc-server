@@ -2,6 +2,7 @@ package com.gdschongik.gdsc.global.common.constant;
 
 public class EmailConstant {
 
+    public static final String VERIFY_UNIV_EMAIL_API_ENDPOINT = "/onboarding/verify-univ-email?%s=";
     public static final String VERIFY_EMAIL_API_ENDPOINT = "/onboarding/verify-email?%s=";
     public static final String VERIFY_EMAIL_REQUEST_PARAMETER_KEY = "token";
     public static final String HONGIK_UNIV_MAIL_DOMAIN = "@g.hongik.ac.kr";
