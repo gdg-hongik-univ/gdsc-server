@@ -4,7 +4,7 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.email.application.UnivEmailVerificationService;
 import com.gdschongik.gdsc.domain.email.domain.UnivEmailVerification;
-import com.gdschongik.gdsc.domain.email.domain.service.EmailVerificationStatusService;
+import com.gdschongik.gdsc.domain.email.domain.service.UnivEmailVerificationStatusService;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.member.dto.UnivVerificationStatus;
@@ -38,7 +38,7 @@ public class OnboardingMemberService {
     private final MembershipService membershipService;
     private final UnivEmailVerificationService univEmailVerificationService;
     private final MemberRepository memberRepository;
-    private final EmailVerificationStatusService emailVerificationStatusService;
+    private final UnivEmailVerificationStatusService univEmailVerificationStatusService;
     private final GithubClient githubClient;
 
     public MemberUnivStatusResponse checkUnivVerificationStatus() {
@@ -64,7 +64,7 @@ public class OnboardingMemberService {
         final Optional<UnivEmailVerification> univEmailVerification =
                 univEmailVerificationService.getUnivEmailVerificationFromRedis(member.getId());
         UnivVerificationStatus univVerificationStatus =
-                emailVerificationStatusService.determineStatus(member, univEmailVerification);
+                univEmailVerificationStatusService.determineStatus(member, univEmailVerification);
         Optional<RecruitmentRound> currentRecruitmentRound = onboardingRecruitmentService.findCurrentRecruitmentRound();
         Optional<Membership> myMembership = currentRecruitmentRound.flatMap(
                 recruitmentRound -> membershipService.findMyMembership(member, recruitmentRound));

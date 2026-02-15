@@ -3,7 +3,7 @@ package com.gdschongik.gdsc.domain.email.application;
 import com.gdschongik.gdsc.domain.email.dao.UnivEmailVerificationRepository;
 import com.gdschongik.gdsc.domain.email.domain.UnivEmailVerification;
 import com.gdschongik.gdsc.domain.email.domain.service.UnivEmailValidator;
-import com.gdschongik.gdsc.domain.email.dto.request.UnivEmailVerificationRequest;
+import com.gdschongik.gdsc.domain.email.dto.request.EmailVerificationRequest;
 import com.gdschongik.gdsc.domain.email.dto.request.UnivEmailVerificationTokenDto;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UnivEmailVerificationService {
+public class EmailVerificationService {
 
     private final EmailVerificationTokenUtil emailVerificationTokenUtil;
     private final MemberRepository memberRepository;
@@ -26,7 +26,7 @@ public class UnivEmailVerificationService {
     private final UnivEmailValidator univEmailValidator;
 
     @Transactional
-    public void verifyMemberUnivEmail(UnivEmailVerificationRequest request) {
+    public void verifyMemberEmail(EmailVerificationRequest request) {
         UnivEmailVerificationTokenDto emailVerificationToken = getEmailVerificationToken(request.token());
         Member member = getMemberById(emailVerificationToken.memberId());
         member.completeUnivEmailVerification(emailVerificationToken.email());

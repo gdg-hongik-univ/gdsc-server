@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Email - Onboarding", description = "학교 인증 메일 인증 API입니다.")
+@Tag(name = "Univ Email - Onboarding", description = "학교 인증 메일 인증 API입니다.")
 @RestController
 @RequestMapping("/onboarding")
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class OnboardingUnivEmailController {
     private final UnivEmailVerificationService univEmailVerificationService;
 
     @Operation(summary = "학교 인증 메일 발송 요청", description = "학교 인증 메일 발송을 요청합니다.")
-    @PostMapping("/send-verify-email")
+    @PostMapping("/send-verify-univ-email")
     public ResponseEntity<Void> sendUnivEmailVerificationLink(
             @Valid @RequestBody UnivEmailVerificationLinkSendRequest request) {
         univEmailVerificationLinkSendService.send(request.univEmail());
@@ -33,7 +33,7 @@ public class OnboardingUnivEmailController {
     }
 
     @Operation(summary = "학교 인증 메일 인증하기", description = "학교 인증 메일을 인증합니다.")
-    @PatchMapping("/verify-email")
+    @PatchMapping("/verify-univ-email")
     public ResponseEntity<Void> sendUnivEmailVerificationLink(
             @RequestBody @Valid UnivEmailVerificationRequest request) {
         univEmailVerificationService.verifyMemberUnivEmail(request);
