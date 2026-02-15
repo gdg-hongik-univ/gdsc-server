@@ -51,11 +51,12 @@ public class EmailVerificationLinkSendService {
 """;
 
     public void send(Long previousMemberId) {
+        Member currentMember = memberUtil.getCurrentMember();
         Member previousMember = memberRepository
                 .findById(previousMemberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        String verificationToken = generateVerificationToken(previousMember.getEmail());
+        String verificationToken = generateVerificationToken(currentMember, previousMember);
         String verificationLink = verificationLinkUtil.createLink(VERIFY_EMAIL_API_ENDPOINT, verificationToken);
         String mailContent = writeMailContentWithVerificationLink(verificationLink);
 
@@ -64,16 +65,18 @@ public class EmailVerificationLinkSendService {
         log.info("[EmailVerificationLinkSendService] 본인 인증 메일 발송: email={}", previousMember.getEmail());
     }
 
-    private String generateVerificationToken(String email) {
-        final Member currentMember = memberUtil.getCurrentMember();
-        String verificationToken =
-                emailVerificationTokenUtil.generateEmailVerificationToken(currentMember.getId(), email);
+    private String generateVerificationToken(Member currentMember, Member previousMember) {
+        String verificationToken = emailVerificationTokenUtil.generateEmailVerificationToken(
+                currentMember.getId(), previousMember.getEmail());
 
         JwtProperty.TokenProperty emailVerificationTokenProperty =
                 jwtProperty.getToken().get(JwtConstant.EMAIL_VERIFICATION_TOKEN);
 
         EmailVerification emailVerification = EmailVerification.of(
-                currentMember.getId(), verificationToken, emailVerificationTokenProperty.expirationTime());
+                currentMember.getId(),
+                previousMember.getId(),
+                verificationToken,
+                emailVerificationTokenProperty.expirationTime());
         emailVerificationRepository.save(emailVerification);
 
         return verificationToken;
