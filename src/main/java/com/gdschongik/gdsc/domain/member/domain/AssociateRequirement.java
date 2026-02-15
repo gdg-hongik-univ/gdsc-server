@@ -65,7 +65,7 @@ public class AssociateRequirement {
         return univStatus == SATISFIED;
     }
 
-    private boolean isDiscordSatisfied() {
+    public boolean isDiscordSatisfied() {
         return discordStatus == SATISFIED;
     }
 
