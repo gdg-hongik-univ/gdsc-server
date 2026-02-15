@@ -2,7 +2,7 @@ package com.gdschongik.gdsc.global.util.email;
 
 import static com.gdschongik.gdsc.global.common.constant.EmailConstant.TOKEN_EMAIL_NAME;
 
-import com.gdschongik.gdsc.domain.email.dto.request.EmailVerificationTokenDto;
+import com.gdschongik.gdsc.domain.email.dto.request.UnivEmailVerificationTokenDto;
 import com.gdschongik.gdsc.global.common.constant.JwtConstant;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
@@ -34,7 +34,7 @@ public class EmailVerificationTokenUtil {
         return buildToken(memberId, email, issuedAt, expiredAt, key);
     }
 
-    public EmailVerificationTokenDto parseEmailVerificationTokenDto(String emailVerificationTokenValue)
+    public UnivEmailVerificationTokenDto parseEmailVerificationTokenDto(String emailVerificationTokenValue)
             throws ExpiredJwtException {
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
@@ -43,7 +43,7 @@ public class EmailVerificationTokenUtil {
                     .build()
                     .parseClaimsJws(emailVerificationTokenValue);
 
-            return new EmailVerificationTokenDto(
+            return new UnivEmailVerificationTokenDto(
                     Long.parseLong(claims.getBody().getSubject()),
                     claims.getBody().get(TOKEN_EMAIL_NAME, String.class));
         } catch (ExpiredJwtException e) {

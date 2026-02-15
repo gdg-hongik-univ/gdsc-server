@@ -4,7 +4,7 @@ import com.gdschongik.gdsc.domain.email.dao.UnivEmailVerificationRepository;
 import com.gdschongik.gdsc.domain.email.domain.UnivEmailVerification;
 import com.gdschongik.gdsc.domain.email.domain.service.UnivEmailValidator;
 import com.gdschongik.gdsc.domain.email.dto.request.EmailVerificationRequest;
-import com.gdschongik.gdsc.domain.email.dto.request.EmailVerificationTokenDto;
+import com.gdschongik.gdsc.domain.email.dto.request.UnivEmailVerificationTokenDto;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
@@ -27,7 +27,7 @@ public class EmailVerificationService {
 
     @Transactional
     public void verifyMemberEmail(EmailVerificationRequest request) {
-        EmailVerificationTokenDto emailVerificationToken = getEmailVerificationToken(request.token());
+        UnivEmailVerificationTokenDto emailVerificationToken = getEmailVerificationToken(request.token());
         Member member = getMemberById(emailVerificationToken.memberId());
         member.completeUnivEmailVerification(emailVerificationToken.email());
         memberRepository.save(member);
@@ -37,15 +37,15 @@ public class EmailVerificationService {
         return univEmailVerificationRepository.findById(memberId);
     }
 
-    private EmailVerificationTokenDto getEmailVerificationToken(String verificationToken) {
-        EmailVerificationTokenDto emailVerificationTokenDto =
+    private UnivEmailVerificationTokenDto getEmailVerificationToken(String verificationToken) {
+        UnivEmailVerificationTokenDto univEmailVerificationTokenDto =
                 emailVerificationTokenUtil.parseEmailVerificationTokenDto(verificationToken);
         final Optional<UnivEmailVerification> univEmailVerification =
-                getUnivEmailVerificationFromRedis(emailVerificationTokenDto.memberId());
+                getUnivEmailVerificationFromRedis(univEmailVerificationTokenDto.memberId());
 
         univEmailValidator.validateUnivEmailVerification(univEmailVerification, verificationToken);
 
-        return emailVerificationTokenDto;
+        return univEmailVerificationTokenDto;
     }
 
     private Member getMemberById(Long id) {
