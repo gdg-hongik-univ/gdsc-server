@@ -20,7 +20,7 @@ public class OnboardingEmailController {
     private final EmailVerificationLinkSendService emailVerificationLinkSendService;
     private final EmailVerificationService emailVerificationService;
 
-    @Operation(summary = "학교 인증 메일 발송 요청", description = "학교 인증 메일 발송을 요청합니다.")
+    @Operation(summary = "본인 인증 메일 발송 요청", description = "본인 인증 메일 발송을 요청합니다.")
     @PostMapping("/send-verify-email")
     public ResponseEntity<Void> sendEmailVerificationLink(
             @Valid @RequestBody EmailVerificationLinkSendRequest request) {
