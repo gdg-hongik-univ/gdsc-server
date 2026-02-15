@@ -8,6 +8,7 @@ import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
+import com.gdschongik.gdsc.global.security.MemberAuthInfo;
 import com.gdschongik.gdsc.global.util.MemberUtil;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class EmailVerificationService {
     private final UnivEmailValidator univEmailValidator;
 
     @Transactional
-    public void verifyMemberEmail(EmailVerificationRequest request) {
+    public MemberAuthInfo verifyMemberEmail(EmailVerificationRequest request) {
         Member currentMember = memberUtil.getCurrentMember();
         EmailVerification emailVerification = getEmailVerification(currentMember.getId(), request.token());
         Member previousMember = memberRepository
@@ -36,6 +37,8 @@ public class EmailVerificationService {
 
         updatePreviousMemberOauthId(previousMember, currentMember);
         deleteCurrentMember(currentMember);
+
+        return MemberAuthInfo.from(previousMember);
     }
 
     private EmailVerification getEmailVerification(Long memberId, String verificationToken) {
