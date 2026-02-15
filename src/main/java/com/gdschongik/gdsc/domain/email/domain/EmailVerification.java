@@ -14,21 +14,25 @@ public class EmailVerification {
     @Id
     private Long memberId;
 
+    private Long previousMemberId;
+
     private String verificationToken;
 
     @TimeToLive
     private long ttl;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private EmailVerification(Long memberId, String verificationToken, long ttl) {
+    private EmailVerification(Long memberId, Long previousMemberId, String verificationToken, long ttl) {
         this.memberId = memberId;
+        this.previousMemberId = previousMemberId;
         this.verificationToken = verificationToken;
         this.ttl = ttl;
     }
 
-    public static EmailVerification of(Long memberId, String verificationToken, long ttl) {
+    public static EmailVerification of(Long memberId, Long previousMemberId, String verificationToken, long ttl) {
         return EmailVerification.builder()
                 .memberId(memberId)
+                .previousMemberId(previousMemberId)
                 .verificationToken(verificationToken)
                 .ttl(ttl)
                 .build();
