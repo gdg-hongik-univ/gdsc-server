@@ -50,11 +50,12 @@ public class EmailVerificationLinkSendService {
 </div>
 """;
 
-    public void send(Long previousMemberId) {
+    public void sendPreviousMemberVerificationLink(Long previousMemberId) {
         Member currentMember = memberUtil.getCurrentMember();
         Member previousMember = memberRepository
                 .findById(previousMemberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        validateMemberDuplicate(previousMember, currentMember);
 
         String verificationToken = generateVerificationToken(currentMember, previousMember);
         String verificationLink = verificationLinkUtil.createLink(VERIFY_EMAIL_API_ENDPOINT, verificationToken);
@@ -63,6 +64,12 @@ public class EmailVerificationLinkSendService {
         mailSender.send(previousMember.getEmail(), VERIFICATION_EMAIL_SUBJECT, mailContent);
 
         log.info("[EmailVerificationLinkSendService] 본인 인증 메일 발송: email={}", previousMember.getEmail());
+    }
+
+    private void validateMemberDuplicate(Member currentMember, Member previousMember) {
+        if (currentMember.getId().equals(previousMember.getId())) {
+            throw new CustomException(ErrorCode.EMAIL_VERIFICATION_SAME_MEMBER);
+        }
     }
 
     private String generateVerificationToken(Member currentMember, Member previousMember) {
