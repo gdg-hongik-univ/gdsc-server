@@ -98,4 +98,30 @@ public class OnboardingMemberService {
         boolean isStudentIdDuplicate = memberRepository.existsByStudentId(studentId);
         return MemberStudentIdDuplicateResponse.from(isStudentIdDuplicate);
     }
+
+    @Transactional
+    public void changeOauthId(Long currentMemberId, Long previousMemberId) {
+        Member currentMember =
+                memberRepository.findById(currentMemberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        Member previousMember =
+                memberRepository.findById(previousMemberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        updatePreviousMemberOauthId(previousMember, currentMember);
+        deleteCurrentMember(currentMember);
+    }
+
+    private void updatePreviousMemberOauthId(Member previousMember, Member currentMember) {
+        previousMember.updateOauthId(currentMember.getOauthId());
+        memberRepository.save(previousMember);
+        log.info(
+                "[OnboardingMemberService] oauthId 변경 완료: previousMemberId={}, currentMemberId={}",
+                previousMember.getId(),
+                currentMember.getId());
+    }
+
+    private void deleteCurrentMember(Member currentMember) {
+        currentMember.withdraw();
+        memberRepository.save(currentMember);
+        log.info("[OnboardingMemberService] 임시 회원 탈퇴 처리 완료: currentMemberId={}", currentMember.getId());
+    }
 }
