@@ -1,14 +1,19 @@
 package com.gdschongik.gdsc.domain.auth.application;
 
 import static com.gdschongik.gdsc.global.common.constant.SecurityConstant.*;
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.auth.dao.RefreshTokenRepository;
 import com.gdschongik.gdsc.domain.auth.domain.RefreshToken;
 import com.gdschongik.gdsc.domain.auth.dto.AccessTokenDto;
 import com.gdschongik.gdsc.domain.auth.dto.RefreshTokenDto;
+import com.gdschongik.gdsc.domain.auth.dto.TokenPairDto;
+import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
+import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.member.domain.MemberManageRole;
 import com.gdschongik.gdsc.domain.member.domain.MemberRole;
 import com.gdschongik.gdsc.domain.member.domain.MemberStudyRole;
+import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.security.MemberAuthInfo;
 import com.gdschongik.gdsc.global.util.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -25,6 +30,7 @@ public class JwtService {
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberRepository memberRepository;
 
     public AccessTokenDto createAccessToken(MemberAuthInfo authInfo) {
         return jwtUtil.generateAccessToken(authInfo);
@@ -41,6 +47,14 @@ public class JwtService {
                 RefreshToken.create(refreshTokenDto.memberId(), refreshTokenDto.tokenValue(), refreshTokenDto.ttl());
 
         refreshTokenRepository.save(refreshToken);
+    }
+
+    public TokenPairDto issueTokenPair(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        MemberAuthInfo authInfo = MemberAuthInfo.from(member);
+        AccessTokenDto accessTokenDto = createAccessToken(authInfo);
+        RefreshTokenDto refreshTokenDto = createRefreshToken(memberId);
+        return new TokenPairDto(accessTokenDto.tokenValue(), refreshTokenDto.tokenValue());
     }
 
     public AccessTokenDto retrieveAccessToken(String accessTokenValue) {
