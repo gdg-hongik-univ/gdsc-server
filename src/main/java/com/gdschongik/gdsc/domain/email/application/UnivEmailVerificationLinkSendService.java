@@ -1,7 +1,6 @@
 package com.gdschongik.gdsc.domain.email.application;
 
 import static com.gdschongik.gdsc.global.common.constant.EmailConstant.*;
-import static com.gdschongik.gdsc.global.common.constant.EmailConstant.VERIFICATION_EMAIL_SUBJECT;
 
 import com.gdschongik.gdsc.domain.email.dao.UnivEmailVerificationRepository;
 import com.gdschongik.gdsc.domain.email.domain.UnivEmailVerification;
@@ -41,12 +40,12 @@ public class UnivEmailVerificationLinkSendService {
     private static final String NOTIFICATION_MESSAGE =
             """
 <div style='font-family: "Roboto", sans-serif; margin: 40px; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);'>
-    <h3 style='color: #202124;'>GDGoC Hongik 재학생 인증 메일</h3>
+    <h3 style='color: #202124;'>GDG Hongik Univ. 재학생 인증 메일</h3>
     <p style='color: #5f6368;'>안녕하세요!</p>
-    <p style='color: #5f6368;'>GDGoC Hongik 커뮤니티에 지원해주셔서 대단히 감사드립니다.</p>
+    <p style='color: #5f6368;'>GDG Hongik Univ.의 오픈 커뮤니티에 가입해주셔서 대단히 감사드립니다.</p>
     <p style='color: #5f6368;'>아래의 버튼을 클릭하여 재학생 인증을 완료해주세요. 링크는 %d분 동안 유효합니다.</p>
     <a href='%s' style='display: inline-block; background-color: #4285F4; color: white; padding: 12px 24px; margin: 20px 0; border-radius: 4px; text-decoration: none; font-weight: 500;'>재학생 인증하기</a>
-    <p style='color: #5f6368;'>감사합니다.<br>GDGoC Hongik Team</p>
+    <p style='color: #5f6368;'>감사합니다.<br>GDG Hongik Univ. Core Team</p>
 </div>
 """;
 
@@ -59,7 +58,7 @@ public class UnivEmailVerificationLinkSendService {
         String verificationLink = verificationLinkUtil.createLink(VERIFY_UNIV_EMAIL_API_ENDPOINT, verificationToken);
         String mailContent = writeMailContentWithVerificationLink(verificationLink);
 
-        mailSender.send(univEmail, VERIFICATION_EMAIL_SUBJECT, mailContent);
+        mailSender.send(univEmail, VERIFICATION_UNIV_EMAIL_SUBJECT, mailContent);
 
         log.info("[UnivEmailVerificationLinkSendService] 학생 인증 메일 발송: univEmail={}", univEmail);
     }
