@@ -59,7 +59,7 @@ public class UnivEmailVerificationLinkSendService {
         String verificationLink = verificationLinkUtil.createLink(VERIFY_UNIV_EMAIL_API_ENDPOINT, verificationToken);
         String mailContent = writeMailContentWithVerificationLink(verificationLink);
 
-        mailSender.send(univEmail, VERIFICATION_EMAIL_SUBJECT, mailContent);
+        mailSender.send(univEmail, VERIFICATION_UNIV_EMAIL_SUBJECT, mailContent);
 
         log.info("[UnivEmailVerificationLinkSendService] 학생 인증 메일 발송: univEmail={}", univEmail);
     }
