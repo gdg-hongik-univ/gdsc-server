@@ -28,7 +28,7 @@ public class EmailVerificationService {
     public MemberAuthInfo verifyMemberEmail(EmailVerificationRequest request) {
         EmailVerification emailVerification = emailVerificationRepository
                 .findById(request.token())
-                .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_SENT));
+                .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_VERIFICATION_NOT_FOUND));
         Member currentMember = memberRepository
                 .findById(emailVerification.getCurrentMemberId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
