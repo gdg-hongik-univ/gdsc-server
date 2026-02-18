@@ -39,7 +39,7 @@ public class OnboardingEmailController {
     public ResponseEntity<Void> verifyPreviousMemberEmail(
             @RequestBody @Valid PreviousEmailVerificationRequest request, HttpServletResponse response) {
         Long previousMemberId = emailVerificationService.verifyPreviousMemberEmail(request);
-        TokenPairDto tokenPair = jwtService.issueTokenPair(previousMemberId);
+        TokenPairDto tokenPair = jwtService.createTokenPair(previousMemberId);
         cookieUtil.addTokenCookies(response, tokenPair.accessToken(), tokenPair.refreshToken());
         return ResponseEntity.ok().build();
     }

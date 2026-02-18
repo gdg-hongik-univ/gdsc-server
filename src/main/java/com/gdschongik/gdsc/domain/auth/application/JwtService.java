@@ -49,12 +49,12 @@ public class JwtService {
         refreshTokenRepository.save(refreshToken);
     }
 
-    public TokenPairDto issueTokenPair(Long memberId) {
+    public TokenPairDto createTokenPair(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         MemberAuthInfo authInfo = MemberAuthInfo.from(member);
         AccessTokenDto accessTokenDto = createAccessToken(authInfo);
         RefreshTokenDto refreshTokenDto = createRefreshToken(memberId);
-        return new TokenPairDto(accessTokenDto.tokenValue(), refreshTokenDto.tokenValue());
+        return TokenPairDto.of(accessTokenDto.tokenValue(), refreshTokenDto.tokenValue());
     }
 
     public AccessTokenDto retrieveAccessToken(String accessTokenValue) {
