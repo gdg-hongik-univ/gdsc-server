@@ -2,15 +2,12 @@ package com.gdschongik.gdsc.domain.email.application;
 
 import com.gdschongik.gdsc.domain.email.dao.EmailVerificationRepository;
 import com.gdschongik.gdsc.domain.email.domain.EmailVerification;
-import com.gdschongik.gdsc.domain.email.domain.service.UnivEmailValidator;
 import com.gdschongik.gdsc.domain.email.dto.request.EmailVerificationRequest;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
 import com.gdschongik.gdsc.global.security.MemberAuthInfo;
-import com.gdschongik.gdsc.global.util.MemberUtil;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,17 +19,19 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class EmailVerificationService {
 
-    private final MemberUtil memberUtil;
     private final MemberRepository memberRepository;
     private final EmailVerificationRepository emailVerificationRepository;
-    private final UnivEmailValidator univEmailValidator;
 
     // TODO: 이메일 인증, oauthId 변경, 임시 멤버 삭제, 토큰 재발급 등 4가지 책임이 하나의 흐름에 결합되어 있음.
     //  도메인 이벤트를 활용하여 책임을 분리하는 리팩토링 필요.
     @Transactional
     public MemberAuthInfo verifyMemberEmail(EmailVerificationRequest request) {
-        Member currentMember = memberUtil.getCurrentMember();
-        EmailVerification emailVerification = getEmailVerification(currentMember.getId(), request.token());
+        EmailVerification emailVerification = emailVerificationRepository
+                .findById(request.token())
+                .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_SENT));
+        Member currentMember = memberRepository
+                .findById(emailVerification.getCurrentMemberId())
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         Member previousMember = memberRepository
                 .findById(emailVerification.getPreviousMemberId())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
@@ -41,12 +40,6 @@ public class EmailVerificationService {
         deleteCurrentMember(currentMember);
 
         return MemberAuthInfo.from(previousMember);
-    }
-
-    private EmailVerification getEmailVerification(Long memberId, String verificationToken) {
-        Optional<EmailVerification> emailVerification = emailVerificationRepository.findById(memberId);
-        univEmailValidator.validateEmailVerification(emailVerification, verificationToken);
-        return emailVerification.get();
     }
 
     private void updatePreviousMemberOauthId(Member previousMember, Member currentMember) {
