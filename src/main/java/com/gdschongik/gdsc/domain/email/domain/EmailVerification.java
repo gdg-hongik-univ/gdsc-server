@@ -1,5 +1,8 @@
 package com.gdschongik.gdsc.domain.email.domain;
 
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+
+import com.gdschongik.gdsc.global.exception.CustomException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,5 +40,11 @@ public class EmailVerification {
                 .previousMemberId(previousMemberId)
                 .ttl(ttl)
                 .build();
+    }
+
+    public void verify(String token) {
+        if (!this.verificationToken.equals(token)) {
+            throw new CustomException(EXPIRED_EMAIL_VERIFICATION_TOKEN);
+        }
     }
 }

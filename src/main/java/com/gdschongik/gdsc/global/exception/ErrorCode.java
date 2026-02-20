@@ -61,6 +61,7 @@ public enum ErrorCode {
     EMAIL_NOT_SENT(BAD_REQUEST, "재학생 인증 메일이 발송되지 않았습니다."),
     EXPIRED_EMAIL_VERIFICATION_TOKEN(BAD_REQUEST, "이메일 인증 토큰이 만료되었습니다."),
     INVALID_EMAIL_VERIFICATION_TOKEN(UNAUTHORIZED, "유효하지 않은 이메일 인증 토큰입니다."),
+    EMAIL_VERIFICATION_SAME_MEMBER(CONFLICT, "현재 로그인한 계정과 동일한 계정으로는 본인 인증할 수 없습니다."),
 
     // Discord
     DISCORD_INVALID_CODE_RANGE(INTERNAL_SERVER_ERROR, "디스코드 인증코드는 4자리 숫자여야 합니다."),
