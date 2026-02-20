@@ -6,15 +6,13 @@ import com.gdschongik.gdsc.domain.email.dao.EmailVerificationRepository;
 import com.gdschongik.gdsc.domain.email.domain.EmailVerification;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
-import com.gdschongik.gdsc.global.common.constant.JwtConstant;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
-import com.gdschongik.gdsc.global.property.JwtProperty;
 import com.gdschongik.gdsc.global.util.MemberUtil;
-import com.gdschongik.gdsc.global.util.email.EmailVerificationTokenUtil;
 import com.gdschongik.gdsc.global.util.email.MailSender;
 import com.gdschongik.gdsc.global.util.email.VerificationLinkUtil;
 import java.time.Duration;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,10 +28,8 @@ public class EmailVerificationLinkSendService {
     private final EmailVerificationRepository emailVerificationRepository;
 
     private final MailSender mailSender;
-    private final EmailVerificationTokenUtil emailVerificationTokenUtil;
     private final VerificationLinkUtil verificationLinkUtil;
     private final MemberUtil memberUtil;
-    private final JwtProperty jwtProperty;
 
     public static final Duration VERIFICATION_TOKEN_TIME_TO_LIVE = Duration.ofMinutes(30);
 
@@ -71,17 +67,13 @@ public class EmailVerificationLinkSendService {
     }
 
     private String generateVerificationToken(Member currentMember, Member previousMember) {
-        String verificationToken = emailVerificationTokenUtil.generateEmailVerificationToken(
-                currentMember.getId(), previousMember.getEmail());
-
-        JwtProperty.TokenProperty emailVerificationTokenProperty =
-                jwtProperty.getToken().get(JwtConstant.EMAIL_VERIFICATION_TOKEN);
+        String verificationToken = UUID.randomUUID().toString();
 
         EmailVerification emailVerification = EmailVerification.of(
+                verificationToken,
                 currentMember.getId(),
                 previousMember.getId(),
-                verificationToken,
-                emailVerificationTokenProperty.expirationTime());
+                VERIFICATION_TOKEN_TIME_TO_LIVE.toSeconds());
         emailVerificationRepository.save(emailVerification);
 
         return verificationToken;

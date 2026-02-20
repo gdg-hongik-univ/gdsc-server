@@ -7,7 +7,6 @@ import com.gdschongik.gdsc.domain.email.domain.EmailVerification;
 import com.gdschongik.gdsc.domain.email.domain.event.PreviousEmailVerifiedEvent;
 import com.gdschongik.gdsc.domain.email.dto.request.PreviousEmailVerificationRequest;
 import com.gdschongik.gdsc.global.exception.CustomException;
-import com.gdschongik.gdsc.global.util.MemberUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,23 +19,19 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class EmailVerificationService {
 
-    private final MemberUtil memberUtil;
     private final EmailVerificationRepository emailVerificationRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public Long verifyPreviousMemberEmail(PreviousEmailVerificationRequest request) {
-        Long currentMemberId = memberUtil.getCurrentMemberId();
         EmailVerification emailVerification = emailVerificationRepository
-                .findById(currentMemberId)
-                .orElseThrow(() -> new CustomException(EMAIL_NOT_SENT));
-        emailVerification.verify(request.token());
-
-        applicationEventPublisher.publishEvent(
-                new PreviousEmailVerifiedEvent(currentMemberId, emailVerification.getPreviousMemberId()));
+                .findById(request.token())
+                .orElseThrow(() -> new CustomException(EMAIL_VERIFICATION_NOT_FOUND));
+        applicationEventPublisher.publishEvent(new PreviousEmailVerifiedEvent(
+                emailVerification.getCurrentMemberId(), emailVerification.getPreviousMemberId()));
         log.info(
                 "[EmailVerificationService] 이메일 인증 완료: currentMemberId={}, previousMemberId={}",
-                currentMemberId,
+                emailVerification.getCurrentMemberId(),
                 emailVerification.getPreviousMemberId());
         return emailVerification.getPreviousMemberId();
     }

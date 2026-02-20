@@ -15,28 +15,29 @@ import org.springframework.data.redis.core.TimeToLive;
 public class EmailVerification {
 
     @Id
-    private Long memberId;
+    private String verificationToken;
+
+    private Long currentMemberId;
 
     private Long previousMemberId;
-
-    private String verificationToken;
 
     @TimeToLive
     private long ttl;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private EmailVerification(Long memberId, Long previousMemberId, String verificationToken, long ttl) {
-        this.memberId = memberId;
-        this.previousMemberId = previousMemberId;
+    private EmailVerification(String verificationToken, Long currentMemberId, Long previousMemberId, long ttl) {
         this.verificationToken = verificationToken;
+        this.currentMemberId = currentMemberId;
+        this.previousMemberId = previousMemberId;
         this.ttl = ttl;
     }
 
-    public static EmailVerification of(Long memberId, Long previousMemberId, String verificationToken, long ttl) {
+    public static EmailVerification of(
+            String verificationToken, Long currentMemberId, Long previousMemberId, long ttl) {
         return EmailVerification.builder()
-                .memberId(memberId)
-                .previousMemberId(previousMemberId)
                 .verificationToken(verificationToken)
+                .currentMemberId(currentMemberId)
+                .previousMemberId(previousMemberId)
                 .ttl(ttl)
                 .build();
     }
