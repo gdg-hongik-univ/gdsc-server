@@ -7,7 +7,7 @@ import com.gdschongik.gdsc.global.annotation.DomainService;
 import java.util.Optional;
 
 @DomainService
-public class EmailVerificationStatusService {
+public class UnivEmailVerificationStatusService {
 
     public UnivVerificationStatus determineStatus(
             Member member, Optional<UnivEmailVerification> univEmailVerification) {

@@ -4,13 +4,15 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.email.application.UnivEmailVerificationService;
 import com.gdschongik.gdsc.domain.email.domain.UnivEmailVerification;
-import com.gdschongik.gdsc.domain.email.domain.service.EmailVerificationStatusService;
+import com.gdschongik.gdsc.domain.email.domain.service.UnivEmailVerificationStatusService;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.member.dto.UnivVerificationStatus;
 import com.gdschongik.gdsc.domain.member.dto.request.MemberInfoRequest;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberDashboardResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberInfoResponse;
+import com.gdschongik.gdsc.domain.member.dto.response.MemberPreviousInfoResponse;
+import com.gdschongik.gdsc.domain.member.dto.response.MemberStudentIdDuplicateResponse;
 import com.gdschongik.gdsc.domain.member.dto.response.MemberUnivStatusResponse;
 import com.gdschongik.gdsc.domain.membership.application.MembershipService;
 import com.gdschongik.gdsc.domain.membership.domain.Membership;
@@ -18,6 +20,7 @@ import com.gdschongik.gdsc.domain.recruitment.application.OnboardingRecruitmentS
 import com.gdschongik.gdsc.domain.recruitment.domain.RecruitmentRound;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.util.MemberUtil;
+import com.gdschongik.gdsc.infra.github.client.GithubClient;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +38,8 @@ public class OnboardingMemberService {
     private final MembershipService membershipService;
     private final UnivEmailVerificationService univEmailVerificationService;
     private final MemberRepository memberRepository;
-    private final EmailVerificationStatusService emailVerificationStatusService;
+    private final UnivEmailVerificationStatusService univEmailVerificationStatusService;
+    private final GithubClient githubClient;
 
     public MemberUnivStatusResponse checkUnivVerificationStatus() {
         Member currentMember = memberUtil.getCurrentMember();
@@ -60,13 +64,23 @@ public class OnboardingMemberService {
         final Optional<UnivEmailVerification> univEmailVerification =
                 univEmailVerificationService.getUnivEmailVerificationFromRedis(member.getId());
         UnivVerificationStatus univVerificationStatus =
-                emailVerificationStatusService.determineStatus(member, univEmailVerification);
+                univEmailVerificationStatusService.determineStatus(member, univEmailVerification);
         Optional<RecruitmentRound> currentRecruitmentRound = onboardingRecruitmentService.findCurrentRecruitmentRound();
         Optional<Membership> myMembership = currentRecruitmentRound.flatMap(
                 recruitmentRound -> membershipService.findMyMembership(member, recruitmentRound));
 
         return MemberDashboardResponse.of(
                 member, univVerificationStatus, currentRecruitmentRound.orElse(null), myMembership.orElse(null));
+    }
+
+    public MemberPreviousInfoResponse getPreviousInfoByStudentId(String studentId) {
+        Member previousMember =
+                memberRepository.findByStudentId(studentId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        String previousGithubHandle = githubClient.getGithubHandle(previousMember.getOauthId());
+        String previousEmail = previousMember.getEmail();
+
+        return MemberPreviousInfoResponse.of(previousMember.getId(), previousGithubHandle, previousEmail);
     }
 
     @Transactional
@@ -78,5 +92,36 @@ public class OnboardingMemberService {
         memberRepository.save(member);
 
         log.info("[OnboardingMemberService] 준회원 승급 완료: memberId={}", member.getId());
+    }
+
+    public MemberStudentIdDuplicateResponse checkStudentIdDuplicate(String studentId) {
+        boolean isStudentIdDuplicate = memberRepository.existsByStudentId(studentId);
+        return MemberStudentIdDuplicateResponse.from(isStudentIdDuplicate);
+    }
+
+    @Transactional
+    public void changeOauthId(Long currentMemberId, Long previousMemberId) {
+        Member currentMember =
+                memberRepository.findById(currentMemberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        Member previousMember =
+                memberRepository.findById(previousMemberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        updatePreviousMemberOauthId(previousMember, currentMember);
+        deleteCurrentMember(currentMember);
+    }
+
+    private void updatePreviousMemberOauthId(Member previousMember, Member currentMember) {
+        previousMember.updateOauthId(currentMember.getOauthId());
+        memberRepository.save(previousMember);
+        log.info(
+                "[OnboardingMemberService] oauthId 변경 완료: previousMemberId={}, currentMemberId={}",
+                previousMember.getId(),
+                currentMember.getId());
+    }
+
+    private void deleteCurrentMember(Member currentMember) {
+        currentMember.withdraw();
+        memberRepository.save(currentMember);
+        log.info("[OnboardingMemberService] 임시 회원 탈퇴 처리 완료: currentMemberId={}", currentMember.getId());
     }
 }

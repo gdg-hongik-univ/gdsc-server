@@ -9,7 +9,6 @@ import static com.gdschongik.gdsc.global.common.constant.StudyConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.TemporalConstant.*;
 import static org.mockito.Mockito.*;
 
-import com.gdschongik.gdsc.config.TestLockConfig;
 import com.gdschongik.gdsc.config.TestRedisConfig;
 import com.gdschongik.gdsc.config.TestSyncExecutorConfig;
 import com.gdschongik.gdsc.domain.common.model.SemesterType;
@@ -61,7 +60,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 
-@Import({TestSyncExecutorConfig.class, TestLockConfig.class, TestRedisConfig.class})
+@Import({TestSyncExecutorConfig.class, TestRedisConfig.class})
 @SpringBootTest
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
@@ -166,8 +165,7 @@ public abstract class IntegrationTest {
 
         member.completeUnivEmailVerification(UNIV_EMAIL);
         member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
-        member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
-        member.updateDiscordId(DISCORD_ID);
+        member.verifyDiscord(DISCORD_USERNAME, NICKNAME, DISCORD_ID);
 
         return memberRepository.save(member);
     }
@@ -182,7 +180,7 @@ public abstract class IntegrationTest {
 
         member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
         member.completeUnivEmailVerification(UNIV_EMAIL);
-        member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
+        member.verifyDiscord(DISCORD_USERNAME, NICKNAME, DISCORD_ID);
         member.advanceToAssociate();
         return memberRepository.save(member);
     }

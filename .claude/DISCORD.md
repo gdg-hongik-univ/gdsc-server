@@ -483,13 +483,13 @@ public class DiscordExceptionMessageGenerator {
 
 **파일**: `src/main/java/com/gdschongik/gdsc/domain/discord/application/OnboardingDiscordService.java`
 
-| 메서드 | 설명 |
-|--------|------|
-| `createVerificationCode(String)` | 인증코드 생성 (TTL 5분) |
-| `verifyDiscordCode(DiscordLinkRequest)` | 인증코드 검증 및 연동 완료 |
-| `checkUsernameDuplicate(String)` | 디스코드 유저명 중복 확인 |
-| `checkNicknameDuplicate(String)` | 닉네임 중복 확인 |
-| `checkServerJoined(String)` | 디스코드 서버 합류 여부 확인 |
+| 메서드                               | 설명                          |
+|-----------------------------------|-----------------------------|
+| `createVerificationCode(String)`  | 인증코드 생성 (TTL 5분)            |
+| `linkDiscord(DiscordLinkRequest)` | 인증코드 검증 및 연결 (최초 연동 또는 재연동) |
+| `checkUsernameDuplicate(String)`  | 디스코드 유저명 중복 확인              |
+| `checkNicknameDuplicate(String)`  | 닉네임 중복 확인                   |
+| `checkServerJoined(String)`       | 디스코드 서버 합류 여부 확인            |
 
 ---
 

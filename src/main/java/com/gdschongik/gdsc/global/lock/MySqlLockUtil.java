@@ -7,13 +7,15 @@ import java.sql.SQLException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 
 /**
  * MySQL 네임드 락 기능을 이용해 락을 제어하는 LockUtil 구현체입니다.
+ *
+ * PostgreSQL 마이그레이션에 따라 deprecated 처리되었습니다.
+ * TODO: 구현 참고하여 PostgreSQL Advisory Lock 기능을 이용한 새로운 LockUtil 구현체 작성 필요
  */
+@Deprecated
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class MySqlLockUtil implements LockUtil {
 

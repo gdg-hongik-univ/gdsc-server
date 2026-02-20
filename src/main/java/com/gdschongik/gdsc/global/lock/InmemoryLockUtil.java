@@ -1,17 +1,18 @@
-package com.gdschongik.gdsc.helper;
+package com.gdschongik.gdsc.global.lock;
 
-import com.gdschongik.gdsc.global.lock.LockUtil;
 import java.sql.Connection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 /**
- * 테스트를 위한 인메모리 락 유틸 구현체입니다.
+ * 인메모리 락 유틸 구현체입니다.
  */
 @Slf4j
+@Component
 public class InmemoryLockUtil implements LockUtil {
 
     private final Map<String, ReentrantLock> locks = new ConcurrentHashMap<>();
