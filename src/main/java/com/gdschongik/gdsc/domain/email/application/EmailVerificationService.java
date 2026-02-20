@@ -1,18 +1,16 @@
 package com.gdschongik.gdsc.domain.email.application;
 
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+
 import com.gdschongik.gdsc.domain.email.dao.EmailVerificationRepository;
 import com.gdschongik.gdsc.domain.email.domain.EmailVerification;
-import com.gdschongik.gdsc.domain.email.domain.service.UnivEmailValidator;
-import com.gdschongik.gdsc.domain.email.dto.request.EmailVerificationRequest;
-import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
-import com.gdschongik.gdsc.domain.member.domain.Member;
+import com.gdschongik.gdsc.domain.email.domain.event.PreviousEmailVerifiedEvent;
+import com.gdschongik.gdsc.domain.email.dto.request.PreviousEmailVerificationRequest;
 import com.gdschongik.gdsc.global.exception.CustomException;
-import com.gdschongik.gdsc.global.exception.ErrorCode;
-import com.gdschongik.gdsc.global.security.MemberAuthInfo;
 import com.gdschongik.gdsc.global.util.MemberUtil;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,47 +21,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class EmailVerificationService {
 
     private final MemberUtil memberUtil;
-    private final MemberRepository memberRepository;
     private final EmailVerificationRepository emailVerificationRepository;
-    private final UnivEmailValidator univEmailValidator;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    // TODO: 이메일 인증, oauthId 변경, 임시 멤버 삭제, 토큰 재발급 등 4가지 책임이 하나의 흐름에 결합되어 있음.
-    //  도메인 이벤트를 활용하여 책임을 분리하는 리팩토링 필요.
     @Transactional
-    public MemberAuthInfo verifyMemberEmail(EmailVerificationRequest request) {
-        Member currentMember = memberUtil.getCurrentMember();
-        EmailVerification emailVerification = getEmailVerification(currentMember.getId(), request.token());
-        Member previousMember = memberRepository
-                .findById(emailVerification.getPreviousMemberId())
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+    public Long verifyPreviousMemberEmail(PreviousEmailVerificationRequest request) {
+        Long currentMemberId = memberUtil.getCurrentMemberId();
+        EmailVerification emailVerification = emailVerificationRepository
+                .findById(currentMemberId)
+                .orElseThrow(() -> new CustomException(EMAIL_NOT_SENT));
+        emailVerification.verify(request.token());
 
-        updatePreviousMemberOauthId(previousMember, currentMember);
-        deleteCurrentMember(currentMember);
-
-        return MemberAuthInfo.from(previousMember);
-    }
-
-    private EmailVerification getEmailVerification(Long memberId, String verificationToken) {
-        Optional<EmailVerification> emailVerification = emailVerificationRepository.findById(memberId);
-        univEmailValidator.validateEmailVerification(emailVerification, verificationToken);
-        return emailVerification.get();
-    }
-
-    private void updatePreviousMemberOauthId(Member previousMember, Member currentMember) {
-        previousMember.updateOauthId(currentMember.getOauthId());
-        memberRepository.save(previousMember);
+        applicationEventPublisher.publishEvent(
+                new PreviousEmailVerifiedEvent(currentMemberId, emailVerification.getPreviousMemberId()));
         log.info(
-                "[EmailVerificationService] 이메일 인증 완료: memberId={}, email={}",
-                previousMember.getId(),
-                previousMember.getEmail());
-    }
-
-    private void deleteCurrentMember(Member currentMember) {
-        currentMember.withdraw();
-        memberRepository.save(currentMember);
-        log.info(
-                "[EmailVerificationService] 임시 회원 탈퇴 처리 완료: memberId={}, email={}",
-                currentMember.getId(),
-                currentMember.getEmail());
+                "[EmailVerificationService] 이메일 인증 완료: currentMemberId={}, previousMemberId={}",
+                currentMemberId,
+                emailVerification.getPreviousMemberId());
+        return emailVerification.getPreviousMemberId();
     }
 }

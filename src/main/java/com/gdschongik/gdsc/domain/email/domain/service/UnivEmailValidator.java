@@ -4,7 +4,6 @@ import static com.gdschongik.gdsc.global.common.constant.EmailConstant.HONGIK_UN
 import static com.gdschongik.gdsc.global.common.constant.RegexConstant.HONGIK_EMAIL;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
-import com.gdschongik.gdsc.domain.email.domain.EmailVerification;
 import com.gdschongik.gdsc.domain.email.domain.UnivEmailVerification;
 import com.gdschongik.gdsc.global.annotation.DomainService;
 import com.gdschongik.gdsc.global.exception.CustomException;
@@ -39,21 +38,6 @@ public class UnivEmailValidator {
         }
 
         if (!optionalUnivEmailVerification.get().getVerificationToken().equals(currentToken)) {
-            throw new CustomException(EXPIRED_EMAIL_VERIFICATION_TOKEN);
-        }
-    }
-
-    /**
-     * redis 안의 존재하는 메일인증 정보로 본인 인증 검증
-     * 1. 토큰이 비었는데 인증하려할 시 에러 (인증메일을 보내지 않았거나, 만료된 경우)
-     * 2. 토큰이 redis에 저장된 토큰과 다르면 만료되었다는 에러 (메일 여러번 보낸 경우)
-     */
-    public void validateEmailVerification(Optional<EmailVerification> optionalEmailVerification, String currentToken) {
-        if (optionalEmailVerification.isEmpty()) {
-            throw new CustomException(EMAIL_NOT_SENT);
-        }
-
-        if (!optionalEmailVerification.get().getVerificationToken().equals(currentToken)) {
             throw new CustomException(EXPIRED_EMAIL_VERIFICATION_TOKEN);
         }
     }
