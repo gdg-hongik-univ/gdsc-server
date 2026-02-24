@@ -25,7 +25,7 @@ public class MemberEventHandler {
     @ApplicationModuleListener
     public void handlePreviousEmailVerifiedEvent(PreviousEmailVerifiedEvent event) {
         log.info(
-                "[EmailEventHandler] 과거 계정 이메일 인증 완료 이벤트 수신: currentMemberId={}, previousMemberId={}",
+                "[MemberEventHandler] 과거 계정 이메일 인증 완료 이벤트 수신: currentMemberId={}, previousMemberId={}",
                 event.currentMemberId(),
                 event.previousMemberId());
 
