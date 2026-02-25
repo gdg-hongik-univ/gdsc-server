@@ -108,16 +108,15 @@ jobs:
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           IMAGE_FULL_URL: ${{ steps.metadata.outputs.tags }}
-          ENV_FILE: .env.prod
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          envs: IMAGE_FULL_URL, ENV_FILE # docker-compose.yml 에서 사용할 환경 변수
+          envs: IMAGE_FULL_URL # docker-compose.yml 에서 사용할 환경 변수
           script: |
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             docker pull ${{ env.IMAGE_FULL_URL }}
-            docker compose up -d
+            docker compose -f docker-compose.prod.yml --env-file .env.prod -p prod up -d
             docker image prune -a -f
 
       # Slack 알림
