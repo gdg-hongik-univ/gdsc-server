@@ -50,7 +50,7 @@ public class EventParticipationCustomRepositoryImpl
         List<EventApplicantResponse> fetch = jpaQueryFactory
                 .select(new QEventApplicantResponse(eventParticipation, member))
                 .from(eventParticipation)
-                .innerJoin(member)
+                .leftJoin(member)
                 .on(eqMemberId())
                 .where(eventParticipation.id.in(ids))
                 .orderBy(orderSpecifiers)
