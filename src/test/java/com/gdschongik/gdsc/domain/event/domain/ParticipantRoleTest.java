@@ -72,18 +72,6 @@ class ParticipantRoleTest {
         }
 
         @Test
-        void 회원이_null이고_참여정보의_멤버_ID가_존재할때_예외를_발생시킨다() {
-            // given
-            Member ignored = fixtureHelper.createRegularMember(1L);
-            EventParticipation participationWithRegistered = createEventParticipation(ignored);
-
-            // when & then
-            assertThatThrownBy(() -> ParticipantRole.of(participationWithRegistered, null))
-                    .isInstanceOf(CustomException.class)
-                    .hasMessageContaining(PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_EXISTENCE_MISMATCH.getMessage());
-        }
-
-        @Test
         void 회원이_존재하지만_참여정보의_멤버_ID가_null일때_예외를_발생시킨다() {
             // given
             Member registeredRegularMember = fixtureHelper.createRegularMember(1L);

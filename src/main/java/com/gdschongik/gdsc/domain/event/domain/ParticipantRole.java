@@ -40,7 +40,7 @@ public enum ParticipantRole {
         boolean memberExists = member != null;
         boolean participationMemberExists = participation.getMemberId() != null;
 
-        if (memberExists != participationMemberExists) {
+        if (memberExists && !participationMemberExists) {
             throw new CustomException(PARTICIPANT_ROLE_NOT_CREATABLE_BOTH_EXISTENCE_MISMATCH);
         }
 
