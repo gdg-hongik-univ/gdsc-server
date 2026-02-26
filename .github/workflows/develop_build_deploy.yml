@@ -114,7 +114,7 @@ jobs:
             cd ${{ env.DEPLOY_DIR }}
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             docker pull ${{ env.IMAGE_FULL_URL }}
-            docker compose -f ${{ env.COMPOSE_FILE }} --env-file .env.dev -p dev up -d
+            docker compose -f ${{ env.COMPOSE_FILE }} -p dev up -d
             docker image prune -a -f
 
       # Slack 알림

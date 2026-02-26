@@ -7,7 +7,7 @@ services:
     ports:
       - "8081:8080"
     env_file:
-      - .env.dev
+      - .env
     environment:
       - TZ=Asia/Seoul
       - DOCKER_IMAGE_TAG=${IMAGE_FULL_URL}
