@@ -20,11 +20,11 @@
 
 ### 배포 환경
 
-| 환경 | 데이터베이스 | 컨테이너 | 아키텍처 | OS |
-|------|--------------|----------|----------|-----|
-| local | local MySQL | - | - | - |
-| dev | AWS RDS MySQL | Docker Compose on EC2 | x86_64 | Ubuntu |
-| prod | AWS RDS MySQL | Docker Compose on EC2 | ARM64 (Graviton) | Amazon Linux |
+| 환경 | 데이터베이스           | 컨테이너 | 아키텍처 | OS |
+|------|------------------|----------|----------|-----|
+| local | local PostgreSQL | - | - | - |
+| dev | Supabase PostgreSQL | Docker Compose on EC2 | ARM64 (Graviton) | Amazon Linux |
+| prod | Supabase PostgreSQL | Docker Compose on EC2 | ARM64 (Graviton) | Amazon Linux |
 
 ### 워크플로우 파일 목록
 
@@ -56,12 +56,15 @@
    - Redis 컨테이너 실행 (테스트용)
    - `./gradlew build --configuration-cache` 실행
 
-2. Docker 이미지 생성 및 푸시
+2. Docker 이미지 생성 및 푸시 (ARM64)
+   - QEMU, Buildx로 크로스 플랫폼 빌드
+   - 플랫폼: `linux/arm64/v8`
    - 이미지 태그: Git commit SHA (7자리)
    - 예시: `username/gdsc-server:abc1234`
    - Docker Hub에 푸시
 
 3. EC2 배포
+   - 배포 경로: `/home/ec2-user/dev` (Amazon Linux)
    - SCP로 docker-compose.yml 복사
    - SSH로 배포 스크립트 실행
    - `docker compose up -d`로 컨테이너 재시작
@@ -102,7 +105,7 @@
    - `latest` 태그 미사용
 
 3. EC2 배포
-   - 배포 경로: `/home/ec2-user` (Amazon Linux)
+   - 배포 경로: `/home/ec2-user/prod` (Amazon Linux)
    - 나머지는 Dev와 동일
 
 ### 수동 배포 (롤백 용)
