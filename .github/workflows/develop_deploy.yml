@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: develop
     env:
+      DEPLOY_DIR: /home/ec2-user/dev
+      COMPOSE_FILE: docker-compose.dev.yml
       IMAGE_FULL_URL: ${{ secrets.DOCKERHUB_USERNAME }}/gdsc-server:${{ github.event.inputs.commit_hash }}
     steps:
       - name: Deploy to EC2 Server
@@ -24,9 +26,10 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           envs: IMAGE_FULL_URL # docker-compose.yml 에서 사용할 환경 변수
           script: |
+            cd ${{ env.DEPLOY_DIR }}
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             docker pull ${{ env.IMAGE_FULL_URL }}
-            docker compose up -d
+            docker compose -f ${{ env.COMPOSE_FILE }} -p dev up -d
             docker image prune -a -f
 
       # Slack 알림
