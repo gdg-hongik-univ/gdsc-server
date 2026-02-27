@@ -4,6 +4,7 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.Embeddable;
 import java.time.LocalDateTime;
@@ -30,7 +31,8 @@ public final class Period {
     }
 
     @JsonCreator // TODO: 레코드로 변경 후 제거
-    public static Period of(LocalDateTime startDate, LocalDateTime endDate) {
+    public static Period of(
+            @JsonProperty("startDate") LocalDateTime startDate, @JsonProperty("endDate") LocalDateTime endDate) {
         validatePeriod(startDate, endDate);
         return Period.builder().startDate(startDate).endDate(endDate).build();
     }
