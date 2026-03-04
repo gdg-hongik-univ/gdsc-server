@@ -1,9 +1,9 @@
 package com.gdschongik.gdsc.domain.study.dao;
 
-import static com.gdschongik.gdsc.domain.coupon.domain.QIssuedCoupon.*;
 import static com.gdschongik.gdsc.domain.member.domain.QMember.*;
 import static com.gdschongik.gdsc.domain.study.domain.QStudyHistory.*;
 
+import com.gdschongik.gdsc.domain.study.domain.Study;
 import com.gdschongik.gdsc.domain.study.domain.StudyHistory;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -34,6 +34,15 @@ public class StudyHistoryCustomRepositoryImpl implements StudyHistoryCustomRepos
         return queryFactory
                 .selectFrom(studyHistory)
                 .where(eqStudyId(studyId), studyHistory.student.id.in(studentIds))
+                .fetch();
+    }
+
+    @Override
+    public List<StudyHistory> findAllByStudy(Study study) {
+        return queryFactory
+                .selectFrom(studyHistory)
+                .innerJoin(studyHistory.student, member)
+                .where(eqStudyId(study.getId()))
                 .fetch();
     }
 

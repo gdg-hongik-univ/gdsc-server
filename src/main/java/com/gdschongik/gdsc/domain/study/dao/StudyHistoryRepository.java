@@ -13,6 +13,4 @@ public interface StudyHistoryRepository extends JpaRepository<StudyHistory, Long
     boolean existsByStudentAndStudy(Member currentMember, Study study);
 
     List<StudyHistory> findAllByStudent(Member student);
-
-    List<StudyHistory> findAllByStudy(Study study);
 }
