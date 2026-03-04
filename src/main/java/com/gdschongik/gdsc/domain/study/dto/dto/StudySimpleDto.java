@@ -12,7 +12,7 @@ public record StudySimpleDto(
                 study.getTitle(),
                 study.getType(),
                 study.getSemester(),
-                study.getMentor().getId(),
-                study.getMentor().getName());
+                study.getMentor() != null ? study.getMentor().getId() : null,
+                study.getMentor() != null ? study.getMentor().getName() : null);
     }
 }

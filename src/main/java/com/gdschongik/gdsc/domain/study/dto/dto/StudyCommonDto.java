@@ -41,8 +41,8 @@ public record StudyCommonDto(
                 study.getEndTime(),
                 study.getApplicationPeriod(),
                 study.getOpeningDate(),
-                study.getMentor().getId(),
-                study.getMentor().getName(),
+                study.getMentor() != null ? study.getMentor().getId() : null,
+                study.getMentor() != null ? study.getMentor().getName() : null,
                 study.getMinAssignmentLength());
     }
 }
