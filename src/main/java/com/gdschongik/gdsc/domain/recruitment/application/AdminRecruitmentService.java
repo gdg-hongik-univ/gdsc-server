@@ -40,7 +40,7 @@ public class AdminRecruitmentService {
         Semester semester = Semester.of(request.academicYear(), request.semesterType());
         boolean isRecruitmentSemesterOverlap = recruitmentRepository.existsBySemester(semester);
         boolean isRecruitmentPeriodOverlap =
-                recruitmentRepository.existsByPeriodOverlapping(request.semesterStartDate(), request.semesterEndDate());
+                recruitmentRepository.existsPeriodOverlapping(request.semesterStartDate(), request.semesterEndDate());
 
         recruitmentValidator.validateRecruitmentCreate(isRecruitmentSemesterOverlap, isRecruitmentPeriodOverlap);
 

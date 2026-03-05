@@ -27,7 +27,7 @@ public class RecruitmentCustomRepositoryImpl implements RecruitmentCustomReposit
     }
 
     @Override
-    public boolean existsByPeriodOverlapping(LocalDateTime startDate, LocalDateTime endDate) {
+    public boolean existsPeriodOverlapping(LocalDateTime startDate, LocalDateTime endDate) {
         Integer fetchOne = queryFactory
                 .selectOne()
                 .from(recruitment)
