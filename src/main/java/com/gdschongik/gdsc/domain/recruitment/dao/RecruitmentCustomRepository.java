@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface RecruitmentCustomRepository {
     Optional<Recruitment> findCurrentRecruitment(LocalDateTime now);
+
+    boolean existsByPeriodOverlapping(LocalDateTime startDate, LocalDateTime endDate);
 }

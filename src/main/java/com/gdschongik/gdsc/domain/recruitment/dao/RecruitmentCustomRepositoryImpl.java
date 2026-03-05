@@ -25,4 +25,19 @@ public class RecruitmentCustomRepositoryImpl implements RecruitmentCustomReposit
     private BooleanExpression isWithinSemesterPeriod(LocalDateTime date) {
         return recruitment.semesterPeriod.startDate.loe(date).and(recruitment.semesterPeriod.endDate.goe(date));
     }
+
+    @Override
+    public boolean existsByPeriodOverlapping(LocalDateTime startDate, LocalDateTime endDate) {
+        Integer fetchOne = queryFactory
+                .selectOne()
+                .from(recruitment)
+                .where(isOverlappingPeriod(startDate, endDate))
+                .fetchFirst();
+
+        return fetchOne != null;
+    }
+
+    private BooleanExpression isOverlappingPeriod(LocalDateTime startDate, LocalDateTime endDate) {
+        return recruitment.semesterPeriod.startDate.loe(endDate).and(recruitment.semesterPeriod.endDate.gt(startDate));
+    }
 }
