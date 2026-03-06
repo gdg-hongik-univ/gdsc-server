@@ -13,7 +13,7 @@ public class StudyConstant {
 
     public static final String STUDY_TITLE = "스터디 제목";
     public static final String STUDY_DESCRIPTION = "스터디 설명";
-    public static final String STUDY_DESCRIPTION_NOTION_LINK = "https://gdschongik.com/2025-1-backend-study";
+    public static final String STUDY_DESCRIPTION_NOTION_LINK = "https://gdghongik.com/2025-1-backend-study";
     public static final Semester STUDY_SEMESTER = Semester.of(2025, SemesterType.FIRST);
     public static final Long TOTAL_WEEK = 8L;
     public static final int TOTAL_ROUND = 8;
