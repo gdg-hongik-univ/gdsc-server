@@ -53,13 +53,12 @@ class UnivEmailValidatorTest {
                 "te&st@g.hongik.ac.kr",
                 "te=st@g.hongik.ac.kr",
                 "te'st@g.hongik.ac.kr",
-                "te-st@g.hongik.ac.kr",
                 "te+st@g.hongik.ac.kr",
                 "te,st@g.hongik.ac.kr",
                 "te<st@g.hongik.ac.kr",
                 "te>st@g.hongik.ac.kr"
             })
-    @DisplayName("Email의 '@' 앞 부분에 '&', '=', ''', '-', '+', ',', '<', '>'가 포함되는 경우 예외를 발생시킨다.")
+    @DisplayName("Email의 '@' 앞 부분에 '&', '=', ''', '+', ',', '<', '>'가 포함되는 경우 예외를 발생시킨다.")
     void validateEmailFormatMismatchTest(String email) {
         // when & then
         assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationLink(email, false))
