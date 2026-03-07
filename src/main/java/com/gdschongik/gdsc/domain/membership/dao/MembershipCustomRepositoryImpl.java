@@ -16,7 +16,7 @@ public class MembershipCustomRepositoryImpl implements MembershipCustomRepositor
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public boolean existsByMemberAndRecruitmentWithSatisfiedRequirements(Member member, Recruitment recruitment) {
+    public boolean existsSatisfiedMembershipByRecruitment(Member member, Recruitment recruitment) {
         Integer fetchOne = queryFactory
                 .selectOne()
                 .from(membership)

@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  api-server:
+    image: ${IMAGE_FULL_URL}
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Seoul
+      - DOCKER_IMAGE_TAG=${IMAGE_FULL_URL}
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: "ap-northeast-2"
+        awslogs-group: ${SPRING_PROFILES_ACTIVE}-server-docker-log-group
+        awslogs-multiline-pattern: "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}\\+\\d{2}:\\d{2})"
+  redis:
+    image: "redis:alpine"
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      - TZ=Asia/Seoul

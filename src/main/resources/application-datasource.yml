@@ -7,3 +7,7 @@ spring:
     url: jdbc:postgresql://${POSTGRESQL_HOST}:${POSTGRESQL_PORT}/${POSTGRESQL_DATABASE}
     username: ${POSTGRESQL_USER}
     password: ${POSTGRESQL_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: ${JPA_BATCH_FETCH_SIZE:1000}

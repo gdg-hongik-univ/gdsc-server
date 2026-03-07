@@ -9,6 +9,8 @@ permissions:
   id-token: write
 
 env:
+  DEPLOY_DIR: /home/ec2-user/prod
+  COMPOSE_FILE: docker-compose.prod.yml
   IMAGE_NAME: gdsc-server
 
 jobs:
@@ -99,10 +101,11 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: "docker-compose.yml"
-          target: "/home/ec2-user"
+          source: ${{ env.COMPOSE_FILE }}
+          target: ${{ env.DEPLOY_DIR }}
           overwrite: true
 
+      # EC2로 배포
       - name: Deploy to EC2 Server
         uses: appleboy/ssh-action@master
         env:
@@ -114,9 +117,10 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           envs: IMAGE_FULL_URL # docker-compose.yml 에서 사용할 환경 변수
           script: |
+            cd ${{ env.DEPLOY_DIR }}
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             docker pull ${{ env.IMAGE_FULL_URL }}
-            docker compose up -d
+            docker compose -f ${{ env.COMPOSE_FILE }} -p prod up -d
             docker image prune -a -f
 
       # Slack 알림

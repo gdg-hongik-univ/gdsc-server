@@ -2,6 +2,7 @@ package com.gdschongik.gdsc.domain.coupon.dao;
 
 import static com.gdschongik.gdsc.domain.coupon.domain.QCoupon.*;
 import static com.gdschongik.gdsc.domain.coupon.domain.QIssuedCoupon.issuedCoupon;
+import static com.gdschongik.gdsc.domain.member.domain.QMember.*;
 
 import com.gdschongik.gdsc.domain.coupon.domain.CouponType;
 import com.gdschongik.gdsc.domain.coupon.domain.IssuedCoupon;
@@ -26,14 +27,18 @@ public class IssuedCouponCustomRepositoryImpl implements IssuedCouponCustomRepos
     public Page<IssuedCoupon> findAllIssuedCoupons(IssuedCouponQueryOption queryOption, Pageable pageable) {
         List<IssuedCoupon> fetch = queryFactory
                 .selectFrom(issuedCoupon)
+                .innerJoin(issuedCoupon.member, member)
                 .where(matchesQueryOption(queryOption))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(issuedCoupon.createdAt.desc())
                 .fetch();
 
-        JPAQuery<Long> countQuery =
-                queryFactory.select(issuedCoupon.count()).from(issuedCoupon).where(matchesQueryOption(queryOption));
+        JPAQuery<Long> countQuery = queryFactory
+                .select(issuedCoupon.count())
+                .from(issuedCoupon)
+                .innerJoin(issuedCoupon.member, member)
+                .where(matchesQueryOption(queryOption));
 
         return PageableExecutionUtils.getPage(fetch, pageable, countQuery::fetchOne);
     }
