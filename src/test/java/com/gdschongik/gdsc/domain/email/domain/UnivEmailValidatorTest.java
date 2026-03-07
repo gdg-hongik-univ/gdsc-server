@@ -19,7 +19,7 @@ class UnivEmailValidatorTest {
     @DisplayName("'g.hongik.ac.kr' 도메인을 가진 이메일을 검증할 수 있다.")
     void validateEmailDomainTest() {
         // given
-        String hongikDomainEmail = "test@g.hongik.ac.kr";
+        String hongikDomainEmail = "te-st@g.hongik.ac.kr";
 
         // when & then
         assertThatCode(() -> univEmailValidator.validateSendUnivEmailVerificationLink(hongikDomainEmail, false))
