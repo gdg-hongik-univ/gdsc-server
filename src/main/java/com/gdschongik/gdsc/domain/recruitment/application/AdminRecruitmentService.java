@@ -38,9 +38,11 @@ public class AdminRecruitmentService {
     @Transactional
     public void createRecruitment(RecruitmentCreateRequest request) {
         Semester semester = Semester.of(request.academicYear(), request.semesterType());
-        boolean isRecruitmentOverlap = recruitmentRepository.existsBySemester(semester);
+        boolean isRecruitmentSemesterOverlap = recruitmentRepository.existsBySemester(semester);
+        boolean isRecruitmentPeriodOverlap =
+                recruitmentRepository.existsPeriodOverlapping(request.semesterStartDate(), request.semesterEndDate());
 
-        recruitmentValidator.validateRecruitmentCreate(isRecruitmentOverlap);
+        recruitmentValidator.validateRecruitmentCreate(isRecruitmentSemesterOverlap, isRecruitmentPeriodOverlap);
 
         Recruitment recruitment = Recruitment.create(
                 request.feeName(),

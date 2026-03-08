@@ -37,14 +37,65 @@ class AdminRecruitmentServiceTest extends IntegrationTest {
         @Test
         void 성공한다() {
             // given
+            Recruitment previousRecruitment =
+                    Recruitment.create(FEE_NAME, FEE, Period.of(SEMESTER_START_DATE, SEMESTER_END_DATE), SEMESTER);
+            recruitmentRepository.save(previousRecruitment);
+
             RecruitmentCreateRequest request = new RecruitmentCreateRequest(
-                    SEMESTER_START_DATE, SEMESTER_END_DATE, ACADEMIC_YEAR, SEMESTER_TYPE, FEE_AMOUNT, FEE_NAME);
+                    SEMESTER_START_DATE.plusYears(1), // 이전 리쿠르팅의 다음 연도로 설정
+                    SEMESTER_END_DATE.plusYears(1),
+                    ACADEMIC_YEAR + 1,
+                    SEMESTER_TYPE,
+                    FEE_AMOUNT,
+                    FEE_NAME);
 
             // when
             adminRecruitmentService.createRecruitment(request);
 
             // then
-            assertThat(recruitmentRepository.findAll()).hasSize(1);
+            assertThat(recruitmentRepository.findAll()).hasSize(2);
+        }
+
+        @Test
+        void 학기와_학년이_중복되는_리쿠르팅이_존재한다면_실패한다() {
+            // given
+            Recruitment previousRecruitment =
+                    Recruitment.create(FEE_NAME, FEE, Period.of(SEMESTER_START_DATE, SEMESTER_END_DATE), SEMESTER);
+            recruitmentRepository.save(previousRecruitment);
+
+            RecruitmentCreateRequest request = new RecruitmentCreateRequest(
+                    SEMESTER_START_DATE.plusYears(1),
+                    SEMESTER_END_DATE.plusYears(1),
+                    ACADEMIC_YEAR, // 학기와 학년 중복
+                    SEMESTER_TYPE,
+                    FEE_AMOUNT,
+                    FEE_NAME);
+
+            // when & then
+            assertThatThrownBy(() -> adminRecruitmentService.createRecruitment(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(RECRUITMENT_SEMESTER_OVERLAP.getMessage());
+        }
+
+        @Test
+        void 학기_기간이_겹치는_리쿠르팅이_존재한다면_실패한다() {
+            // given
+            Recruitment previousRecruitment =
+                    Recruitment.create(FEE_NAME, FEE, Period.of(SEMESTER_START_DATE, SEMESTER_END_DATE), SEMESTER);
+            recruitmentRepository.save(previousRecruitment);
+
+            RecruitmentCreateRequest request = new RecruitmentCreateRequest(
+                    SEMESTER_START_DATE, // 이전 리쿠르팅과 학기 기간 중복
+                    SEMESTER_END_DATE,
+                    ACADEMIC_YEAR + 1,
+                    SEMESTER_TYPE,
+                    FEE_AMOUNT,
+                    FEE_NAME);
+
+            // when & then
+            assertThatThrownBy(() -> adminRecruitmentService.createRecruitment(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(RECRUITMENT_PERIOD_OVERLAP.getMessage());
         }
     }
 
