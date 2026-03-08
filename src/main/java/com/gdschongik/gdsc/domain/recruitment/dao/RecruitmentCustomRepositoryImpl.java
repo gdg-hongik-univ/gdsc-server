@@ -38,6 +38,6 @@ public class RecruitmentCustomRepositoryImpl implements RecruitmentCustomReposit
     }
 
     private BooleanExpression isOverlappingPeriod(LocalDateTime startDate, LocalDateTime endDate) {
-        return recruitment.semesterPeriod.endDate.gt(startDate).and(recruitment.semesterPeriod.startDate.loe(endDate));
+        return recruitment.semesterPeriod.endDate.goe(startDate).and(recruitment.semesterPeriod.startDate.loe(endDate));
     }
 }
