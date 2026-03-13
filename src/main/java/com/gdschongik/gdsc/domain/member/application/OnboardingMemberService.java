@@ -87,11 +87,13 @@ public class OnboardingMemberService {
     public void attemptAdvanceToAssociate(long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        member.advanceToAssociate();
-
-        memberRepository.save(member);
-
-        log.info("[OnboardingMemberService] 준회원 승급 완료: memberId={}", member.getId());
+        try {
+            member.advanceToAssociate();
+            memberRepository.save(member);
+            log.info("[OnboardingMemberService] 준회원 승급 완료: memberId={}", member.getId());
+        } catch (CustomException e) {
+            log.info("[OnboardingMemberService] 준회원 승급 실패: memberId={}, reason={}", member.getId(), e.getMessage());
+        }
     }
 
     public MemberStudentIdDuplicateResponse checkStudentIdDuplicate(String studentId) {
