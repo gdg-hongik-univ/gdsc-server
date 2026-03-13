@@ -75,18 +75,8 @@ public class AssociateRequirement {
 
     // 검증 로직
 
-    public void validateAllSatisfied() {
-        if (!isUnivSatisfied()) {
-            throw new CustomException(UNIV_NOT_SATISFIED);
-        }
-
-        if (!isDiscordSatisfied()) {
-            throw new CustomException(DISCORD_NOT_SATISFIED);
-        }
-
-        if (!isInfoSatisfied()) {
-            throw new CustomException(INFO_NOT_SATISFIED);
-        }
+    public boolean isAllSatisfied() {
+        return isUnivSatisfied() && isDiscordSatisfied() && isInfoSatisfied();
     }
 
     public void checkVerifiableUniv() {
