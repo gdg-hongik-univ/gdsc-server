@@ -103,45 +103,47 @@ class MemberTest {
     class 준회원으로_승급시도시 {
 
         @Test
-        void 기본_회원정보_작성하지_않았으면_실패한다() {
+        void 기본_회원정보_작성하지_않았으면_false를_반환한다() {
             // given
             Member member = Member.createGuest(OAUTH_ID);
 
             member.verifyDiscord(DISCORD_USERNAME, NICKNAME, DISCORD_ID);
             member.completeUnivEmailVerification(UNIV_EMAIL);
 
-            // when & then
-            assertThatThrownBy(member::advanceToAssociate)
-                    .isInstanceOf(CustomException.class)
-                    .hasMessage(INFO_NOT_SATISFIED.getMessage());
+            // when
+            boolean advanced = member.tryAdvanceToAssociate();
+
+            // then
+            assertThat(advanced).isFalse();
         }
 
         @Test
-        void 디스코드_인증하지_않았으면_실패한다() {
+        void 디스코드_인증하지_않았으면_false를_반환한다() {
             // given
             Member member = Member.createGuest(OAUTH_ID);
 
             member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
             member.completeUnivEmailVerification(UNIV_EMAIL);
 
-            // when & then
-            assertThatThrownBy(member::advanceToAssociate)
-                    .isInstanceOf(CustomException.class)
-                    .hasMessage(DISCORD_NOT_SATISFIED.getMessage());
+            // when
+            boolean advanced = member.tryAdvanceToAssociate();
+
+            // then
+            assertThat(advanced).isFalse();
         }
 
         @Test
-        void 이미_준회원으로_승급_돼있으면_실패한다() {
+        void 이미_준회원으로_승급_돼있으면_예외를_뱉는다() {
             // given
             Member member = Member.createGuest(OAUTH_ID);
 
             member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
             member.completeUnivEmailVerification(UNIV_EMAIL);
             member.verifyDiscord(DISCORD_USERNAME, NICKNAME, DISCORD_ID);
-            member.advanceToAssociate();
+            member.tryAdvanceToAssociate();
 
             // when & then
-            assertThatThrownBy(member::advanceToAssociate)
+            assertThatThrownBy(member::tryAdvanceToAssociate)
                     .isInstanceOf(CustomException.class)
                     .hasMessage(MEMBER_ALREADY_ASSOCIATE.getMessage());
         }
@@ -156,10 +158,11 @@ class MemberTest {
             member.verifyDiscord(DISCORD_USERNAME, NICKNAME, DISCORD_ID);
 
             // when
-            member.advanceToAssociate();
+            boolean advanced = member.tryAdvanceToAssociate();
 
             // then
             assertThat(member.getRole()).isEqualTo(ASSOCIATE);
+            assertThat(advanced).isTrue();
         }
     }
 
@@ -247,7 +250,7 @@ class MemberTest {
             member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
             member.completeUnivEmailVerification(UNIV_EMAIL);
             member.verifyDiscord(DISCORD_USERNAME, NICKNAME, DISCORD_ID);
-            member.advanceToAssociate();
+            member.tryAdvanceToAssociate();
             member.advanceToRegular();
 
             // when & then
@@ -275,7 +278,7 @@ class MemberTest {
             member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
             member.completeUnivEmailVerification(UNIV_EMAIL);
             member.verifyDiscord(DISCORD_USERNAME, NICKNAME, DISCORD_ID);
-            member.advanceToAssociate();
+            member.tryAdvanceToAssociate();
 
             // when
             member.advanceToRegular();
@@ -296,7 +299,7 @@ class MemberTest {
             member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
             member.completeUnivEmailVerification(UNIV_EMAIL);
             member.verifyDiscord(DISCORD_USERNAME, NICKNAME, DISCORD_ID);
-            member.advanceToAssociate();
+            member.tryAdvanceToAssociate();
 
             // when
             member.demoteToGuest();
