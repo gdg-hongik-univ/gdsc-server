@@ -51,7 +51,7 @@ public class FixtureHelper {
         member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
         member.completeUnivEmailVerification(UNIV_EMAIL);
         member.verifyDiscord(DISCORD_USERNAME, NICKNAME, DISCORD_ID);
-        member.advanceToAssociate();
+        member.tryAdvanceToAssociate();
         return member;
     }
 

@@ -145,8 +145,6 @@ public class Member extends BaseEntity {
         if (!isGuest()) {
             throw new CustomException(MEMBER_NOT_GUEST);
         }
-
-        associateRequirement.validateAllSatisfied();
     }
 
     /**
@@ -238,14 +236,19 @@ public class Member extends BaseEntity {
      * 조건 1 : 기본 회원정보 작성
      * 조건 2 : 재학생 인증
      * 조건 3 : 디스코드 인증
-     * 조건 4 : 멤버가 게스트이어야 함
+     *
+     * 승급 시도 결과 로깅을 위해 true/false를 응답합니다.
      */
-    public void advanceToAssociate() {
+    public boolean tryAdvanceToAssociate() {
         validateStatusUpdatable();
-
         validateAssociateAvailable();
 
-        role = ASSOCIATE;
+        if (associateRequirement.isAllSatisfied()) {
+            role = ASSOCIATE;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
