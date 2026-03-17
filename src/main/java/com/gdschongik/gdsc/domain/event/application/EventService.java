@@ -50,8 +50,7 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public Page<EventResponse> searchEvent(String name, Pageable pageable) {
-        String searchName = (name == null || name.isBlank()) ? "" : name;
-        Page<Event> events = eventRepository.findAllByNameContains(searchName, pageable);
+        Page<Event> events = eventRepository.findAllByNameContains(name, pageable);
 
         List<EventResponse> response = events.stream()
                 .map(event -> EventResponse.of(
