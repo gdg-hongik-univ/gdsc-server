@@ -6,9 +6,7 @@ import static com.gdschongik.gdsc.domain.member.domain.MemberStudyRole.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.common.model.BaseEntity;
-import com.gdschongik.gdsc.domain.member.domain.event.MemberAdvancedToRegularEvent;
-import com.gdschongik.gdsc.domain.member.domain.event.MemberAssociateRequirementUpdatedEvent;
-import com.gdschongik.gdsc.domain.member.domain.event.MemberDemotedToAssociateEvent;
+import com.gdschongik.gdsc.domain.member.domain.event.*;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -147,8 +145,6 @@ public class Member extends BaseEntity {
         if (!isGuest()) {
             throw new CustomException(MEMBER_NOT_GUEST);
         }
-
-        associateRequirement.validateAllSatisfied();
     }
 
     /**
@@ -205,15 +201,33 @@ public class Member extends BaseEntity {
      * 디스코드 서버와의 연동을 진행합니다.
      * 디스코드 인증상태를 인증 처리합니다.
      */
-    public void verifyDiscord(String discordUsername, String nickname) {
+    public void verifyDiscord(String discordUsername, String nickname, String discordId) {
         validateStatusUpdatable();
 
-        this.discordUsername = discordUsername;
-        this.nickname = nickname;
+        updateDiscordUsername(discordUsername);
+        updateNickname(nickname);
+        updateDiscordId(discordId);
 
         associateRequirement.verifyDiscord();
 
         registerEvent(new MemberAssociateRequirementUpdatedEvent(this.id));
+    }
+
+    /**
+     * 디스코드 서버와의 재연동을 진행합니다.
+     */
+    public void changeDiscord(String discordUsername, String nickname, String discordId) {
+        validateStatusUpdatable();
+
+        String previousDiscordId = this.discordId;
+
+        updateDiscordUsername(discordUsername);
+        updateNickname(nickname);
+        updateDiscordId(discordId);
+
+        if (previousDiscordId != null && !previousDiscordId.equals(discordId)) {
+            registerEvent(new MemberDiscordChangedEvent(id, role, previousDiscordId, discordId));
+        }
     }
 
     /**
@@ -222,14 +236,19 @@ public class Member extends BaseEntity {
      * 조건 1 : 기본 회원정보 작성
      * 조건 2 : 재학생 인증
      * 조건 3 : 디스코드 인증
-     * 조건 4 : 멤버가 게스트이어야 함
+     *
+     * 승급 시도 결과 로깅을 위해 true/false를 응답합니다.
      */
-    public void advanceToAssociate() {
+    public boolean tryAdvanceToAssociate() {
         validateStatusUpdatable();
-
         validateAssociateAvailable();
 
-        role = ASSOCIATE;
+        if (associateRequirement.isAllSatisfied()) {
+            role = ASSOCIATE;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -296,8 +315,21 @@ public class Member extends BaseEntity {
         this.lastLoginAt = now;
     }
 
+    private void updateDiscordUsername(String discordUsername) {
+        this.discordUsername = discordUsername;
+    }
+
+    private void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     public void updateDiscordId(String discordId) {
         this.discordId = discordId;
+    }
+
+    public void updateOauthId(String oauthId) {
+        validateStatusUpdatable();
+        this.oauthId = oauthId;
     }
 
     /**

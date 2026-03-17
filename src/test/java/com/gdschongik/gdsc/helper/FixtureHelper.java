@@ -50,8 +50,8 @@ public class FixtureHelper {
         Member member = createGuestMember(id);
         member.updateInfo(STUDENT_ID, NAME, PHONE_NUMBER, D022, EMAIL);
         member.completeUnivEmailVerification(UNIV_EMAIL);
-        member.verifyDiscord(DISCORD_USERNAME, NICKNAME);
-        member.advanceToAssociate();
+        member.verifyDiscord(DISCORD_USERNAME, NICKNAME, DISCORD_ID);
+        member.tryAdvanceToAssociate();
         return member;
     }
 

@@ -1,8 +1,11 @@
 package com.gdschongik.gdsc.domain.discord.application.handler;
 
+import static com.gdschongik.gdsc.domain.member.domain.MemberRole.*;
 import static com.gdschongik.gdsc.global.common.constant.DiscordConstant.*;
 
+import com.gdschongik.gdsc.domain.member.domain.MemberRole;
 import com.gdschongik.gdsc.domain.member.domain.event.MemberDemotedToAssociateEvent;
+import com.gdschongik.gdsc.domain.member.domain.event.MemberDiscordChangedEvent;
 import com.gdschongik.gdsc.global.util.DiscordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,16 +23,29 @@ public class MemberDiscordRoleRevokeHandler implements SpringEventHandler {
 
     @Override
     public void delegate(Object context) {
-        MemberDemotedToAssociateEvent event = (MemberDemotedToAssociateEvent) context;
+        if (context instanceof MemberDemotedToAssociateEvent event) {
+            revokeDiscordRole(event.memberId(), event.discordId());
+        } else if (context instanceof MemberDiscordChangedEvent event) {
+            revokeDiscordRoleWhenRegularRole(event.memberId(), event.previousDiscordId(), event.memberRole());
+        }
+    }
+
+    private void revokeDiscordRoleWhenRegularRole(Long memberId, String discordId, MemberRole role) {
+        if (role == REGULAR) {
+            revokeDiscordRole(memberId, discordId);
+        }
+    }
+
+    private void revokeDiscordRole(Long memberId, String discordId) {
         Guild guild = discordUtil.getCurrentGuild();
-        Member member = discordUtil.getMemberById(event.discordId());
+        Member member = discordUtil.getMemberById(discordId);
         Role role = discordUtil.findRoleByName(MEMBER_ROLE_NAME);
 
         guild.removeRoleFromMember(member, role).queue();
 
         log.info(
                 "[MemberDiscordRoleRevokeHandler] 디스코드 서버 정회원 역할 제거 완료: memberId={}, discordId={}",
-                event.memberId(),
-                event.discordId());
+                memberId,
+                discordId);
     }
 }

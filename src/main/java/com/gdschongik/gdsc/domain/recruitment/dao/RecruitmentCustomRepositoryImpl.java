@@ -22,7 +22,22 @@ public class RecruitmentCustomRepositoryImpl implements RecruitmentCustomReposit
                 .fetchOne());
     }
 
+    @Override
+    public boolean existsPeriodOverlapping(LocalDateTime startDate, LocalDateTime endDate) {
+        Integer fetchOne = queryFactory
+                .selectOne()
+                .from(recruitment)
+                .where(isOverlappingPeriod(startDate, endDate))
+                .fetchFirst();
+
+        return fetchOne != null;
+    }
+
     private BooleanExpression isWithinSemesterPeriod(LocalDateTime date) {
         return recruitment.semesterPeriod.startDate.loe(date).and(recruitment.semesterPeriod.endDate.goe(date));
+    }
+
+    private BooleanExpression isOverlappingPeriod(LocalDateTime startDate, LocalDateTime endDate) {
+        return recruitment.semesterPeriod.endDate.goe(startDate).and(recruitment.semesterPeriod.startDate.loe(endDate));
     }
 }

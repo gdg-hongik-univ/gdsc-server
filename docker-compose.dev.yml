@@ -1,12 +1,11 @@
 version: "3.8"
 
 services:
-  backend:
+  api-server:
     image: ${IMAGE_FULL_URL}
-    container_name: gdsc-server
     restart: always
     ports:
-      - "80:8080"
+      - "8081:8080"
     env_file:
       - .env
     environment:
@@ -20,9 +19,8 @@ services:
         awslogs-multiline-pattern: "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}\\+\\d{2}:\\d{2})"
   redis:
     image: "redis:alpine"
-    container_name: redis
     restart: always
     ports:
-      - "6379:6379"
+      - "6380:6379"
     environment:
       - TZ=Asia/Seoul

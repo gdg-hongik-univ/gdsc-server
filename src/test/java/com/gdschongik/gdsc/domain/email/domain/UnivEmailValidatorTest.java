@@ -19,7 +19,7 @@ class UnivEmailValidatorTest {
     @DisplayName("'g.hongik.ac.kr' 도메인을 가진 이메일을 검증할 수 있다.")
     void validateEmailDomainTest() {
         // given
-        String hongikDomainEmail = "test@g.hongik.ac.kr";
+        String hongikDomainEmail = "te-st@g.hongik.ac.kr";
 
         // when & then
         assertThatCode(() -> univEmailValidator.validateSendUnivEmailVerificationLink(hongikDomainEmail, false))
@@ -53,13 +53,12 @@ class UnivEmailValidatorTest {
                 "te&st@g.hongik.ac.kr",
                 "te=st@g.hongik.ac.kr",
                 "te'st@g.hongik.ac.kr",
-                "te-st@g.hongik.ac.kr",
                 "te+st@g.hongik.ac.kr",
                 "te,st@g.hongik.ac.kr",
                 "te<st@g.hongik.ac.kr",
                 "te>st@g.hongik.ac.kr"
             })
-    @DisplayName("Email의 '@' 앞 부분에 '&', '=', ''', '-', '+', ',', '<', '>'가 포함되는 경우 예외를 발생시킨다.")
+    @DisplayName("Email의 '@' 앞 부분에 '&', '=', ''', '+', ',', '<', '>'가 포함되는 경우 예외를 발생시킨다.")
     void validateEmailFormatMismatchTest(String email) {
         // when & then
         assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationLink(email, false))

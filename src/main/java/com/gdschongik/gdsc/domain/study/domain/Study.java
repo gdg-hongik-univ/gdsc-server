@@ -220,9 +220,9 @@ public class Study extends BaseEntity {
         return studySessions.stream()
                 .filter(studySession -> studySession.getPosition() == 1)
                 .findFirst()
-                .map(studySession -> type.isLive()
-                        ? studySession.getLessonPeriod().getStartDate()
-                        : studySession.getAssignmentPeriod().getStartDate())
+                .map(studySession ->
+                        type.isLive() ? studySession.getLessonPeriod() : studySession.getAssignmentPeriod())
+                .map(Period::getStartDate)
                 .orElse(null);
     }
 

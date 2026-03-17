@@ -14,7 +14,7 @@ public interface IssuedCouponQueryMethod {
     }
 
     default BooleanExpression eqMemberName(String memberName) {
-        return memberName != null ? issuedCoupon.coupon.name.containsIgnoreCase(memberName) : null;
+        return memberName != null ? issuedCoupon.member.name.containsIgnoreCase(memberName) : null;
     }
 
     default BooleanExpression eqMember(Member member) {

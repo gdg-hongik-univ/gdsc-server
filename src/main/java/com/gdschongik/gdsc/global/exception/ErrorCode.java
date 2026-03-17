@@ -57,10 +57,11 @@ public enum ErrorCode {
     UNIV_EMAIL_FORMAT_MISMATCH(BAD_REQUEST, "형식에 맞지 않는 재학생 메일입니다."),
     UNIV_EMAIL_DOMAIN_MISMATCH(BAD_REQUEST, "재학생 메일의 도메인이 맞지 않습니다."),
     MESSAGING_EXCEPTION(BAD_REQUEST, "수신자 이메일이 올바르지 않습니다."),
-    VERIFICATION_CODE_NOT_FOUND(NOT_FOUND, "재학생 인증 코드가 존재하지 않습니다."),
+    EMAIL_VERIFICATION_NOT_FOUND(NOT_FOUND, "인증 정보가 존재하지 않습니다."),
     EMAIL_NOT_SENT(BAD_REQUEST, "재학생 인증 메일이 발송되지 않았습니다."),
     EXPIRED_EMAIL_VERIFICATION_TOKEN(BAD_REQUEST, "이메일 인증 토큰이 만료되었습니다."),
     INVALID_EMAIL_VERIFICATION_TOKEN(UNAUTHORIZED, "유효하지 않은 이메일 인증 토큰입니다."),
+    EMAIL_VERIFICATION_SAME_MEMBER(CONFLICT, "현재 로그인한 계정과 동일한 계정으로는 본인 인증할 수 없습니다."),
 
     // Discord
     DISCORD_INVALID_CODE_RANGE(INTERNAL_SERVER_ERROR, "디스코드 인증코드는 4자리 숫자여야 합니다."),
@@ -83,7 +84,8 @@ public enum ErrorCode {
 
     // Recruitment
     DATE_PRECEDENCE_INVALID(BAD_REQUEST, "종료일이 시작일과 같거나 앞설 수 없습니다."),
-    RECRUITMENT_OVERLAP(BAD_REQUEST, "해당 학기에 이미 리크루팅이 존재합니다."),
+    RECRUITMENT_SEMESTER_OVERLAP(BAD_REQUEST, "해당 학기에 이미 리크루팅이 존재합니다."),
+    RECRUITMENT_PERIOD_OVERLAP(BAD_REQUEST, "해당 기간에 이미 리크루팅이 존재합니다. 학기 시작일과 종료일을 확인해주세요."),
     RECRUITMENT_NOT_FOUND(NOT_FOUND, "리크루팅이 존재하지 않습니다."),
     RECRUITMENT_PERIOD_NOT_WITHIN_TWO_WEEKS(BAD_REQUEST, "모집 시작일과 종료일이 학기 시작일로부터 2주 이내에 있지 않습니다."),
 

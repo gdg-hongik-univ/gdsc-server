@@ -42,8 +42,8 @@ public record StudyManagerDto(
                 study.getApplicationPeriod(),
                 study.getDiscordChannelId(),
                 study.getDiscordRoleId(),
-                study.getMentor().getId(),
-                study.getMentor().getName(),
+                study.getMentor() != null ? study.getMentor().getId() : null,
+                study.getMentor() != null ? study.getMentor().getName() : null,
                 study.getMinAssignmentLength());
     }
 }

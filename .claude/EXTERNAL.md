@@ -303,7 +303,7 @@ public interface MailSender {
 **특징**:
 - `MimeMessage`를 사용한 HTML 이메일 발송
 - `message.setText(content, "utf-8", "html")`: HTML 형식 지원
-- 발신자: `GDSC Hongik <gdsc.hongik@gmail.com>`
+- 발신자: `GDGoC Hongik <gdsc.hongik@gmail.com>`
 
 ### 4.3 Gmail SMTP 설정
 
@@ -381,7 +381,7 @@ https://{환경별_URL}/onboarding/verify-email?token={JWT_TOKEN}
 **이메일 템플릿**: 인라인 CSS 스타일링된 HTML
 ```html
 <div style='font-family: "Roboto", sans-serif; ...'>
-    <h3>GDSC Hongik 재학생 인증 메일</h3>
+    <h3>GDGoC Hongik 재학생 인증 메일</h3>
     <a href='{링크}'>재학생 인증하기</a>
 </div>
 ```

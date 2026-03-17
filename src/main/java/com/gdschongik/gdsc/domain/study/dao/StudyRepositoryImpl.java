@@ -39,7 +39,7 @@ public class StudyRepositoryImpl implements StudyCustomRepository {
                 .selectFrom(study)
                 .join(study.studySessions)
                 .fetchJoin()
-                .join(study.mentor)
+                .leftJoin(study.mentor)
                 .fetchJoin()
                 .fetch();
     }
