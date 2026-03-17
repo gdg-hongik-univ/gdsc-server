@@ -49,7 +49,7 @@ public class EventServiceTest extends IntegrationTest {
     class 이벤트_검색시 {
 
         @Test
-        void 검색어를_넣지_않고_조회하면_모든_이벤트가_조회된다() {
+        void 검색어를_빈_문자열로_조회하면_모든_이벤트가_조회된다() {
             // given
             createEvent("2026-1 새싹 세미나");
             createEvent("2026-1 프로젝트 트랙 결과 발표");
