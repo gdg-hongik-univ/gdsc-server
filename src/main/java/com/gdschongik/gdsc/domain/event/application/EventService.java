@@ -32,17 +32,6 @@ public class EventService {
     private final EventParticipationRepository eventParticipationRepository;
     private final EventDomainService eventDomainService;
 
-    @Transactional(readOnly = true)
-    public Page<EventResponse> getEvents(Pageable pageable) {
-        Page<Event> events = eventRepository.findAll(pageable);
-
-        List<EventResponse> response = events.stream()
-                .map(event -> EventResponse.of(event, eventParticipationRepository.countByEvent(event)))
-                .toList();
-
-        return new PageImpl<>(response, pageable, events.getTotalElements());
-    }
-
     @Transactional
     public EventCreateResponse createEvent(EventCreateRequest request) {
         Event event = Event.create(
@@ -62,7 +51,8 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public Page<EventResponse> searchEvent(String name, Pageable pageable) {
-        Page<Event> events = eventRepository.findAllByNameContains(name, pageable);
+        String searchName = (name == null || name.isBlank()) ? "" : name;
+        Page<Event> events = eventRepository.findAllByNameContains(searchName, pageable);
 
         List<EventResponse> response = events.stream()
                 .map(event -> EventResponse.of(event, eventParticipationRepository.countByEvent(event)))
