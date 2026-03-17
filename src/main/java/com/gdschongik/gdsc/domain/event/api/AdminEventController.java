@@ -46,7 +46,7 @@ public class AdminEventController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "이벤트 검색", description = "이벤트를 검색합니다.")
+    @Operation(summary = "행사 검색", description = "행사를 검색합니다.")
     @GetMapping("/search")
     public ResponseEntity<Page<EventResponse>> searchEvent(
             @RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
@@ -54,7 +54,7 @@ public class AdminEventController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "이벤트 기본 정보 수정", description = "이벤트 기본 정보를 수정합니다.")
+    @Operation(summary = "행사 기본 정보 수정", description = "행사 기본 정보를 수정합니다.")
     @PutMapping("/{eventId}/basic-info")
     public ResponseEntity<Void> updateEventBasicInfo(
             @PathVariable Long eventId, @Valid @RequestBody EventUpdateBasicInfoRequest request) {
@@ -62,7 +62,7 @@ public class AdminEventController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "이벤트 폼 정보 수정", description = "이벤트 신청 폼 관련 정보를 수정합니다.")
+    @Operation(summary = "행사 폼 정보 수정", description = "행사 신청 폼 관련 정보를 수정합니다.")
     @PutMapping("/{eventId}/form-info")
     public ResponseEntity<Void> updateEventFormInfo(
             @PathVariable Long eventId, @Valid @RequestBody EventUpdateFormInfoRequest request) {
