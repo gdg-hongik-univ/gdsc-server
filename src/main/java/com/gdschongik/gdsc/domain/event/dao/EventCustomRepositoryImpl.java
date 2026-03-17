@@ -19,10 +19,8 @@ public class EventCustomRepositoryImpl implements EventCustomRepository, EventQu
     public Page<Event> findAllByNameContains(String name, Pageable pageable) {
         List<Long> ids = getEventIdsContainsName(name);
 
-        List<Event> fetch = jpaQueryFactory
-                .selectFrom(event)
-                .where(event.id.in(ids))
-                .fetch();
+        List<Event> fetch =
+                jpaQueryFactory.selectFrom(event).where(event.id.in(ids)).fetch();
 
         return PageableExecutionUtils.getPage(fetch, pageable, ids::size);
     }
