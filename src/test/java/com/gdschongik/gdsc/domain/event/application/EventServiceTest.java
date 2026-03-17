@@ -46,7 +46,7 @@ public class EventServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 이벤트_조회시 {
+    class 이벤트_검색시 {
 
         @Test
         void 검색어를_넣지_않고_조회하면_모든_이벤트가_조회된다() {
