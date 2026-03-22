@@ -280,4 +280,18 @@ public abstract class IntegrationTest {
 
         return eventRepository.save(event);
     }
+
+    protected Event createEvent(String eventName) {
+        Event event = Event.create(
+                eventName,
+                VENUE,
+                EVENT_START_AT,
+                EVENT_DESCRIPTION,
+                EVENT_APPLICATION_PERIOD,
+                REGULAR_ROLE_ONLY_STATUS,
+                MAIN_EVENT_MAX_APPLICATION_COUNT,
+                AFTER_PARTY_MAX_APPLICATION_COUNT);
+
+        return eventRepository.save(event);
+    }
 }

@@ -31,13 +31,6 @@ public class AdminEventController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "행사 목록 조회", description = "행사 목록을 조회합니다.")
-    @GetMapping
-    public ResponseEntity<Page<EventResponse>> getEvents(@ParameterObject Pageable pageable) {
-        var response = eventService.getEvents(pageable);
-        return ResponseEntity.ok(response);
-    }
-
     @Operation(summary = "행사 생성", description = "행사를 생성합니다.")
     @PostMapping
     public ResponseEntity<EventCreateResponse> createEvent(@Valid @RequestBody EventCreateRequest request) {
@@ -48,7 +41,7 @@ public class AdminEventController {
     @Operation(summary = "이벤트 검색", description = "이벤트를 검색합니다.")
     @GetMapping("/search")
     public ResponseEntity<Page<EventResponse>> searchEvent(
-            @RequestParam String name, @ParameterObject Pageable pageable) {
+            @RequestParam(required = false) String name, @ParameterObject Pageable pageable) {
         var response = eventService.searchEvent(name, pageable);
         return ResponseEntity.ok(response);
     }

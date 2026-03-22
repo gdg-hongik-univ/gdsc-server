@@ -9,11 +9,15 @@ import com.gdschongik.gdsc.domain.event.domain.UsageStatus;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
+import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.helper.IntegrationTest;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 public class EventServiceTest extends IntegrationTest {
 
@@ -38,6 +42,55 @@ public class EventServiceTest extends IntegrationTest {
 
             // when & then
             assertThatCode(() -> eventService.createEvent(request)).doesNotThrowAnyException();
+        }
+    }
+
+    @Nested
+    class 이벤트_검색시 {
+
+        @Test
+        void 검색어를_빈_문자열로_조회하면_모든_이벤트가_조회된다() {
+            // given
+            createEvent("2026-1 새싹 세미나");
+            createEvent("2026-1 프로젝트 트랙 결과 발표");
+            createEvent("2026-1 코어멤버 세미나");
+
+            // when
+            Page<EventResponse> result = eventService.searchEvent("", PageRequest.of(0, 8));
+
+            // then
+            Assertions.assertThat(result).hasSize(3);
+        }
+
+        @Test
+        void 검색어가_null일_때_모든_이벤트가_조회된다() {
+            // given
+            createEvent("2026-1 새싹 세미나");
+            createEvent("2026-1 프로젝트 트랙 결과 발표");
+            createEvent("2026-1 코어멤버 세미나");
+
+            // when
+            Page<EventResponse> result = eventService.searchEvent(null, PageRequest.of(0, 8));
+
+            // then
+            Assertions.assertThat(result).hasSize(3);
+        }
+
+        @Test
+        void 검색어를_이름에_포함하는_모든_이벤트가_조회된다() {
+            // given
+            createEvent("2026-1 새싹 세미나");
+            createEvent("2026-1 프로젝트 트랙 결과 발표");
+            createEvent("2026-1 코어멤버 세미나");
+
+            // when
+            Page<EventResponse> result = eventService.searchEvent("세미나", PageRequest.of(0, 8));
+
+            // then
+            Assertions.assertThat(result)
+                    .hasSize(2)
+                    .extracting(res -> res.event().name())
+                    .allMatch(name -> name.contains("세미나"));
         }
     }
 

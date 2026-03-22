@@ -6,13 +6,11 @@ import com.gdschongik.gdsc.domain.event.dao.EventParticipationRepository;
 import com.gdschongik.gdsc.domain.event.dao.EventRepository;
 import com.gdschongik.gdsc.domain.event.domain.Event;
 import com.gdschongik.gdsc.domain.event.domain.service.EventDomainService;
-import com.gdschongik.gdsc.domain.event.domain.service.EventParticipationDomainService;
 import com.gdschongik.gdsc.domain.event.dto.request.EventCreateRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateBasicInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.request.EventUpdateFormInfoRequest;
 import com.gdschongik.gdsc.domain.event.dto.response.EventCreateResponse;
 import com.gdschongik.gdsc.domain.event.dto.response.EventResponse;
-import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.lock.DistributedLock;
 import java.util.List;
@@ -31,22 +29,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventParticipationRepository eventParticipationRepository;
-    private final MemberRepository memberRepository;
     private final EventDomainService eventDomainService;
-    private final EventParticipationDomainService eventParticipationDomainService;
-
-    @Transactional(readOnly = true)
-    public Page<EventResponse> getEvents(Pageable pageable) {
-        Page<Event> events = eventRepository.findAll(pageable);
-        List<EventResponse> response = events.stream()
-                .map(event -> EventResponse.of(
-                        event,
-                        eventParticipationRepository.countMainEventApplicantsByEvent(event),
-                        eventParticipationRepository.countAfterPartyApplicantsByEvent(event)))
-                .toList();
-
-        return new PageImpl<>(response, pageable, events.getTotalElements());
-    }
 
     @Transactional
     public EventCreateResponse createEvent(EventCreateRequest request) {
