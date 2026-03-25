@@ -65,8 +65,9 @@ public enum AssignmentHistoryStatus {
 
         Period assignmentPeriod = studySession.getAssignmentPeriod();
 
-        if (!assignmentPeriod.isWithin(committedAt)) {
-            throw new CustomException(ASSIGNMENT_HISTORY_NOT_WITHIN_PERIOD);
+        // 과제 제출일시가 과제 제출기한 마감일시 이후인 경우
+        if (committedAt.isAfter(assignmentPeriod.getEndDate())) {
+            throw new CustomException(ASSIGNMENT_HISTORY_AFTER_PERIOD_END);
         }
     }
 }
