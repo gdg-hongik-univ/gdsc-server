@@ -20,7 +20,7 @@ public enum AssignmentHistoryStatus {
     private final String value;
 
     /**
-     * 과제 제출 상태를 반환합니다. 제출기한 이내에 있는 제츌이력만 인자로 받습니다.
+     * 과제 제출 상태를 반환합니다. 제출기한 마감일시 이전의 제출이력만 인자로 받습니다.
      * 제출기한이 설정되지 않았을 경우, 판정 대상에서 제외합니다.
      * 제출기한에 포함되지 않는 제출이력은 제출기한 변경 전 제출이력이므로, 판정 대상에서 제외합니다.
      *
@@ -65,8 +65,9 @@ public enum AssignmentHistoryStatus {
 
         Period assignmentPeriod = studySession.getAssignmentPeriod();
 
-        if (!assignmentPeriod.isWithin(committedAt)) {
-            throw new CustomException(ASSIGNMENT_HISTORY_NOT_WITHIN_PERIOD);
+        // 과제 제출일시가 과제 제출기한 마감일시 이후인 경우
+        if (committedAt.isAfter(assignmentPeriod.getEndDate())) {
+            throw new CustomException(ASSIGNMENT_HISTORY_AFTER_PERIOD_END);
         }
     }
 }
