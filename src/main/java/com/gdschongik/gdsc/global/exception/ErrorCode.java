@@ -181,7 +181,7 @@ public enum ErrorCode {
     ASSIGNMENT_SUBMIT_CANCELED(CONFLICT, "과제 휴강 주간에는 과제를 제출할 수 없습니다."),
     ASSIGNMENT_SUBMIT_DEADLINE_PASSED(CONFLICT, "과제 마감 기한이 지났습니다."),
 
-    // AssignmentHistory (Assignment V2)
+    // AssignmentHistory
     ASSIGNMENT_HISTORY_AFTER_PERIOD_END(INTERNAL_SERVER_ERROR, "제출상태 변환 시 제출 마감 이후의 제출이력을 인자로 받을 수 없습니다."),
 
     // Github
