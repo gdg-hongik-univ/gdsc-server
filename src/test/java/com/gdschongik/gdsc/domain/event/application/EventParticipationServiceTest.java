@@ -1212,19 +1212,6 @@ class EventParticipationServiceTest extends IntegrationTest {
         return eventRepository.save(event);
     }
 
-    private Event createEvent(String name) {
-        Event event = Event.create(
-                name,
-                VENUE,
-                EVENT_START_AT,
-                EVENT_DESCRIPTION,
-                EVENT_APPLICATION_PERIOD,
-                REGULAR_ROLE_ONLY_STATUS,
-                MAIN_EVENT_MAX_APPLICATION_COUNT,
-                AFTER_PARTY_MAX_APPLICATION_COUNT);
-        return eventRepository.save(event);
-    }
-
     private Member createGuestMemberForEvent(String studentId, String name) {
         Member member = createGuestMember();
         member.updateInfo(studentId, name, PHONE_NUMBER, D022, EMAIL);
