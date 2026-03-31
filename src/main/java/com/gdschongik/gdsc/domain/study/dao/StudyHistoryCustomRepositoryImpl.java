@@ -52,6 +52,7 @@ public class StudyHistoryCustomRepositoryImpl implements StudyHistoryCustomRepos
                 .selectFrom(studyHistory)
                 .innerJoin(studyHistory.student, member)
                 .where(eqStudyId(studyId))
+                .orderBy(studyHistory.id.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
