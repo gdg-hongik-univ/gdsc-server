@@ -151,7 +151,7 @@ public void applyOnline(EventApplyOnlineRequest request) {
 ```
 1. LockAspect 진입 (@Order(1)로 트랜잭션보다 먼저 실행)
 2. 락 키 파싱 (SpEL 평가)
-3. MySQL Named Lock 획득 시도
+3. 락 획득 시도 (현재: InmemoryLockUtil)
    └─ 실패 시: LOCK_ACQUIRE_FAILED 예외 발생
 4. 트랜잭션 시작 (@Transactional AOP)
 5. 비즈니스 로직 실행
