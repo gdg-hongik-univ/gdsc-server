@@ -60,19 +60,23 @@ gdsc-server는 **단일 Spring Boot 애플리케이션**으로 구성됩니다.
 
 ## 데이터베이스 구성
 
-### MySQL (Primary Database)
+### PostgreSQL (Primary Database)
 
 **설정 파일**: `application-datasource.yml`
 
-| 환경 | ddl-auto |
-|------|----------|
-| local | update |
-| dev | update |
-| prod | none |
+드라이버: `org.postgresql.Driver` (`jdbc:postgresql://`)
+
+환경별 실제 DB 및 ddl-auto 설정:
+
+| 환경 | 인스턴스 | ddl-auto |
+|-----|------|------|
+| local | 로컬 PostgreSQL | update |
+| dev | Supabase PostgreSQL | update |
+| prod | Supabase PostgreSQL | none |
 
 **주요 용도**:
 - 전체 비즈니스 데이터 저장
-- Named Lock 기반 분산 락 (상세: [LOCK.md](LOCK.md))
+- 분산 락 (상세: [LOCK.md](LOCK.md))
 
 ### Redis
 
