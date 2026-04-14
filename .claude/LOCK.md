@@ -6,7 +6,9 @@
 
 ## 개요
 
-MySQL Named Lock을 사용한 동시성 제어 메커니즘입니다. 동일한 리소스에 대한 동시 접근을 제어하여 데이터 정합성을 보장합니다.
+분산 락을 사용한 동시성 제어 메커니즘입니다. 동일한 리소스에 대한 동시 접근을 제어하여 데이터 정합성을 보장합니다.
+
+> **현재 상태**: PostgreSQL 마이그레이션에 따라 `MySqlLockUtil`이 `@Deprecated` 처리되었으며, `InmemoryLockUtil`을 임시로 사용 중입니다. PostgreSQL Advisory Lock 기반의 새로운 `LockUtil` 구현체 작성이 필요합니다.
 
 ### 사용 목적
 
@@ -25,7 +27,8 @@ src/main/java/com/gdschongik/gdsc/global/lock/
 ├── DistributedLock.java    # 분산 락 어노테이션
 ├── LockAspect.java         # AOP Aspect
 ├── LockUtil.java           # 락 유틸리티 인터페이스
-└── MySqlLockUtil.java      # MySQL Named Lock 구현체
+├── MySqlLockUtil.java      # MySQL Named Lock 구현체 (@Deprecated)
+└── InmemoryLockUtil.java   # 인메모리 구현체 (임시 사용 중)
 ```
 
 ### 1. `@DistributedLock` 어노테이션
@@ -61,7 +64,7 @@ AOP를 통해 `@DistributedLock` 어노테이션을 처리합니다.
 
 ### 3. `LockUtil` 인터페이스
 
-락 구현체를 추상화한 인터페이스입니다. 현재는 `MySqlLockUtil`만 구현되어 있으나, 향후 Redis 등 다른 락 구현체 도입을 고려할 수 있습니다.
+락 구현체를 추상화한 인터페이스입니다.
 
 ```java
 public interface LockUtil {
@@ -70,23 +73,19 @@ public interface LockUtil {
 }
 ```
 
-### 4. `MySqlLockUtil`
+### 4. `InmemoryLockUtil` (현재 사용 중)
 
-MySQL Named Lock을 사용한 `LockUtil` 구현체입니다.
+`ConcurrentHashMap` 기반의 인메모리 구현체입니다. PostgreSQL 마이그레이션 이후 임시로 사용 중입니다.
+
+> **TODO**: PostgreSQL Advisory Lock(`pg_try_advisory_lock`) 기반의 새로운 구현체로 교체 필요
+
+### 5. `MySqlLockUtil` (@Deprecated)
+
+MySQL Named Lock을 사용한 구현체입니다. PostgreSQL 마이그레이션으로 인해 deprecated 처리되었습니다.
 
 **사용 쿼리**:
 - 락 획득: `SELECT GET_LOCK(?, ?)`
 - 락 해제: `SELECT RELEASE_LOCK(?)`
-
-**결과 해석**:
-| 함수 | 결과값 | 의미 |
-|------|--------|------|
-| `GET_LOCK` | 1 | 락 획득 성공 |
-| `GET_LOCK` | 0 | 타임아웃 (대기 시간 초과) |
-| `GET_LOCK` | null | 에러 발생 |
-| `RELEASE_LOCK` | 1 | 락 해제 성공 |
-| `RELEASE_LOCK` | 0 | 락이 해당 세션의 것이 아님 |
-| `RELEASE_LOCK` | null | 락이 존재하지 않음 |
 
 ---
 
@@ -152,7 +151,7 @@ public void applyOnline(EventApplyOnlineRequest request) {
 ```
 1. LockAspect 진입 (@Order(1)로 트랜잭션보다 먼저 실행)
 2. 락 키 파싱 (SpEL 평가)
-3. MySQL Named Lock 획득 시도
+3. 락 획득 시도 (현재: InmemoryLockUtil)
    └─ 실패 시: LOCK_ACQUIRE_FAILED 예외 발생
 4. 트랜잭션 시작 (@Transactional AOP)
 5. 비즈니스 로직 실행

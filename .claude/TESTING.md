@@ -46,8 +46,8 @@ src/test/java/com/gdschongik/gdsc/
 프로필: `test`
 
 데이터베이스:
-- 프로덕션: MySQL 8.0+
-- 테스트: H2 인메모리 DB (MySQL 모드)
+- 프로덕션: PostgreSQL (Supabase)
+- 테스트: H2 인메모리 DB (PostgreSQL 모드)
 
 비동기 처리:
 - 프로덕션: 스레드 풀 기반 비동기
@@ -561,10 +561,9 @@ public class TestLockConfig {
 
 ### TestRedisConfig
 
-테스트용 Redis 설정을 제공합니다:
+Embedded Redis를 동적 포트로 구동합니다. 실제 Redis 없이 테스트가 가능하며, 포트 충돌을 방지하기 위해 사용 가능한 포트를 동적으로 할당합니다:
 
 ```java
 @TestConfiguration
-@Import(RedisConfig.class)
-public class TestRedisConfig { }
+public class TestRedisConfig { ... }
 ```

@@ -158,11 +158,13 @@ public record StudyHistoriesCompletedEvent(@NonNull List<Long> studyHistoryIds) 
 | member | MemberAdvancedToRegularEvent | 정회원 승급 시 |
 | member | MemberAssociateRequirementUpdatedEvent | 준회원 요건 충족 시 |
 | member | MemberDemotedToAssociateEvent | 준회원 강등 시 |
+| member | MemberDiscordChangedEvent | 디스코드 재연동 시 |
 | membership | MembershipVerifiedEvent | 멤버십 결제 검증 완료 시 |
 | membership | MembershipPaymentRevokedEvent | 멤버십 결제 철회 시 |
 | order | OrderCreatedEvent | 주문 생성 시 |
 | order | OrderCompletedEvent | 주문 완료 시 |
 | order | OrderCanceledEvent | 주문 취소 시 |
+| email | PreviousEmailVerifiedEvent | 깃허브 계정 변경을 위한 본인 인증 완료 시 |
 | study | StudyApplyCompletedEvent | 스터디 수강신청 완료 시 (@PostPersist) |
 | study | StudyApplyCanceledEvent | 스터디 수강신청 취소 시 (@PreRemove) |
 | study | StudyAnnouncementCreatedEvent | 스터디 공지 생성 시 (@PostPersist) |
