@@ -108,10 +108,12 @@ public class StudentStudyService {
         Member currentMember = memberUtil.getCurrentMember();
         LocalDateTime now = LocalDateTime.now();
 
-        Recruitment recruitment = recruitmentRepository
-                .findCurrentRecruitment(now)
-                .orElseThrow(() -> new CustomException(RECRUITMENT_NOT_FOUND));
+        Optional<Recruitment> optionalRecruitment = recruitmentRepository.findCurrentRecruitment(now);
+        if (optionalRecruitment.isEmpty()) {
+            return List.of();
+        }
 
+        Recruitment recruitment = optionalRecruitment.get();
         List<Study> currentStudies = studyHistoryRepository.findAllByStudent(currentMember).stream()
                 .map(StudyHistory::getStudy)
                 .filter(study -> study.getSemester().equals(recruitment.getSemester()))
