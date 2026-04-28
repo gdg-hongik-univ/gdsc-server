@@ -1,8 +1,11 @@
 package com.gdschongik.gdsc.domain.member.application.handler;
 
 import com.gdschongik.gdsc.domain.email.domain.event.PreviousEmailVerifiedEvent;
+import com.gdschongik.gdsc.domain.member.application.CommonMemberService;
 import com.gdschongik.gdsc.domain.member.application.OnboardingMemberService;
 import com.gdschongik.gdsc.domain.member.domain.event.MemberAssociateRequirementUpdatedEvent;
+import com.gdschongik.gdsc.domain.membership.domain.event.MembershipPaymentRevokedEvent;
+import com.gdschongik.gdsc.domain.membership.domain.event.MembershipVerifiedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.modulith.events.ApplicationModuleListener;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MemberEventHandler {
 
+    private final CommonMemberService commonMemberService;
     private final OnboardingMemberService onboardingMemberService;
 
     @ApplicationModuleListener
@@ -30,5 +34,17 @@ public class MemberEventHandler {
                 event.previousMemberId());
 
         onboardingMemberService.changeOauthId(event.currentMemberId(), event.previousMemberId());
+    }
+
+    @ApplicationModuleListener
+    public void handleMembershipVerifiedEvent(MembershipVerifiedEvent event) {
+        log.info("[MemberEventHandler] 멤버십 인증 이벤트 수신: membershipId={}", event.membershipId());
+        commonMemberService.advanceMemberToRegularByMembership(event.membershipId());
+    }
+
+    @ApplicationModuleListener
+    public void handleMembershipPaymentRevokedEvent(MembershipPaymentRevokedEvent event) {
+        log.info("[MemberEventHandler] 멤버십 회비납입 취소 이벤트 수신: membershipId={}", event.membershipId());
+        commonMemberService.demoteMemberToAssociateByMembership(event.membershipId());
     }
 }
