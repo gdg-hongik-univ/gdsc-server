@@ -19,6 +19,8 @@ import com.gdschongik.gdsc.global.util.MemberUtil;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -71,14 +73,14 @@ public class StudentStudyService {
         Member currentMember = memberUtil.getCurrentMember();
         LocalDateTime now = LocalDateTime.now();
 
-        Recruitment recruitment = recruitmentRepository
+        return recruitmentRepository
                 .findCurrentRecruitment(now)
-                .orElseThrow(() -> new CustomException(RECRUITMENT_NOT_FOUND));
-
-        return studyHistoryRepository.findAllByStudent(currentMember).stream()
-                .filter(studyHistory -> studyHistory.getStudy().getSemester().equals(recruitment.getSemester()))
-                .map(studyHistory -> StudySimpleDto.from(studyHistory.getStudy()))
-                .toList();
+                .map(recruitment -> studyHistoryRepository.findAllByStudent(currentMember).stream()
+                        .filter(studyHistory ->
+                                studyHistory.getStudy().getSemester().equals(recruitment.getSemester()))
+                        .map(studyHistory -> StudySimpleDto.from(studyHistory.getStudy()))
+                        .toList())
+                .orElse(List.of());
     }
 
     @Transactional(readOnly = true)
