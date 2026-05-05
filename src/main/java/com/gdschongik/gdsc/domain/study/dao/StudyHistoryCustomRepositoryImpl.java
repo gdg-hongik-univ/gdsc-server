@@ -1,13 +1,16 @@
 package com.gdschongik.gdsc.domain.study.dao;
 
 import static com.gdschongik.gdsc.domain.member.domain.QMember.*;
+import static com.gdschongik.gdsc.domain.recruitment.domain.QRecruitment.*;
 import static com.gdschongik.gdsc.domain.study.domain.QStudyHistory.*;
 
+import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.study.domain.Study;
 import com.gdschongik.gdsc.domain.study.domain.StudyHistory;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +50,17 @@ public class StudyHistoryCustomRepositoryImpl implements StudyHistoryCustomRepos
     }
 
     @Override
+    public List<Study> findCurrentStudiesByMember(Member member, LocalDateTime now) {
+        return queryFactory
+                .select(studyHistory.study)
+                .from(studyHistory)
+                .innerJoin(recruitment)
+                .where(eqMember(member), isWithinSemesterPeriod(now), eqStudySemesterToRecruitmentSemester())
+                .distinct()
+                .fetch();
+    }
+
+    @Override
     public Page<StudyHistory> findByStudyId(Long studyId, Pageable pageable) {
         List<StudyHistory> fetch = queryFactory
                 .selectFrom(studyHistory)
@@ -68,5 +82,22 @@ public class StudyHistoryCustomRepositoryImpl implements StudyHistoryCustomRepos
 
     private BooleanExpression eqStudyId(Long studyId) {
         return studyHistory.study.id.eq(studyId);
+    }
+
+    private BooleanExpression eqMember(Member member) {
+        return studyHistory.student.eq(member);
+    }
+
+    private BooleanExpression isWithinSemesterPeriod(LocalDateTime now) {
+        return recruitment.semesterPeriod.startDate.loe(now).and(recruitment.semesterPeriod.endDate.goe(now));
+    }
+
+    private BooleanExpression eqStudySemesterToRecruitmentSemester() {
+        return studyHistory
+                .study
+                .semester
+                .academicYear
+                .eq(recruitment.semester.academicYear)
+                .and(studyHistory.study.semester.semesterType.eq(recruitment.semester.semesterType));
     }
 }
