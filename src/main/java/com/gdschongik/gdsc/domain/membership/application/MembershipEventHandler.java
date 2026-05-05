@@ -1,11 +1,11 @@
 package com.gdschongik.gdsc.domain.membership.application;
 
-import com.gdschongik.gdsc.domain.member.application.CommonMemberService;
-import com.gdschongik.gdsc.domain.membership.domain.event.MembershipPaymentRevokedEvent;
-import com.gdschongik.gdsc.domain.membership.domain.event.MembershipVerifiedEvent;
+import com.gdschongik.gdsc.domain.order.domain.event.OrderCanceledEvent;
+import com.gdschongik.gdsc.domain.order.domain.event.OrderCompletedEvent;
+import com.gdschongik.gdsc.domain.order.domain.event.OrderCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
+import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -13,17 +13,29 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MembershipEventHandler {
 
-    private final CommonMemberService commonMemberService;
+    private final MembershipService membershipService;
 
-    @EventListener
-    public void handleMembershipVerifiedEvent(MembershipVerifiedEvent event) {
-        log.info("[MembershipEventHandler] 멤버십 인증 이벤트 수신: membershipId={}", event.membershipId());
-        commonMemberService.advanceMemberToRegularByMembership(event.membershipId());
+    @ApplicationModuleListener
+    public void handleOrderCreatedEvent(OrderCreatedEvent orderCreatedEvent) {
+        log.info(
+                "[MembershipEventHandler] 주문 생성 이벤트 수신: nanoId={}, isFree={}",
+                orderCreatedEvent.nanoId(),
+                orderCreatedEvent.isFree());
+        // TODO: 히스토리 파악 후 내부에서 isFree 필터링하도록 변경
+        if (orderCreatedEvent.isFree()) {
+            membershipService.verifyPaymentStatus(orderCreatedEvent.nanoId());
+        }
     }
 
-    @EventListener
-    public void handleMembershipPaymentRevokedEvent(MembershipPaymentRevokedEvent event) {
-        log.info("[MembershipEventHandler] 멤버십 회비납입 취소 이벤트 수신: membershipId={}", event.membershipId());
-        commonMemberService.demoteMemberToAssociateByMembership(event.membershipId());
+    @ApplicationModuleListener
+    public void handleOrderCompletedEvent(OrderCompletedEvent orderCompletedEvent) {
+        log.info("[MembershipEventHandler] 주문 완료 이벤트 수신: nanoId={}", orderCompletedEvent.nanoId());
+        membershipService.verifyPaymentStatus(orderCompletedEvent.nanoId());
+    }
+
+    @ApplicationModuleListener
+    public void handleOrderCanceledEvent(OrderCanceledEvent orderCanceledEvent) {
+        log.info("[MembershipEventHandler] 주문 취소 이벤트 수신: orderId={}", orderCanceledEvent.orderId());
+        membershipService.revokePaymentStatus(orderCanceledEvent.orderId());
     }
 }
