@@ -8,6 +8,7 @@ import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.study.domain.Study;
 import com.gdschongik.gdsc.domain.study.domain.StudyHistory;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
@@ -54,8 +55,7 @@ public class StudyHistoryCustomRepositoryImpl implements StudyHistoryCustomRepos
         return queryFactory
                 .select(studyHistory.study)
                 .from(studyHistory)
-                .innerJoin(recruitment)
-                .where(eqMember(member), isWithinSemesterPeriod(now), eqStudySemesterToRecruitmentSemester())
+                .where(eqMember(member), isInCurrentRecruitment(now))
                 .distinct()
                 .fetch();
     }
@@ -88,16 +88,22 @@ public class StudyHistoryCustomRepositoryImpl implements StudyHistoryCustomRepos
         return studyHistory.student.eq(member);
     }
 
+    private BooleanExpression isInCurrentRecruitment(LocalDateTime now) {
+        return JPAExpressions.selectOne()
+                .from(recruitment)
+                .where(isWithinSemesterPeriod(now), eqStudySemesterToRecruitmentSemester())
+                .exists();
+    }
+
     private BooleanExpression isWithinSemesterPeriod(LocalDateTime now) {
         return recruitment.semesterPeriod.startDate.loe(now).and(recruitment.semesterPeriod.endDate.goe(now));
     }
 
     private BooleanExpression eqStudySemesterToRecruitmentSemester() {
-        return studyHistory
-                .study
+        return recruitment
                 .semester
                 .academicYear
-                .eq(recruitment.semester.academicYear)
-                .and(studyHistory.study.semester.semesterType.eq(recruitment.semester.semesterType));
+                .eq(studyHistory.study.semester.academicYear)
+                .and(recruitment.semester.semesterType.eq(studyHistory.study.semester.semesterType));
     }
 }
