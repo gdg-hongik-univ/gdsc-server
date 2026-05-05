@@ -7,7 +7,6 @@ import com.gdschongik.gdsc.domain.coupon.domain.IssuedCoupon;
 import com.gdschongik.gdsc.domain.membership.domain.Membership;
 import com.gdschongik.gdsc.domain.order.domain.event.OrderCanceledEvent;
 import com.gdschongik.gdsc.domain.order.domain.event.OrderCompletedEvent;
-import com.gdschongik.gdsc.domain.order.domain.event.OrderCreatedEvent;
 import com.gdschongik.gdsc.domain.order.domain.service.OrderValidator;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.annotation.Nullable;
@@ -83,8 +82,6 @@ public class Order extends BaseEntity {
         this.recruitmentRoundId = recruitmentRoundId;
         this.issuedCouponId = issuedCouponId;
         this.moneyInfo = moneyInfo;
-
-        registerEvent(new OrderCreatedEvent(nanoId, isFree()));
     }
 
     /**
