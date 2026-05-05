@@ -1,15 +1,11 @@
 package com.gdschongik.gdsc.domain.study.application;
 
-import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
-
 import com.gdschongik.gdsc.domain.member.domain.Member;
-import com.gdschongik.gdsc.domain.recruitment.dao.RecruitmentRepository;
-import com.gdschongik.gdsc.domain.recruitment.domain.Recruitment;
 import com.gdschongik.gdsc.domain.study.dao.StudyAnnouncementRepository;
 import com.gdschongik.gdsc.domain.study.dao.StudyHistoryRepository;
+import com.gdschongik.gdsc.domain.study.domain.Study;
 import com.gdschongik.gdsc.domain.study.domain.StudyAnnouncement;
 import com.gdschongik.gdsc.domain.study.dto.response.StudyAnnouncementResponse;
-import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.util.MemberUtil;
 import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
@@ -23,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudentStudyAnnouncementService {
 
     private final MemberUtil memberUtil;
-    private final RecruitmentRepository recruitmentRepository;
     private final StudyAnnouncementRepository studyAnnouncementRepository;
     private final StudyHistoryRepository studyHistoryRepository;
 
@@ -40,13 +35,8 @@ public class StudentStudyAnnouncementService {
         Member currentMember = memberUtil.getCurrentMember();
         LocalDateTime now = LocalDateTime.now();
 
-        Recruitment recruitment = recruitmentRepository
-                .findCurrentRecruitment(now)
-                .orElseThrow(() -> new CustomException(RECRUITMENT_NOT_FOUND));
-
-        List<Long> currentStudyIds = studyHistoryRepository.findAllByStudent(currentMember).stream()
-                .filter(studyHistory -> studyHistory.getStudy().getSemester().equals(recruitment.getSemester()))
-                .map(studyHistory -> studyHistory.getStudy().getId())
+        List<Long> currentStudyIds = studyHistoryRepository.findCurrentStudiesByMember(currentMember, now).stream()
+                .map(Study::getId)
                 .toList();
 
         List<StudyAnnouncement> studyAnnouncements =

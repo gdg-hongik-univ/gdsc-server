@@ -3,8 +3,6 @@ package com.gdschongik.gdsc.domain.study.application;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.member.domain.Member;
-import com.gdschongik.gdsc.domain.recruitment.dao.RecruitmentRepository;
-import com.gdschongik.gdsc.domain.recruitment.domain.Recruitment;
 import com.gdschongik.gdsc.domain.study.dao.AssignmentHistoryRepository;
 import com.gdschongik.gdsc.domain.study.dao.AttendanceRepository;
 import com.gdschongik.gdsc.domain.study.dao.StudyHistoryRepository;
@@ -19,8 +17,6 @@ import com.gdschongik.gdsc.global.util.MemberUtil;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,7 +32,6 @@ public class StudentStudyService {
     private final AttendanceRepository attendanceRepository;
     private final AssignmentHistoryRepository assignmentHistoryRepository;
     private final StudyHistoryRepository studyHistoryRepository;
-    private final RecruitmentRepository recruitmentRepository;
 
     @Transactional(readOnly = true)
     public StudyDashboardResponse getMyStudyDashboard(Long studyId) {
@@ -73,14 +68,9 @@ public class StudentStudyService {
         Member currentMember = memberUtil.getCurrentMember();
         LocalDateTime now = LocalDateTime.now();
 
-        return recruitmentRepository
-                .findCurrentRecruitment(now)
-                .map(recruitment -> studyHistoryRepository.findAllByStudent(currentMember).stream()
-                        .filter(studyHistory ->
-                                studyHistory.getStudy().getSemester().equals(recruitment.getSemester()))
-                        .map(studyHistory -> StudySimpleDto.from(studyHistory.getStudy()))
-                        .toList())
-                .orElse(List.of());
+        return studyHistoryRepository.findCurrentStudiesByMember(currentMember, now).stream()
+                .map(StudySimpleDto::from)
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -108,16 +98,7 @@ public class StudentStudyService {
         Member currentMember = memberUtil.getCurrentMember();
         LocalDateTime now = LocalDateTime.now();
 
-        Optional<Recruitment> optionalRecruitment = recruitmentRepository.findCurrentRecruitment(now);
-        if (optionalRecruitment.isEmpty()) {
-            return List.of();
-        }
-
-        Recruitment recruitment = optionalRecruitment.get();
-        List<Study> currentStudies = studyHistoryRepository.findAllByStudent(currentMember).stream()
-                .map(StudyHistory::getStudy)
-                .filter(study -> study.getSemester().equals(recruitment.getSemester()))
-                .toList();
+        List<Study> currentStudies = studyHistoryRepository.findCurrentStudiesByMember(currentMember, now);
 
         List<StudyTodoResponse> response = new ArrayList<>();
 
