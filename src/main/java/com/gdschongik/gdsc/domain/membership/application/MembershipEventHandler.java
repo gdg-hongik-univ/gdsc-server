@@ -2,7 +2,6 @@ package com.gdschongik.gdsc.domain.membership.application;
 
 import com.gdschongik.gdsc.domain.order.domain.event.OrderCanceledEvent;
 import com.gdschongik.gdsc.domain.order.domain.event.OrderCompletedEvent;
-import com.gdschongik.gdsc.domain.order.domain.event.OrderCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.modulith.events.ApplicationModuleListener;
@@ -14,18 +13,6 @@ import org.springframework.stereotype.Component;
 public class MembershipEventHandler {
 
     private final MembershipService membershipService;
-
-    @ApplicationModuleListener
-    public void handleOrderCreatedEvent(OrderCreatedEvent orderCreatedEvent) {
-        log.info(
-                "[MembershipEventHandler] 주문 생성 이벤트 수신: nanoId={}, isFree={}",
-                orderCreatedEvent.nanoId(),
-                orderCreatedEvent.isFree());
-        // TODO: 히스토리 파악 후 내부에서 isFree 필터링하도록 변경
-        if (orderCreatedEvent.isFree()) {
-            membershipService.verifyPaymentStatus(orderCreatedEvent.nanoId());
-        }
-    }
 
     @ApplicationModuleListener
     public void handleOrderCompletedEvent(OrderCompletedEvent orderCompletedEvent) {
