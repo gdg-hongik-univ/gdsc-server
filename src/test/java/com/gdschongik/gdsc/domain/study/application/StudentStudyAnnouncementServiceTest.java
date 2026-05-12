@@ -32,10 +32,10 @@ class StudentStudyAnnouncementServiceTest extends IntegrationTest {
             logoutAndReloginAs(member.getId(), MemberRole.ASSOCIATE);
 
             // when
-            List<StudyAnnouncementResponse> response = studentStudyAnnouncementService.getStudiesAnnouncements();
+            List<StudyAnnouncementResponse> result = studentStudyAnnouncementService.getStudiesAnnouncements();
 
             // then
-            assertThat(response).isEmpty();
+            assertThat(result).isEmpty();
         }
 
         @Test
@@ -59,14 +59,14 @@ class StudentStudyAnnouncementServiceTest extends IntegrationTest {
             createStudyAnnouncement("이전 공지", DESCRIPTION_LINK, previousStudy);
 
             // when
-            List<StudyAnnouncementResponse> response = studentStudyAnnouncementService.getStudiesAnnouncements();
+            List<StudyAnnouncementResponse> result = studentStudyAnnouncementService.getStudiesAnnouncements();
 
             // then
-            assertThat(response).hasSize(1);
-            assertThat(response.get(0).study().studyId()).isEqualTo(currentStudy.getId());
-            assertThat(response.get(0).studyAnnouncement().studyAnnouncementId())
+            assertThat(result).hasSize(1);
+            assertThat(result.get(0).study().studyId()).isEqualTo(currentStudy.getId());
+            assertThat(result.get(0).studyAnnouncement().studyAnnouncementId())
                     .isEqualTo(currentAnnouncement.getId());
-            assertThat(response.get(0).studyAnnouncement().title()).isEqualTo("현재 공지");
+            assertThat(result.get(0).studyAnnouncement().title()).isEqualTo("현재 공지");
         }
     }
 }

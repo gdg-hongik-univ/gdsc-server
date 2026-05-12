@@ -34,10 +34,10 @@ class StudentStudyServiceTest extends IntegrationTest {
             logoutAndReloginAs(member.getId(), MemberRole.ASSOCIATE);
 
             // when
-            List<StudySimpleDto> response = studentStudyService.getMyCurrentStudies();
+            List<StudySimpleDto> result = studentStudyService.getMyCurrentStudies();
 
             // then
-            assertThat(response).isEmpty();
+            assertThat(result).isEmpty();
         }
 
         @Test
@@ -58,11 +58,11 @@ class StudentStudyServiceTest extends IntegrationTest {
             createStudyHistory(member, previousStudy);
 
             // when
-            List<StudySimpleDto> response = studentStudyService.getMyCurrentStudies();
+            List<StudySimpleDto> result = studentStudyService.getMyCurrentStudies();
 
             // then
-            assertThat(response).extracting(StudySimpleDto::studyId).containsExactly(currentStudy.getId());
-            assertThat(response).extracting(StudySimpleDto::studyName).containsExactly("현재 스터디");
+            assertThat(result).extracting(StudySimpleDto::studyId).containsExactly(currentStudy.getId());
+            assertThat(result).extracting(StudySimpleDto::studyName).containsExactly("현재 스터디");
         }
     }
 
@@ -76,10 +76,10 @@ class StudentStudyServiceTest extends IntegrationTest {
             logoutAndReloginAs(member.getId(), MemberRole.ASSOCIATE);
 
             // when
-            List<StudyTodoResponse> response = studentStudyService.getMyStudiesTodos();
+            List<StudyTodoResponse> result = studentStudyService.getMyStudiesTodos();
 
             // then
-            assertThat(response).isEmpty();
+            assertThat(result).isEmpty();
         }
 
         @Test
@@ -102,14 +102,14 @@ class StudentStudyServiceTest extends IntegrationTest {
             updateSessionPeriodToNow(previousStudy, now);
 
             // when
-            List<StudyTodoResponse> response = studentStudyService.getMyStudiesTodos();
+            List<StudyTodoResponse> result = studentStudyService.getMyStudiesTodos();
 
             // then
-            assertThat(response).hasSize(2);
-            assertThat(response)
+            assertThat(result).hasSize(2);
+            assertThat(result)
                     .extracting(studyTodoResponse -> studyTodoResponse.study().studyId())
                     .containsOnly(currentStudy.getId());
-            assertThat(response)
+            assertThat(result)
                     .extracting(StudyTodoResponse::todoType)
                     .containsExactlyInAnyOrder(
                             StudyTodoResponse.StudyTodoType.ATTENDANCE, StudyTodoResponse.StudyTodoType.ASSIGNMENT);
