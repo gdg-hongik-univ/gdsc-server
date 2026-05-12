@@ -16,7 +16,7 @@ public interface StudyHistoryCustomRepository {
 
     List<StudyHistory> findAllByStudy(Study study);
 
-    List<Study> findCurrentStudiesByMember(Member member, LocalDateTime now);
+    List<Study> findMyCurrentStudiesByMember(Member member, LocalDateTime now);
 
     Page<StudyHistory> findByStudyId(Long studyId, Pageable pageable);
 }

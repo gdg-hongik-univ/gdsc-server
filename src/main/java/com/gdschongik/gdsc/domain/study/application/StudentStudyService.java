@@ -68,7 +68,7 @@ public class StudentStudyService {
         Member currentMember = memberUtil.getCurrentMember();
         LocalDateTime now = LocalDateTime.now();
 
-        return studyHistoryRepository.findCurrentStudiesByMember(currentMember, now).stream()
+        return studyHistoryRepository.findMyCurrentStudiesByMember(currentMember, now).stream()
                 .map(StudySimpleDto::from)
                 .toList();
     }
@@ -98,7 +98,7 @@ public class StudentStudyService {
         Member currentMember = memberUtil.getCurrentMember();
         LocalDateTime now = LocalDateTime.now();
 
-        List<Study> currentStudies = studyHistoryRepository.findCurrentStudiesByMember(currentMember, now);
+        List<Study> currentStudies = studyHistoryRepository.findMyCurrentStudiesByMember(currentMember, now);
 
         List<StudyTodoResponse> response = new ArrayList<>();
 

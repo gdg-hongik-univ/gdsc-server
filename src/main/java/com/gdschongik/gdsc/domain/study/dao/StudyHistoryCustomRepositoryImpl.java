@@ -51,7 +51,7 @@ public class StudyHistoryCustomRepositoryImpl implements StudyHistoryCustomRepos
     }
 
     @Override
-    public List<Study> findCurrentStudiesByMember(Member member, LocalDateTime now) {
+    public List<Study> findMyCurrentStudiesByMember(Member member, LocalDateTime now) {
         return queryFactory
                 .select(studyHistory.study)
                 .from(studyHistory)

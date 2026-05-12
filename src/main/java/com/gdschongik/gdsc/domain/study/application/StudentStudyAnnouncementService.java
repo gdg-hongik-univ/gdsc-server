@@ -35,7 +35,7 @@ public class StudentStudyAnnouncementService {
         Member currentMember = memberUtil.getCurrentMember();
         LocalDateTime now = LocalDateTime.now();
 
-        List<Long> currentStudyIds = studyHistoryRepository.findCurrentStudiesByMember(currentMember, now).stream()
+        List<Long> currentStudyIds = studyHistoryRepository.findMyCurrentStudiesByMember(currentMember, now).stream()
                 .map(Study::getId)
                 .toList();
 
