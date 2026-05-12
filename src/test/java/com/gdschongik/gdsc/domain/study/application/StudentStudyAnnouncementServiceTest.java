@@ -64,8 +64,7 @@ class StudentStudyAnnouncementServiceTest extends IntegrationTest {
             // then
             assertThat(result).hasSize(1);
             assertThat(result.get(0).study().studyId()).isEqualTo(currentStudy.getId());
-            assertThat(result.get(0).studyAnnouncement().studyAnnouncementId())
-                    .isEqualTo(currentAnnouncement.getId());
+            assertThat(result.get(0).studyAnnouncement().studyAnnouncementId()).isEqualTo(currentAnnouncement.getId());
             assertThat(result.get(0).studyAnnouncement().title()).isEqualTo("현재 학기 공지");
         }
     }
