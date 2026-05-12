@@ -23,7 +23,7 @@ class StudentStudyAnnouncementServiceTest extends IntegrationTest {
     StudentStudyAnnouncementService studentStudyAnnouncementService;
 
     @Nested
-    class 내_모든_스터디_공지를_조회할때 {
+    class 내가_수강중인_모든_스터디_공지를_조회할때 {
 
         @Test
         void 진행중인_학기가_없으면_빈_리스트를_반환한다() {
