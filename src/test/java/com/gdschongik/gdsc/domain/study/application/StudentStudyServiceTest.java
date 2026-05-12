@@ -52,8 +52,8 @@ class StudentStudyServiceTest extends IntegrationTest {
 
             createRecruitment(currentSemester, now.minusDays(1), now.plusDays(1));
 
-            Study currentStudy = createStudy("현재 스터디", currentSemester, member);
-            Study previousStudy = createStudy("이전 스터디", previousSemester, member);
+            Study currentStudy = createStudy("현재 학기 스터디", currentSemester, member);
+            Study previousStudy = createStudy("이전 학기 스터디", previousSemester, member);
             createStudyHistory(member, currentStudy);
             createStudyHistory(member, previousStudy);
 
@@ -62,7 +62,7 @@ class StudentStudyServiceTest extends IntegrationTest {
 
             // then
             assertThat(result).extracting(StudySimpleDto::studyId).containsExactly(currentStudy.getId());
-            assertThat(result).extracting(StudySimpleDto::studyName).containsExactly("현재 스터디");
+            assertThat(result).extracting(StudySimpleDto::studyName).containsExactly("현재 학기 스터디");
         }
     }
 
@@ -94,8 +94,8 @@ class StudentStudyServiceTest extends IntegrationTest {
 
             createRecruitment(currentSemester, now.minusDays(1), now.plusDays(1));
 
-            Study currentStudy = createStudy("현재 스터디", currentSemester, member);
-            Study previousStudy = createStudy("이전 스터디", previousSemester, member);
+            Study currentStudy = createStudy("현재 학기 스터디", currentSemester, member);
+            Study previousStudy = createStudy("이전 학기 스터디", previousSemester, member);
             createStudyHistory(member, currentStudy);
             createStudyHistory(member, previousStudy);
             updateSessionPeriodToNow(currentStudy, now);

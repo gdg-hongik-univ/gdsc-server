@@ -50,13 +50,13 @@ class StudentStudyAnnouncementServiceTest extends IntegrationTest {
 
             createRecruitment(currentSemester, now.minusDays(1), now.plusDays(1));
 
-            Study currentStudy = createStudy("현재 스터디", currentSemester, member);
-            Study previousStudy = createStudy("이전 스터디", previousSemester, member);
+            Study currentStudy = createStudy("현재 학기 스터디", currentSemester, member);
+            Study previousStudy = createStudy("이전 학기 스터디", previousSemester, member);
             createStudyHistory(member, currentStudy);
             createStudyHistory(member, previousStudy);
 
-            StudyAnnouncement currentAnnouncement = createStudyAnnouncement("현재 공지", DESCRIPTION_LINK, currentStudy);
-            createStudyAnnouncement("이전 공지", DESCRIPTION_LINK, previousStudy);
+            StudyAnnouncement currentAnnouncement = createStudyAnnouncement("현재 학기 공지", DESCRIPTION_LINK, currentStudy);
+            createStudyAnnouncement("이전 학기 공지", DESCRIPTION_LINK, previousStudy);
 
             // when
             List<StudyAnnouncementResponse> result = studentStudyAnnouncementService.getStudiesAnnouncements();
@@ -66,7 +66,7 @@ class StudentStudyAnnouncementServiceTest extends IntegrationTest {
             assertThat(result.get(0).study().studyId()).isEqualTo(currentStudy.getId());
             assertThat(result.get(0).studyAnnouncement().studyAnnouncementId())
                     .isEqualTo(currentAnnouncement.getId());
-            assertThat(result.get(0).studyAnnouncement().title()).isEqualTo("현재 공지");
+            assertThat(result.get(0).studyAnnouncement().title()).isEqualTo("현재 학기 공지");
         }
     }
 }
