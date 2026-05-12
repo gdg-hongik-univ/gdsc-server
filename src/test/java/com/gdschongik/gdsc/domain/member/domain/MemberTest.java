@@ -4,7 +4,7 @@ import static com.gdschongik.gdsc.domain.common.model.RequirementStatus.*;
 import static com.gdschongik.gdsc.domain.member.domain.Department.*;
 import static com.gdschongik.gdsc.domain.member.domain.MemberRole.*;
 import static com.gdschongik.gdsc.domain.member.domain.MemberStatus.*;
-import static com.gdschongik.gdsc.global.common.constant.MemberConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestMemberConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 

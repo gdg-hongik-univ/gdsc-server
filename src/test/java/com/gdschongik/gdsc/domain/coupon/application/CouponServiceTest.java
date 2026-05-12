@@ -1,7 +1,7 @@
 package com.gdschongik.gdsc.domain.coupon.application;
 
 import static com.gdschongik.gdsc.domain.coupon.domain.CouponType.*;
-import static com.gdschongik.gdsc.global.common.constant.CouponConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestCouponConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static java.math.BigDecimal.*;
 import static org.assertj.core.api.Assertions.*;

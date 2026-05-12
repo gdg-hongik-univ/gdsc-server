@@ -1,7 +1,7 @@
 package com.gdschongik.gdsc.global.common.constant;
 
-public class DiscordConstant {
-    private DiscordConstant() {}
+public class TestDiscordConstant {
+    private TestDiscordConstant() {}
 
     public static final String DISCORD_USERNAME = "유저네임";
     public static final Integer DISCORD_CODE = 1234;

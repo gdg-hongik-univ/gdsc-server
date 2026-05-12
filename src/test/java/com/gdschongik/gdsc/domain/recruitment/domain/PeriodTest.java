@@ -1,6 +1,6 @@
 package com.gdschongik.gdsc.domain.recruitment.domain;
 
-import static com.gdschongik.gdsc.global.common.constant.RecruitmentConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestRecruitmentConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.DATE_PRECEDENCE_INVALID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

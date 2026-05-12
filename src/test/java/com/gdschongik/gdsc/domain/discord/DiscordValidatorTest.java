@@ -1,6 +1,6 @@
 package com.gdschongik.gdsc.domain.discord;
 
-import static com.gdschongik.gdsc.global.common.constant.DiscordConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestDiscordConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 

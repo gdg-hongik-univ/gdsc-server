@@ -1,6 +1,6 @@
 package com.gdschongik.gdsc.domain.member.application;
 
-import static com.gdschongik.gdsc.global.common.constant.MemberConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestMemberConstant.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
