@@ -38,9 +38,11 @@ import com.gdschongik.gdsc.domain.recruitment.dao.RecruitmentRoundRepository;
 import com.gdschongik.gdsc.domain.recruitment.domain.Recruitment;
 import com.gdschongik.gdsc.domain.recruitment.domain.RecruitmentRound;
 import com.gdschongik.gdsc.domain.recruitment.domain.RoundType;
+import com.gdschongik.gdsc.domain.study.dao.StudyAnnouncementRepository;
 import com.gdschongik.gdsc.domain.study.dao.StudyHistoryRepository;
 import com.gdschongik.gdsc.domain.study.dao.StudyRepository;
 import com.gdschongik.gdsc.domain.study.domain.Study;
+import com.gdschongik.gdsc.domain.study.domain.StudyAnnouncement;
 import com.gdschongik.gdsc.domain.study.domain.StudyFactory;
 import com.gdschongik.gdsc.domain.study.domain.StudyHistory;
 import com.gdschongik.gdsc.domain.study.domain.StudyType;
@@ -97,6 +99,9 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected StudyHistoryRepository studyHistoryRepository;
+
+    @Autowired
+    protected StudyAnnouncementRepository studyAnnouncementRepository;
 
     @Autowired
     protected EventRepository eventRepository;
@@ -231,6 +236,11 @@ public abstract class IntegrationTest {
         return recruitmentRepository.save(recruitment);
     }
 
+    protected Recruitment createRecruitment(Semester semester, LocalDateTime startDate, LocalDateTime endDate) {
+        Recruitment recruitment = Recruitment.create(FEE_NAME, FEE, Period.of(startDate, endDate), semester);
+        return recruitmentRepository.save(recruitment);
+    }
+
     protected Membership createMembership(Member member, RecruitmentRound recruitmentRound) {
         Membership membership = Membership.create(member, recruitmentRound);
         return membershipRepository.save(membership);
@@ -262,9 +272,33 @@ public abstract class IntegrationTest {
         return studyRepository.save(study);
     }
 
+    protected Study createStudy(String title, Semester semester, Member mentor) {
+        Study study = studyFactory.create(
+                StudyType.OFFLINE,
+                title,
+                semester,
+                TOTAL_ROUND,
+                DAY_OF_WEEK,
+                STUDY_START_TIME,
+                STUDY_END_TIME,
+                STUDY_APPLICATION_PERIOD,
+                STUDY_DISCORD_CHANNEL_ID,
+                STUDY_DISCORD_ROLE_ID,
+                mentor,
+                () -> "0000",
+                MIN_ASSIGNMENT_CONTENT_LENGTH);
+
+        return studyRepository.save(study);
+    }
+
     protected StudyHistory createStudyHistory(Member member, Study study) {
         StudyHistory studyHistory = StudyHistory.create(member, study);
         return studyHistoryRepository.save(studyHistory);
+    }
+
+    protected StudyAnnouncement createStudyAnnouncement(String title, String link, Study study) {
+        StudyAnnouncement studyAnnouncement = StudyAnnouncement.create(title, link, study);
+        return studyAnnouncementRepository.save(studyAnnouncement);
     }
 
     protected Event createEvent() {
