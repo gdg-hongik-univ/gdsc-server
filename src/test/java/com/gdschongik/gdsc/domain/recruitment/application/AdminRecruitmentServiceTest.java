@@ -1,7 +1,7 @@
 package com.gdschongik.gdsc.domain.recruitment.application;
 
-import static com.gdschongik.gdsc.global.common.constant.RecruitmentConstant.*;
-import static com.gdschongik.gdsc.global.common.constant.TemporalConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestRecruitmentConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestTemporalConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 

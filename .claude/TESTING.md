@@ -421,21 +421,30 @@ Spring Modulith의 Scenario API를 기반으로 비동기 이벤트 처리를 �
 
 ### 테스트 상수 클래스
 
-테스트에서 공통으로 사용되는 상수는 도메인별 상수 클래스에 정의합니다:
+테스트에서 공통으로 사용되는 상수는 별도의 상수 클래스에 정의합니다:
 
 위치: `src/test/java/com/gdschongik/gdsc/global/common/constant/`
 
-```java
-// MemberConstant.java
-public static final String OAUTH_ID = "testOauthId";
-public static final String UNIV_EMAIL = "b000000@g.hongik.ac.kr";
-public static final String NAME = "김홍익";
-public static final String STUDENT_ID = "C123456";
+#### 테스트 상수 네이밍 규칙
+- 테스트 상수 클래스는 반드시 **`Test` 접두어**를 붙입니다.
+- `src/main`의 상수 클래스(`MemberConstant`, `TemporalConstant`, `DiscordConstant` 등)와 **동일 패키지 + 동일 클래스명**이 되면 충돌 발생
+- Gradle 증분 컴파일 시 한쪽의 stale `.class`가 남아 `clean` 전까지 필드를 찾지 못하는 간헐적 빌드/테스트 실패
 
-// StudyConstant.java
-public static final String STUDY_TITLE = "스터디 제목";
-public static final Long TOTAL_WEEK = 8L;
-public static final DayOfWeek DAY_OF_WEEK = DayOfWeek.FRIDAY;
+```java
+// TestMemberConstant.java
+public class TestMemberConstant {
+    public static final String OAUTH_ID = "testOauthId";
+    public static final String UNIV_EMAIL = "b000000@g.hongik.ac.kr";
+    public static final String NAME = "김홍익";
+    public static final String STUDENT_ID = "C123456";
+}
+
+// TestStudyConstant.java
+public class TestStudyConstant {
+    public static final String STUDY_TITLE = "스터디 제목";
+    public static final Long TOTAL_WEEK = 8L;
+    public static final DayOfWeek DAY_OF_WEEK = DayOfWeek.FRIDAY;
+}
 ```
 
 ### FixtureHelper

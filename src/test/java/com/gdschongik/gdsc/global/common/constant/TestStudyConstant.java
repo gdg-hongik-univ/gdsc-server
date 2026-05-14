@@ -8,8 +8,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class StudyConstant {
-    private StudyConstant() {}
+public class TestStudyConstant {
+    private TestStudyConstant() {}
 
     public static final String STUDY_TITLE = "스터디 제목";
     public static final String STUDY_DESCRIPTION = "스터디 설명";

@@ -1,8 +1,8 @@
 package com.gdschongik.gdsc.global.common.constant;
 
-public class MemberConstant {
+public class TestMemberConstant {
 
-    private MemberConstant() {}
+    private TestMemberConstant() {}
 
     public static final String OAUTH_ID = "testOauthId";
     public static final String UNIV_EMAIL = "b000000@g.hongik.ac.kr";

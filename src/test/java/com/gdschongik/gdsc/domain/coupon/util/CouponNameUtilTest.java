@@ -1,6 +1,6 @@
 package com.gdschongik.gdsc.domain.coupon.util;
 
-import static com.gdschongik.gdsc.global.common.constant.StudyConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestStudyConstant.*;
 import static org.assertj.core.api.Assertions.*;
 
 import com.gdschongik.gdsc.domain.study.domain.Study;

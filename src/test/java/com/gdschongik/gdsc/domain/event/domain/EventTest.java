@@ -2,7 +2,7 @@ package com.gdschongik.gdsc.domain.event.domain;
 
 import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.DISABLED;
 import static com.gdschongik.gdsc.domain.event.domain.UsageStatus.ENABLED;
-import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestEventConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
