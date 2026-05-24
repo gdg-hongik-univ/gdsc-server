@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class CouponEventHandler {
-    // TODO: 여기서는 쿠폰 외 도메인의 이벤트를 받아서 쿠폰 서비스를 호출. 다른 핸들러는 반대로 되어있으므로 수정 필요
 
     private final CouponService couponService;
 

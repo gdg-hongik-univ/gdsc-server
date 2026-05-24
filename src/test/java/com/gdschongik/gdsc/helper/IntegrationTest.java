@@ -1,12 +1,12 @@
 package com.gdschongik.gdsc.helper;
 
 import static com.gdschongik.gdsc.domain.member.domain.Department.*;
-import static com.gdschongik.gdsc.global.common.constant.CouponConstant.*;
-import static com.gdschongik.gdsc.global.common.constant.EventConstant.*;
-import static com.gdschongik.gdsc.global.common.constant.MemberConstant.*;
-import static com.gdschongik.gdsc.global.common.constant.RecruitmentConstant.*;
-import static com.gdschongik.gdsc.global.common.constant.StudyConstant.*;
-import static com.gdschongik.gdsc.global.common.constant.TemporalConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestCouponConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestEventConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestMemberConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestRecruitmentConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestStudyConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestTemporalConstant.*;
 import static org.mockito.Mockito.*;
 
 import com.gdschongik.gdsc.config.TestRedisConfig;

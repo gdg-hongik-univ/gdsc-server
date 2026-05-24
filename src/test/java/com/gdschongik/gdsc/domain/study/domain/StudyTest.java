@@ -1,6 +1,6 @@
 package com.gdschongik.gdsc.domain.study.domain;
 
-import static com.gdschongik.gdsc.global.common.constant.StudyConstant.MIN_ASSIGNMENT_CONTENT_LENGTH;
+import static com.gdschongik.gdsc.global.common.constant.TestStudyConstant.MIN_ASSIGNMENT_CONTENT_LENGTH;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 

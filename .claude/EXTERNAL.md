@@ -303,7 +303,7 @@ public interface MailSender {
 **특징**:
 - `MimeMessage`를 사용한 HTML 이메일 발송
 - `message.setText(content, "utf-8", "html")`: HTML 형식 지원
-- 발신자: `GDGoC Hongik <gdsc.hongik@gmail.com>`
+- 발신자: `GDG Hongik Univ. Core Team <gdsc.hongik@gmail.com>`
 
 ### 4.3 Gmail SMTP 설정
 
@@ -367,24 +367,26 @@ https://{환경별_URL}/onboarding/verify-email?token={JWT_TOKEN}
 
 ### 4.7 인증 메일 발송 플로우
 
+이메일 인증은 두 가지 용도로 분리되어 있습니다.
+
+#### 재학생 인증 (`UnivEmailVerificationLinkSendService`)
+
 **파일**: `domain/email/application/UnivEmailVerificationLinkSendService.java`
 
-**인증 플로우**:
+**플로우**:
 1. 이메일 중복 검증 (`memberRepository.existsByUnivEmail`)
 2. 이메일 유효성 검증 (`univEmailValidator.validateSendUnivEmailVerificationLink`)
 3. JWT 인증 토큰 생성
 4. Redis에 토큰 저장 (만료 시간 포함)
 5. HTML 이메일 발송
 
-**토큰 유효 시간**: 30분 (`VERIFICATION_TOKEN_TIME_TO_LIVE`)
+#### 깃허브 계정 변경용 본인 인증 (`EmailVerificationLinkSendService`)
 
-**이메일 템플릿**: 인라인 CSS 스타일링된 HTML
-```html
-<div style='font-family: "Roboto", sans-serif; ...'>
-    <h3>GDGoC Hongik 재학생 인증 메일</h3>
-    <a href='{링크}'>재학생 인증하기</a>
-</div>
-```
+**파일**: `domain/email/application/EmailVerificationLinkSendService.java`
+
+깃허브 계정 변경 시 기존 이메일로 본인 인증을 수행합니다. 인증 완료 시 `PreviousEmailVerifiedEvent`를 발행하여 깃허브 계정 변경 처리가 이벤트 기반으로 진행됩니다.
+
+**토큰 유효 시간**: 30분 (`VERIFICATION_TOKEN_TIME_TO_LIVE`)
 
 ---
 

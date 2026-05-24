@@ -46,8 +46,8 @@ src/test/java/com/gdschongik/gdsc/
 프로필: `test`
 
 데이터베이스:
-- 프로덕션: MySQL 8.0+
-- 테스트: H2 인메모리 DB (MySQL 모드)
+- 프로덕션: PostgreSQL (Supabase)
+- 테스트: H2 인메모리 DB (PostgreSQL 모드)
 
 비동기 처리:
 - 프로덕션: 스레드 풀 기반 비동기
@@ -421,21 +421,30 @@ Spring Modulith의 Scenario API를 기반으로 비동기 이벤트 처리를 �
 
 ### 테스트 상수 클래스
 
-테스트에서 공통으로 사용되는 상수는 도메인별 상수 클래스에 정의합니다:
+테스트에서 공통으로 사용되는 상수는 별도의 상수 클래스에 정의합니다:
 
 위치: `src/test/java/com/gdschongik/gdsc/global/common/constant/`
 
-```java
-// MemberConstant.java
-public static final String OAUTH_ID = "testOauthId";
-public static final String UNIV_EMAIL = "b000000@g.hongik.ac.kr";
-public static final String NAME = "김홍익";
-public static final String STUDENT_ID = "C123456";
+#### 테스트 상수 네이밍 규칙
+- 테스트 상수 클래스는 반드시 **`Test` 접두어**를 붙입니다.
+- `src/main`의 상수 클래스(`MemberConstant`, `TemporalConstant`, `DiscordConstant` 등)와 **동일 패키지 + 동일 클래스명**이 되면 충돌 발생
+- Gradle 증분 컴파일 시 한쪽의 stale `.class`가 남아 `clean` 전까지 필드를 찾지 못하는 간헐적 빌드/테스트 실패
 
-// StudyConstant.java
-public static final String STUDY_TITLE = "스터디 제목";
-public static final Long TOTAL_WEEK = 8L;
-public static final DayOfWeek DAY_OF_WEEK = DayOfWeek.FRIDAY;
+```java
+// TestMemberConstant.java
+public class TestMemberConstant {
+    public static final String OAUTH_ID = "testOauthId";
+    public static final String UNIV_EMAIL = "b000000@g.hongik.ac.kr";
+    public static final String NAME = "김홍익";
+    public static final String STUDENT_ID = "C123456";
+}
+
+// TestStudyConstant.java
+public class TestStudyConstant {
+    public static final String STUDY_TITLE = "스터디 제목";
+    public static final Long TOTAL_WEEK = 8L;
+    public static final DayOfWeek DAY_OF_WEEK = DayOfWeek.FRIDAY;
+}
 ```
 
 ### FixtureHelper
@@ -561,10 +570,9 @@ public class TestLockConfig {
 
 ### TestRedisConfig
 
-테스트용 Redis 설정을 제공합니다:
+Embedded Redis를 동적 포트로 구동합니다. 실제 Redis 없이 테스트가 가능하며, 포트 충돌을 방지하기 위해 사용 가능한 포트를 동적으로 할당합니다:
 
 ```java
 @TestConfiguration
-@Import(RedisConfig.class)
-public class TestRedisConfig { }
+public class TestRedisConfig { ... }
 ```

@@ -2,9 +2,9 @@ package com.gdschongik.gdsc.domain.membership.domain;
 
 import static com.gdschongik.gdsc.domain.member.domain.Department.*;
 import static com.gdschongik.gdsc.domain.member.domain.Member.*;
-import static com.gdschongik.gdsc.global.common.constant.MemberConstant.*;
-import static com.gdschongik.gdsc.global.common.constant.RecruitmentConstant.*;
-import static com.gdschongik.gdsc.global.common.constant.TemporalConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestMemberConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestRecruitmentConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestTemporalConstant.*;
 import static org.assertj.core.api.Assertions.*;
 
 import com.gdschongik.gdsc.domain.common.vo.Period;

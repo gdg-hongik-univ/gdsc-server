@@ -4,9 +4,9 @@ import com.gdschongik.gdsc.domain.common.vo.Period;
 import com.gdschongik.gdsc.domain.event.domain.UsageStatus;
 import java.time.LocalDateTime;
 
-public class EventConstant {
+public class TestEventConstant {
 
-    private EventConstant() {}
+    private TestEventConstant() {}
 
     public static final String EVENT_NAME = "2025년 1학기 새내기 배움터";
     public static final String EVENT_DESCRIPTION =

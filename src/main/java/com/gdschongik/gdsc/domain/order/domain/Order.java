@@ -7,7 +7,6 @@ import com.gdschongik.gdsc.domain.coupon.domain.IssuedCoupon;
 import com.gdschongik.gdsc.domain.membership.domain.Membership;
 import com.gdschongik.gdsc.domain.order.domain.event.OrderCanceledEvent;
 import com.gdschongik.gdsc.domain.order.domain.event.OrderCompletedEvent;
-import com.gdschongik.gdsc.domain.order.domain.event.OrderCreatedEvent;
 import com.gdschongik.gdsc.domain.order.domain.service.OrderValidator;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import jakarta.annotation.Nullable;
@@ -83,8 +82,6 @@ public class Order extends BaseEntity {
         this.recruitmentRoundId = recruitmentRoundId;
         this.issuedCouponId = issuedCouponId;
         this.moneyInfo = moneyInfo;
-
-        registerEvent(new OrderCreatedEvent(nanoId, isFree()));
     }
 
     /**
@@ -104,10 +101,15 @@ public class Order extends BaseEntity {
                 .build();
     }
 
+    /**
+     * 무료 주문을 생성합니다.
+     * 결제가 필요하지 않으므로 주문 완료 상태로 생성됩니다.
+     * 주문 완료 상태로 생성되므로 주문 완료 이벤트 {@link OrderCompletedEvent} 를 함께 발행합니다.
+     */
     public static Order createFree(
             String nanoId, MoneyInfo moneyInfo, Membership membership, @Nullable IssuedCoupon issuedCoupon) {
         validateFreeOrder(moneyInfo);
-        return Order.builder()
+        Order order = Order.builder()
                 .status(OrderStatus.COMPLETED)
                 .nanoId(nanoId)
                 .memberId(membership.getMember().getId())
@@ -116,6 +118,10 @@ public class Order extends BaseEntity {
                 .issuedCouponId(issuedCoupon != null ? issuedCoupon.getId() : null)
                 .moneyInfo(moneyInfo)
                 .build();
+
+        order.registerEvent(new OrderCompletedEvent(nanoId));
+
+        return order;
     }
 
     private static void validateFreeOrder(MoneyInfo moneyInfo) {
