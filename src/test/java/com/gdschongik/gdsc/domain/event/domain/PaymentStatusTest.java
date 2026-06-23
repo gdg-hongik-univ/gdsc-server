@@ -11,7 +11,7 @@ public class PaymentStatusTest {
     private FixtureHelper fixtureHelper = new FixtureHelper();
 
     @Test
-    void 선입금이_활성화된_이벤트일_경우_선입금_기본값은_NOT_PAID이다() {
+    void 선입금이_활성화된_행사일_경우_선입금_기본값은_NOT_PAID이다() {
         // given
         Event event = createEventWithPrePaymentEnabled();
 
@@ -23,7 +23,7 @@ public class PaymentStatusTest {
     }
 
     @Test
-    void 선입금이_비활성화된_이벤트일_경우_선입금_기본값은_NONE이다() {
+    void 선입금이_비활성화된_행사일_경우_선입금_기본값은_NONE이다() {
         // given
         Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED);
 
@@ -35,7 +35,7 @@ public class PaymentStatusTest {
     }
 
     @Test
-    void 후정산이_활성화된_이벤트일_경우_후정산_기본값은_NOT_PAID이다() {
+    void 후정산이_활성화된_행사일_경우_후정산_기본값은_NOT_PAID이다() {
         // given
         Event event = createEventWithPostPaymentEnabled();
 
@@ -47,7 +47,7 @@ public class PaymentStatusTest {
     }
 
     @Test
-    void 후정산이_비활성화된_이벤트일_경우_후정산_기본값은_NONE이다() {
+    void 후정산이_비활성화된_행사일_경우_후정산_기본값은_NONE이다() {
         // given
         Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED);
 

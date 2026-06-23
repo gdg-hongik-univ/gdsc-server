@@ -19,7 +19,7 @@ public class EventTest {
     class 행사_생성시 {
 
         @Test
-        void 뒤풀이활성상태가_ENABLED인_이벤트가_생성된다() {
+        void 뒤풀이활성상태가_ENABLED인_행사가_생성된다() {
             // when
             Event event = Event.create(
                     EVENT_NAME,

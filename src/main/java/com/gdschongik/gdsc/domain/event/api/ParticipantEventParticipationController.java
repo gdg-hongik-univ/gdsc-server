@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Event Participation - Participant", description = "참가자용 이벤트 참여 정보 관리 API입니다.")
+@Tag(name = "Event Participation - Participant", description = "참가자용 행사 참여 정보 관리 API입니다.")
 @RestController
 @RequestMapping("/participant/event-participations")
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class ParticipantEventParticipationController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "이벤트 참여 신청 폼 제출", description = "이벤트 참여 신청 폼을 제출합니다.")
+    @Operation(summary = "행사 참여 신청 폼 제출", description = "행사 참여 신청 폼을 제출합니다.")
     @PostMapping("/apply")
     public ResponseEntity<Void> applyEventParticipation(@Valid @RequestBody EventApplyOnlineRequest request) {
         eventParticipationService.applyOnline(request);

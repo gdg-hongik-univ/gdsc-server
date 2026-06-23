@@ -16,10 +16,10 @@ public class EventDomainServiceTest {
     FixtureHelper fixtureHelper = new FixtureHelper();
 
     @Nested
-    class 이벤트_기본정보를_수정할_때 {
+    class 행사_기본정보를_수정할_때 {
 
         @Test
-        void 신청자가_존재하는데_정회원_전용_이벤트_여부를_변경하면_실패한다() {
+        void 신청자가_존재하는데_정회원_전용_행사_여부를_변경하면_실패한다() {
             // given
             Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED); // 정회원 전용 X
 
@@ -129,7 +129,7 @@ public class EventDomainServiceTest {
     }
 
     @Nested
-    class 이벤트_폼_정보를_수정할_때 {
+    class 행사_폼_정보를_수정할_때 {
 
         @Test
         void 신청자가_존재하는데_수정을_시도하면_실패한다() {

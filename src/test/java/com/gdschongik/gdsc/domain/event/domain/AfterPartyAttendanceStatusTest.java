@@ -10,7 +10,7 @@ public class AfterPartyAttendanceStatusTest {
     private FixtureHelper fixtureHelper = new FixtureHelper();
 
     @Test
-    void 뒤풀이가_없는_이벤트는_초기값이_NONE이다() {
+    void 뒤풀이가_없는_행사는_초기값이_NONE이다() {
         // given
         Event event = fixtureHelper.createEventWithoutAfterParty(1L);
 
@@ -22,7 +22,7 @@ public class AfterPartyAttendanceStatusTest {
     }
 
     @Test
-    void 뒤풀이가_있는_이벤트는_초기값이_NOT_ATTENDED이다() {
+    void 뒤풀이가_있는_행사는_초기값이_NOT_ATTENDED이다() {
         // given
         Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED);
 

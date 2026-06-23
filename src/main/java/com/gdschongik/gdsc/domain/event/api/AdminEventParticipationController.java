@@ -111,8 +111,8 @@ public class AdminEventParticipationController {
             summary = "행사 참여 가능 멤버 검색",
             description =
                     """
-					해당 이벤트에 참여 가능한 멤버를 이름으로 검색합니다.
-					멤버 정보 및 해당 이벤트 기 신청 상태를 반환합니다.
+					해당 행사에 참여 가능한 멤버를 이름으로 검색합니다.
+					멤버 정보 및 해당 행사 기신청 상태를 반환합니다.
 					이름과 정확히 일치하는 멤버만 검색하며, 동명이인인 경우 여러 건을 반환합니다.""")
     @GetMapping("/members/participable/search")
     public ResponseEntity<List<EventParticipableMemberDto>> searchParticipableMembers(
@@ -124,7 +124,7 @@ public class AdminEventParticipationController {
     @Deprecated(forRemoval = true)
     @Operation(
             summary = "행사 및 뒤풀이 수동 신청 (회원)",
-            description = "관리자가 회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 이벤트 뒤풀이가 있는 행사라면 뒤풀이 신청 상태로 신청 처리합니다.")
+            description = "관리자가 회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 뒤풀이가 있는 행사라면 뒤풀이 신청 상태로 신청 처리합니다.")
     @PostMapping("/apply/manual/registered")
     public ResponseEntity<Void> applyManualForRegistered(
             @Valid @RequestBody EventRegisteredManualApplyRequest request) {
@@ -135,7 +135,7 @@ public class AdminEventParticipationController {
     @Deprecated(forRemoval = true)
     @Operation(
             summary = "행사 및 뒤풀이 수동 신청 (비회원)",
-            description = "관리자가 비회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 이벤트 뒤풀이가 있는 행사라면 뒤풀이 신청 상태로 신청 처리합니다.")
+            description = "관리자가 비회원의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 뒤풀이가 있는 행사라면 뒤풀이 신청 상태로 신청 처리합니다.")
     @PostMapping("/apply/manual/unregistered")
     public ResponseEntity<Void> applyManualForUnregistered(
             @Valid @RequestBody EventUnregisteredManualApplyRequest request) {
@@ -145,7 +145,7 @@ public class AdminEventParticipationController {
 
     @Operation(
             summary = "행사 및 뒤풀이 수동 신청",
-            description = "관리자가 참여자의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 이벤트 뒤풀이가 있는 행사라면 뒤풀이 신청 상태로 신청 처리합니다.")
+            description = "관리자가 참여자의 정보를 바탕으로 행사를 수동으로 신청 처리합니다. 뒤풀이가 있는 행사라면 뒤풀이 신청 상태로 신청 처리합니다.")
     @PostMapping("/apply/manual")
     public ResponseEntity<Void> applyManual(@Valid @RequestBody EventManualApplyRequest request) {
         eventParticipationService.applyManual(request);
