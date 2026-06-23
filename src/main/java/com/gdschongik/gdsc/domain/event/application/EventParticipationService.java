@@ -206,7 +206,7 @@ public class EventParticipationService {
         eventParticipationRepository.save(participation);
 
         log.info(
-                "[EventParticipationService] 이벤트 수동 신청 (회원): eventId={}, memberId={}",
+                "[EventParticipationService] 행사 수동 신청 (회원): eventId={}, memberId={}",
                 request.eventId(),
                 request.memberId());
     }
@@ -225,7 +225,7 @@ public class EventParticipationService {
         eventParticipationRepository.save(participation);
 
         log.info(
-                "[EventParticipationService] 이벤트 수동 신청 (비회원): eventId={}, participant={}",
+                "[EventParticipationService] 행사 수동 신청 (비회원): eventId={}, participant={}",
                 request.eventId(),
                 request.participant());
     }
@@ -246,7 +246,7 @@ public class EventParticipationService {
         eventParticipationRepository.save(participation);
 
         log.info(
-                "[EventParticipationService] 이벤트 수동 신청: eventId={}, studentId={}",
+                "[EventParticipationService] 행사 수동 신청: eventId={}, studentId={}",
                 request.eventId(),
                 participant.getStudentId());
     }
@@ -265,7 +265,7 @@ public class EventParticipationService {
 
         eventParticipationRepository.deleteAll(participations);
         log.info(
-                "[EventParticipationService] 이벤트 참여 정보 삭제 완료: eventParticipationIds={}",
+                "[EventParticipationService] 행사 참여 정보 삭제 완료: eventParticipationIds={}",
                 request.eventParticipationIds());
     }
 
@@ -341,7 +341,7 @@ public class EventParticipationService {
         eventParticipationRepository.save(eventParticipation);
 
         log.info(
-                "[EventParticipationService] 이벤트 참여 신청: eventId={}, memberStudentId={}",
+                "[EventParticipationService] 행사 참여 신청: eventId={}, memberStudentId={}",
                 event.getId(),
                 participant.getStudentId());
     }
@@ -388,7 +388,7 @@ public class EventParticipationService {
                     mainEventApplicantCount);
             return EventValidateApplicableResponse.success();
         } catch (CustomException e) {
-            log.info("[EventService] 이벤트 참여 불가: eventId={}, failureReason={}", request.eventId(), e.getErrorCode());
+            log.info("[EventService] 행사 참여 불가: eventId={}, failureReason={}", request.eventId(), e.getErrorCode());
             return EventValidateApplicableResponse.failure(e.getErrorCode());
         }
     }
