@@ -14,3 +14,7 @@ jwt:
     EMAIL_VERIFICATION_TOKEN:
       secret: 235872q3ywhtf87q243yt98qop42y3whtg8oiq92ayh4gq2g
       expiration-time: 1800
+
+logging:
+  level:
+    com.gdschongik.gdsc: debug

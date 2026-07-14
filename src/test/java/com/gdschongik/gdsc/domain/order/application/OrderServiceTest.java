@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
@@ -40,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+@Slf4j
 class OrderServiceTest extends IntegrationTest {
 
     public static final Money MONEY_20000_WON = Money.from(20000L);
@@ -519,10 +521,12 @@ class OrderServiceTest extends IntegrationTest {
             orderService.completeOrder(request);
 
             LocalDate date = LocalDate.now();
+            log.debug("LocalDate = {}", date);
             OrderQueryOption queryOption = new OrderQueryOption(null, null, null, null, null, null, null, date);
 
             // when
             Page<OrderAdminResponse> orderResponse = orderService.searchOrders(queryOption, PageRequest.of(0, 10));
+            log.debug("approvedAt = {}", orderResponse.get().findFirst().map(OrderAdminResponse::approvedAt));
 
             // then
             boolean orderExists = orderResponse.getContent().stream()
