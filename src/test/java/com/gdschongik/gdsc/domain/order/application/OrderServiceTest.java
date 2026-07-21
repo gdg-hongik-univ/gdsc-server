@@ -30,6 +30,7 @@ import com.gdschongik.gdsc.infra.feign.payment.dto.response.PaymentResponse;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -529,6 +530,7 @@ class OrderServiceTest extends IntegrationTest {
             Page<OrderAdminResponse> orderResponse = orderService.searchOrders(queryOption, PageRequest.of(0, 10));
             log.debug("approvedAt = {}", all.get(0).getApprovedAt());
             log.debug("orderAllSize = {}", all.size());
+            log.debug("JVM TimeZone = {}", ZoneId.systemDefault());
 
             // then
             boolean orderExists = orderResponse.getContent().stream()
