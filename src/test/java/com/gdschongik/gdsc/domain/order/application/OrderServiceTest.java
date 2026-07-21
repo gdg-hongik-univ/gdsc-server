@@ -525,8 +525,10 @@ class OrderServiceTest extends IntegrationTest {
             OrderQueryOption queryOption = new OrderQueryOption(null, null, null, null, null, null, null, date);
 
             // when
+            List<Order> all = orderRepository.findAll();
             Page<OrderAdminResponse> orderResponse = orderService.searchOrders(queryOption, PageRequest.of(0, 10));
-            log.debug("approvedAt = {}", orderResponse.get().findFirst().map(OrderAdminResponse::approvedAt));
+            log.debug("approvedAt = {}", all.get(0).getApprovedAt());
+            log.debug("orderAllSize = {}", all.size());
 
             // then
             boolean orderExists = orderResponse.getContent().stream()
