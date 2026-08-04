@@ -62,9 +62,9 @@ public interface OrderQueryMethod {
         if (approvedAt == null) {
             return null;
         }
-        ZoneId seoulZone = ZoneId.of("Asia/Seoul");
-        ZonedDateTime startOfDay = approvedAt.atStartOfDay(seoulZone);
-        ZonedDateTime endOfDay = approvedAt.atTime(LocalTime.MAX).atZone(seoulZone);
+        ZoneId zoneId = ZoneId.systemDefault();
+        ZonedDateTime startOfDay = approvedAt.atStartOfDay(zoneId);
+        ZonedDateTime endOfDay = approvedAt.atTime(LocalTime.MAX).atZone(zoneId);
         return order.approvedAt.between(startOfDay, endOfDay);
     }
 }
