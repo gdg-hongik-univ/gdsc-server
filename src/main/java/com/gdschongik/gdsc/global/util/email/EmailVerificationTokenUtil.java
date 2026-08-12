@@ -18,6 +18,10 @@ import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+/**
+ * @deprecated 링크 클릭 방식의 JWT 발급/파싱. 코드 인증 방식에서는 사용하지 않는다.
+ */
+@Deprecated
 @Component
 @RequiredArgsConstructor
 public class EmailVerificationTokenUtil {
