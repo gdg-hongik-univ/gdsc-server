@@ -12,7 +12,13 @@ import java.util.Optional;
 @DomainService
 public class UnivEmailValidator {
 
-    public void validateSendUnivEmailVerificationLink(String email, boolean isUnivEmailDuplicate) {
+    /**
+     * 학교 메일 인증 전 메일을 검증합니다.
+     *
+     * @param email 학교 메일
+     * @param isUnivEmailDuplicate 이미 가입된 메일이 있는지 여부 (DB 조회 값)
+     */
+    public void validateSendUnivEmailVerificationCode(String email, boolean isUnivEmailDuplicate) {
         if (!email.contains(HONGIK_UNIV_MAIL_DOMAIN)) {
             throw new CustomException(UNIV_EMAIL_DOMAIN_MISMATCH);
         }
