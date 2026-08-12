@@ -31,6 +31,7 @@ public class UnivEmailVerificationCodeSendService {
 
     private static final long VERIFICATION_CODE_TTL_SECONDS = 60;
 
+    // TODO: 기획에서 확정된 메일 양식으로 교체. 현재는 코드가 보이기만 하는 임시 디자인
     private static final String NOTIFICATION_MESSAGE =
             """
 <div style='font-family: "Roboto", sans-serif; margin: 40px; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);'>

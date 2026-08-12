@@ -9,7 +9,7 @@ import com.gdschongik.gdsc.global.exception.CustomException;
 public class EmailValidator {
 
     /**
-     * 학교 메일 인증 전 메일을 검증합니다.
+     * 본인 인증 코드 발송 전 과거 계정을 검증합니다.
      *
      * @param currentMemberId 현재 로그인한 유저의 아이디
      * @param previousMemberId 유저의 옛 계정 아이디

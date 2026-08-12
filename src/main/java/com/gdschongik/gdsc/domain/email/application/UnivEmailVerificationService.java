@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+// TODO SendCodeService와 통합 검토
 public class UnivEmailVerificationService {
 
     private final MemberRepository memberRepository;

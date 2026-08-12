@@ -61,6 +61,7 @@ public class OnboardingMemberService {
 
     public MemberDashboardResponse getDashboard() {
         final Member member = memberUtil.getCurrentMember();
+        // TODO: 이메일 코드 서비스와 서비스간 의존성 제거
         final Optional<UnivEmailVerification> univEmailVerification =
                 univEmailVerificationService.getUnivEmailVerificationFromRedis(member.getId());
         UnivVerificationStatus univVerificationStatus =
