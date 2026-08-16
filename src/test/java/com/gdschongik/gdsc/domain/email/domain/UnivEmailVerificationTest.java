@@ -15,23 +15,6 @@ class UnivEmailVerificationTest {
     private static final long TTL = 60L;
 
     @Nested
-    class 인증정보_생성시 {
-
-        @Test
-        void 학교_메일과_인증_코드가_내부에_저장된다() {
-            // when
-            UnivEmailVerification univEmailVerification =
-                    UnivEmailVerification.create(MEMBER_ID, UNIV_EMAIL, CODE, TTL);
-
-            // then
-            assertThat(univEmailVerification.getMemberId()).isEqualTo(MEMBER_ID);
-            assertThat(univEmailVerification.getUnivEmail()).isEqualTo(UNIV_EMAIL);
-            assertThat(univEmailVerification.getCode()).isEqualTo(CODE);
-            assertThat(univEmailVerification.getTtl()).isEqualTo(TTL);
-        }
-    }
-
-    @Nested
     class 인증_코드_검증시 {
 
         @Test

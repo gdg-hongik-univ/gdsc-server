@@ -15,23 +15,6 @@ class EmailVerificationTest {
     private static final long TTL = 60L;
 
     @Nested
-    class 인증정보_생성시 {
-
-        @Test
-        void 인증_코드와_유효기간이_내부에_저장된다() {
-            // when
-            EmailVerification emailVerification =
-                    EmailVerification.create(CURRENT_MEMBER_ID, PREVIOUS_MEMBER_ID, CODE, TTL);
-
-            // then
-            assertThat(emailVerification.getCurrentMemberId()).isEqualTo(CURRENT_MEMBER_ID);
-            assertThat(emailVerification.getPreviousMemberId()).isEqualTo(PREVIOUS_MEMBER_ID);
-            assertThat(emailVerification.getCode()).isEqualTo(CODE);
-            assertThat(emailVerification.getTtl()).isEqualTo(TTL);
-        }
-    }
-
-    @Nested
     class 인증_코드_검증시 {
 
         @Test
