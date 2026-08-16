@@ -38,7 +38,7 @@ public class UnivEmailVerificationService {
         memberRepository.save(currentMember);
         univEmailVerificationRepository.delete(univEmailVerification);
 
-        log.info("[UnivEmailVerificationService] 학교 이메일 인증 완료: memberId={}", currentMember.getId());
+        log.info("[UnivEmailVerificationService] 재학생 인증 완료: memberId={}", currentMember.getId());
     }
 
     public Optional<UnivEmailVerification> getUnivEmailVerificationFromRedis(Long memberId) {

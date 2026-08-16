@@ -55,7 +55,7 @@ public class UnivEmailVerificationCodeSendService {
         String mailContent = writeMailContentWithVerificationCode(verificationCode);
         mailSender.send(univEmail, VERIFICATION_UNIV_EMAIL_SUBJECT, mailContent);
 
-        log.info("[UnivEmailVerificationCodeSendService] 학생 인증 메일 발송: memberId={}", currentMember.getId());
+        log.info("[UnivEmailVerificationCodeSendService] 재학생 인증 메일 발송: memberId={}", currentMember.getId());
     }
 
     private String writeMailContentWithVerificationCode(String verificationCode) {
