@@ -62,7 +62,10 @@ public class EmailVerificationCodeSendService {
         String mailContent = writeMailContentWithVerificationCode(verificationCode);
         mailSender.send(previousMember.getEmail(), VERIFICATION_EMAIL_SUBJECT, mailContent);
 
-        log.info("[EmailVerificationCodeSendService] 본인 인증 메일 발송: email={}", previousMember.getEmail());
+        log.info(
+                "[EmailVerificationCodeSendService] 본인 인증 메일 발송: currentMemberId={}, previousMemberId={}",
+                currentMember.getId(),
+                previousMemberId);
     }
 
     private String writeMailContentWithVerificationCode(String verificationCode) {
