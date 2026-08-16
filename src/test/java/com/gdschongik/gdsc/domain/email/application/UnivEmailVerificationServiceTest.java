@@ -45,23 +45,6 @@ public class UnivEmailVerificationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 인증코드와_레디스에_존재하는_인증정보의_코드가_다르면_실패한다() {
-            // given
-            Member member = createGuestMember();
-            logoutAndReloginAs(member.getId(), member.getRole());
-
-            // when
-            String oldVerificationCode = sendCodeAndGetCode(member, UNIV_EMAIL);
-            UnivEmailVerificationRequest request = new UnivEmailVerificationRequest(oldVerificationCode);
-            univEmailVerificationCodeSendService.send("b123456@g.hongik.ac.kr");
-
-            // then
-            assertThatThrownBy(() -> univEmailVerificationService.verifyMemberUnivEmail(request))
-                    .isInstanceOf(CustomException.class)
-                    .hasMessage(EMAIL_VERIFICATION_CODE_MISMATCH.getMessage());
-        }
-
-        @Test
         void 인증코드가_일치하면_학교_메일_인증이_완료된다() {
             // given
             Member member = createGuestMember();

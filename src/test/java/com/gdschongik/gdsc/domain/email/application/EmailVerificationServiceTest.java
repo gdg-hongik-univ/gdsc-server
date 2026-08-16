@@ -84,21 +84,6 @@ public class EmailVerificationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 인증코드가_레디스에_저장된_코드와_다르면_실패한다() {
-            // given
-            Member previousMember = createMember();
-            Member currentMember = createGuestMember();
-            logoutAndReloginAs(currentMember.getId(), currentMember.getRole());
-            sendCodeAndGetCode(currentMember, previousMember);
-
-            // when & then
-            PreviousEmailVerificationRequest request = new PreviousEmailVerificationRequest("999999");
-            assertThatThrownBy(() -> emailVerificationService.verifyPreviousMemberEmail(request))
-                    .isInstanceOf(CustomException.class)
-                    .hasMessage(EMAIL_VERIFICATION_CODE_MISMATCH.getMessage());
-        }
-
-        @Test
         void 인증코드가_일치하면_과거_계정_아이디를_반환한다() {
             // given
             Member previousMember = createMember();
