@@ -30,16 +30,14 @@ public class UnivEmailVerificationCodeSendService {
     private final VerificationCodeGenerator verificationCodeGenerator;
 
     private static final long VERIFICATION_CODE_TTL_SECONDS = 60;
-
-    // TODO: 기획에서 확정된 메일 양식으로 교체. 현재는 코드가 보이기만 하는 임시 디자인
     private static final String NOTIFICATION_MESSAGE =
             """
 <div style='font-family: "Roboto", sans-serif; margin: 40px; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);'>
     <h3 style='color: #202124;'>GDG Hongik Univ. 재학생 인증 메일</h3>
     <p style='color: #5f6368;'>안녕하세요!</p>
     <p style='color: #5f6368;'>GDG Hongik Univ.의 오픈 커뮤니티에 가입해주셔서 대단히 감사드립니다.</p>
-    <p style='color: #5f6368;'>아래의 코드를 입력하여 재학생 인증을 완료해주세요. 코드는 %d초 동안 유효합니다.</p>
-    <p style='display: inline-block; background-color: #f1f3f4; color: #202124; padding: 12px 24px; margin: 20px 0; border-radius: 4px; font-size: 32px; font-weight: 700; letter-spacing: 8px;'>%s</p>
+    <p style='color: #5f6368;'>아래의 인증 코드를 입력하여 재학생 인증을 완료해주세요. 코드는 %d초 동안 유효합니다.</p>
+    <div style='display: inline-block; background-color: #F8F9FA; color: #202124; border-left: 4px solid #4285F4; padding: 12px 28px; margin: 20px 0; border-radius: 0 4px 4px 0; font-weight: 500; font-size: 28px; letter-spacing: 8px; font-family: monospace;'>%s</div>
     <p style='color: #5f6368;'>감사합니다.<br>GDG Hongik Univ. Core Team</p>
 </div>
 """;
