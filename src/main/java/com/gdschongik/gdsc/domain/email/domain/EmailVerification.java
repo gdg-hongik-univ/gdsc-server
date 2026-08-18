@@ -15,36 +15,36 @@ import org.springframework.data.redis.core.TimeToLive;
 public class EmailVerification {
 
     @Id
-    private String verificationToken;
-
     private Long currentMemberId;
 
     private Long previousMemberId;
+
+    private String code;
 
     @TimeToLive
     private long ttl;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private EmailVerification(String verificationToken, Long currentMemberId, Long previousMemberId, long ttl) {
-        this.verificationToken = verificationToken;
+    private EmailVerification(Long currentMemberId, Long previousMemberId, String code, long ttl) {
         this.currentMemberId = currentMemberId;
         this.previousMemberId = previousMemberId;
+        this.code = code;
         this.ttl = ttl;
     }
 
-    public static EmailVerification of(
-            String verificationToken, Long currentMemberId, Long previousMemberId, long ttl) {
+    public static EmailVerification create(Long currentMemberId, Long previousMemberId, String code, long ttl) {
         return EmailVerification.builder()
-                .verificationToken(verificationToken)
                 .currentMemberId(currentMemberId)
                 .previousMemberId(previousMemberId)
+                .code(code)
                 .ttl(ttl)
                 .build();
     }
 
-    public void verify(String token) {
-        if (!this.verificationToken.equals(token)) {
-            throw new CustomException(EXPIRED_EMAIL_VERIFICATION_TOKEN);
+    // TODO: 무차별 대입 방어. 시도 횟수 제한 및 실패 누적 시 인증정보 무효화 필요
+    public void validateCode(String code) {
+        if (!this.code.equals(code)) {
+            throw new CustomException(EMAIL_VERIFICATION_CODE_MISMATCH);
         }
     }
 }

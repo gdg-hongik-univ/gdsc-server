@@ -2,9 +2,9 @@ package com.gdschongik.gdsc.domain.email.api;
 
 import com.gdschongik.gdsc.domain.auth.application.JwtService;
 import com.gdschongik.gdsc.domain.auth.dto.TokenPairDto;
-import com.gdschongik.gdsc.domain.email.application.EmailVerificationLinkSendService;
+import com.gdschongik.gdsc.domain.email.application.EmailVerificationCodeSendService;
 import com.gdschongik.gdsc.domain.email.application.EmailVerificationService;
-import com.gdschongik.gdsc.domain.email.dto.request.PreviousEmailVerificationLinkSendRequest;
+import com.gdschongik.gdsc.domain.email.dto.request.PreviousEmailVerificationCodeSendRequest;
 import com.gdschongik.gdsc.domain.email.dto.request.PreviousEmailVerificationRequest;
 import com.gdschongik.gdsc.global.util.CookieUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,16 +21,16 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class OnboardingEmailController {
 
-    private final EmailVerificationLinkSendService emailVerificationLinkSendService;
+    private final EmailVerificationCodeSendService emailVerificationCodeSendService;
     private final EmailVerificationService emailVerificationService;
     private final JwtService jwtService;
     private final CookieUtil cookieUtil;
 
     @Operation(summary = "과거 계정 본인 인증 메일 발송 요청", description = "깃허브 계정 변경 전 과거 계정의 본인 인증 메일 발송을 요청합니다.")
     @PostMapping("/send-verify-email")
-    public ResponseEntity<Void> sendPreviousEmailVerificationLink(
-            @Valid @RequestBody PreviousEmailVerificationLinkSendRequest request) {
-        emailVerificationLinkSendService.sendPreviousMemberVerificationLink(request.previousMemberId());
+    public ResponseEntity<Void> sendPreviousEmailVerificationCode(
+            @Valid @RequestBody PreviousEmailVerificationCodeSendRequest request) {
+        emailVerificationCodeSendService.sendPreviousMemberVerificationCode(request.previousMemberId());
         return ResponseEntity.ok().build();
     }
 
