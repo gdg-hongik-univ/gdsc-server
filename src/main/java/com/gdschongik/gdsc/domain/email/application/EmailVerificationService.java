@@ -7,6 +7,7 @@ import com.gdschongik.gdsc.domain.email.domain.EmailVerification;
 import com.gdschongik.gdsc.domain.email.domain.event.PreviousEmailVerifiedEvent;
 import com.gdschongik.gdsc.domain.email.dto.request.PreviousEmailVerificationRequest;
 import com.gdschongik.gdsc.global.exception.CustomException;
+import com.gdschongik.gdsc.global.util.MemberUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -15,18 +16,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+// TODO SendCodeService와 통합 검토
 public class EmailVerificationService {
 
     private final EmailVerificationRepository emailVerificationRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final MemberUtil memberUtil;
 
     @Transactional
     public Long verifyPreviousMemberEmail(PreviousEmailVerificationRequest request) {
         EmailVerification emailVerification = emailVerificationRepository
-                .findById(request.token())
-                .orElseThrow(() -> new CustomException(EMAIL_VERIFICATION_NOT_FOUND));
+                .findById(memberUtil.getCurrentMemberId())
+                .orElseThrow(() -> new CustomException(EMAIL_VERIFICATION_CODE_NOT_SENT));
+        emailVerification.validateCode(request.code());
+        emailVerificationRepository.delete(emailVerification);
+
         applicationEventPublisher.publishEvent(new PreviousEmailVerifiedEvent(
                 emailVerification.getCurrentMemberId(), emailVerification.getPreviousMemberId()));
         log.info(

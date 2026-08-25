@@ -22,7 +22,7 @@ class UnivEmailValidatorTest {
         String hongikDomainEmail = "te-st@g.hongik.ac.kr";
 
         // when & then
-        assertThatCode(() -> univEmailValidator.validateSendUnivEmailVerificationLink(hongikDomainEmail, false))
+        assertThatCode(() -> univEmailValidator.validateSendUnivEmailVerificationCode(hongikDomainEmail, false))
                 .doesNotThrowAnyException();
     }
 
@@ -31,7 +31,7 @@ class UnivEmailValidatorTest {
     @DisplayName("'g.hongik.ac.kr'가 아닌 도메인을 가진 이메일을 입력하면 예외를 발생시킨다.")
     void validateEmailDomainMismatchTest(String email) {
         // when & then
-        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationLink(email, false))
+        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(email, false))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.UNIV_EMAIL_DOMAIN_MISMATCH.getMessage());
     }
@@ -43,7 +43,7 @@ class UnivEmailValidatorTest {
         String email = "t.e.s.t@g.hongik.ac.kr";
 
         // when & then
-        assertThatCode(() -> univEmailValidator.validateSendUnivEmailVerificationLink(email, false))
+        assertThatCode(() -> univEmailValidator.validateSendUnivEmailVerificationCode(email, false))
                 .doesNotThrowAnyException();
     }
 
@@ -61,7 +61,7 @@ class UnivEmailValidatorTest {
     @DisplayName("Email의 '@' 앞 부분에 '&', '=', ''', '+', ',', '<', '>'가 포함되는 경우 예외를 발생시킨다.")
     void validateEmailFormatMismatchTest(String email) {
         // when & then
-        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationLink(email, false))
+        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(email, false))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.UNIV_EMAIL_FORMAT_MISMATCH.getMessage());
     }
@@ -73,7 +73,7 @@ class UnivEmailValidatorTest {
         String email = "te..st@g.hongik.ac.kr";
 
         // when & then
-        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationLink(email, false))
+        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(email, false))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.UNIV_EMAIL_FORMAT_MISMATCH.getMessage());
     }
@@ -84,7 +84,7 @@ class UnivEmailValidatorTest {
         String hongikDomainEmail = "test@g.hongik.ac.kr";
 
         // when & then
-        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationLink(hongikDomainEmail, true))
+        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(hongikDomainEmail, true))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(UNIV_EMAIL_ALREADY_SATISFIED.getMessage());
     }

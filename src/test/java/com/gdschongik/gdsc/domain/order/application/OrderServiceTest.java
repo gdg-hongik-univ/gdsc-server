@@ -486,7 +486,6 @@ class OrderServiceTest extends IntegrationTest {
         }
     }
 
-    @Disabled // TODO: CI 환경에서만 실패하는 테스트, TZ 관련 설정 확인 필요
     @Nested
     class 일자기준으로_주문목록_조회시 {
 

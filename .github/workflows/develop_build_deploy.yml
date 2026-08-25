@@ -17,6 +17,8 @@ env:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Seoul
     environment: develop
     strategy:
       matrix:

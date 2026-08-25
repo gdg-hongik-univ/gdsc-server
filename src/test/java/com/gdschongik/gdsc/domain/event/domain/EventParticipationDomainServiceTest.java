@@ -519,7 +519,7 @@ public class EventParticipationDomainServiceTest {
         }
 
         @Test
-        void 이미_신청한_이벤트를_다시_신청하면_실패한다() {
+        void 이미_신청한_행사를_다시_신청하면_실패한다() {
             // given
             Member regularMember = fixtureHelper.createRegularMember(1L);
             Participant participant =
@@ -633,7 +633,7 @@ public class EventParticipationDomainServiceTest {
         }
 
         @Test
-        void 이미_신청한_이벤트를_다시_신청하면_실패한다() {
+        void 이미_신청한_행사를_다시_신청하면_실패한다() {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
@@ -670,7 +670,7 @@ public class EventParticipationDomainServiceTest {
         }
 
         @Test
-        void 이미_신청한_이벤트를_다시_신청하면_실패한다() {
+        void 이미_신청한_행사를_다시_신청하면_실패한다() {
             // given
             Participant participant = Participant.of(NAME, STUDENT_ID, PHONE_NUMBER);
             Event event = fixtureHelper.createEventWithAfterParty(1L, REGULAR_ROLE_ONLY_STATUS);
@@ -684,7 +684,7 @@ public class EventParticipationDomainServiceTest {
     }
 
     @Nested
-    class 이벤트_신청_가능_여부_검증시 {
+    class 행사_신청_가능_여부_검증시 {
 
         @Test
         void 모두_참석_가능한_행사에_정회원이_검증하면_성공한다() {
@@ -784,7 +784,7 @@ public class EventParticipationDomainServiceTest {
         }
 
         @Test
-        void 이미_신청한_이벤트를_다시_신청하면_실패한다() {
+        void 이미_신청한_행사를_다시_신청하면_실패한다() {
             // given
             Member regularMember = fixtureHelper.createRegularMember(1L);
             Event event = fixtureHelper.createEventWithAfterParty(1L, UsageStatus.DISABLED); // 모두 참석 가능 (정회원 전용 비활성화)

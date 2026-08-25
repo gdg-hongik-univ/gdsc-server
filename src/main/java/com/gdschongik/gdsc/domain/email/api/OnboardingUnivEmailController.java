@@ -1,8 +1,8 @@
 package com.gdschongik.gdsc.domain.email.api;
 
-import com.gdschongik.gdsc.domain.email.application.UnivEmailVerificationLinkSendService;
+import com.gdschongik.gdsc.domain.email.application.UnivEmailVerificationCodeSendService;
 import com.gdschongik.gdsc.domain.email.application.UnivEmailVerificationService;
-import com.gdschongik.gdsc.domain.email.dto.request.UnivEmailVerificationLinkSendRequest;
+import com.gdschongik.gdsc.domain.email.dto.request.UnivEmailVerificationCodeSendRequest;
 import com.gdschongik.gdsc.domain.email.dto.request.UnivEmailVerificationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,20 +21,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OnboardingUnivEmailController {
 
-    private final UnivEmailVerificationLinkSendService univEmailVerificationLinkSendService;
+    private final UnivEmailVerificationCodeSendService univEmailVerificationCodeSendService;
     private final UnivEmailVerificationService univEmailVerificationService;
 
     @Operation(summary = "학교 인증 메일 발송 요청", description = "학교 인증 메일 발송을 요청합니다.")
     @PostMapping("/send-verify-univ-email")
-    public ResponseEntity<Void> sendUnivEmailVerificationLink(
-            @Valid @RequestBody UnivEmailVerificationLinkSendRequest request) {
-        univEmailVerificationLinkSendService.send(request.univEmail());
+    public ResponseEntity<Void> sendUnivEmailVerificationCode(
+            @Valid @RequestBody UnivEmailVerificationCodeSendRequest request) {
+        univEmailVerificationCodeSendService.send(request.univEmail());
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "학교 인증 메일 인증하기", description = "학교 인증 메일을 인증합니다.")
     @PatchMapping("/verify-univ-email")
-    public ResponseEntity<Void> sendUnivEmailVerificationLink(
+    public ResponseEntity<Void> sendUnivEmailVerificationCode(
             @RequestBody @Valid UnivEmailVerificationRequest request) {
         univEmailVerificationService.verifyMemberUnivEmail(request);
         return ResponseEntity.ok().build();

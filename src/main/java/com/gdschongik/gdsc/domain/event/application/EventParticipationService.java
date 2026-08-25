@@ -341,7 +341,7 @@ public class EventParticipationService {
         eventParticipationRepository.save(eventParticipation);
 
         log.info(
-                "[EventParticipationService] 이벤트 참여 신청: eventId={}, memberStudentId={}",
+                "[EventParticipationService] 행사 참여 신청: eventId={}, memberStudentId={}",
                 event.getId(),
                 participant.getStudentId());
     }
@@ -388,7 +388,7 @@ public class EventParticipationService {
                     mainEventApplicantCount);
             return EventValidateApplicableResponse.success();
         } catch (CustomException e) {
-            log.info("[EventService] 이벤트 참여 불가: eventId={}, failureReason={}", request.eventId(), e.getErrorCode());
+            log.info("[EventService] 행사 참여 불가: eventId={}, failureReason={}", request.eventId(), e.getErrorCode());
             return EventValidateApplicableResponse.failure(e.getErrorCode());
         }
     }

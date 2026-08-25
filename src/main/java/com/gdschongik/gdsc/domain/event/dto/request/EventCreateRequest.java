@@ -15,5 +15,5 @@ public record EventCreateRequest(
         String description,
         @NotNull Period applicationPeriod,
         @NotNull UsageStatus regularRoleOnlyStatus,
-        @Positive @Schema(description = "본 행사 최대 신청 가능 인원. 제한 없음은 null을 입력합니다.") Integer mainEventMaxApplicantCount,
+        @Positive @Schema(description = "본행사 최대 신청 가능 인원. 제한 없음은 null을 입력합니다.") Integer mainEventMaxApplicantCount,
         @Positive @Schema(description = "뒤풀이 최대 신청 가능 인원. 제한 없음은 null을 입력합니다.") Integer afterPartyMaxApplicantCount) {}

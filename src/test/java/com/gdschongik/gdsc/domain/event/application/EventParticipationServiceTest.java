@@ -50,10 +50,10 @@ class EventParticipationServiceTest extends IntegrationTest {
     private EventParticipationRepository eventParticipationRepository;
 
     @Nested
-    class 이벤트_신청자_목록_조회할때 {
+    class 행사_신청자_목록_조회할때 {
 
         @Test
-        void 이벤트_ID가_일치하는_신청자만_조회된다() {
+        void 행사_ID가_일치하는_신청자만_조회된다() {
             // given
             Event event1 = createEvent();
             Event event2 = createEvent();
@@ -246,7 +246,7 @@ class EventParticipationServiceTest extends IntegrationTest {
     class 뒤풀이_신청자_목록_조회할때 {
 
         @Test
-        void 뒤풀이가_비활성화된_이벤트이면_실패한다() {
+        void 뒤풀이가_비활성화된_행사이면_실패한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
             EventParticipantQueryOption queryOption = new EventParticipantQueryOption(null, null, null);
@@ -259,7 +259,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 이벤트_ID가_일치하는_신청자만_조회된다() {
+        void 행사_ID가_일치하는_신청자만_조회된다() {
             // given
             Event event1 = createEvent();
             Event event2 = createEvent();
@@ -463,7 +463,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 서로_다른_이벤트의_참여정보들에_대한_뒤풀이_참석_시도시_예외가_발생한다() {
+        void 서로_다른_행사의_참여정보들에_대한_뒤풀이_참석_시도시_예외가_발생한다() {
             // given
             Event event1 = createEvent("2025-2 개강총회");
             Event event2 = createEvent("2025-1 새싹 세미나");
@@ -482,7 +482,7 @@ class EventParticipationServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 이벤트_신청_정보_삭제시 {
+    class 행사_신청_정보_삭제시 {
 
         @Test
         void 성공한다() {
@@ -789,7 +789,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 뒤풀이가_비활성화된_이벤트_참석정보라면_뒤풀이_첨석_처리에_실패한다() {
+        void 뒤풀이가_비활성화된_행사_참석정보라면_뒤풀이_첨석_처리에_실패한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
             Member member = createMember();
@@ -806,7 +806,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 뒤풀이가_비활성화된_이벤트_참석정보라면_선입금_확인_처리에_실패한다() {
+        void 뒤풀이가_비활성화된_행사_참석정보라면_선입금_확인_처리에_실패한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
             Member member = createMember();
@@ -823,7 +823,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 뒤풀이가_비활성화된_이벤트_참석정보라면_정산_확인_처리에_실패한다() {
+        void 뒤풀이가_비활성화된_행사_참석정보라면_정산_확인_처리에_실패한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
             Member member = createMember();
@@ -840,7 +840,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 뒤풀이가_비활성화된_이벤트_참석정보라면_뒤풀이_첨석_취소_처리에_실패한다() {
+        void 뒤풀이가_비활성화된_행사_참석정보라면_뒤풀이_첨석_취소_처리에_실패한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
             Member member = createMember();
@@ -857,7 +857,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 뒤풀이가_비활성화된_이벤트_참석정보라면_선입금_확인_취소_처리에_실패한다() {
+        void 뒤풀이가_비활성화된_행사_참석정보라면_선입금_확인_취소_처리에_실패한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
             Member member = createMember();
@@ -874,7 +874,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 뒤풀이가_비활성화된_이벤트_참석정보라면_정산_확인_취소_처리에_실패한다() {
+        void 뒤풀이가_비활성화된_행사_참석정보라면_정산_확인_취소_처리에_실패한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
             Member member = createMember();
@@ -891,7 +891,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 뒤풀이가_비활성화된_이벤트_참석정보라면_뒤풀이_전체_참석_처리에_실패한다() {
+        void 뒤풀이가_비활성화된_행사_참석정보라면_뒤풀이_전체_참석_처리에_실패한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
             Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
@@ -911,7 +911,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 뒤풀이가_비활성화된_이벤트_참석정보라면_선입금_전체_확인_처리에_실패한다() {
+        void 뒤풀이가_비활성화된_행사_참석정보라면_선입금_전체_확인_처리에_실패한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
             Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
@@ -931,7 +931,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 뒤풀이가_비활성화된_이벤트_참석정보라면_정산_전체_확인_처리에_실패한다() {
+        void 뒤풀이가_비활성화된_행사_참석정보라면_정산_전체_확인_처리에_실패한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
             Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
@@ -951,7 +951,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 뒤풀이가_비활성화된_이벤트_참석정보라면_뒤풀이_전체_참석_취소_처리에_실패한다() {
+        void 뒤풀이가_비활성화된_행사_참석정보라면_뒤풀이_전체_참석_취소_처리에_실패한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
             Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
@@ -971,7 +971,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 뒤풀이가_비활성화된_이벤트_참석정보라면_선입금_전체_확인_취소_처리에_실패한다() {
+        void 뒤풀이가_비활성화된_행사_참석정보라면_선입금_전체_확인_취소_처리에_실패한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
             Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
@@ -991,7 +991,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 뒤풀이가_비활성화된_이벤트_참석정보라면_정산_전체_확인_취소_처리에_실패한다() {
+        void 뒤풀이가_비활성화된_행사_참석정보라면_정산_전체_확인_취소_처리에_실패한다() {
             // given
             Event event = createAfterPartyDisabledEvent();
             Member member1 = createAssociateMemberForEvent("C000001", "김홍익");
@@ -1173,7 +1173,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 존재하지_않는_이벤트라면_전체_확인_처리에_실패한다() {
+        void 존재하지_않는_행사라면_전체_확인_처리에_실패한다() {
             // given
             AfterPartyStatusesUpdateRequest request =
                     new AfterPartyStatusesUpdateRequest(9999L, AfterPartyUpdateTarget.ATTENDANCE);
@@ -1185,7 +1185,7 @@ class EventParticipationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 존재하지_않는_이벤트라면_전체_확인_취소_처리에_실패한다() {
+        void 존재하지_않는_행사라면_전체_확인_취소_처리에_실패한다() {
             // given
             AfterPartyStatusesUpdateRequest request =
                     new AfterPartyStatusesUpdateRequest(9999L, AfterPartyUpdateTarget.ATTENDANCE);

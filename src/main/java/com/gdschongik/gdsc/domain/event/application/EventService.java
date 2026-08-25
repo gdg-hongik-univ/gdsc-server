@@ -44,7 +44,7 @@ public class EventService {
                 request.afterPartyMaxApplicantCount());
         eventRepository.save(event);
 
-        log.info("[EventService] 이벤트 생성: eventId={}", event.getId());
+        log.info("[EventService] 행사 생성: eventId={}", event.getId());
         return EventCreateResponse.of(event.getId());
     }
 
@@ -84,7 +84,7 @@ public class EventService {
 
         eventRepository.save(event);
 
-        log.info("[EventService] 이벤트 기본 정보 수정 완료: eventId={}", event.getId());
+        log.info("[EventService] 행사 기본 정보 수정 완료: eventId={}", event.getId());
     }
 
     @Transactional
@@ -103,7 +103,7 @@ public class EventService {
 
         eventRepository.save(event);
 
-        log.info("[EventService] 이벤트 폼 정보 수정 완료: eventId={}", event.getId());
+        log.info("[EventService] 행사 폼 정보 수정 완료: eventId={}", event.getId());
     }
 
     @Transactional(readOnly = true)

@@ -25,7 +25,7 @@ public class EventServiceTest extends IntegrationTest {
     private EventService eventService;
 
     @Nested
-    class 이벤트_생성시 {
+    class 행사_생성시 {
 
         @Test
         void 성공한다() {
@@ -46,10 +46,10 @@ public class EventServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 이벤트_검색시 {
+    class 행사_검색시 {
 
         @Test
-        void 검색어를_빈_문자열로_조회하면_모든_이벤트가_조회된다() {
+        void 검색어를_빈_문자열로_조회하면_모든_행사가_조회된다() {
             // given
             createEvent("2026-1 새싹 세미나");
             createEvent("2026-1 프로젝트 트랙 결과 발표");
@@ -63,7 +63,7 @@ public class EventServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 검색어가_null일_때_모든_이벤트가_조회된다() {
+        void 검색어가_null일_때_모든_행사가_조회된다() {
             // given
             createEvent("2026-1 새싹 세미나");
             createEvent("2026-1 프로젝트 트랙 결과 발표");
@@ -77,7 +77,7 @@ public class EventServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 검색어를_이름에_포함하는_모든_이벤트가_조회된다() {
+        void 검색어를_이름에_포함하는_모든_행사가_조회된다() {
             // given
             createEvent("2026-1 새싹 세미나");
             createEvent("2026-1 프로젝트 트랙 결과 발표");
@@ -95,10 +95,10 @@ public class EventServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 이벤트_기본_정보_수정시 {
+    class 행사_기본_정보_수정시 {
 
         @Test
-        void 존재하지_않는_이벤트일_경우_실패한다() {
+        void 존재하지_않는_행사일_경우_실패한다() {
             // given
             Long invalidId = 999L;
             var request = new EventUpdateBasicInfoRequest(
@@ -143,10 +143,10 @@ public class EventServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 이벤트_폼_정보_수정시 {
+    class 행사_폼_정보_수정시 {
 
         @Test
-        void 존재하지_않는_이벤트일_경우_실패한다() {
+        void 존재하지_않는_행사일_경우_실패한다() {
             // given
             Long invalidId = 999L;
             var request = new EventUpdateFormInfoRequest(

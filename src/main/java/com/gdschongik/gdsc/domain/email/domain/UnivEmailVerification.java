@@ -1,5 +1,8 @@
 package com.gdschongik.gdsc.domain.email.domain;
 
+import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
+
+import com.gdschongik.gdsc.global.exception.CustomException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,23 +17,34 @@ public class UnivEmailVerification {
     @Id
     private Long memberId;
 
-    private String verificationToken;
+    private String univEmail;
+
+    private String code;
 
     @TimeToLive
     private long ttl;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private UnivEmailVerification(Long memberId, String verificationToken, long ttl) {
+    private UnivEmailVerification(Long memberId, String univEmail, String code, long ttl) {
         this.memberId = memberId;
-        this.verificationToken = verificationToken;
+        this.univEmail = univEmail;
+        this.code = code;
         this.ttl = ttl;
     }
 
-    public static UnivEmailVerification of(Long memberId, String verificationToken, long ttl) {
+    public static UnivEmailVerification create(Long memberId, String univEmail, String code, long ttl) {
         return UnivEmailVerification.builder()
                 .memberId(memberId)
-                .verificationToken(verificationToken)
+                .univEmail(univEmail)
+                .code(code)
                 .ttl(ttl)
                 .build();
+    }
+
+    // TODO: 무차별 대입 방어. 시도 횟수 제한 및 실패 누적 시 인증정보 무효화 필요
+    public void validateCode(String code) {
+        if (!this.code.equals(code)) {
+            throw new CustomException(EMAIL_VERIFICATION_CODE_MISMATCH);
+        }
     }
 }

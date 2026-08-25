@@ -17,5 +17,7 @@ public class RegexConstant {
 
     public static final String ATTENDANCE_NUMBER = "^[0-9]{4}$";
 
+    public static final String VERIFICATION_CODE = "^[0-9]{6}$";
+
     private RegexConstant() {}
 }
