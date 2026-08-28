@@ -1,5 +1,6 @@
 package com.gdschongik.gdsc.domain.email.application;
 
+import static com.gdschongik.gdsc.global.common.constant.TestEmailConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -14,9 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class EmailVerificationServiceTest extends IntegrationTest {
-
-    private static final String WRONG_CODE = "9999999"; // 7자리 존재할 수 없는 코드
-    private static final int MAX_ATTEMPT_COUNT = 5;
 
     @Autowired
     private EmailVerificationCodeSendService emailVerificationCodeSendService;

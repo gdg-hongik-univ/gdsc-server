@@ -1,5 +1,7 @@
 package com.gdschongik.gdsc.domain.email.domain;
 
+import static com.gdschongik.gdsc.global.common.constant.TestEmailConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestMemberConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -15,11 +17,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 class UnivEmailValidatorTest {
 
     private static final Long MEMBER_ID = 1L;
-    private static final String UNIV_EMAIL = "test@g.hongik.ac.kr";
-    private static final String CODE = "042917";
-    private static final String WRONG_CODE = "999999";
-    private static final long TTL = 60L;
-    private static final int MAX_ATTEMPT_COUNT = 5;
 
     UnivEmailValidator univEmailValidator = new UnivEmailValidator();
 
@@ -92,11 +89,8 @@ class UnivEmailValidatorTest {
 
     @Test
     void 이미_가입된_재학생_메일이라면_실패한다() {
-        // given
-        String hongikDomainEmail = "test@g.hongik.ac.kr";
-
         // when & then
-        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(hongikDomainEmail, true))
+        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(UNIV_EMAIL, true))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(UNIV_EMAIL_ALREADY_SATISFIED.getMessage());
     }

@@ -1,5 +1,6 @@
 package com.gdschongik.gdsc.domain.email.domain;
 
+import static com.gdschongik.gdsc.global.common.constant.TestEmailConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -11,8 +12,6 @@ class EmailVerificationTest {
 
     private static final Long CURRENT_MEMBER_ID = 1L;
     private static final Long PREVIOUS_MEMBER_ID = 2L;
-    private static final String CODE = "042917";
-    private static final long TTL = 60L;
 
     @Nested
     class 인증_코드_검증시 {
@@ -34,7 +33,7 @@ class EmailVerificationTest {
                     EmailVerification.create(CURRENT_MEMBER_ID, PREVIOUS_MEMBER_ID, CODE, TTL);
 
             // when & then
-            assertThatThrownBy(() -> emailVerification.validateCode("999999"))
+            assertThatThrownBy(() -> emailVerification.validateCode(WRONG_CODE))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EMAIL_VERIFICATION_CODE_MISMATCH.getMessage());
         }

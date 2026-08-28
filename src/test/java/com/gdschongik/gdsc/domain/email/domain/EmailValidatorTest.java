@@ -1,5 +1,6 @@
 package com.gdschongik.gdsc.domain.email.domain;
 
+import static com.gdschongik.gdsc.global.common.constant.TestEmailConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -12,11 +13,6 @@ class EmailValidatorTest {
 
     private static final Long CURRENT_MEMBER_ID = 1L;
     private static final Long PREVIOUS_MEMBER_ID = 2L;
-
-    private static final String CODE = "042917";
-    private static final String WRONG_CODE = "999999";
-    private static final long TTL = 60L;
-    private static final int MAX_ATTEMPT_COUNT = 5;
 
     EmailValidator emailValidator = new EmailValidator();
 

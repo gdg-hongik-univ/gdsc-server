@@ -1,5 +1,7 @@
 package com.gdschongik.gdsc.domain.email.domain;
 
+import static com.gdschongik.gdsc.global.common.constant.TestEmailConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestMemberConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -10,9 +12,6 @@ import org.junit.jupiter.api.Test;
 class UnivEmailVerificationTest {
 
     private static final Long MEMBER_ID = 1L;
-    private static final String UNIV_EMAIL = "test@g.hongik.ac.kr";
-    private static final String CODE = "042917";
-    private static final long TTL = 60L;
 
     @Nested
     class 인증_코드_검증시 {
@@ -34,7 +33,7 @@ class UnivEmailVerificationTest {
                     UnivEmailVerification.create(MEMBER_ID, UNIV_EMAIL, CODE, TTL);
 
             // when & then
-            assertThatThrownBy(() -> univEmailVerification.validateCode("999999"))
+            assertThatThrownBy(() -> univEmailVerification.validateCode(WRONG_CODE))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EMAIL_VERIFICATION_CODE_MISMATCH.getMessage());
         }
