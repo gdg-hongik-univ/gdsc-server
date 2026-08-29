@@ -1,5 +1,6 @@
 package com.gdschongik.gdsc.domain.email.application;
 
+import static com.gdschongik.gdsc.global.common.constant.TestEmailConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.TestMemberConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
@@ -74,6 +75,49 @@ public class UnivEmailVerificationServiceTest extends IntegrationTest {
             // then
             assertThat(univEmailVerificationService.getUnivEmailVerificationFromRedis(member.getId()))
                     .isEmpty();
+        }
+
+        @Test
+        void 최대_시도_횟수를_초과하면_인증에_실패하고_레디스의_인증정보가_삭제된다() {
+            // given
+            Member member = createGuestMember();
+            logoutAndReloginAs(member.getId(), member.getRole());
+            String verificationCode = sendCodeAndGetCode(member, UNIV_EMAIL);
+            UnivEmailVerificationRequest wrongRequest = new UnivEmailVerificationRequest(WRONG_CODE);
+            for (int i = 0; i < MAX_ATTEMPT_COUNT; i++) {
+                assertThatThrownBy(() -> univEmailVerificationService.verifyMemberUnivEmail(wrongRequest))
+                        .isInstanceOf(CustomException.class);
+            }
+
+            // when & then
+            UnivEmailVerificationRequest request = new UnivEmailVerificationRequest(verificationCode);
+            assertThatThrownBy(() -> univEmailVerificationService.verifyMemberUnivEmail(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EMAIL_VERIFICATION_CODE_ATTEMPT_EXCEEDED.getMessage());
+            assertThat(univEmailVerificationService.getUnivEmailVerificationFromRedis(member.getId()))
+                    .isEmpty();
+        }
+
+        @Test
+        void 인증_코드를_재발송하면_시도_횟수가_초기화된다() {
+            // given
+            Member member = createGuestMember();
+            logoutAndReloginAs(member.getId(), member.getRole());
+            sendCodeAndGetCode(member, UNIV_EMAIL);
+            UnivEmailVerificationRequest wrongRequest = new UnivEmailVerificationRequest(WRONG_CODE);
+            for (int i = 0; i < MAX_ATTEMPT_COUNT; i++) {
+                assertThatThrownBy(() -> univEmailVerificationService.verifyMemberUnivEmail(wrongRequest))
+                        .isInstanceOf(CustomException.class);
+            }
+
+            // when
+            String reissuedCode = sendCodeAndGetCode(member, UNIV_EMAIL);
+            univEmailVerificationService.verifyMemberUnivEmail(new UnivEmailVerificationRequest(reissuedCode));
+
+            // then
+            Member verifiedMember = memberRepository.findById(member.getId()).orElseThrow();
+            assertThat(verifiedMember.getAssociateRequirement().isUnivSatisfied())
+                    .isTrue();
         }
 
         @Test

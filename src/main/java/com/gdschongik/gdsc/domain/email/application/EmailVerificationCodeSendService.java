@@ -3,6 +3,7 @@ package com.gdschongik.gdsc.domain.email.application;
 import static com.gdschongik.gdsc.global.common.constant.EmailConstant.*;
 
 import com.gdschongik.gdsc.domain.email.dao.EmailVerificationRepository;
+import com.gdschongik.gdsc.domain.email.dao.VerificationAttemptCounter;
 import com.gdschongik.gdsc.domain.email.domain.EmailVerification;
 import com.gdschongik.gdsc.domain.email.domain.service.EmailValidator;
 import com.gdschongik.gdsc.domain.email.domain.service.VerificationCodeGenerator;
@@ -25,6 +26,7 @@ public class EmailVerificationCodeSendService {
 
     private final MemberRepository memberRepository;
     private final EmailVerificationRepository emailVerificationRepository;
+    private final VerificationAttemptCounter verificationAttemptCounter;
 
     private final MailSender mailSender;
     private final MemberUtil memberUtil;
@@ -58,6 +60,8 @@ public class EmailVerificationCodeSendService {
         EmailVerification emailVerification = EmailVerification.create(
                 currentMember.getId(), previousMemberId, verificationCode, VERIFICATION_CODE_TTL_SECONDS);
         emailVerificationRepository.save(emailVerification);
+        verificationAttemptCounter.initializeEmailVerificationAttemptCount(
+                currentMember.getId(), VERIFICATION_CODE_TTL_SECONDS);
 
         // 이메일 발송
         String mailContent = writeMailContentWithVerificationCode(verificationCode);

@@ -3,6 +3,7 @@ package com.gdschongik.gdsc.domain.email.application;
 import static com.gdschongik.gdsc.global.common.constant.EmailConstant.*;
 
 import com.gdschongik.gdsc.domain.email.dao.UnivEmailVerificationRepository;
+import com.gdschongik.gdsc.domain.email.dao.VerificationAttemptCounter;
 import com.gdschongik.gdsc.domain.email.domain.UnivEmailVerification;
 import com.gdschongik.gdsc.domain.email.domain.service.UnivEmailValidator;
 import com.gdschongik.gdsc.domain.email.domain.service.VerificationCodeGenerator;
@@ -23,6 +24,7 @@ public class UnivEmailVerificationCodeSendService {
 
     private final MemberRepository memberRepository;
     private final UnivEmailVerificationRepository univEmailVerificationRepository;
+    private final VerificationAttemptCounter verificationAttemptCounter;
 
     private final MailSender mailSender;
     private final UnivEmailValidator univEmailValidator;
@@ -51,6 +53,8 @@ public class UnivEmailVerificationCodeSendService {
         UnivEmailVerification univEmailVerification = UnivEmailVerification.create(
                 currentMember.getId(), univEmail, verificationCode, VERIFICATION_CODE_TTL_SECONDS);
         univEmailVerificationRepository.save(univEmailVerification);
+        verificationAttemptCounter.initializeUnivEmailVerificationAttemptCount(
+                currentMember.getId(), VERIFICATION_CODE_TTL_SECONDS);
 
         String mailContent = writeMailContentWithVerificationCode(verificationCode);
         mailSender.send(univEmail, VERIFICATION_UNIV_EMAIL_SUBJECT, mailContent);

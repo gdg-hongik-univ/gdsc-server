@@ -1,5 +1,6 @@
 package com.gdschongik.gdsc.domain.email.application;
 
+import static com.gdschongik.gdsc.global.common.constant.TestEmailConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -113,6 +114,50 @@ public class EmailVerificationServiceTest extends IntegrationTest {
             // then
             assertThat(emailVerificationRepository.findById(currentMember.getId()))
                     .isEmpty();
+        }
+
+        @Test
+        void 최대_시도_횟수를_초과하면_인증에_실패하고_레디스의_인증정보가_삭제된다() {
+            // given
+            Member previousMember = createMember();
+            Member currentMember = createGuestMember();
+            logoutAndReloginAs(currentMember.getId(), currentMember.getRole());
+            String verificationCode = sendCodeAndGetCode(currentMember, previousMember);
+            PreviousEmailVerificationRequest wrongRequest = new PreviousEmailVerificationRequest(WRONG_CODE);
+            for (int i = 0; i < MAX_ATTEMPT_COUNT; i++) {
+                assertThatThrownBy(() -> emailVerificationService.verifyPreviousMemberEmail(wrongRequest))
+                        .isInstanceOf(CustomException.class);
+            }
+
+            // when & then
+            PreviousEmailVerificationRequest request = new PreviousEmailVerificationRequest(verificationCode);
+            assertThatThrownBy(() -> emailVerificationService.verifyPreviousMemberEmail(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EMAIL_VERIFICATION_CODE_ATTEMPT_EXCEEDED.getMessage());
+            assertThat(emailVerificationRepository.findById(currentMember.getId()))
+                    .isEmpty();
+        }
+
+        @Test
+        void 인증_코드를_재발송하면_시도_횟수가_초기화된다() {
+            // given
+            Member previousMember = createMember();
+            Member currentMember = createGuestMember();
+            logoutAndReloginAs(currentMember.getId(), currentMember.getRole());
+            sendCodeAndGetCode(currentMember, previousMember);
+            PreviousEmailVerificationRequest wrongRequest = new PreviousEmailVerificationRequest(WRONG_CODE);
+            for (int i = 0; i < MAX_ATTEMPT_COUNT; i++) {
+                assertThatThrownBy(() -> emailVerificationService.verifyPreviousMemberEmail(wrongRequest))
+                        .isInstanceOf(CustomException.class);
+            }
+
+            // when
+            String reissuedCode = sendCodeAndGetCode(currentMember, previousMember);
+
+            // then
+            Long previousMemberId = emailVerificationService.verifyPreviousMemberEmail(
+                    new PreviousEmailVerificationRequest(reissuedCode));
+            assertThat(previousMemberId).isEqualTo(previousMember.getId());
         }
 
         @Test
