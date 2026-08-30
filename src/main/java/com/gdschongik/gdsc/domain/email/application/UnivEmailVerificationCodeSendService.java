@@ -11,7 +11,6 @@ import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.util.MemberUtil;
 import com.gdschongik.gdsc.global.util.email.MailSender;
-import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,6 @@ public class UnivEmailVerificationCodeSendService {
     private final MemberUtil memberUtil;
     private final VerificationCodeGenerator verificationCodeGenerator;
 
-    private static final Duration VERIFICATION_CODE_TTL = Duration.ofMinutes(5);
     private static final String NOTIFICATION_MESSAGE =
             """
 <div style='font-family: "Roboto", sans-serif; margin: 40px; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);'>

@@ -13,7 +13,6 @@ import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.exception.ErrorCode;
 import com.gdschongik.gdsc.global.util.MemberUtil;
 import com.gdschongik.gdsc.global.util.email.MailSender;
-import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,8 +32,6 @@ public class EmailVerificationCodeSendService {
     private final MemberUtil memberUtil;
     private final EmailValidator emailValidator;
     private final VerificationCodeGenerator verificationCodeGenerator;
-
-    private static final Duration VERIFICATION_CODE_TTL = Duration.ofMinutes(5);
 
     // TODO: 기획에서 확정된 메일 양식으로 교체. 현재는 코드가 보이기만 하는 임시 디자인
     private static final String NOTIFICATION_MESSAGE =
