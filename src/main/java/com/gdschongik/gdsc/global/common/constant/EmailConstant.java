@@ -14,6 +14,7 @@ public class EmailConstant {
     public static final String VERIFICATION_EMAIL_SUBJECT = "GDG Hongik Univ. 본인 인증 메일입니다.";
     public static final String TOKEN_EMAIL_NAME = "email";
     public static final Duration VERIFICATION_CODE_TTL = Duration.ofMinutes(5);
+    public static final Duration VERIFICATION_CODE_RESEND_WAIT_TIME = Duration.ofSeconds(60);
 
     private EmailConstant() {}
 }

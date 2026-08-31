@@ -31,7 +31,7 @@ class UnivEmailValidatorTest {
         String hongikDomainEmail = "te-st@g.hongik.ac.kr";
 
         // when & then
-        assertThatCode(() -> univEmailValidator.validateSendUnivEmailVerificationCode(hongikDomainEmail, false))
+        assertThatCode(() -> univEmailValidator.validateSendUnivEmailVerificationCode(null, hongikDomainEmail, false))
                 .doesNotThrowAnyException();
     }
 
@@ -40,7 +40,7 @@ class UnivEmailValidatorTest {
     @DisplayName("'g.hongik.ac.kr'가 아닌 도메인을 가진 이메일을 입력하면 예외를 발생시킨다.")
     void validateEmailDomainMismatchTest(String email) {
         // when & then
-        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(email, false))
+        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(null, email, false))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.UNIV_EMAIL_DOMAIN_MISMATCH.getMessage());
     }
@@ -52,7 +52,7 @@ class UnivEmailValidatorTest {
         String email = "t.e.s.t@g.hongik.ac.kr";
 
         // when & then
-        assertThatCode(() -> univEmailValidator.validateSendUnivEmailVerificationCode(email, false))
+        assertThatCode(() -> univEmailValidator.validateSendUnivEmailVerificationCode(null, email, false))
                 .doesNotThrowAnyException();
     }
 
@@ -70,7 +70,7 @@ class UnivEmailValidatorTest {
     @DisplayName("Email의 '@' 앞 부분에 '&', '=', ''', '+', ',', '<', '>'가 포함되는 경우 예외를 발생시킨다.")
     void validateEmailFormatMismatchTest(String email) {
         // when & then
-        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(email, false))
+        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(null, email, false))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.UNIV_EMAIL_FORMAT_MISMATCH.getMessage());
     }
@@ -82,7 +82,7 @@ class UnivEmailValidatorTest {
         String email = "te..st@g.hongik.ac.kr";
 
         // when & then
-        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(email, false))
+        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(null, email, false))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.UNIV_EMAIL_FORMAT_MISMATCH.getMessage());
     }
@@ -90,9 +90,29 @@ class UnivEmailValidatorTest {
     @Test
     void 이미_가입된_재학생_메일이라면_실패한다() {
         // when & then
-        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(UNIV_EMAIL, true))
+        assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(null, UNIV_EMAIL, true))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(UNIV_EMAIL_ALREADY_SATISFIED.getMessage());
+    }
+
+    @Nested
+    class 재학생_인증_코드_발송시 {
+
+        @Test
+        void 재발송_대기_시간이_지나지_않았으면_실패한다() {
+            // when & then
+            assertThatThrownBy(() -> univEmailValidator.validateSendUnivEmailVerificationCode(
+                            RESEND_WAIT_TIME_SECONDS - 1, UNIV_EMAIL, false))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EMAIL_VERIFICATION_CODE_RESEND_WAIT_TIME_NOT_PASSED.getMessage());
+        }
+
+        @Test
+        void 이전_발송_이력이_없으면_성공한다() {
+            // when & then
+            assertThatCode(() -> univEmailValidator.validateSendUnivEmailVerificationCode(null, UNIV_EMAIL, false))
+                    .doesNotThrowAnyException();
+        }
     }
 
     @Nested
