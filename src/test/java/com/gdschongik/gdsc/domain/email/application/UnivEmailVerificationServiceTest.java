@@ -1,10 +1,13 @@
 package com.gdschongik.gdsc.domain.email.application;
 
+import static com.gdschongik.gdsc.global.common.constant.EmailConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.TestEmailConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.TestMemberConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
+import com.gdschongik.gdsc.domain.email.dao.UnivEmailVerificationRepository;
+import com.gdschongik.gdsc.domain.email.domain.UnivEmailVerification;
 import com.gdschongik.gdsc.domain.email.dto.request.UnivEmailVerificationRequest;
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.global.exception.CustomException;
@@ -21,12 +24,71 @@ public class UnivEmailVerificationServiceTest extends IntegrationTest {
     @Autowired
     private UnivEmailVerificationService univEmailVerificationService;
 
+    @Autowired
+    private UnivEmailVerificationRepository univEmailVerificationRepository;
+
+    private void passResendWaitTime(Long memberId) {
+        UnivEmailVerification univEmailVerification =
+                univEmailVerificationRepository.findById(memberId).orElseThrow();
+        long remainingSeconds = VERIFICATION_CODE_TTL.toSeconds() - VERIFICATION_CODE_RESEND_WAIT_TIME.toSeconds();
+        univEmailVerificationRepository.save(UnivEmailVerification.create(
+                univEmailVerification.getMemberId(),
+                univEmailVerification.getUnivEmail(),
+                univEmailVerification.getCode(),
+                remainingSeconds));
+    }
+
     private String sendCodeAndGetCode(Member member, String univEmail) {
         univEmailVerificationCodeSendService.send(univEmail);
         return univEmailVerificationService
                 .getUnivEmailVerificationFromRedis(member.getId())
                 .orElseThrow()
                 .getCode();
+    }
+
+    @Nested
+    class 재학생_인증_코드_발송시 {
+
+        @Test
+        void 재발송_대기_시간이_지나지_않았으면_실패한다() {
+            // given
+            Member member = createGuestMember();
+            logoutAndReloginAs(member.getId(), member.getRole());
+            univEmailVerificationCodeSendService.send(UNIV_EMAIL);
+
+            // when & then
+            assertThatThrownBy(() -> univEmailVerificationCodeSendService.send(UNIV_EMAIL))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EMAIL_VERIFICATION_CODE_RESEND_WAIT_TIME_NOT_PASSED.getMessage());
+        }
+
+        @Test
+        void 재발송_대기_시간이_지났으면_성공한다() {
+            // given
+            Member member = createGuestMember();
+            logoutAndReloginAs(member.getId(), member.getRole());
+            sendCodeAndGetCode(member, UNIV_EMAIL);
+            passResendWaitTime(member.getId());
+
+            // when & then
+            assertThatCode(() -> univEmailVerificationCodeSendService.send(UNIV_EMAIL))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void 발송_검증에_실패하면_재발송_대기_시간이_적용되지_않는다() {
+            // given
+            Member member = createGuestMember();
+            logoutAndReloginAs(member.getId(), member.getRole());
+            String invalidUnivEmail = "test@naver.com";
+            assertThatThrownBy(() -> univEmailVerificationCodeSendService.send(invalidUnivEmail))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(UNIV_EMAIL_DOMAIN_MISMATCH.getMessage());
+
+            // when & then
+            assertThatCode(() -> univEmailVerificationCodeSendService.send(UNIV_EMAIL))
+                    .doesNotThrowAnyException();
+        }
     }
 
     @Nested
@@ -78,7 +140,7 @@ public class UnivEmailVerificationServiceTest extends IntegrationTest {
         }
 
         @Test
-        void 최대_시도_횟수를_초과하면_인증에_실패하고_레디스의_인증정보가_삭제된다() {
+        void 최대_시도_횟수를_초과하면_인증에_실패한다() {
             // given
             Member member = createGuestMember();
             logoutAndReloginAs(member.getId(), member.getRole());
@@ -94,8 +156,6 @@ public class UnivEmailVerificationServiceTest extends IntegrationTest {
             assertThatThrownBy(() -> univEmailVerificationService.verifyMemberUnivEmail(request))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EMAIL_VERIFICATION_CODE_ATTEMPT_EXCEEDED.getMessage());
-            assertThat(univEmailVerificationService.getUnivEmailVerificationFromRedis(member.getId()))
-                    .isEmpty();
         }
 
         @Test
@@ -104,6 +164,7 @@ public class UnivEmailVerificationServiceTest extends IntegrationTest {
             Member member = createGuestMember();
             logoutAndReloginAs(member.getId(), member.getRole());
             sendCodeAndGetCode(member, UNIV_EMAIL);
+            passResendWaitTime(member.getId());
             UnivEmailVerificationRequest wrongRequest = new UnivEmailVerificationRequest(WRONG_CODE);
             for (int i = 0; i < MAX_ATTEMPT_COUNT; i++) {
                 assertThatThrownBy(() -> univEmailVerificationService.verifyMemberUnivEmail(wrongRequest))
