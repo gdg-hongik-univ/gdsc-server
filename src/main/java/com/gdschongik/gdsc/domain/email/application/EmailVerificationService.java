@@ -34,7 +34,8 @@ public class EmailVerificationService {
         EmailVerification emailVerification = emailVerificationRepository
                 .findById(currentMemberId)
                 .orElseThrow(() -> new CustomException(EMAIL_VERIFICATION_CODE_NOT_SENT));
-        validateCode(emailVerification, request.code(), currentMemberId);
+        long attemptCount = verificationAttemptCounter.increaseEmailVerificationAttemptCount(currentMemberId);
+        emailValidator.validateEmailVerificationCode(emailVerification, request.code(), attemptCount);
         emailVerificationRepository.delete(emailVerification);
 
         applicationEventPublisher.publishEvent(new PreviousEmailVerifiedEvent(
@@ -44,25 +45,5 @@ public class EmailVerificationService {
                 emailVerification.getCurrentMemberId(),
                 emailVerification.getPreviousMemberId());
         return emailVerification.getPreviousMemberId();
-    }
-
-    /**
-     * 시도 횟수를 증가시킨 뒤 인증 코드를 검증하고, 시도 횟수를 초과한 경우 인증 정보를 삭제하여 무효화합니다.
-     */
-    private void validateCode(EmailVerification emailVerification, String code, Long currentMemberId) {
-        long attemptCount = verificationAttemptCounter.increaseEmailVerificationAttemptCount(currentMemberId);
-
-        try {
-            emailValidator.validateEmailVerificationCode(emailVerification, code, attemptCount);
-        } catch (CustomException e) {
-            if (e.getErrorCode() == EMAIL_VERIFICATION_CODE_ATTEMPT_EXCEEDED) {
-                emailVerificationRepository.delete(emailVerification);
-                log.warn(
-                        "[EmailVerificationService] 본인 인증 시도 횟수 초과: currentMemberId={}, attemptCount={}",
-                        currentMemberId,
-                        attemptCount);
-            }
-            throw e;
-        }
     }
 }
