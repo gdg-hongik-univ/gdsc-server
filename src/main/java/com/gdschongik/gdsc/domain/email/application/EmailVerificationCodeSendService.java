@@ -50,7 +50,8 @@ public class EmailVerificationCodeSendService {
         Member previousMember = memberRepository
                 .findById(previousMemberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-        emailValidator.validateSendEmailVerificationCode(currentMember.getId(), previousMemberId);
+        Long secondsSinceLastSent = calculateSecondsSinceLastSent(currentMember.getId());
+        emailValidator.validateSendEmailVerificationCode(secondsSinceLastSent, currentMember.getId(), previousMemberId);
 
         // 코드 저장
         String verificationCode = verificationCodeGenerator.generate();
@@ -68,6 +69,17 @@ public class EmailVerificationCodeSendService {
                 "[EmailVerificationCodeSendService] 본인 인증 메일 발송: currentMemberId={}, previousMemberId={}",
                 currentMember.getId(),
                 previousMemberId);
+    }
+
+    private Long calculateSecondsSinceLastSent(Long currentMemberId) {
+        EmailVerification emailVerification =
+                emailVerificationRepository.findById(currentMemberId).orElse(null);
+
+        if (emailVerification == null) {
+            return null;
+        }
+
+        return VERIFICATION_CODE_TTL.toSeconds() - emailVerification.getTtl();
     }
 
     private String writeMailContentWithVerificationCode(String verificationCode) {

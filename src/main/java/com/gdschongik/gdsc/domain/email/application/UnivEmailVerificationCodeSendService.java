@@ -44,11 +44,12 @@ public class UnivEmailVerificationCodeSendService {
 """;
 
     public void send(String univEmail) {
+        Member currentMember = memberUtil.getCurrentMember();
+        Long secondsSinceLastSent = calculateSecondsSinceLastSent(currentMember.getId());
         boolean isUnivEmailDuplicate = memberRepository.existsByUnivEmail(univEmail);
-        univEmailValidator.validateSendUnivEmailVerificationCode(univEmail, isUnivEmailDuplicate);
+        univEmailValidator.validateSendUnivEmailVerificationCode(secondsSinceLastSent, univEmail, isUnivEmailDuplicate);
 
         String verificationCode = verificationCodeGenerator.generate();
-        Member currentMember = memberUtil.getCurrentMember();
         UnivEmailVerification univEmailVerification = UnivEmailVerification.create(
                 currentMember.getId(), univEmail, verificationCode, VERIFICATION_CODE_TTL.toSeconds());
         univEmailVerificationRepository.save(univEmailVerification);
@@ -59,6 +60,17 @@ public class UnivEmailVerificationCodeSendService {
         mailSender.send(univEmail, VERIFICATION_UNIV_EMAIL_SUBJECT, mailContent);
 
         log.info("[UnivEmailVerificationCodeSendService] 재학생 인증 메일 발송: memberId={}", currentMember.getId());
+    }
+
+    private Long calculateSecondsSinceLastSent(Long memberId) {
+        UnivEmailVerification univEmailVerification =
+                univEmailVerificationRepository.findById(memberId).orElse(null);
+
+        if (univEmailVerification == null) {
+            return null;
+        }
+
+        return VERIFICATION_CODE_TTL.toSeconds() - univEmailVerification.getTtl();
     }
 
     private String writeMailContentWithVerificationCode(String verificationCode) {

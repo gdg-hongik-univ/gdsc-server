@@ -24,20 +24,29 @@ class EmailValidatorTest {
     class 본인_인증_코드_발송시 {
 
         @Test
-        void 현재_계정과_과거_계정이_같으면_실패한다() {
+        void 재발송_대기_시간이_지나지_않았으면_실패한다() {
             // when & then
-            assertThatThrownBy(() ->
-                            emailValidator.validateSendEmailVerificationCode(CURRENT_MEMBER_ID, CURRENT_MEMBER_ID))
+            assertThatThrownBy(() -> emailValidator.validateSendEmailVerificationCode(
+                            RESEND_WAIT_TIME_SECONDS - 1, CURRENT_MEMBER_ID, PREVIOUS_MEMBER_ID))
                     .isInstanceOf(CustomException.class)
-                    .hasMessage(EMAIL_VERIFICATION_SAME_MEMBER.getMessage());
+                    .hasMessage(EMAIL_VERIFICATION_CODE_RESEND_WAIT_TIME_NOT_PASSED.getMessage());
         }
 
         @Test
-        void 현재_계정과_과거_계정이_다르면_성공한다() {
+        void 이전_발송_이력이_없으면_성공한다() {
             // when & then
-            assertThatCode(() ->
-                            emailValidator.validateSendEmailVerificationCode(CURRENT_MEMBER_ID, PREVIOUS_MEMBER_ID))
+            assertThatCode(() -> emailValidator.validateSendEmailVerificationCode(
+                            null, CURRENT_MEMBER_ID, PREVIOUS_MEMBER_ID))
                     .doesNotThrowAnyException();
+        }
+
+        @Test
+        void 현재_계정과_과거_계정이_같으면_실패한다() {
+            // when & then
+            assertThatThrownBy(() -> emailValidator.validateSendEmailVerificationCode(
+                            null, CURRENT_MEMBER_ID, CURRENT_MEMBER_ID))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EMAIL_VERIFICATION_SAME_MEMBER.getMessage());
         }
     }
 

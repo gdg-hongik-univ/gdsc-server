@@ -35,7 +35,8 @@ public class UnivEmailVerificationService {
         UnivEmailVerification univEmailVerification = univEmailVerificationRepository
                 .findById(currentMember.getId())
                 .orElseThrow(() -> new CustomException(UNIV_EMAIL_VERIFICATION_CODE_NOT_SENT));
-        validateCode(univEmailVerification, request.code(), currentMember.getId());
+        long attemptCount = verificationAttemptCounter.increaseUnivEmailVerificationAttemptCount(currentMember.getId());
+        univEmailValidator.validateUnivEmailVerificationCode(univEmailVerification, request.code(), attemptCount);
 
         // TODO: 어플리케이션 이벤트 발행 방식으로 변경
         currentMember.completeUnivEmailVerification(univEmailVerification.getUnivEmail());
@@ -47,25 +48,5 @@ public class UnivEmailVerificationService {
 
     public Optional<UnivEmailVerification> getUnivEmailVerificationFromRedis(Long memberId) {
         return univEmailVerificationRepository.findById(memberId);
-    }
-
-    /**
-     * 시도 횟수를 증가시킨 뒤 인증 코드를 검증하고, 시도 횟수를 초과한 경우 인증 정보를 삭제하여 무효화합니다.
-     */
-    private void validateCode(UnivEmailVerification univEmailVerification, String code, Long memberId) {
-        long attemptCount = verificationAttemptCounter.increaseUnivEmailVerificationAttemptCount(memberId);
-
-        try {
-            univEmailValidator.validateUnivEmailVerificationCode(univEmailVerification, code, attemptCount);
-        } catch (CustomException e) {
-            if (e.getErrorCode() == EMAIL_VERIFICATION_CODE_ATTEMPT_EXCEEDED) {
-                univEmailVerificationRepository.delete(univEmailVerification);
-                log.warn(
-                        "[UnivEmailVerificationService] 재학생 인증 시도 횟수 초과: memberId={}, attemptCount={}",
-                        memberId,
-                        attemptCount);
-            }
-            throw e;
-        }
     }
 }
