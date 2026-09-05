@@ -41,7 +41,6 @@ public class UnivEmailVerification {
                 .build();
     }
 
-    // TODO: 무차별 대입 방어. 시도 횟수 제한 및 실패 누적 시 인증정보 무효화 필요
     public void validateCode(String code) {
         if (!this.code.equals(code)) {
             throw new CustomException(EMAIL_VERIFICATION_CODE_MISMATCH);

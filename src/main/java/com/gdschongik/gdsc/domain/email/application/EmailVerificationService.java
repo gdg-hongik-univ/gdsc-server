@@ -3,8 +3,10 @@ package com.gdschongik.gdsc.domain.email.application;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.email.dao.EmailVerificationRepository;
+import com.gdschongik.gdsc.domain.email.dao.VerificationAttemptCounter;
 import com.gdschongik.gdsc.domain.email.domain.EmailVerification;
 import com.gdschongik.gdsc.domain.email.domain.event.PreviousEmailVerifiedEvent;
+import com.gdschongik.gdsc.domain.email.domain.service.EmailValidator;
 import com.gdschongik.gdsc.domain.email.dto.request.PreviousEmailVerificationRequest;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.global.util.MemberUtil;
@@ -21,15 +23,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class EmailVerificationService {
 
     private final EmailVerificationRepository emailVerificationRepository;
+    private final VerificationAttemptCounter verificationAttemptCounter;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final MemberUtil memberUtil;
+    private final EmailValidator emailValidator;
 
     @Transactional
     public Long verifyPreviousMemberEmail(PreviousEmailVerificationRequest request) {
+        Long currentMemberId = memberUtil.getCurrentMemberId();
         EmailVerification emailVerification = emailVerificationRepository
-                .findById(memberUtil.getCurrentMemberId())
+                .findById(currentMemberId)
                 .orElseThrow(() -> new CustomException(EMAIL_VERIFICATION_CODE_NOT_SENT));
-        emailVerification.validateCode(request.code());
+        long attemptCount = verificationAttemptCounter.increaseEmailVerificationAttemptCount(currentMemberId);
+        emailValidator.validateEmailVerificationCode(emailVerification, request.code(), attemptCount);
         emailVerificationRepository.delete(emailVerification);
 
         applicationEventPublisher.publishEvent(new PreviousEmailVerifiedEvent(

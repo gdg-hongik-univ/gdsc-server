@@ -63,6 +63,9 @@ public enum ErrorCode {
     INVALID_EMAIL_VERIFICATION_TOKEN(UNAUTHORIZED, "유효하지 않은 이메일 인증 토큰입니다."),
     EMAIL_VERIFICATION_SAME_MEMBER(CONFLICT, "현재 로그인한 계정과 동일한 계정으로는 본인 인증할 수 없습니다."),
     EMAIL_VERIFICATION_CODE_MISMATCH(BAD_REQUEST, "이메일 인증 코드가 일치하지 않습니다."),
+    EMAIL_VERIFICATION_CODE_ATTEMPT_EXCEEDED(BAD_REQUEST, "이메일 인증 코드 입력 횟수를 초과했습니다. 인증 메일을 다시 요청해주세요."),
+    EMAIL_VERIFICATION_CODE_RESEND_WAIT_TIME_NOT_PASSED(
+            TOO_MANY_REQUESTS, "인증 메일 재발송 대기 시간이 지나지 않았습니다. 잠시 후 다시 시도해주세요."),
 
     // Discord
     DISCORD_INVALID_CODE_RANGE(INTERNAL_SERVER_ERROR, "디스코드 인증코드는 4자리 숫자여야 합니다."),

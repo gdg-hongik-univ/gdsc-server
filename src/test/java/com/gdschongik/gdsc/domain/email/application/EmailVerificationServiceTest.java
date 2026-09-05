@@ -1,5 +1,7 @@
 package com.gdschongik.gdsc.domain.email.application;
 
+import static com.gdschongik.gdsc.global.common.constant.EmailConstant.*;
+import static com.gdschongik.gdsc.global.common.constant.TestEmailConstant.*;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -23,6 +25,17 @@ public class EmailVerificationServiceTest extends IntegrationTest {
 
     @Autowired
     private EmailVerificationRepository emailVerificationRepository;
+
+    private void passResendWaitTime(Long memberId) {
+        EmailVerification emailVerification =
+                emailVerificationRepository.findById(memberId).orElseThrow();
+        long remainingSeconds = VERIFICATION_CODE_TTL.toSeconds() - VERIFICATION_CODE_RESEND_WAIT_TIME.toSeconds();
+        emailVerificationRepository.save(EmailVerification.create(
+                emailVerification.getCurrentMemberId(),
+                emailVerification.getPreviousMemberId(),
+                emailVerification.getCode(),
+                remainingSeconds));
+    }
 
     private String sendCodeAndGetCode(Member currentMember, Member previousMember) {
         emailVerificationCodeSendService.sendPreviousMemberVerificationCode(previousMember.getId());
@@ -64,6 +77,53 @@ public class EmailVerificationServiceTest extends IntegrationTest {
             assertThat(emailVerification.getCode()).isNotEmpty();
             assertThat(emailVerification.getCurrentMemberId()).isEqualTo(currentMember.getId());
             assertThat(emailVerification.getPreviousMemberId()).isEqualTo(previousMember.getId());
+        }
+
+        @Test
+        void 재발송_대기_시간이_지나지_않았으면_실패한다() {
+            // given
+            Member previousMember = createMember();
+            Member currentMember = createGuestMember();
+            logoutAndReloginAs(currentMember.getId(), currentMember.getRole());
+            emailVerificationCodeSendService.sendPreviousMemberVerificationCode(previousMember.getId());
+
+            // when & then
+            assertThatThrownBy(() ->
+                            emailVerificationCodeSendService.sendPreviousMemberVerificationCode(previousMember.getId()))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EMAIL_VERIFICATION_CODE_RESEND_WAIT_TIME_NOT_PASSED.getMessage());
+        }
+
+        @Test
+        void 재발송_대기_시간이_지났으면_성공한다() {
+            // given
+            Member previousMember = createMember();
+            Member currentMember = createGuestMember();
+            logoutAndReloginAs(currentMember.getId(), currentMember.getRole());
+            sendCodeAndGetCode(currentMember, previousMember);
+            passResendWaitTime(currentMember.getId());
+
+            // when & then
+            assertThatCode(() ->
+                            emailVerificationCodeSendService.sendPreviousMemberVerificationCode(previousMember.getId()))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void 발송_검증에_실패하면_재발송_대기_시간이_적용되지_않는다() {
+            // given
+            Member previousMember = createMember();
+            Member currentMember = createGuestMember();
+            logoutAndReloginAs(currentMember.getId(), currentMember.getRole());
+            assertThatThrownBy(() ->
+                            emailVerificationCodeSendService.sendPreviousMemberVerificationCode(currentMember.getId()))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EMAIL_VERIFICATION_SAME_MEMBER.getMessage());
+
+            // when & then
+            assertThatCode(() ->
+                            emailVerificationCodeSendService.sendPreviousMemberVerificationCode(previousMember.getId()))
+                    .doesNotThrowAnyException();
         }
     }
 
@@ -113,6 +173,49 @@ public class EmailVerificationServiceTest extends IntegrationTest {
             // then
             assertThat(emailVerificationRepository.findById(currentMember.getId()))
                     .isEmpty();
+        }
+
+        @Test
+        void 최대_시도_횟수를_초과하면_올바른_코드로도_인증에_실패한다() {
+            // given
+            Member previousMember = createMember();
+            Member currentMember = createGuestMember();
+            logoutAndReloginAs(currentMember.getId(), currentMember.getRole());
+            String verificationCode = sendCodeAndGetCode(currentMember, previousMember);
+            PreviousEmailVerificationRequest wrongRequest = new PreviousEmailVerificationRequest(WRONG_CODE);
+            for (int i = 0; i < MAX_ATTEMPT_COUNT; i++) {
+                assertThatThrownBy(() -> emailVerificationService.verifyPreviousMemberEmail(wrongRequest))
+                        .isInstanceOf(CustomException.class);
+            }
+
+            // when & then
+            PreviousEmailVerificationRequest request = new PreviousEmailVerificationRequest(verificationCode);
+            assertThatThrownBy(() -> emailVerificationService.verifyPreviousMemberEmail(request))
+                    .isInstanceOf(CustomException.class)
+                    .hasMessage(EMAIL_VERIFICATION_CODE_ATTEMPT_EXCEEDED.getMessage());
+        }
+
+        @Test
+        void 인증_코드를_재발송하면_시도_횟수가_초기화된다() {
+            // given
+            Member previousMember = createMember();
+            Member currentMember = createGuestMember();
+            logoutAndReloginAs(currentMember.getId(), currentMember.getRole());
+            sendCodeAndGetCode(currentMember, previousMember);
+            passResendWaitTime(currentMember.getId());
+            PreviousEmailVerificationRequest wrongRequest = new PreviousEmailVerificationRequest(WRONG_CODE);
+            for (int i = 0; i < MAX_ATTEMPT_COUNT; i++) {
+                assertThatThrownBy(() -> emailVerificationService.verifyPreviousMemberEmail(wrongRequest))
+                        .isInstanceOf(CustomException.class);
+            }
+
+            // when
+            String reissuedCode = sendCodeAndGetCode(currentMember, previousMember);
+
+            // then
+            Long previousMemberId = emailVerificationService.verifyPreviousMemberEmail(
+                    new PreviousEmailVerificationRequest(reissuedCode));
+            assertThat(previousMemberId).isEqualTo(previousMember.getId());
         }
 
         @Test

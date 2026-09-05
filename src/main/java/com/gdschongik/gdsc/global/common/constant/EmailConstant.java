@@ -1,5 +1,7 @@
 package com.gdschongik.gdsc.global.common.constant;
 
+import java.time.Duration;
+
 public class EmailConstant {
 
     public static final String VERIFY_UNIV_EMAIL_API_ENDPOINT = "/onboarding/verify-univ-email?%s=";
@@ -11,6 +13,8 @@ public class EmailConstant {
     public static final String VERIFICATION_UNIV_EMAIL_SUBJECT = "GDG Hongik Univ. 재학생 인증 메일입니다.";
     public static final String VERIFICATION_EMAIL_SUBJECT = "GDG Hongik Univ. 본인 인증 메일입니다.";
     public static final String TOKEN_EMAIL_NAME = "email";
+    public static final Duration VERIFICATION_CODE_TTL = Duration.ofMinutes(5);
+    public static final Duration VERIFICATION_CODE_RESEND_WAIT_TIME = Duration.ofSeconds(60);
 
     private EmailConstant() {}
 }

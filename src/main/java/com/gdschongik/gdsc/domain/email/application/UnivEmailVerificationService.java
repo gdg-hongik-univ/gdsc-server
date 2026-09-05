@@ -3,7 +3,9 @@ package com.gdschongik.gdsc.domain.email.application;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.email.dao.UnivEmailVerificationRepository;
+import com.gdschongik.gdsc.domain.email.dao.VerificationAttemptCounter;
 import com.gdschongik.gdsc.domain.email.domain.UnivEmailVerification;
+import com.gdschongik.gdsc.domain.email.domain.service.UnivEmailValidator;
 import com.gdschongik.gdsc.domain.email.dto.request.UnivEmailVerificationRequest;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
@@ -23,7 +25,9 @@ public class UnivEmailVerificationService {
 
     private final MemberRepository memberRepository;
     private final UnivEmailVerificationRepository univEmailVerificationRepository;
+    private final VerificationAttemptCounter verificationAttemptCounter;
     private final MemberUtil memberUtil;
+    private final UnivEmailValidator univEmailValidator;
 
     @Transactional
     public void verifyMemberUnivEmail(UnivEmailVerificationRequest request) {
@@ -31,7 +35,8 @@ public class UnivEmailVerificationService {
         UnivEmailVerification univEmailVerification = univEmailVerificationRepository
                 .findById(currentMember.getId())
                 .orElseThrow(() -> new CustomException(UNIV_EMAIL_VERIFICATION_CODE_NOT_SENT));
-        univEmailVerification.validateCode(request.code());
+        long attemptCount = verificationAttemptCounter.increaseUnivEmailVerificationAttemptCount(currentMember.getId());
+        univEmailValidator.validateUnivEmailVerificationCode(univEmailVerification, request.code(), attemptCount);
 
         // TODO: 어플리케이션 이벤트 발행 방식으로 변경
         currentMember.completeUnivEmailVerification(univEmailVerification.getUnivEmail());
