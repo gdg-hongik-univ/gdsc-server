@@ -16,13 +16,13 @@ public class EmailValidator {
     /**
      * 본인 인증 코드 발송 전 재발송 대기 시간과 과거 계정을 검증합니다.
      *
-     * @param secondsSinceLastSend 마지막 발송 이후 경과한 시간(초). 이전 발송 이력이 없다면 null
+     * @param secondsSinceLastSent 마지막 발송 이후 경과한 시간(초). 이전 발송 이력이 없다면 null
      * @param currentMemberId 현재 로그인한 유저의 아이디
      * @param previousMemberId 유저의 옛 계정 아이디
      */
     public void validateSendEmailVerificationCode(
-            @Nullable Long secondsSinceLastSend, Long currentMemberId, Long previousMemberId) {
-        if (secondsSinceLastSend != null && secondsSinceLastSend < VERIFICATION_CODE_RESEND_WAIT_TIME.toSeconds()) {
+            @Nullable Long secondsSinceLastSent, Long currentMemberId, Long previousMemberId) {
+        if (secondsSinceLastSent != null && secondsSinceLastSent < VERIFICATION_CODE_RESEND_WAIT_TIME.toSeconds()) {
             throw new CustomException(EMAIL_VERIFICATION_CODE_RESEND_WAIT_TIME_NOT_PASSED);
         }
 

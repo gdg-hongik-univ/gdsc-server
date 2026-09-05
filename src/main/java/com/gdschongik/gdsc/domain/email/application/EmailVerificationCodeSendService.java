@@ -50,8 +50,8 @@ public class EmailVerificationCodeSendService {
         Member previousMember = memberRepository
                 .findById(previousMemberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-        Long secondsSinceLastSend = calculateSecondsSinceLastSend(currentMember.getId());
-        emailValidator.validateSendEmailVerificationCode(secondsSinceLastSend, currentMember.getId(), previousMemberId);
+        Long secondsSinceLastSent = calculateSecondsSinceLastSent(currentMember.getId());
+        emailValidator.validateSendEmailVerificationCode(secondsSinceLastSent, currentMember.getId(), previousMemberId);
 
         // 코드 저장
         String verificationCode = verificationCodeGenerator.generate();
@@ -71,7 +71,7 @@ public class EmailVerificationCodeSendService {
                 previousMemberId);
     }
 
-    private Long calculateSecondsSinceLastSend(Long currentMemberId) {
+    private Long calculateSecondsSinceLastSent(Long currentMemberId) {
         EmailVerification emailVerification =
                 emailVerificationRepository.findById(currentMemberId).orElse(null);
 

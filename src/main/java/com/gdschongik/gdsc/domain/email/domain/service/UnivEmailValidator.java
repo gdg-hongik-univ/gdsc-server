@@ -1,7 +1,6 @@
 package com.gdschongik.gdsc.domain.email.domain.service;
 
-import static com.gdschongik.gdsc.global.common.constant.EmailConstant.HONGIK_UNIV_MAIL_DOMAIN;
-import static com.gdschongik.gdsc.global.common.constant.EmailConstant.VERIFICATION_CODE_RESEND_WAIT_TIME;
+import static com.gdschongik.gdsc.global.common.constant.EmailConstant.*;
 import static com.gdschongik.gdsc.global.common.constant.RegexConstant.HONGIK_EMAIL;
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
@@ -18,13 +17,13 @@ public class UnivEmailValidator {
     /**
      * 학교 메일 인증 전 재발송 대기 시간과 메일을 검증합니다.
      *
-     * @param secondsSinceLastSend 마지막 발송 이후 경과한 시간(초). 이전 발송 이력이 없다면 null
+     * @param secondsSinceLastSent 마지막 발송 이후 경과한 시간(초). 이전 발송 이력이 없다면 null
      * @param email 학교 메일
      * @param isUnivEmailDuplicate 이미 가입된 메일이 있는지 여부 (DB 조회 값)
      */
     public void validateSendUnivEmailVerificationCode(
-            @Nullable Long secondsSinceLastSend, String email, boolean isUnivEmailDuplicate) {
-        if (secondsSinceLastSend != null && secondsSinceLastSend < VERIFICATION_CODE_RESEND_WAIT_TIME.toSeconds()) {
+            @Nullable Long secondsSinceLastSent, String email, boolean isUnivEmailDuplicate) {
+        if (secondsSinceLastSent != null && secondsSinceLastSent < VERIFICATION_CODE_RESEND_WAIT_TIME.toSeconds()) {
             throw new CustomException(EMAIL_VERIFICATION_CODE_RESEND_WAIT_TIME_NOT_PASSED);
         }
 
