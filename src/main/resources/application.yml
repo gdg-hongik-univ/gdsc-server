@@ -15,6 +15,7 @@ spring:
       - github
       - sentry
       - modulith
+      - storage
 
 logging:
   level:
