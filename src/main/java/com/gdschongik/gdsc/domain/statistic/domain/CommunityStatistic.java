@@ -49,7 +49,7 @@ public class CommunityStatistic extends BaseEntity {
     /**
      * 누적 회원 수를 수정합니다.
      */
-    public void updateTotalMemberCount(int totalMemberCount) {
+    public void updateTotalMemberCount(Integer totalMemberCount) {
         this.totalMemberCount = totalMemberCount;
     }
 
