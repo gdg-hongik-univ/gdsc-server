@@ -14,3 +14,12 @@ jwt:
     EMAIL_VERIFICATION_TOKEN:
       secret: 235872q3ywhtf87q243yt98qop42y3whtg8oiq92ayh4gq2g
       expiration-time: 1800
+
+storage:
+  r2:
+    endpoint: https://r2.test.invalid
+    bucket: test-bucket
+    access-key-id: test-access-key
+    secret-access-key: test-secret-key
+    upload-url-ttl: 15m
+    download-url-ttl: 15m

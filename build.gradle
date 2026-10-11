@@ -32,6 +32,7 @@ dependencyManagement {
     imports {
         mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2023.0.2'
         mavenBom 'org.springframework.modulith:spring-modulith-bom:1.3.3'
+        mavenBom 'software.amazon.awssdk:bom:2.55.11'
     }
 }
 
@@ -107,6 +108,9 @@ dependencies {
 
     // Spring Modulith
     implementation 'org.springframework.modulith:spring-modulith-starter-jpa'
+
+    // AWS SDK (Cloudflare R2)
+    implementation 'software.amazon.awssdk:s3'
 }
 
 tasks.named('test') {
