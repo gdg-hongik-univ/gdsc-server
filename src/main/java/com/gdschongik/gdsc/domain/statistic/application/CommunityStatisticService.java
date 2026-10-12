@@ -37,6 +37,9 @@ public class CommunityStatisticService {
         communityStatistic.updateTotalSeminarCount(totalSeminarCount);
         communityStatisticRepository.save(communityStatistic);
 
-        log.info("[CommunityStatisticService] 커뮤니티 통계 누적 세미나 수 갱신: totalSeminarCount={}", totalSeminarCount);
+        log.info(
+                "[CommunityStatisticService] 커뮤니티 통계 누적 세미나 수 갱신: memberId={}, totalSeminarCount={}",
+                currentMember.getId(),
+                totalSeminarCount);
     }
 }
