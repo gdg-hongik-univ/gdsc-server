@@ -46,4 +46,12 @@ public class DiscordConstant {
     public static final String OPTION_DESCRIPTION_STUDY_YEAR = "연도를 입력해주세요. YYYY 형식으로 입력해주세요.";
     public static final String OPTION_NAME_STUDY_SEMESTER = "스터디-학기";
     public static final String OPTION_DESCRIPTION_STUDY_SEMESTER = "학기를 입력해주세요. FIRST 혹은 SECOND로 입력해주세요.";
+
+    // 커뮤니티 통계 세미나 수 갱신 커맨드
+    public static final String COMMAND_NAME_UPDATE_SEMINAR_COUNT = "커뮤니티-통계-세미나-수-갱신하기";
+    public static final String COMMAND_DESCRIPTION_UPDATE_SEMINAR_COUNT = "커뮤니티 통계 세미나 수를 갱신합니다.";
+    public static final String DEFER_MESSAGE_UPDATE_SEMINAR_COUNT = "커뮤니티 통계 세미나 수 갱신 작업을 진행하는 중입니다...";
+    public static final String REPLY_MESSAGE_UPDATE_SEMINAR_COUNT = "커뮤니티 통계 세미나 수 갱신 작업이 완료되었습니다.";
+    public static final String OPTION_NAME_SEMINAR_COUNT = "세미나-수";
+    public static final String OPTION_DESCRIPTION_SEMINAR_COUNT = "세미나 수를 입력해주세요.";
 }
