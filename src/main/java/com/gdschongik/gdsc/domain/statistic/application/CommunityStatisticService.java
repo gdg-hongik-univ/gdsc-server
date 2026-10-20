@@ -4,9 +4,9 @@ import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
 import com.gdschongik.gdsc.domain.member.domain.Member;
+import com.gdschongik.gdsc.domain.member.domain.service.MemberValidator;
 import com.gdschongik.gdsc.domain.statistic.dao.CommunityStatisticRepository;
 import com.gdschongik.gdsc.domain.statistic.domain.CommunityStatistic;
-import com.gdschongik.gdsc.domain.statistic.domain.CommunityStatisticValidator;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,14 +21,14 @@ public class CommunityStatisticService {
 
     private final CommunityStatisticRepository communityStatisticRepository;
     private final MemberRepository memberRepository;
-    private final CommunityStatisticValidator communityStatisticValidator;
+    private final MemberValidator memberValidator;
 
     @Transactional
     public void updateTotalSeminarCount(String currentMemberDiscordUsername, Integer totalSeminarCount) {
         Member currentMember = memberRepository
                 .findByDiscordUsername(currentMemberDiscordUsername)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        communityStatisticValidator.validateSeminarCountUpdate(currentMember);
+        memberValidator.validateAdminPermission(currentMember.getManageRole());
 
         CommunityStatistic communityStatistic = communityStatisticRepository
                 .findTopByOrderByIdAsc()
