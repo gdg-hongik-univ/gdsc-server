@@ -233,6 +233,9 @@ public enum ErrorCode {
 
     // Lock
     LOCK_ACQUIRE_FAILED(INTERNAL_SERVER_ERROR, "락 획득에 실패했습니다. 다시 시도해주세요."),
+
+    // CommunityStatistic
+    COMMUNITY_STATISTIC_NOT_FOUND(NOT_FOUND, "존재하지 않는 커뮤니티 통계입니다."),
     ;
 
     private final HttpStatus status;

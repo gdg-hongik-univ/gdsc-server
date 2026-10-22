@@ -52,6 +52,8 @@ public class DiscordConfig {
                         .addOption(STRING, OPTION_NAME_STUDY_TITLE, OPTION_DESCRIPTION_STUDY_TITLE, true)
                         .addOption(INTEGER, OPTION_NAME_STUDY_YEAR, OPTION_DESCRIPTION_STUDY_YEAR, true)
                         .addOption(STRING, OPTION_NAME_STUDY_SEMESTER, OPTION_DESCRIPTION_STUDY_SEMESTER, true))
+                .addCommands(Commands.slash(COMMAND_NAME_UPDATE_SEMINAR_COUNT, COMMAND_DESCRIPTION_UPDATE_SEMINAR_COUNT)
+                        .addOption(INTEGER, OPTION_NAME_SEMINAR_COUNT, OPTION_DESCRIPTION_SEMINAR_COUNT, true))
                 .queue();
 
         return jda;
