@@ -7,6 +7,7 @@ import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.member.domain.service.MemberValidator;
 import com.gdschongik.gdsc.domain.statistic.dao.CommunityStatisticRepository;
 import com.gdschongik.gdsc.domain.statistic.domain.CommunityStatistic;
+import com.gdschongik.gdsc.domain.statistic.dto.response.CommunityStatisticResponse;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,5 +42,13 @@ public class CommunityStatisticService {
                 "[CommunityStatisticService] 커뮤니티 통계 누적 세미나 수 갱신: memberId={}, totalSeminarCount={}",
                 currentMember.getId(),
                 totalSeminarCount);
+    }
+
+    public CommunityStatisticResponse getCommunityStatistic() {
+        CommunityStatistic communityStatistic = communityStatisticRepository
+                .findTopByOrderByIdAsc()
+                .orElseThrow(() -> new CustomException(COMMUNITY_STATISTIC_NOT_FOUND));
+
+        return CommunityStatisticResponse.from(communityStatistic);
     }
 }
