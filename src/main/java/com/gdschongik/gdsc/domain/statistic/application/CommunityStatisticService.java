@@ -24,6 +24,7 @@ public class CommunityStatisticService {
     private final MemberRepository memberRepository;
     private final MemberValidator memberValidator;
 
+    // todo: 세미나 도메인 생기면 updateCommunityStatistic로 통합
     @Transactional
     public void updateTotalSeminarCount(String currentMemberDiscordUsername, Integer totalSeminarCount) {
         Member currentMember = memberRepository
@@ -50,5 +51,20 @@ public class CommunityStatisticService {
                 .orElseThrow(() -> new CustomException(COMMUNITY_STATISTIC_NOT_FOUND));
 
         return CommunityStatisticResponse.from(communityStatistic);
+    }
+
+    // todo: 프로젝트 도메인 생성 후 프로젝트 수 집계 로직 추가
+    @Transactional
+    public void updateCommunityStatistic() {
+        int totalMemberCount = (int) memberRepository.count();
+
+        CommunityStatistic communityStatistic = communityStatisticRepository
+                .findTopByOrderByIdAsc()
+                .orElseThrow(() -> new CustomException(COMMUNITY_STATISTIC_NOT_FOUND));
+
+        communityStatistic.updateTotalMemberCount(totalMemberCount);
+        communityStatisticRepository.save(communityStatistic);
+
+        log.info("[CommunityStatisticService] 커뮤니티 통계 최신화: totalMemberCount={}", totalMemberCount);
     }
 }
