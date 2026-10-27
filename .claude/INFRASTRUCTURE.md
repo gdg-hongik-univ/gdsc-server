@@ -88,7 +88,8 @@ gdsc-server는 **단일 Spring Boot 애플리케이션**으로 구성됩니다.
 |--------|------|
 | `DiscordVerificationCode` | Discord 인증 코드 |
 | `RefreshToken` | JWT 리프레시 토큰 |
-| `UnivEmailVerification` | 대학교 이메일 인증 토큰 |
+| `UnivEmailVerification` | 대학교 이메일 인증 코드 |
+| `EmailVerification` | 깃허브 계정 변경용 본인 인증 코드 |
 
 ---
 
