@@ -130,6 +130,8 @@ public class WebSecurityConfig {
                 .permitAll()
                 .requestMatchers("/participant/**")
                 .permitAll()
+                .requestMatchers("/community-statistics")
+                .permitAll()
                 .requestMatchers("/test/**")
                 .permitAll()
                 .requestMatchers("/onboarding/**")
