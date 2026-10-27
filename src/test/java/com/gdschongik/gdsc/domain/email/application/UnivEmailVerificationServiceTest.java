@@ -19,9 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class UnivEmailVerificationServiceTest extends IntegrationTest {
 
     @Autowired
-    private UnivEmailVerificationCodeSendService univEmailVerificationCodeSendService;
-
-    @Autowired
     private UnivEmailVerificationService univEmailVerificationService;
 
     @Autowired
@@ -39,9 +36,9 @@ public class UnivEmailVerificationServiceTest extends IntegrationTest {
     }
 
     private String sendCodeAndGetCode(Member member, String univEmail) {
-        univEmailVerificationCodeSendService.send(univEmail);
-        return univEmailVerificationService
-                .getUnivEmailVerificationFromRedis(member.getId())
+        univEmailVerificationService.sendUnivEmailVerificationCode(univEmail);
+        return univEmailVerificationRepository
+                .findById(member.getId())
                 .orElseThrow()
                 .getCode();
     }
@@ -54,10 +51,10 @@ public class UnivEmailVerificationServiceTest extends IntegrationTest {
             // given
             Member member = createGuestMember();
             logoutAndReloginAs(member.getId(), member.getRole());
-            univEmailVerificationCodeSendService.send(UNIV_EMAIL);
+            univEmailVerificationService.sendUnivEmailVerificationCode(UNIV_EMAIL);
 
             // when & then
-            assertThatThrownBy(() -> univEmailVerificationCodeSendService.send(UNIV_EMAIL))
+            assertThatThrownBy(() -> univEmailVerificationService.sendUnivEmailVerificationCode(UNIV_EMAIL))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EMAIL_VERIFICATION_CODE_RESEND_WAIT_TIME_NOT_PASSED.getMessage());
         }
@@ -71,7 +68,7 @@ public class UnivEmailVerificationServiceTest extends IntegrationTest {
             passResendWaitTime(member.getId());
 
             // when & then
-            assertThatCode(() -> univEmailVerificationCodeSendService.send(UNIV_EMAIL))
+            assertThatCode(() -> univEmailVerificationService.sendUnivEmailVerificationCode(UNIV_EMAIL))
                     .doesNotThrowAnyException();
         }
 
@@ -81,12 +78,12 @@ public class UnivEmailVerificationServiceTest extends IntegrationTest {
             Member member = createGuestMember();
             logoutAndReloginAs(member.getId(), member.getRole());
             String invalidUnivEmail = "test@naver.com";
-            assertThatThrownBy(() -> univEmailVerificationCodeSendService.send(invalidUnivEmail))
+            assertThatThrownBy(() -> univEmailVerificationService.sendUnivEmailVerificationCode(invalidUnivEmail))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(UNIV_EMAIL_DOMAIN_MISMATCH.getMessage());
 
             // when & then
-            assertThatCode(() -> univEmailVerificationCodeSendService.send(UNIV_EMAIL))
+            assertThatCode(() -> univEmailVerificationService.sendUnivEmailVerificationCode(UNIV_EMAIL))
                     .doesNotThrowAnyException();
         }
     }
@@ -135,8 +132,7 @@ public class UnivEmailVerificationServiceTest extends IntegrationTest {
             univEmailVerificationService.verifyMemberUnivEmail(new UnivEmailVerificationRequest(verificationCode));
 
             // then
-            assertThat(univEmailVerificationService.getUnivEmailVerificationFromRedis(member.getId()))
-                    .isEmpty();
+            assertThat(univEmailVerificationRepository.findById(member.getId())).isEmpty();
         }
 
         @Test

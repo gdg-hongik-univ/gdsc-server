@@ -18,9 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EmailVerificationServiceTest extends IntegrationTest {
 
     @Autowired
-    private EmailVerificationCodeSendService emailVerificationCodeSendService;
-
-    @Autowired
     private EmailVerificationService emailVerificationService;
 
     @Autowired
@@ -38,7 +35,7 @@ public class EmailVerificationServiceTest extends IntegrationTest {
     }
 
     private String sendCodeAndGetCode(Member currentMember, Member previousMember) {
-        emailVerificationCodeSendService.sendPreviousMemberVerificationCode(previousMember.getId());
+        emailVerificationService.sendPreviousMemberVerificationCode(previousMember.getId());
         return emailVerificationRepository
                 .findById(currentMember.getId())
                 .orElseThrow()
@@ -55,8 +52,7 @@ public class EmailVerificationServiceTest extends IntegrationTest {
             logoutAndReloginAs(currentMember.getId(), currentMember.getRole());
 
             // when & then
-            assertThatThrownBy(() ->
-                            emailVerificationCodeSendService.sendPreviousMemberVerificationCode(currentMember.getId()))
+            assertThatThrownBy(() -> emailVerificationService.sendPreviousMemberVerificationCode(currentMember.getId()))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EMAIL_VERIFICATION_SAME_MEMBER.getMessage());
         }
@@ -69,7 +65,7 @@ public class EmailVerificationServiceTest extends IntegrationTest {
             logoutAndReloginAs(currentMember.getId(), currentMember.getRole());
 
             // when
-            emailVerificationCodeSendService.sendPreviousMemberVerificationCode(previousMember.getId());
+            emailVerificationService.sendPreviousMemberVerificationCode(previousMember.getId());
 
             // then
             EmailVerification emailVerification =
@@ -85,11 +81,11 @@ public class EmailVerificationServiceTest extends IntegrationTest {
             Member previousMember = createMember();
             Member currentMember = createGuestMember();
             logoutAndReloginAs(currentMember.getId(), currentMember.getRole());
-            emailVerificationCodeSendService.sendPreviousMemberVerificationCode(previousMember.getId());
+            emailVerificationService.sendPreviousMemberVerificationCode(previousMember.getId());
 
             // when & then
-            assertThatThrownBy(() ->
-                            emailVerificationCodeSendService.sendPreviousMemberVerificationCode(previousMember.getId()))
+            assertThatThrownBy(
+                            () -> emailVerificationService.sendPreviousMemberVerificationCode(previousMember.getId()))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EMAIL_VERIFICATION_CODE_RESEND_WAIT_TIME_NOT_PASSED.getMessage());
         }
@@ -104,8 +100,7 @@ public class EmailVerificationServiceTest extends IntegrationTest {
             passResendWaitTime(currentMember.getId());
 
             // when & then
-            assertThatCode(() ->
-                            emailVerificationCodeSendService.sendPreviousMemberVerificationCode(previousMember.getId()))
+            assertThatCode(() -> emailVerificationService.sendPreviousMemberVerificationCode(previousMember.getId()))
                     .doesNotThrowAnyException();
         }
 
@@ -115,14 +110,12 @@ public class EmailVerificationServiceTest extends IntegrationTest {
             Member previousMember = createMember();
             Member currentMember = createGuestMember();
             logoutAndReloginAs(currentMember.getId(), currentMember.getRole());
-            assertThatThrownBy(() ->
-                            emailVerificationCodeSendService.sendPreviousMemberVerificationCode(currentMember.getId()))
+            assertThatThrownBy(() -> emailVerificationService.sendPreviousMemberVerificationCode(currentMember.getId()))
                     .isInstanceOf(CustomException.class)
                     .hasMessage(EMAIL_VERIFICATION_SAME_MEMBER.getMessage());
 
             // when & then
-            assertThatCode(() ->
-                            emailVerificationCodeSendService.sendPreviousMemberVerificationCode(previousMember.getId()))
+            assertThatCode(() -> emailVerificationService.sendPreviousMemberVerificationCode(previousMember.getId()))
                     .doesNotThrowAnyException();
         }
     }
