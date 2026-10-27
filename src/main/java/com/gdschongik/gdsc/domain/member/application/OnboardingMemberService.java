@@ -2,7 +2,7 @@ package com.gdschongik.gdsc.domain.member.application;
 
 import static com.gdschongik.gdsc.global.exception.ErrorCode.*;
 
-import com.gdschongik.gdsc.domain.email.application.UnivEmailVerificationService;
+import com.gdschongik.gdsc.domain.email.dao.UnivEmailVerificationRepository;
 import com.gdschongik.gdsc.domain.email.domain.UnivEmailVerification;
 import com.gdschongik.gdsc.domain.email.domain.service.UnivEmailVerificationStatusService;
 import com.gdschongik.gdsc.domain.member.dao.MemberRepository;
@@ -36,8 +36,8 @@ public class OnboardingMemberService {
     private final MemberUtil memberUtil;
     private final OnboardingRecruitmentService onboardingRecruitmentService;
     private final MembershipService membershipService;
-    private final UnivEmailVerificationService univEmailVerificationService;
     private final MemberRepository memberRepository;
+    private final UnivEmailVerificationRepository univEmailVerificationRepository;
     private final UnivEmailVerificationStatusService univEmailVerificationStatusService;
     private final GithubClient githubClient;
 
@@ -61,9 +61,8 @@ public class OnboardingMemberService {
 
     public MemberDashboardResponse getDashboard() {
         final Member member = memberUtil.getCurrentMember();
-        // TODO: 이메일 코드 서비스와 서비스간 의존성 제거
         final Optional<UnivEmailVerification> univEmailVerification =
-                univEmailVerificationService.getUnivEmailVerificationFromRedis(member.getId());
+                univEmailVerificationRepository.findById(member.getId());
         UnivVerificationStatus univVerificationStatus =
                 univEmailVerificationStatusService.determineStatus(member, univEmailVerification);
         Optional<RecruitmentRound> currentRecruitmentRound = onboardingRecruitmentService.findCurrentRecruitmentRound();

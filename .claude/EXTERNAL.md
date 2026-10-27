@@ -326,67 +326,46 @@ public interface MailSender {
 
 **필드**: `gmail` (로그인 정보), `host`, `port`, `protocol`, `encoding`, `javaMailProperty` (JavaMail 세부 설정)
 
-### 4.5 이메일 인증 토큰
+### 4.5 인증 코드
 
-**파일**: `global/util/email/EmailVerificationTokenUtil.java`
+**파일**: `domain/email/domain/service/VerificationCodeGenerator.java`
 
-**JWT 토큰 구조**:
-| 클레임 | 설명 |
-|--------|------|
-| `sub` | 회원 ID (memberId) |
-| `email` | 인증 대상 이메일 |
-| `iss` | 발급자 (jwtProperty.issuer) |
-| `iat` | 발급 시간 |
-| `exp` | 만료 시간 |
+- `SecureRandom`으로 6자리 숫자 코드 생성 (앞자리 0 허용, 문자열로 관리)
+- 인증 정보는 memberId를 키로 Redis에 저장 (`EmailVerification`, `UnivEmailVerification`)
 
-**주요 메서드**:
-```java
-public String generateEmailVerificationToken(Long memberId, String email);
-public EmailVerificationTokenDto parseEmailVerificationTokenDto(String token) throws ExpiredJwtException;
-```
+**정책** (`EmailConstant`, 각 Validator):
+| 항목 | 값 |
+|------|------|
+| 코드 유효 시간 | 5분 (`VERIFICATION_CODE_TTL`) |
+| 재발송 대기 시간 | 60초 (`VERIFICATION_CODE_RESEND_WAIT_TIME`) |
+| 최대 입력 시도 횟수 | 5회 (`VerificationAttemptCounter`로 원자적 증가) |
 
-**토큰 만료 처리**:
-- `ExpiredJwtException` → `ErrorCode.EXPIRED_EMAIL_VERIFICATION_TOKEN`
-- 기타 예외 → `ErrorCode.INVALID_EMAIL_VERIFICATION_TOKEN`
+- 인증 성공 시 Redis 인증 정보를 즉시 삭제하여 코드 재사용 차단
+- 재발송 시 시도 횟수 초기화
+- 메일 본문은 `EmailConstant.VERIFICATION_CODE_MAIL_CONTENT` 템플릿을 공통으로 사용
 
-### 4.6 인증 링크 생성
+### 4.6 인증 메일 발송 및 검증 플로우
 
-**파일**: `global/util/email/VerificationLinkUtil.java`
+이메일 인증은 두 가지 용도로 분리되어 있으며, 각 서비스가 발송과 검증을 함께 담당합니다.
 
-**환경별 클라이언트 URL**:
-| 환경 | URL |
-|------|-----|
-| prod | `https://onboarding.wawoo.dev` |
-| dev | `https://dev-onboarding.wawoo.dev` |
-| local | `https://localhost:5173` |
+#### 재학생 인증 (`UnivEmailVerificationService`)
 
-**생성되는 링크 형식**:
-```
-https://{환경별_URL}/onboarding/verify-email?token={JWT_TOKEN}
-```
+**파일**: `domain/email/application/UnivEmailVerificationService.java`
 
-### 4.7 인증 메일 발송 플로우
+**발송 플로우** (`sendUnivEmailVerificationCode`):
+1. 재발송 대기 시간, 메일 도메인/형식, 중복 여부 검증 (`univEmailValidator.validateSendUnivEmailVerificationCode`)
+2. 인증 코드 생성 후 Redis에 저장 (유효 시간 포함), 시도 횟수 초기화
+3. HTML 이메일 발송
 
-이메일 인증은 두 가지 용도로 분리되어 있습니다.
+**검증 플로우** (`verifyMemberUnivEmail`):
+1. 시도 횟수 증가 후 코드 검증 (`univEmailValidator.validateUnivEmailVerificationCode`)
+2. 회원 재학생 인증 완료 처리 및 Redis 인증 정보 삭제
 
-#### 재학생 인증 (`UnivEmailVerificationLinkSendService`)
+#### 깃허브 계정 변경용 본인 인증 (`EmailVerificationService`)
 
-**파일**: `domain/email/application/UnivEmailVerificationLinkSendService.java`
+**파일**: `domain/email/application/EmailVerificationService.java`
 
-**플로우**:
-1. 이메일 중복 검증 (`memberRepository.existsByUnivEmail`)
-2. 이메일 유효성 검증 (`univEmailValidator.validateSendUnivEmailVerificationLink`)
-3. JWT 인증 토큰 생성
-4. Redis에 토큰 저장 (만료 시간 포함)
-5. HTML 이메일 발송
-
-#### 깃허브 계정 변경용 본인 인증 (`EmailVerificationLinkSendService`)
-
-**파일**: `domain/email/application/EmailVerificationLinkSendService.java`
-
-깃허브 계정 변경 시 기존 이메일로 본인 인증을 수행합니다. 인증 완료 시 `PreviousEmailVerifiedEvent`를 발행하여 깃허브 계정 변경 처리가 이벤트 기반으로 진행됩니다.
-
-**토큰 유효 시간**: 30분 (`VERIFICATION_TOKEN_TIME_TO_LIVE`)
+깃허브 계정 변경 시 기존 이메일로 인증 코드를 발송하여 본인 인증을 수행합니다. 인증 완료 시 `PreviousEmailVerifiedEvent`를 발행하여 깃허브 계정 변경 처리가 이벤트 기반으로 진행됩니다.
 
 ---
 
