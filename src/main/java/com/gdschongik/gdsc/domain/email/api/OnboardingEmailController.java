@@ -2,7 +2,6 @@ package com.gdschongik.gdsc.domain.email.api;
 
 import com.gdschongik.gdsc.domain.auth.application.JwtService;
 import com.gdschongik.gdsc.domain.auth.dto.TokenPairDto;
-import com.gdschongik.gdsc.domain.email.application.EmailVerificationCodeSendService;
 import com.gdschongik.gdsc.domain.email.application.EmailVerificationService;
 import com.gdschongik.gdsc.domain.email.dto.request.PreviousEmailVerificationCodeSendRequest;
 import com.gdschongik.gdsc.domain.email.dto.request.PreviousEmailVerificationRequest;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class OnboardingEmailController {
 
-    private final EmailVerificationCodeSendService emailVerificationCodeSendService;
     private final EmailVerificationService emailVerificationService;
     private final JwtService jwtService;
     private final CookieUtil cookieUtil;
@@ -30,7 +28,7 @@ public class OnboardingEmailController {
     @PostMapping("/send-verify-email")
     public ResponseEntity<Void> sendPreviousEmailVerificationCode(
             @Valid @RequestBody PreviousEmailVerificationCodeSendRequest request) {
-        emailVerificationCodeSendService.sendPreviousMemberVerificationCode(request.previousMemberId());
+        emailVerificationService.sendPreviousMemberVerificationCode(request.previousMemberId());
         return ResponseEntity.ok().build();
     }
 

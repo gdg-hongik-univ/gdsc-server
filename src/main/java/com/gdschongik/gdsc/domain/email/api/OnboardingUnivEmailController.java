@@ -1,6 +1,5 @@
 package com.gdschongik.gdsc.domain.email.api;
 
-import com.gdschongik.gdsc.domain.email.application.UnivEmailVerificationCodeSendService;
 import com.gdschongik.gdsc.domain.email.application.UnivEmailVerificationService;
 import com.gdschongik.gdsc.domain.email.dto.request.UnivEmailVerificationCodeSendRequest;
 import com.gdschongik.gdsc.domain.email.dto.request.UnivEmailVerificationRequest;
@@ -21,14 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OnboardingUnivEmailController {
 
-    private final UnivEmailVerificationCodeSendService univEmailVerificationCodeSendService;
     private final UnivEmailVerificationService univEmailVerificationService;
 
     @Operation(summary = "학교 인증 메일 발송 요청", description = "학교 인증 메일 발송을 요청합니다.")
     @PostMapping("/send-verify-univ-email")
     public ResponseEntity<Void> sendUnivEmailVerificationCode(
             @Valid @RequestBody UnivEmailVerificationCodeSendRequest request) {
-        univEmailVerificationCodeSendService.send(request.univEmail());
+        univEmailVerificationService.sendUnivEmailVerificationCode(request.univEmail());
         return ResponseEntity.ok().build();
     }
 
