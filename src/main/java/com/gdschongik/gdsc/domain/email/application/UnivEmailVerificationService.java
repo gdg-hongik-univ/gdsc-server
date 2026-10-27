@@ -82,6 +82,6 @@ public class UnivEmailVerificationService {
     }
 
     private String writeMailContentWithVerificationCode(String verificationCode) {
-        return VERIFICATION_CODE_MAIL_CONTENT.formatted(VERIFICATION_CODE_TTL.toMinutes(), verificationCode);
+        return UNIV_EMAIL_VERIFICATION_CODE_MAIL_CONTENT.formatted(VERIFICATION_CODE_TTL.toMinutes(), verificationCode);
     }
 }
