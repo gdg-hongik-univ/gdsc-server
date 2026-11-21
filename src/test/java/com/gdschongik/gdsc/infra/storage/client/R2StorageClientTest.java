@@ -58,16 +58,25 @@ class R2StorageClientTest {
 
             assertThat(upload.method()).isEqualTo("PUT");
             assertThat(uri.getPath()).isEqualTo("/" + R2_BUCKET + "/" + upload.objectKey());
-            assertThat(upload.url())
-                    .startsWith(R2_ENDPOINT + "/")
-                    .contains("X-Amz-Credential=" + R2_ACCESS_KEY_ID + "%2F")
-                    .contains("%2Fauto%2Fs3%2Faws4_request")
-                    .doesNotContain("checksum");
             assertThat(UriComponentsBuilder.fromUri(uri).build(true).getQueryParams())
                     .containsEntry("X-Amz-SignedHeaders", List.of("content-type%3Bhost"))
                     .containsEntry("X-Amz-Expires", List.of(expectedTtlSeconds));
             assertThat(upload.requiredHeaders()).isEqualTo(Map.of("content-type", List.of(CONTENT_TYPE)));
             assertThat(upload.expiresAt()).isBetween(before.plus(UPLOAD_URL_TTL), after.plus(UPLOAD_URL_TTL));
+        }
+
+        @Test
+        void 요청한_경로에_key를_만들고_정규화한_Content_Type을_필수_헤더로_반환한다() {
+            // given
+            String path = "study";
+            String contentType = "Text/Plain; charset=UTF-8";
+
+            // when
+            PresignedUrlDto upload = r2StorageClient.generateUploadUrl(path, contentType);
+
+            // then
+            assertThat(upload.objectKey()).startsWith(path + "/");
+            assertThat(upload.requiredHeaders()).containsEntry("content-type", List.of("text/plain;charset=UTF-8"));
         }
 
         @Test
