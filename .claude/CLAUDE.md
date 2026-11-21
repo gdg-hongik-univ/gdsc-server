@@ -121,3 +121,4 @@ fix: 과제 스터디에서 출석 마감 조회로 인한 NPE 수정
 |------|------|
 | [DISCORD.md](./DISCORD.md) | Discord 봇 통합 |
 | [EXTERNAL.md](./EXTERNAL.md) | 외부 서비스 연동 (GitHub, 토스페이먼츠, Email) |
+| [STORAGE.md](./STORAGE.md) | Cloudflare R2 presigned URL 발급 |
