@@ -234,6 +234,12 @@ public enum ErrorCode {
 
     // CommunityStatistic
     COMMUNITY_STATISTIC_NOT_FOUND(NOT_FOUND, "존재하지 않는 커뮤니티 통계입니다."),
+
+    // Storage
+    STORAGE_INVALID_PATH(BAD_REQUEST, "파일 업로드 경로가 올바르지 않습니다."),
+    STORAGE_INVALID_OBJECT_KEY(BAD_REQUEST, "파일 키가 비어 있습니다."),
+    STORAGE_INVALID_CONTENT_TYPE(BAD_REQUEST, "파일 업로드 Content-Type이 올바르지 않습니다."),
+    STORAGE_PRESIGN_FAILED(INTERNAL_SERVER_ERROR, "파일 URL 발급에 실패했습니다. 관리자에게 문의 바랍니다."),
     ;
 
     private final HttpStatus status;

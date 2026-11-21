@@ -8,3 +8,12 @@ spring:
 
 discord:
   enabled: false
+
+storage:
+  r2:
+    endpoint: https://r2.test.invalid
+    bucket: test-bucket
+    access-key-id: test-access-key
+    secret-access-key: test-secret-key
+    upload-url-ttl: 15m
+    download-url-ttl: 15m

@@ -14,6 +14,7 @@ gdsc-server는 다음 외부 서비스와 연동합니다:
 | 토스페이먼츠 | 결제 승인/조회/취소 | Feign Client |
 | Gmail | 이메일 인증 발송 | SMTP (JavaMailSender) |
 | Sentry | 에러 모니터링, 분산 추적 | sentry-spring-boot-starter |
+| Cloudflare R2 | 파일 업로드/다운로드 presigned URL 발급 | AWS SDK for Java v2 (S3Presigner) |
 
 ---
 
@@ -447,6 +448,7 @@ spring:
       - github
       - sentry
       - modulith
+      - storage
 ```
 
 ### 6.2 외부 서비스별 설정 파일
@@ -458,6 +460,7 @@ spring:
 | `application-email.yml` | Gmail SMTP | `GOOGLE_LOGIN_EMAIL`, `GOOGLE_PASSWORD` |
 | `application-sentry.yml` | Sentry | `SENTRY_DSN`, `DOCKER_IMAGE_TAG` |
 | `application-discord.yml` | Discord | `DISCORD_BOT_TOKEN`, `DISCORD_SERVER_ID`, ... |
+| `application-storage.yml` | Cloudflare R2 | `R2_ENDPOINT`, `R2_BUCKET`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` |
 
 ### 6.3 환경 변수 바인딩 패턴
 
@@ -528,5 +531,6 @@ port: ${REDIS_PORT:6379}
 ## 참고
 
 - Discord 연동: [DISCORD.md](DISCORD.md) 참조
+- Cloudflare R2 연동: [STORAGE.md](STORAGE.md) 참조
 - 인프라 설정: [INFRASTRUCTURE.md](INFRASTRUCTURE.md) 참조
 - 예외 처리: [EXCEPTION.md](EXCEPTION.md) 참조
