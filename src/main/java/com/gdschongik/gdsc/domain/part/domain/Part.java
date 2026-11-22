@@ -40,6 +40,7 @@ public class Part extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PartType partType;
 
+    // todo: 향후 Image 엔티티로 변경
     @Column(columnDefinition = "TEXT")
     private String thumbnailUrl;
 
