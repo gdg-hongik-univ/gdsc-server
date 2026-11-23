@@ -9,6 +9,7 @@ import com.gdschongik.gdsc.domain.part.dao.PartRepository;
 import com.gdschongik.gdsc.domain.part.dto.request.PartCreateRequest;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.helper.IntegrationTest;
+import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,8 @@ class PartServiceTest extends IntegrationTest {
                     PART_THUMBNAIL_URL,
                     PART_LEAD_NAME,
                     PART_INTRODUCTIONS,
-                    PART_RECOMMENDATIONS);
+                    PART_RECOMMENDATIONS,
+                    List.of());
 
             // when
             partService.createPart(request);
@@ -57,7 +59,8 @@ class PartServiceTest extends IntegrationTest {
                     PART_THUMBNAIL_URL,
                     PART_LEAD_NAME,
                     PART_INTRODUCTIONS,
-                    PART_RECOMMENDATIONS);
+                    PART_RECOMMENDATIONS,
+                    List.of());
 
             // when & then
             assertThatThrownBy(() -> partService.createPart(request))
