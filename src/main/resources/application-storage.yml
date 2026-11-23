@@ -1,3 +1,8 @@
+spring:
+  config:
+    activate:
+      on-profile: "storage"
+
 storage:
   r2:
     endpoint: ${R2_ENDPOINT:}
@@ -6,15 +11,3 @@ storage:
     secret-access-key: ${R2_SECRET_ACCESS_KEY:}
     upload-url-ttl: ${R2_UPLOAD_URL_TTL:15m}
     download-url-ttl: ${R2_DOWNLOAD_URL_TTL:15m}
----
-spring:
-  config:
-    activate:
-      on-profile: "local"
-
-storage:
-  r2:
-    endpoint: https://r2.local.invalid
-    bucket: local-bucket
-    access-key-id: local-access-key
-    secret-access-key: local-secret-key

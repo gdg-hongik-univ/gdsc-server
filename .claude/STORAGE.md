@@ -49,9 +49,14 @@ Bean은 특정 도메인, 로그인 사용자, HTTP 요청 컨텍스트, DB에 �
 
 ### YAML
 
-`application.yml`의 `spring.profiles.include`에 `storage`가 포함되어 있으며, `application-storage.yml`에서 설정합니다.
+`application.yml`의 `spring.profiles.include`에 `storage`가 포함되어 있으며, `application-storage.yml`에서 `storage` 프로필 활성화 조건과 공통 설정을 명시합니다.
 
 ```yaml
+spring:
+  config:
+    activate:
+      on-profile: "storage"
+
 storage:
   r2:
     endpoint: ${R2_ENDPOINT:}
@@ -73,7 +78,7 @@ storage:
 | `R2_UPLOAD_URL_TTL` | X | 업로드 URL 만료 시간. 생략 시 `15m` |
 | `R2_DOWNLOAD_URL_TTL` | X | 다운로드 URL 만료 시간. 생략 시 `15m` |
 
-- dev/prod는 **같은 변수 이름에 다른 값**을 주입합니다. dev `.env`에는 dev 버킷과 키, prod `.env`에는 prod 버킷과 키를 넣습니다.
+- local/dev/prod는 **같은 `R2_*` 변수 이름**을 사용합니다. local과 dev에는 개발용 버킷과 키, prod에는 운영용 버킷과 키를 주입합니다.
 - 한 프로세스에 dev/prod 자격 증명을 함께 넣고 코드에서 고르지 않습니다. 버킷 이름과 계정 ID는 코드에 하드코딩하지 않습니다.
 - endpoint에는 버킷 경로, 사용자 정보, 쿼리, fragment를 넣지 않습니다. 끝의 `/` 하나는 허용합니다.
 - 공개 커스텀 도메인이나 `r2.dev` 주소가 아니라 S3 API endpoint를 사용합니다. 리전은 코드에서 `auto`로 고정합니다.
@@ -84,13 +89,11 @@ storage:
 
 | 프로필 | 동작 |
 |--------|------|
-| `dev`, `prod` | `R2_*` 환경 변수를 사용합니다. endpoint나 자격 증명이 비어 있으면 `S3Presigner` 생성에 실패하고, 버킷이나 TTL 오류는 URL 발급 또는 사용 시점에 드러날 수 있습니다. |
-| `local` | `https://r2.local.invalid`, `local-bucket`과 더미 키로 실제 SDK 서명을 생성합니다. URL 형식은 같지만 **실제 업로드와 다운로드는 동작하지 않습니다.** |
+| `local`, `dev`, `prod` | `R2_*` 환경 변수를 사용합니다. endpoint나 자격 증명이 비어 있으면 `S3Presigner` 생성에 실패하고, 버킷이나 TTL 오류는 URL 발급 또는 사용 시점에 드러날 수 있습니다. |
 | `test` | `src/test/resources/application-test.yml`의 더미 접속 정보를 사용합니다. 상세 구성은 [테스트](#테스트)를 참고하세요. |
 | 미지정 | `R2_*` 환경 변수를 사용합니다. 실행 시 프로필을 하나만 명시하세요. |
 
-- local/test는 `R2_*` 접속 환경 변수가 설정되어 있어도 프로필의 더미 접속 정보를 사용합니다.
-- local/test 실행 예제나 CI에 `STORAGE_R2_*` 환경 변수나 `--storage.r2.*` 인자를 추가하지 마세요. 이들은 우선순위가 높아 더미 값을 덮어씁니다.
+- local 실행 시에는 IDE 또는 실행 환경의 환경 변수 설정을 통해 개발용 `.env`의 `R2_*` 값을 애플리케이션에 주입합니다. `.env` 파일을 두는 것만으로 Spring이 자동으로 읽지는 않으므로 실행 설정에서 로딩 여부를 확인합니다.
 
 ---
 
@@ -295,15 +298,15 @@ async function downloadFromR2(downloadUrl) {
 
 브라우저에서 cross-origin으로 요청하려면 아래 [R2 CORS](#3-r2-cors-설정)가 설정되어 있어야 합니다.
 
-### local 결과 확인
+### local에서 개발용 버킷 연결
 
-local 프로필에서 발급한 URL은 다음 형식입니다.
+local 프로필에 개발용 버킷의 접속 정보를 주입하면 실제 R2 endpoint를 사용하는 URL이 발급됩니다.
 
 ```
-https://r2.local.invalid/local-bucket/member/<UUID>?X-Amz-Algorithm=AWS4-HMAC-SHA256&...&X-Amz-Signature=<SIGNATURE>
+https://<ACCOUNT_ID>.r2.cloudflarestorage.com/<DEV_BUCKET>/member/<UUID>?X-Amz-Algorithm=AWS4-HMAC-SHA256&...&X-Amz-Signature=<SIGNATURE>
 ```
 
-local URL은 응답 형식과 key 생성 결과를 확인하는 용도입니다. `.invalid` 도메인은 실제로 연결되지 않으므로 업로드와 다운로드가 동작하지 않습니다. 실제 전송 확인에는 dev 설정을 사용합니다.
+local에서도 발급된 URL로 개발용 버킷에 업로드·다운로드할 수 있습니다. 실제 전송은 아래 [실제 R2 확인 절차](#실제-r2-확인-절차)에 따라 dev 버킷에서 검증합니다. 브라우저에서 확인할 때는 개발용 프런트엔드 origin도 버킷 CORS에 허용해야 합니다.
 
 ---
 
