@@ -86,7 +86,7 @@ storage:
 |--------|------|
 | `dev`, `prod` | `R2_*` 환경 변수를 사용합니다. endpoint나 자격 증명이 비어 있으면 `S3Presigner` 생성에 실패하고, 버킷이나 TTL 오류는 URL 발급 또는 사용 시점에 드러날 수 있습니다. |
 | `local` | `https://r2.local.invalid`, `local-bucket`과 더미 키로 실제 SDK 서명을 생성합니다. URL 형식은 같지만 **실제 업로드와 다운로드는 동작하지 않습니다.** |
-| `test` | `src/test/resources/application-test.yml`의 `https://r2.test.invalid`, `test-bucket`, 더미 키, 두 TTL을 사용합니다. R2 환경 변수 없이 실행됩니다. |
+| `test` | `src/test/resources/application-test.yml`의 더미 접속 정보를 사용합니다. 상세 구성은 [테스트](#테스트)를 참고하세요. |
 | 미지정 | `R2_*` 환경 변수를 사용합니다. 실행 시 프로필을 하나만 명시하세요. |
 
 - local/test는 `R2_*` 접속 환경 변수가 설정되어 있어도 프로필의 더미 접속 정보를 사용합니다.
@@ -104,7 +104,7 @@ public PresignedUrlDto generateUploadUrl(String path, String contentType);
 public PresignedUrlDto generateDownloadUrl(String objectKey);
 ```
 
-모든 지원 프로필에서 Bean이 생성되므로 서비스에서 조건 없이 생성자 주입으로 사용할 수 있습니다.
+도메인 서비스는 `R2StorageClient`를 생성자 주입으로 사용합니다.
 
 ### 업로드 key 규칙
 
@@ -380,9 +380,9 @@ R2 API 토큰을 환경별로 발급합니다.
 
 ## 실제 R2 확인 절차
 
-더미 자격 증명을 사용하는 단위 테스트는 URL 형식과 서명 구조만 검증합니다. 실제 R2 동작은 아래 절차로 **dev 버킷에서** 확인합니다. 검증 목적으로 prod 버킷에 파일을 쓰지 않습니다.
+`IntegrationTest`의 R2 mock은 실제 URL 서명이나 파일 전송을 수행하지 않습니다. 실제 R2 동작은 아래 절차로 **dev 버킷에서** 확인합니다. 검증 목적으로 prod 버킷에 파일을 쓰지 않습니다.
 
-현재는 `R2StorageClient`를 호출하는 API가 없으므로, 아래 임시 테스트로 dev 설정의 URL을 발급할 수 있습니다. **확인 후 삭제하고 커밋하지 않습니다.**
+현재는 `R2StorageClient`를 호출하는 API가 없으므로, 아래 임시 테스트로 dev 설정의 URL을 발급할 수 있습니다. 이 확인은 `IntegrationTest`를 상속하지 않고 dev 접속 정보로 실제 클라이언트와 서명기를 사용합니다. **확인 후 삭제하고 커밋하지 않습니다.**
 
 ```java
 // 임시 확인용. dev R2 값을 OS 환경 변수로 주입한 뒤 실행하고, 확인 후 삭제한다.
@@ -428,14 +428,35 @@ R2_ENDPOINT=... R2_BUCKET=<dev 버킷> R2_ACCESS_KEY_ID=... R2_SECRET_ACCESS_KEY
 
 ## 테스트
 
-```bash
-./gradlew test --tests 'com.gdschongik.gdsc.infra.storage.*' --tests 'com.gdschongik.gdsc.global.config.R2StorageConfigTest'
+### 테스트 환경 설정
+
+test 프로필에서도 `R2StorageConfig`의 실제 `S3Presigner` Bean을 생성합니다. 클라이언트를 mock으로 교체해도 별도로 등록된 서명기는 초기화되므로, `src/test/resources/application-test.yml`에 더미 접속 정보를 둡니다.
+
+```yaml
+storage:
+  r2:
+    endpoint: https://r2.test.invalid
+    bucket: test-bucket
+    access-key-id: test-access-key
+    secret-access-key: test-secret-key
+    upload-url-ttl: 15m
+    download-url-ttl: 15m
 ```
 
-| 테스트 | 검증 내용 |
-|--------|-----------|
-| `R2StorageClientTest` | 실제 `S3Presigner`와 더미 자격 증명으로 key 생성, path-style URL, SigV4 쿼리, TTL, 인코딩, 서명 헤더, 만료 시각, 예외 변환 |
-| `PresignedUrlDtoTest` | 만료 시각의 JSON 직렬화, 필수 헤더 Map과 값 목록의 불변성 |
-| `R2StorageConfigTest` | 실제 `application.yml`/`application-storage.yml` 로딩, 프로필별 접속 정보, 기본 및 사용자 지정 TTL, endpoint·자격 증명 누락 시 시작 실패 |
+- 테스트 실행 시 R2 환경 변수를 별도로 주입할 필요가 없습니다.
+- 테스트용 업로드·다운로드 TTL은 test YAML에서 각각 `15m`으로 지정합니다.
+- 더미 접속 정보는 서명기 초기화용이며 실제 R2 업로드·다운로드에는 사용할 수 없습니다.
 
-새 테스트는 R2, AWS 계정, DB, Redis, Docker 없이 실행됩니다. `R2StorageConfigTest`는 OS 환경 변수 대신 테스트에서 만든 가짜 환경 변수만 사용합니다.
+### 테스트별 Bean 구성
+
+| 테스트 | `R2StorageClient` | `S3Presigner` |
+|--------|-------------------|---------------|
+| `IntegrationTest`를 상속한 도메인 테스트 | mock | 실제 Bean |
+| `GdscApplicationTests` | 실제 Bean | 실제 Bean |
+
+- 클라이언트 mock은 `IntegrationTest`의 `@MockBean` 선언으로 등록됩니다.
+- `GdscApplicationTests`는 `IntegrationTest`를 상속하지 않는 독립적인 기동 테스트입니다.
+
+이 테스트들은 실제 R2 인증이나 버킷 권한을 검증하지 않습니다. 실제 연동은 [실제 R2 확인 절차](#실제-r2-확인-절차)에 따라 dev 버킷에서 확인합니다.
+
+> 도메인 테스트의 mock 사용법은 [TESTING.md의 외부 서비스 모킹](TESTING.md#외부-서비스-모킹)을 참고하세요.
