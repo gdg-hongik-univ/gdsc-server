@@ -38,12 +38,14 @@ class PartServiceTest extends IntegrationTest {
                     PART_LEAD_NAME,
                     PART_INTRODUCTIONS,
                     PART_RECOMMENDATIONS,
-                    List.of());
+                    List.of(new PartCreateRequest.Item(
+                            PART_SESSION_TITLE, PART_SESSION_DESCRIPTION, PART_SESSION_IS_HIGHLIGHTED)));
 
             // when
             partService.createPart(request);
 
             // then
+            // todo : findFetchById 구현 후 세션 생성 여부 확인 추가
             assertThat(partRepository.findAll()).hasSize(1);
         }
 
@@ -60,7 +62,8 @@ class PartServiceTest extends IntegrationTest {
                     PART_LEAD_NAME,
                     PART_INTRODUCTIONS,
                     PART_RECOMMENDATIONS,
-                    List.of());
+                    List.of(new PartCreateRequest.Item(
+                            PART_SESSION_TITLE, PART_SESSION_DESCRIPTION, PART_SESSION_IS_HIGHLIGHTED)));
 
             // when & then
             assertThatThrownBy(() -> partService.createPart(request))

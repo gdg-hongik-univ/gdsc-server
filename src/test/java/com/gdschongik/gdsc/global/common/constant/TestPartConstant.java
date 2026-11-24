@@ -15,4 +15,7 @@ public class TestPartConstant {
     public static final String PART_LEAD_NAME = "김홍익";
     public static final List<String> PART_INTRODUCTIONS = List.of("Spring 기반 백엔드 개발을 학습합니다.");
     public static final List<String> PART_RECOMMENDATIONS = List.of("백엔드 개발에 관심 있는 분께 추천합니다.");
+    public static final String PART_SESSION_TITLE = "Spring 기초";
+    public static final String PART_SESSION_DESCRIPTION = "Spring의 핵심 개념을 학습합니다.";
+    public static final boolean PART_SESSION_IS_HIGHLIGHTED = true;
 }
