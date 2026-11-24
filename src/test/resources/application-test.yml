@@ -8,3 +8,13 @@ spring:
 
 discord:
   enabled: false
+
+# 테스트 컨텍스트의 S3Presigner 생성에 사용하는 더미 값
+storage:
+  r2:
+    endpoint: https://r2.test.invalid
+    bucket: test-bucket
+    access-key-id: test-access-key
+    secret-access-key: test-secret-key
+    upload-url-ttl: 15m
+    download-url-ttl: 15m

@@ -312,7 +312,7 @@ memberRepository.save(member);
 
 ### 외부 서비스 모킹
 
-`IntegrationTest`에서 외부 서비스는 `@MockBean`으로 자동 모킹됩니다:
+`IntegrationTest`를 상속한 테스트에서는 베이스 클래스에 `@MockBean`으로 선언한 외부 서비스 의존성을 mock으로 사용합니다:
 
 ```java
 // IntegrationTest.java
@@ -321,6 +321,9 @@ protected PaymentClient paymentClient;
 
 @MockBean
 protected GithubClient githubClient;
+
+@MockBean
+protected R2StorageClient r2StorageClient;
 
 @MockBean
 protected DelegateMemberDiscordEventHandler delegateMemberDiscordEventHandler;
@@ -343,6 +346,14 @@ class OrderServiceTest extends IntegrationTest {
     }
 }
 ```
+
+R2 응답도 `doStubTemplate()` 또는 각 테스트의 given 단계에서 설정합니다. `expectedUpload`는 해당 테스트가 준비한 `PresignedUrlDto`입니다.
+
+```java
+when(r2StorageClient.generateUploadUrl("member", "image/png")).thenReturn(expectedUpload);
+```
+
+> R2 테스트 설정과 서명기 초기화에 관한 자세한 내용은 [STORAGE.md의 테스트](STORAGE.md#테스트)를 참고하세요.
 
 ### 데이터베이스 자동 정리
 

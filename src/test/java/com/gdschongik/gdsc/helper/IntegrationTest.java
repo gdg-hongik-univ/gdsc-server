@@ -49,6 +49,7 @@ import com.gdschongik.gdsc.global.util.DiscordUtil;
 import com.gdschongik.gdsc.global.util.email.MailSender;
 import com.gdschongik.gdsc.infra.feign.payment.client.PaymentClient;
 import com.gdschongik.gdsc.infra.github.client.GithubClient;
+import com.gdschongik.gdsc.infra.storage.client.R2StorageClient;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +110,9 @@ public abstract class IntegrationTest {
 
     @MockBean
     protected GithubClient githubClient;
+
+    @MockBean
+    protected R2StorageClient r2StorageClient;
 
     @MockBean
     protected DelegateMemberDiscordEventHandler delegateMemberDiscordEventHandler;

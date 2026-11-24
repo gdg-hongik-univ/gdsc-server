@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: "storage"
+
+storage:
+  r2:
+    endpoint: ${R2_ENDPOINT:}
+    bucket: ${R2_BUCKET:}
+    access-key-id: ${R2_ACCESS_KEY_ID:}
+    secret-access-key: ${R2_SECRET_ACCESS_KEY:}
+    upload-url-ttl: ${R2_UPLOAD_URL_TTL:15m}
+    download-url-ttl: ${R2_DOWNLOAD_URL_TTL:15m}
