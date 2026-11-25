@@ -6,13 +6,16 @@ import static org.assertj.core.api.Assertions.*;
 
 import com.gdschongik.gdsc.domain.member.domain.Member;
 import com.gdschongik.gdsc.domain.part.dao.PartRepository;
+import com.gdschongik.gdsc.domain.part.domain.Part;
 import com.gdschongik.gdsc.domain.part.dto.request.PartCreateRequest;
 import com.gdschongik.gdsc.global.exception.CustomException;
 import com.gdschongik.gdsc.helper.IntegrationTest;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 class PartServiceTest extends IntegrationTest {
 
@@ -26,6 +29,7 @@ class PartServiceTest extends IntegrationTest {
     class 파트_생성할때 {
 
         @Test
+        @Transactional
         void 성공한다() {
             // given
             Member member = createAdminMember();
@@ -45,8 +49,11 @@ class PartServiceTest extends IntegrationTest {
             partService.createPart(request);
 
             // then
-            // todo : findFetchById 구현 후 세션 생성 여부 확인 추가
-            assertThat(partRepository.findAll()).hasSize(1);
+            Optional<Part> optionalPart = partRepository.findById(1L);
+            assertThat(optionalPart).isPresent();
+
+            Part part = optionalPart.get();
+            assertThat(part.getPartSessions()).hasSizeGreaterThan(0);
         }
 
         @Test
